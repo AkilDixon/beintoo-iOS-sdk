@@ -1,0 +1,347 @@
+/*******************************************************************************
+ * Copyright 2011 Beintoo - author fmessina@beintoo.com
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
+#import "BeintooMessagesVC.h"
+#import "Beintoo.h"
+
+@implementation BeintooMessagesVC
+
+@synthesize elementsTable, elementsArrayList, elementsImages, selectedMessage, startingOptions;
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+		self.startingOptions	= options;
+		cellsToLoad				= 0;
+    }
+    return self;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+	
+	self.title			 	= NSLocalizedStringFromTable(@"inbox",@"BeintooLocalizable",@"Select A Friend");
+	titleLabel.text			= NSLocalizedStringFromTable(@"yourMessages",@"BeintooLocalizable",@"Select A Friend");
+	noMessagesLabel.text	= NSLocalizedStringFromTable(@"noMessages",@"BeintooLocalizable",@"Select A Friend");
+	
+	[messagesView setTopHeight:50];
+	[messagesView setBodyHeight:367];
+	
+	_message				= [[BeintooMessage alloc] init];
+	_player					= [[BeintooPlayer alloc] init];
+	_user					= [[BeintooUser alloc] init];
+	
+	beintooMessageShowVC	= [BeintooMessagesShowVC alloc];
+	newMessageVC			= [BeintooNewMessageVC alloc];
+	
+	self.elementsTable.delegate	= self;
+	self.elementsTable.rowHeight	= 68.0;	
+	
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
+	[barCloseBtn release];			
+	
+	self.elementsArrayList = [[NSMutableArray alloc] init];
+	self.elementsImages    = [[NSMutableArray alloc] init];
+	
+	[newMessageButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
+	[newMessageButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
+	[newMessageButton setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
+    [newMessageButton setLowColor:[UIColor colorWithRed:89.0/255 green:112.0/255 blue:142.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
+	[newMessageButton setTitle:NSLocalizedStringFromTable(@"newMessage",@"BeintooLocalizable",@"Load more") forState:UIControlStateNormal];
+	[newMessageButton setButtonTextSize:15];
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+	
+    if ([BeintooDevice isiPad]) {
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+    }
+	[self.elementsTable deselectRowAtIndexPath:[self.elementsTable indexPathForSelectedRow] animated:YES];
+	
+    _message.delegate		= self;
+	_player.delegate	    = self;
+	_user.delegate			= self;
+
+    
+	if (![Beintoo isUserLogged])
+		[self.navigationController popToRootViewControllerAnimated:NO];
+	else {
+		NSString *guid = [Beintoo getPlayerID];
+		[_player getPlayerByGUID:guid];
+	}
+}
+
+- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result{
+	if (result != nil) {
+		[BeintooMessage setTotalMessages:[[result objectForKey:@"user"] objectForKey:@"messages"]];
+		[BeintooMessage setUnreadMessages:[[result objectForKey:@"user"]objectForKey:@"unreadMessages"]];
+	}
+	
+	[noMessagesLabel setHidden:YES];
+	loadMoreCount = 0;
+	
+	[self.elementsArrayList removeAllObjects];
+	[self.elementsImages removeAllObjects];
+	
+	[BLoadingView startActivity:self.view];
+	[_message showMessagesFrom:MSGFORPAGE*loadMoreCount andRows:MSGFORPAGE];
+}
+
+#pragma mark -
+#pragma mark IBActions
+
+- (void)loadmoreMessages{
+	loadMoreCount = loadMoreCount + 1;
+	[BLoadingView startActivity:self.view];
+	[_message showMessagesFrom:MSGFORPAGE*loadMoreCount andRows:MSGFORPAGE];
+}
+
+- (IBAction)newMessage{
+	[newMessageVC initWithNibName:@"BeintooNewMessageVC" bundle:[NSBundle mainBundle] andOptions:nil];
+	[self.navigationController pushViewController:newMessageVC animated:YES];
+}
+
+#pragma mark -
+#pragma mark MessageDelegate
+
+- (void)didFinishToLoadMessagesWithResult:(NSArray *)result{
+	@try {
+		if ([result count] <= 0) {
+			[noMessagesLabel setHidden:NO];
+		}
+		if ([result isKindOfClass:[NSDictionary class]]) {
+			NSLog(@"error in messages:");
+			[noMessagesLabel setHidden:NO];
+			[BLoadingView stopActivity];
+			[elementsTable reloadData];
+			return;
+		}
+	}
+	@catch (NSException * e) {
+	}
+
+	for (int i=0; i<[result count]; i++) {	
+		@try {
+			NSMutableDictionary *messageEntry = [[NSMutableDictionary alloc]init];
+			NSString *from			= [[[result objectAtIndex:i] objectForKey:@"userFrom"] objectForKey:@"nickname"];
+			NSString *fromUserID	= [[[result objectAtIndex:i] objectForKey:@"userFrom"] objectForKey:@"id"];
+			NSString *creationdate	= [[result objectAtIndex:i] objectForKey:@"creationdate"]; 
+			NSString *text			= [[result objectAtIndex:i] objectForKey:@"text"];
+			NSString *status		= [[result objectAtIndex:i] objectForKey:@"status"];
+			NSString *messageID		= [[result objectAtIndex:i] objectForKey:@"id"];
+			NSString *fromImgURL	= [[[result objectAtIndex:i] objectForKey:@"userFrom"] objectForKey:@"userimg"];
+			
+			BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
+			download.delegate = self;
+			download.urlString = [[[result objectAtIndex:i] objectForKey:@"userFrom"] objectForKey:@"usersmallimg"]; 
+						
+			[messageEntry setObject:messageID forKey:@"id"];
+			[messageEntry setObject:fromUserID forKey:@"fromUserID"];
+			[messageEntry setObject:fromImgURL forKey:@"fromImgURL"];
+			[messageEntry setObject:from forKey:@"from"];
+			[messageEntry setObject:creationdate forKey:@"creationdate"];
+			[messageEntry setObject:text forKey:@"text"];
+			[messageEntry setObject:status forKey:@"status"];
+			[self.elementsArrayList addObject:messageEntry];
+			[self.elementsImages addObject:download];
+			[messageEntry release];
+		}
+		@catch (NSException * e) {
+			NSLog(@"exception %@",e);
+			//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
+		}
+	}
+	if ([self.elementsArrayList count] >= [BeintooMessage totalMessagesCount]) 
+		cellsToLoad = [self.elementsArrayList count];
+	else 
+		cellsToLoad = [self.elementsArrayList count]+1;
+	
+	[self.elementsTable reloadData];
+	[BLoadingView stopActivity];	
+}
+
+#pragma mark -
+#pragma mark Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+	return cellsToLoad;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    static NSString *CellIdentifier = @"Cell";
+   	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
+	
+	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil || TRUE) {
+        cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+    }	
+	@try {
+		if (indexPath.row == [self.elementsArrayList count]) {
+			
+			UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+			button.frame = CGRectMake(5, 15, 310, 35);
+			[button addTarget:self action:@selector(loadmoreMessages) forControlEvents:UIControlEventTouchUpInside];
+			button.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+			button.backgroundColor = [UIColor clearColor];
+			[button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+			[button setTitleColor:[UIColor colorWithRed:84.0/255 green:88.0/255 blue:89.0/255 alpha:1.0] forState:UIControlStateHighlighted];
+			[button setTitle:NSLocalizedStringFromTable(@"loadmoreButton",@"BeintooLocalizable",@"") forState:UIControlStateNormal];
+			[cell addSubview:button];
+		}
+		else {
+			NSString *creationDate = [BeintooNetwork convertToCurrentDate:[[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"creationdate"]];
+			BOOL isUnread = FALSE;
+			if ([[[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"status"] isEqualToString:@"UNREAD"]) {
+				isUnread = YES;
+			}
+			
+			/* --- FROM --- */
+			UILabel *fromLabel = [[UILabel alloc] initWithFrame:CGRectMake(75, 5, 230, 20)];
+			NSString *fromText = [NSString stringWithFormat:@"%@: %@",NSLocalizedStringFromTable(@"from",@"BeintooLocalizable",@""),[[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"from"]];
+			fromLabel.text = fromText;
+			if (isUnread) 
+				fromLabel.font = [UIFont boldSystemFontOfSize:14];
+			else 
+				fromLabel.font = [UIFont systemFontOfSize:14];
+			fromLabel.textColor = [UIColor colorWithRed:84.0/255 green:88.0/255 blue:89.0/255 alpha:1.0];
+			fromLabel.backgroundColor = [UIColor clearColor];
+			
+			/* --- CREATION --- */		
+			UILabel *creationDateLabel = [[UILabel alloc] initWithFrame:CGRectMake(75, 20, 230, 20)];
+			creationDateLabel.text = creationDate;
+			if (isUnread) 
+				creationDateLabel.font = [UIFont boldSystemFontOfSize:14];
+			else 
+				creationDateLabel.font = [UIFont systemFontOfSize:14];
+			creationDateLabel.textColor = [UIColor colorWithRed:84.0/255 green:88.0/255 blue:89.0/255 alpha:1.0];
+			creationDateLabel.backgroundColor = [UIColor clearColor];
+			
+			/* --- TEXT --- */
+			UILabel *textLabel = [[UILabel alloc] initWithFrame:CGRectMake(75, 39, 230, 20)];
+			textLabel.text = [[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"text"];
+			if (isUnread){
+				textLabel.font = [UIFont boldSystemFontOfSize:12];
+				textLabel.textColor = [UIColor blackColor];
+			}
+			else{ 
+				textLabel.font = [UIFont systemFontOfSize:12];
+				textLabel.textColor = [UIColor colorWithRed:84.0/255 green:88.0/255 blue:89.0/255 alpha:1.0];
+			}
+			textLabel.backgroundColor = [UIColor clearColor];
+			textLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+			
+			BImageDownload *download = [self.elementsImages objectAtIndex:indexPath.row];
+			UIImage *cellImage  = download.image;
+			
+			UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(7, 7, 50, 50)];
+			imageView.contentMode = UIViewContentModeScaleAspectFit;
+			imageView.backgroundColor = [UIColor clearColor];
+			[imageView setImage:cellImage];
+			
+			[cell addSubview:fromLabel];
+			[cell addSubview:creationDateLabel];
+			[cell addSubview:textLabel];
+			[cell addSubview:imageView];
+			
+			[fromLabel release];
+			[creationDateLabel release];
+			[textLabel release];
+			[imageView release];
+		}
+	}
+	@catch (NSException * e) {
+	}
+	
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+	@try {
+		self.selectedMessage = [self.elementsArrayList objectAtIndex:indexPath.row];
+		[beintooMessageShowVC initWithNibName:@"BeintooMessagesShowVC" bundle:[NSBundle mainBundle] andOptions:self.selectedMessage];
+		[self.navigationController pushViewController:beintooMessageShowVC animated:YES];
+	}
+	@catch (NSException * e) {
+	}
+}
+
+#pragma mark TableViewLoadEndedDelegate
+
+- (void)didEndLoadingTableData{
+	@try {
+		NSIndexPath *indPath = [NSIndexPath indexPathForRow:(MSGFORPAGE*loadMoreCount) inSection:0];
+		[self.elementsTable scrollToRowAtIndexPath:indPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+	}
+	@catch (NSException * e) {
+	}
+}
+
+
+#pragma mark -
+#pragma mark BImageDownload Delegate Methods
+
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+    NSUInteger index = [self.elementsImages indexOfObject:download]; 
+    NSUInteger indices[] = {0, index};
+    NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
+    [self.elementsTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
+    [path release];
+    download.delegate = nil;
+}
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+    NSLog(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+	return NO;
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    }
+
+- (void)viewDidUnload {
+    [super viewDidUnload];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    _message.delegate		= nil;
+	_player.delegate	    = nil;
+	_user.delegate			= nil;
+
+    @try {
+		[BLoadingView stopActivity];
+	}
+	@catch (NSException * e) {
+	}
+}
+
+- (void)dealloc {
+	[_message release];
+	[_player release];
+	[self.elementsArrayList release];
+	[self.elementsImages release];
+	[beintooMessageShowVC release];
+	[newMessageVC release];
+    [super dealloc];
+}
+
+
+@end

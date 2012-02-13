@@ -1,0 +1,206 @@
+/*******************************************************************************
+ * Copyright 2011 Beintoo - author fmessina@beintoo.com
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
+
+#import "BeintooLeaderboardVC.h"
+#import "Beintoo.h"
+
+@implementation BeintooLeaderboardVC
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+	self.title = NSLocalizedStringFromTable(@"leaderboard",@"BeintooLocalizable",@"pickContest");
+	//leaderboardLabel.text = NSLocalizedStringFromTable(@"pickacontest",@"BeintooLocalizable",@"pickContest");
+	
+	[leaderboardView setTopHeight:57];
+	[leaderboardView setBodyHeight:372];
+    
+    [segControl setTitle:NSLocalizedStringFromTable(@"people",@"BeintooLocalizable",@"All") forSegmentAtIndex:0];
+	[segControl setTitle:NSLocalizedStringFromTable(@"alliances",@"BeintooLocalizable",@"Friends") forSegmentAtIndex:1];
+
+    segControl.tintColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1];
+
+
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
+	[barCloseBtn release];	
+	
+	leaderboardsTable.delegate = self;
+	leaderboardsTable.rowHeight = 55;
+    
+    leaderboardContestVC = [[BeintooLeaderboardContestVC alloc]initWithNibName:@"BeintooLeaderboardContestVC" bundle:[NSBundle mainBundle]];
+    allianceLeaderboardVC = [[BeintooAlliancesLeaderboardVC alloc]initWithNibName:@"BeintooAlliancesLeaderboardVC" bundle:[NSBundle mainBundle]];
+
+	
+	contestListToShow	= [[NSMutableArray alloc] init];	
+	allContests			= [[NSArray alloc]init];
+	contestCodeID		= [[NSMutableArray alloc]init];
+	player				= [[BeintooPlayer alloc] init];
+}
+
+- (void) viewWillAppear:(BOOL)animated {
+    if ([BeintooDevice isiPad]) {
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+    }
+    player.delegate		= self;
+	
+    if (segControl.selectedSegmentIndex == 0) {
+        isAllianceLeaderboard = NO;
+    }else if(segControl.selectedSegmentIndex == 1){
+        isAllianceLeaderboard = YES;
+    }
+    
+    [leaderboardsTable deselectRowAtIndexPath:[leaderboardsTable indexPathForSelectedRow] animated:animated];
+	
+    if ([contestListToShow count]<=0) {
+        [BLoadingView startActivity:self.view];
+        [player showContestList];
+    }
+}
+
+#pragma mark AppDelegate
+- (void)appDidGetContestsForApp:(NSArray *)result{
+	allContests = result;
+	
+	NSString *defaultName = [[NSString alloc]init];
+	[contestListToShow removeAllObjects];
+	for (int i=0; i<[allContests count]; i++) {
+		@try {
+			if ([[[allContests objectAtIndex:i] objectForKey:@"isPublic"] boolValue] == 1) {
+				defaultName = [[allContests objectAtIndex:i] objectForKey:@"name"];
+				[contestListToShow addObject:defaultName];
+				[contestCodeID addObject:[[allContests objectAtIndex:i] objectForKey:@"codeID"]];
+			}
+		}
+		@catch (NSException * e) {
+			//[player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
+		}
+	}
+	[BLoadingView stopActivity];
+	[leaderboardsTable reloadData];
+}
+
+#pragma mark -
+#pragma mark Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+   return [contestListToShow count];
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+	static NSString *CellIdentifier = @"Cell";
+   	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
+	
+	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+    }
+
+	NSString *contestName = [contestListToShow objectAtIndex:indexPath.row];
+	if ([contestName isEqualToString:@"default"]) {
+		contestName = @"General"; 
+	}
+	cell.textLabel.text  = [NSString stringWithFormat:@"%@",contestName];
+	cell.textLabel.font  = [UIFont systemFontOfSize:17];
+	cell.imageView.image = [UIImage imageNamed:@"beintoo_cup.png"];
+    NSString *typeOf;
+    if (segControl.selectedSegmentIndex == 0) {
+        typeOf = @"People";
+    }
+    else{
+        typeOf = @"Alliances";
+    }
+    cell.detailTextLabel.text = typeOf;
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+	[[NSUserDefaults standardUserDefaults] setObject:[contestCodeID objectAtIndex:indexPath.row] forKey:@"selectedContest"];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+
+	UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"back",@"BeintooLocalizable",@"Backbutton") style: UIBarButtonItemStyleBordered target:nil action:nil];
+	[[self navigationItem] setBackBarButtonItem: backButton];
+	[backButton release];
+	
+    if (isAllianceLeaderboard) {
+        NSString *contestName = [contestListToShow objectAtIndex:indexPath.row];
+        if ([contestName isEqualToString:@"default"]) {
+            contestName = @"General"; 
+        }
+        allianceLeaderboardVC.title = contestName;
+        
+        [self.navigationController pushViewController:allianceLeaderboardVC animated:YES];
+    }
+    else{
+        [self.navigationController pushViewController:leaderboardContestVC animated:YES];
+    }
+}
+
+- (IBAction) segmentedControlIndexChanged{
+	switch (segControl.selectedSegmentIndex) {
+		case 0:{
+            isAllianceLeaderboard = NO;
+            [leaderboardsTable reloadData];
+		}
+			break;
+		case 1:{
+            isAllianceLeaderboard = YES;
+            [leaderboardsTable reloadData];
+		}
+			break;
+			
+		default:
+			break;
+	}
+}
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+	return NO;
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    player.delegate    = nil;
+    
+    @try {
+		[BLoadingView stopActivity];
+	}
+	@catch (NSException * e) {
+	}
+}
+
+- (void)viewDidUnload {
+    [super viewDidUnload];
+}
+
+- (void)dealloc {
+	[contestListToShow release];
+    [leaderboardContestVC release];
+    [allianceLeaderboardVC release];
+	[allContests release];
+	[contestCodeID release];
+	[player release];
+    [super dealloc];
+}
+
+@end

@@ -1,0 +1,51 @@
+/*******************************************************************************
+ * Copyright 2011 Beintoo - author fmessina@beintoo.com
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
+#import <UIKit/UIKit.h>
+
+@class BeintooFriendsListVC, BeintooMarketplaceVC;
+
+@interface BeintooVGoodShowVC : UIViewController <UIWebViewDelegate,UINavigationBarDelegate>{
+
+	IBOutlet UIWebView		*vGoodWebView;
+	UIActivityIndicatorView *loadingIndicator;
+	NSString				*urlToOpen;
+
+#ifdef UI_USER_INTERFACE_IDIOM
+	UIPopoverController		*recommendPopoverController;
+#endif
+	
+	BOOL					isFromWallet;
+	BOOL					didOpenTheRecommendation;
+	
+}
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil urlToOpen:(NSString *)URL;
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
+
+#ifdef UI_USER_INTERFACE_IDIOM
+- (void)setRecommendationPopoverController:(UIPopoverController *)_recommPopover;
+#endif
+
+- (void)setIsFromWallet:(BOOL)value;
+- (UIButton *)closeButton;
+
+@property (nonatomic, retain) NSString *urlToOpen;
+@property (nonatomic, retain) NSString *caller;
+@property (nonatomic, retain) BeintooFriendsListVC *callerIstance;
+@property (nonatomic, retain) BeintooMarketplaceVC *callerIstanceMP;
+
+@end

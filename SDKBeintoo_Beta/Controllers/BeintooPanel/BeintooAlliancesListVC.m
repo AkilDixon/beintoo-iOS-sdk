@@ -1,0 +1,204 @@
+/*******************************************************************************
+ * Copyright 2011 Beintoo - author fmessina@beintoo.com
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
+#import "BeintooAlliancesListVC.h"
+#import "Beintoo.h"
+
+@implementation BeintooAlliancesListVC
+
+@synthesize elementsTable, elementsArrayList, elementsImages, selectedElement, startingOptions;
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+		self.startingOptions	= options;
+    }
+    return self;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+	
+	self.title		= NSLocalizedStringFromTable(@"alliancemainlist",@"BeintooLocalizable",@"Select A Friend");
+	
+	[findFriendsView setTopHeight:80];
+	[findFriendsView setBodyHeight:332];
+	
+	_player					= [[BeintooPlayer alloc] init];
+    _alliance               = [[BeintooAlliance alloc] init];
+	
+	elementsArrayList = [[NSMutableArray alloc] init];
+	elementsImages    = [[NSMutableArray alloc] init];
+	
+	self.elementsTable.delegate		= self;
+	self.elementsTable.dataSource	= self;
+	self.elementsTable.rowHeight	= 41.0;
+	
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
+	[barCloseBtn release];	
+	
+	friendTextField.delegate           = self;
+	friendTextField.textColor          = [UIColor colorWithWhite:0 alpha:0.7]; 
+	friendTextField.font               = [UIFont systemFontOfSize:14];
+    friendTextField.layer.cornerRadius = 3;
+	
+	friendTextField.text		= NSLocalizedStringFromTable(@"allianceSearchFor",@"BeintooLocalizable",@"");
+	noResultLabel.text			= NSLocalizedStringFromTable(@"noResult",@"BeintooLocalizable",@"");
+	[noResultLabel setHidden:YES];
+    
+    viewAllianceVC              = [BeintooViewAllianceVC alloc];
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    if ([BeintooDevice isiPad]) {
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+    }
+
+    _alliance.delegate      = self;
+
+	if (![Beintoo isUserLogged]){
+		[self.navigationController popToRootViewControllerAnimated:NO];
+    }
+    else{
+        [BLoadingView startActivity:self.view];
+        [_alliance getAllianceListWithQueryText:nil];
+    }
+}
+
+#pragma mark - 
+#pragma mark Alliance delegate
+
+- (void)didGetAlliancesList:(NSArray *)result{
+    [BLoadingView stopActivity];
+    noResultLabel.hidden = YES;    
+    
+    [self.elementsArrayList removeAllObjects];   
+    
+    if ([result isKindOfClass:[NSArray class]]) {
+        self.elementsArrayList =  (NSMutableArray *)result;
+    }
+    [self.elementsTable reloadData];
+    
+    if ([result count] <= 0) {
+        noResultLabel.hidden = NO;
+    }
+}
+
+
+#pragma mark -
+#pragma mark UITextField
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+	textField.font = [UIFont systemFontOfSize:16];
+	
+	return YES;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+	[textField resignFirstResponder];
+	@try {
+        if ([textField.text length]==0) {
+            [BLoadingView startActivity:self.view];
+			[_alliance getAllianceListWithQueryText:nil];	
+        }
+		if ([textField.text length]>0) {
+			[BLoadingView startActivity:self.view];
+			NSString *encodedString = [textField.text stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+			[_alliance getAllianceListWithQueryText:encodedString];	
+		}
+		else {
+			friendTextField.font	= [UIFont systemFontOfSize:12];
+			friendTextField.text	= NSLocalizedStringFromTable(@"searchForTitle",@"BeintooLocalizable",@"");
+		}
+	}
+	@catch (NSException * e) {
+		//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
+	}
+	return YES;
+}
+
+#pragma mark -
+#pragma mark Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+	return [self.elementsArrayList count];
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    static NSString *CellIdentifier = @"Cell";
+   	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
+	
+	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil || TRUE) {
+        cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+    }
+	
+	cell.textLabel.text     = [[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"name"];
+	cell.textLabel.font     = [UIFont systemFontOfSize:13];
+    cell.imageView.image    = [UIImage imageNamed:@"beintoo_alliance_iconsmall.png"];
+    
+    return cell;
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    NSDictionary *currentElem       = [self.elementsArrayList objectAtIndex:indexPath.row];
+    NSString *selectedAllianceID    = [currentElem objectForKey:@"id"];
+    NSString *selectedAllianceAdmin = [currentElem objectForKey:@"admin"];
+    
+    NSDictionary *optionsToSeeAlliance = [NSDictionary dictionaryWithObjectsAndKeys:selectedAllianceID,@"allianceID",selectedAllianceAdmin,@"allianceAdmin", nil];
+    [viewAllianceVC initWithNibName:@"BeintooViewAllianceVC" bundle:[NSBundle mainBundle] andOptions:optionsToSeeAlliance];
+    
+    [self.navigationController pushViewController:viewAllianceVC animated:YES];
+
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+	return NO;
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+}
+
+- (void)viewDidUnload {
+    [super viewDidUnload];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    _alliance.delegate      = nil;
+    
+    @try {
+		[BLoadingView stopActivity];
+	}
+	@catch (NSException * e) {
+	}
+}
+
+- (void)dealloc {
+	[elementsArrayList release];
+	[elementsImages release];
+    [_player release];
+    [_alliance release];
+    [super dealloc];
+}
+
+
+@end
