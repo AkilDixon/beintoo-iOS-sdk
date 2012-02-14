@@ -93,8 +93,6 @@
      *
      */
     
-    [Beintoo removeStoredVirtualCurrency];
-	
     /*  UNCOMMENT the line below to use Beintoo in our testing environment sandbox 
 	*   
     *   [Beintoo switchBeintooToSandbox];
