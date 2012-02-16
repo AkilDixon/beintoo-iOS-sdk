@@ -57,15 +57,15 @@
 }
 
 - (void)hideNotAnimated{
-    CATransition *applicationUnloadViewIn = [CATransition animation];
-	[applicationUnloadViewIn setDuration:0.5f];
+    /*CATransition *applicationUnloadViewIn = [CATransition animation];
+	[applicationUnloadViewIn setDuration:0.0f];
 	[applicationUnloadViewIn setValue:@"unload" forKey:@"name"];
 	applicationUnloadViewIn.removedOnCompletion = YES;
 	[applicationUnloadViewIn setType:kCATransitionReveal];
 	applicationUnloadViewIn.subtype = transitionExitSubtype;
 	applicationUnloadViewIn.delegate = self;
 	[applicationUnloadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
+	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];*/
 	self.view.alpha = 0;
 }
 
@@ -80,7 +80,7 @@
 }
 
 - (void)prepareBeintooPanelOrientation{
-	if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
+    if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
 
         self.view.frame  = CGRectMake(0, 0, 320, 480);
         self.view.bounds = CGRectMake(0, 0, 480, 320); 

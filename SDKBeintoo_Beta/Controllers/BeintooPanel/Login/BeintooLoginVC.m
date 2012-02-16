@@ -202,6 +202,7 @@
             if ([Beintoo dismissBeintooOnRegistrationEnd]) {
                 [Beintoo dismissBeintooNotAnimated];
                 [self dismissModalViewControllerAnimated:YES];
+            
             }
             else{
                 [self dismissModalViewControllerAnimated:YES];

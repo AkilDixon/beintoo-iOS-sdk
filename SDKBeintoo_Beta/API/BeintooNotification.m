@@ -52,7 +52,6 @@
     
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:NOTIFICATION_GETLIST_CALLER_ID];
     
-    NSLog(@"res and params %@ %@",res,params);
 }
 
 - (void)setNotificationReadWithNotificationID:(NSString *)_notificationID{
@@ -90,7 +89,6 @@
 	switch (callerID){
 		case NOTIFICATION_GETLIST_CALLER_ID:{
             
-            //NSLog(@"%@", result);
             if ([[self delegate] respondsToSelector:@selector(didGetNotificationListWithResult:)]){
                 [[self delegate] didGetNotificationListWithResult:(NSArray *)result];
             }
@@ -101,7 +99,6 @@
             
         case NOTIFICATION_SETREAD_CALLER_ID:{
             
-            //NSLog(@"%@", result);
             if ([[self delegate] respondsToSelector:@selector(didSetNotificationReadWithResult:)]){
                 [[self delegate] didSetNotificationReadWithResult:(NSArray *)result];
             }

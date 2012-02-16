@@ -435,7 +435,7 @@
 	[beintooLogo setImage:[UIImage imageNamed:@"beintoo_icon.png"]];
 	[self addSubview:beintooLogo];
 	
-	captionLabel                    = [[UILabel alloc] initWithFrame:CGRectMake(45, 5, [self bounds].size.width-50, 40)];
+	captionLabel                    = [[UILabel alloc] initWithFrame:CGRectMake(45, 0, [self bounds].size.width-50, 40)];
 	captionLabel.backgroundColor    = [UIColor clearColor];
 	captionLabel.textColor          = [UIColor whiteColor];
 	captionLabel.font               = [UIFont fontWithName:@"TrebuchetMS-Bold" size:13.0];//[UIFont systemFontOfSize:13];
@@ -446,6 +446,7 @@
     int unreadNotifications         = [[[Beintoo getPlayer] objectForKey:@"unreadNotification"] intValue];
     if (unreadNotifications > 0) {
         
+        captionLabel.frame                          = CGRectMake(45, -5, [self bounds].size.width-50, 40);
         UILabel *unreadNotificationLabel           = [[UILabel alloc] initWithFrame:CGRectMake(45, 25, self.bounds.size.width - 50, 15)];
         unreadNotificationLabel.backgroundColor    = [UIColor clearColor];
         unreadNotificationLabel.textColor          = [UIColor whiteColor];
