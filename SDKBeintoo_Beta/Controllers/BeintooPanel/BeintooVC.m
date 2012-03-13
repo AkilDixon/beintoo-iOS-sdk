@@ -453,7 +453,7 @@
                 NSDictionary *currentUser = [Beintoo getUserIfLogged];
                 
                 userNick.text		= [currentUser objectForKey:@"nickname"];
-                bedollars.text      = [NSString stringWithFormat:@"%@ Bedollars",[currentUser objectForKey:@"bedollars"]];
+                bedollars.text      = [NSString stringWithFormat:@"%.2f Bedollars", [[currentUser objectForKey:@"bedollars"] floatValue]];
                 
                 if(homeTablePlayerAnimationPerformed){
                     CGRect currentFrame = homeTable.frame;
@@ -644,7 +644,7 @@
 		if ([result objectForKey:@"user"]!=nil) {
 			[Beintoo setBeintooPlayer:result];
 			userNick.text  = [[Beintoo getUserIfLogged]objectForKey:@"nickname"];
-			bedollars.text = [NSString stringWithFormat:@"%@ Bedollars",[[Beintoo getUserIfLogged] objectForKey:@"bedollars"]];
+			bedollars.text = [NSString stringWithFormat:@"%.2f Bedollars",[[[Beintoo getUserIfLogged] objectForKey:@"bedollars"] floatValue]];
 			
 			[BeintooMessage setTotalMessages:[[result objectForKey:@"user"]objectForKey:@"messages"]];
 			[BeintooMessage setUnreadMessages:[[result objectForKey:@"user"]objectForKey:@"unreadMessages"]];

@@ -40,7 +40,7 @@
 		isAFriendProfile = YES;
 	}		 
 		
-	self.title = NSLocalizedStringFromTable(@"profile",@"BeintooLocalizable",@"Profile");
+	self.title = NSLocalizedStringFromTable(@"profile", @"BeintooLocalizable", @"Profile");
 	
     loginVC                 = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
     
@@ -209,6 +209,8 @@
 #pragma mark delegates
 - (void)player:(BeintooPlayer *)player didGetAllScores:(NSDictionary *)result{
 	
+    NSLog(@"scores %@", result);
+    
 	self.allScores = result; 
 	if (self.allScores == nil) {
 		[noScoreLabel setHidden:NO];
@@ -226,7 +228,7 @@
         }
 		nickname.text  = [currentUser objectForKey:@"nickname"];
 		level.text	   = [self translateLevel:[currentUser objectForKey:@"level"]];
-		beDollars.text = [NSString stringWithFormat:@"%d",[[currentUser objectForKey:@"bedollars"]intValue]];
+		beDollars.text = [NSString stringWithFormat:@"%.2f",[[currentUser objectForKey:@"bedollars"]floatValue]];
 		
 		[self.allContests removeAllObjects];
 		[self.allScoresForContest removeAllObjects];
@@ -252,6 +254,8 @@
 			[scores addObject:bestScore];
 			[scores addObject:lastScore];
 			
+            NSLog(@"scores %@", scores);
+            
 			[self.allScoresForContest addObject:scores];
 			[scores release];
 		}
@@ -277,7 +281,7 @@
 		[userImg setImage:[UIImage imageWithData:imgData]];
 		nickname.text  = [currentUser objectForKey:@"nickname"];
 		level.text	   = [self translateLevel:[currentUser objectForKey:@"level"]];
-		beDollars.text = [NSString stringWithFormat:@"%d",[[currentUser objectForKey:@"bedollars"]intValue]];
+		beDollars.text = [NSString stringWithFormat:@"%.2f",[[currentUser objectForKey:@"bedollars"]floatValue]];
 		
 		[self.allContests removeAllObjects];
 		[self.allScoresForContest removeAllObjects];
@@ -467,9 +471,9 @@
 		lastLabel.font                  = labelFont;
 		lastLabel.textColor             = labelTextColor;
 		
-		totLabel.text                   = [NSString stringWithFormat:@"Tot: %@",[scoresForThisSection objectAtIndex:0]];
-		bestLabel.text                  = [NSString stringWithFormat:NSLocalizedStringFromTable(@"best",@"BeintooLocalizable",@""),[scoresForThisSection objectAtIndex:1]];
-		lastLabel.text                  = [NSString stringWithFormat:NSLocalizedStringFromTable(@"last",@"BeintooLocalizable",@""),[scoresForThisSection objectAtIndex:2]];
+		totLabel.text                   = [NSString stringWithFormat:@"Tot: %@", [scoresForThisSection objectAtIndex:0]];
+		bestLabel.text                  = [NSString stringWithFormat:@"%@ %@", NSLocalizedStringFromTable(@"best", @"BeintooLocalizable", nil), [scoresForThisSection objectAtIndex:1]];
+		lastLabel.text                  = [NSString stringWithFormat:@"%@ %@", NSLocalizedStringFromTable(@"last", @"BeintooLocalizable", nil),[scoresForThisSection objectAtIndex:2]];
         
         totLabel.adjustsFontSizeToFitWidth  = YES;
         bestLabel.adjustsFontSizeToFitWidth = YES;

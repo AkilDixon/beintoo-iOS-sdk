@@ -31,6 +31,7 @@
 	[leaderboardContestView setTopHeight:60];
 	[leaderboardContestView setBodyHeight:367];
 	
+    noScoresLabel.hidden = YES;
     noScoresLabel.text = NSLocalizedStringFromTable(@"errorMessage",@"BeintooLocalizable",@"All");
 
 	[segControl setTitle:NSLocalizedStringFromTable(@"all",@"BeintooLocalizable",@"All") forSegmentAtIndex:0];
@@ -145,81 +146,73 @@
 
 - (void)appDidGetTopScoreswithResult:(NSDictionary *)result{
 
-	@try {
-		NSDictionary *currentContest = [result objectForKey:[[NSUserDefaults standardUserDefaults] objectForKey:@"selectedContest"]];
-		currentUser					 = [currentContest objectForKey:@"currentUser"];
-		self.players				 = [currentContest objectForKey:@"leaderboard"];
-		if ([self.players count]>0 && !isLeaderboardCloseToUser) {
-			plusOneCell = 1;
-		}
-		else {
-			plusOneCell = 0;
-		}
-        if ([self.players count] <= 0 && !currentUser) {
-            noScoresLabel.hidden = NO;
+    @try {
+        NSDictionary *currentContest = [result objectForKey:[[NSUserDefaults standardUserDefaults] objectForKey:@"selectedContest"]];
+        currentUser					 = [currentContest objectForKey:@"currentUser"];
+        self.players				 = [currentContest objectForKey:@"leaderboard"];
+        if ([self.players count] > 0 && [self.players count] >= NUMBER_OF_ROWS && !isLeaderboardCloseToUser) {
+            plusOneCell = 1;
         }
-
-	}
+        else {
+            plusOneCell = 0;
+        }
+            
+        if ([self.leaderboardEntries count] <= 0 && currentUser != nil) {
+             // --------- Here we set the first element of the leaderboard: the current player and its position
+            NSMutableDictionary *leaderboardEntry = [[NSMutableDictionary alloc]init];
+            
+            NSString *position		= [currentUser objectForKey:@"pos"]; 	
+            NSString *score			= [currentUser objectForKey:@"score"];
+            NSDictionary *theUser	= [currentUser objectForKey:@"user"];
+            
+            BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
+            download.delegate = self;
+            download.urlString = [theUser objectForKey:@"usersmallimg"];
+            
+            [leaderboardEntry setObject:position forKey:@"position"];
+            [leaderboardEntry setObject:score forKey:@"score"];
+            [leaderboardEntry setObject:theUser forKey:@"user"];
+            
+            [self.leaderboardEntries addObject:leaderboardEntry];
+            [self.leaderboardImages addObject:download];
+            
+            [leaderboardEntry release];
+        }
+            
+        for (int i = 0; i < [self.players count]; i++) {
+            NSMutableDictionary *leaderboardEntry = [[NSMutableDictionary alloc]init];
+            
+            NSString *position		= [[self.players objectAtIndex:i] objectForKey:@"pos"]; 	
+            NSString *score			= [[self.players objectAtIndex:i] objectForKey:@"score"];
+            NSDictionary *theUser	= [[self.players objectAtIndex:i] objectForKey:@"user"];
+            
+            BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
+            download.delegate = self;
+            download.urlString = [theUser objectForKey:@"usersmallimg"];
+                        
+            [leaderboardEntry setObject:position forKey:@"position"];
+            [leaderboardEntry setObject:score forKey:@"score"];
+            [leaderboardEntry setObject:theUser forKey:@"user"];
+            
+            [self.leaderboardEntries addObject:leaderboardEntry];
+            [self.leaderboardImages addObject:download];
+            
+            [leaderboardEntry release];		
+        }
+    }
 	@catch (NSException * e) {
-		//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
+		NSLog(@"BeintooException: %@",e);
+        noScoresLabel.hidden = NO;
+        noScoresLabel.text = NSLocalizedStringFromTable(@"errorMessage",@"BeintooLocalizable",@"All");
 	}
     
-	if ([self.leaderboardEntries count]<=0 && currentUser != nil) {
-		@try { // --------- Here we set the first element of the leaderboard: the current player and its position
-			NSMutableDictionary *leaderboardEntry = [[NSMutableDictionary alloc]init];
-			
-			NSString *position		= [currentUser objectForKey:@"pos"]; 	
-			NSString *score			= [currentUser objectForKey:@"score"];
-			NSDictionary *theUser	= [currentUser objectForKey:@"user"];
-			
-			BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
-			download.delegate = self;
-			download.urlString = [theUser objectForKey:@"usersmallimg"];
-			
-			[leaderboardEntry setObject:position forKey:@"position"];
-			[leaderboardEntry setObject:score forKey:@"score"];
-			[leaderboardEntry setObject:theUser forKey:@"user"];
-			
-			[self.leaderboardEntries addObject:leaderboardEntry];
-			[self.leaderboardImages addObject:download];
-			
-			[leaderboardEntry release];
-		}
-		@catch (NSException * e) {
-			//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
-		}
-	}
-		
-	for (int i=0; i<[self.players count]; i++) {
-		@try {
-			NSMutableDictionary *leaderboardEntry = [[NSMutableDictionary alloc]init];
-			
-			NSString *position		= [[self.players objectAtIndex:i] objectForKey:@"pos"]; 	
-			NSString *score			= [[self.players objectAtIndex:i] objectForKey:@"score"];
-			NSDictionary *theUser	= [[self.players objectAtIndex:i] objectForKey:@"user"];
-			
-			BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
-			download.delegate = self;
-			download.urlString = [theUser objectForKey:@"usersmallimg"];
-						
-			[leaderboardEntry setObject:position forKey:@"position"];
-			[leaderboardEntry setObject:score forKey:@"score"];
-			[leaderboardEntry setObject:theUser forKey:@"user"];
-			
-			[self.leaderboardEntries addObject:leaderboardEntry];
-			[self.leaderboardImages addObject:download];
-			
-			[leaderboardEntry release];
-		}
-		@catch (NSException * e) {
-			//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
-			NSLog(@"BeintooException: %@ \n for object: %@",e,[players objectAtIndex:i]);
-		}
-	}
+    if ([self.leaderboardEntries count] <= 0 && !currentUser) {
+        noScoresLabel.hidden = NO;
+        noScoresLabel.text = NSLocalizedStringFromTable(@"noResult", @"BeintooLocalizable", nil);
+    }
+
 	[BLoadingView stopActivity];
-    
-    //int currentUserPosition = [[currentUser objectForKey:@"pos"] intValue];
-	[leaderboardContestTable reloadData];
+    [leaderboardContestTable reloadData];
 }
 
 - (void)tryBeintoo{	
@@ -322,7 +315,9 @@
 		}
 		[BLoadingView startActivity:self.view];
 	}
-	else if([Beintoo isUserLogged]) {  /* LEADERBOARD FOR USER */
+	else if([Beintoo isUserLogged]) {  
+        
+        /* LEADERBOARD FOR USER */
         // here we have to choose among:
         // -- 1. Send a challenge
         // -- 2. View profile
@@ -446,7 +441,7 @@
     }	
 }
 
--(IBAction) segmentedControlIndexChanged{
+-(IBAction)segmentedControlIndexChanged{
     noScoresLabel.hidden = YES;
     
 	switch (self.segControl.selectedSegmentIndex) {
@@ -517,7 +512,7 @@
 		[BLoadingView stopActivity];
         for (UIView *view in [self.view subviews]) {
             if([view isKindOfClass:[BLoadingView class]]){	
-            [view removeFromSuperview];
+                [view removeFromSuperview];
             }
         }
 	}

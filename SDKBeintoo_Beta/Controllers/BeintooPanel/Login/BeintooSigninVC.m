@@ -79,7 +79,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:YES];
+    [super viewWillAppear:animated];
     newUserButton.clipsToBounds = YES;
     
     if ([BeintooDevice isiPad]) {
@@ -117,10 +117,12 @@
 	
 	loginWithDifferent.hidden = NO;
 	facebookButton.hidden = NO;
+    
+    [scrollView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
 }
 
 - (void)viewDidAppear:(BOOL)animated{
-    [super viewDidAppear:YES];
+    [super viewDidAppear:animated];
     
     if (![BeintooDevice isiPad]) {
         if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
@@ -131,6 +133,7 @@
             beintooView.frame = CGRectMake(0, 0, 320,440);
         }
     }
+    
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{

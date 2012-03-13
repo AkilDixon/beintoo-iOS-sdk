@@ -58,8 +58,6 @@
 
     [Beintoo launchBeintoo];
     
-   
-    
     /*
      *
      *  If your app uses Virtual Currency, after setting your Virtual Currency name and your user 
@@ -225,14 +223,11 @@
 // -------------- PLAYER LOGIN CALLBACKS
 - (void)didCompleteBackgroundRegistration:(NSDictionary *)result{
     NSLog(@"Set User Callback -------> result %@", result);
-    
-    [_user release];
 
 }
 - (void)didNotCompleteBackgroundRegistration{
     NSLog(@"Error in Set User Callback ------->");
     
-    [_user release];
 }
 
 // -------------- PLAYER SUBMITSORE CALLBACKS
