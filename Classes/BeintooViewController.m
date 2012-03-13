@@ -34,10 +34,14 @@
     
     //* SampleBeintoo buttons customization
 	[self buttonsCustomization];
-       
+    
+    
+    [Beintoo playerLogout];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
     
     [self manageLocation];
 }
@@ -53,6 +57,8 @@
      */
 
     [Beintoo launchBeintoo];
+    
+   
     
     /*
      *
@@ -117,8 +123,11 @@
 }
 
 - (IBAction)submitScoreForContest{
-	[BeintooPlayer setPlayerDelegate:self];
-	[BeintooPlayer submitScore:1 forContest:@"default"]; // Here the contest name instead of "default"
+	[BeintooPlayer setPlayerDelegate:nil];
+	//[BeintooPlayer submitScore:1 forContest:@"default"]; // Here the contest name instead of "default"
+    
+    [BeintooPlayer submitScoreAndGetVgoodForScore:100 andContest:@"default" withThreshold:1000 andVgoodMultiple:YES];
+    
 }
 
 - (IBAction)getScoreForContest{
@@ -138,6 +147,7 @@
 	 * Note that not always a virtual good will be generated from Beintoo. Wait for the generation response from 
 	 * the delegate  */
 	[BeintooVgood getMultipleVirtualGood];
+    
 }
 
 - (IBAction)submitAchievement{
@@ -171,7 +181,9 @@
 }
 - (IBAction)setLondon{
 	// 51.4925,-0.105057
-	CLLocation *loc = [[CLLocation alloc] initWithLatitude:51.492500 longitude:-0.105057];
+    CLLocation *loc = [[CLLocation alloc] initWithLatitude:40.719681 longitude:-73.997726];
+    
+	//CLLocation *loc = [[CLLocation alloc] initWithLatitude:51.492500 longitude:-0.105057];
     [Beintoo _setUserLocation:loc];
     
     [self manageLocation];    
@@ -207,6 +219,20 @@
 
 - (void)playerDidFailLoginWithResult:(NSString *)error{
 	NSLog(@"playerLogin error: %@",error);
+    
+}
+
+// -------------- PLAYER LOGIN CALLBACKS
+- (void)didCompleteBackgroundRegistration:(NSDictionary *)result{
+    NSLog(@"Set User Callback -------> result %@", result);
+    
+    [_user release];
+
+}
+- (void)didNotCompleteBackgroundRegistration{
+    NSLog(@"Error in Set User Callback ------->");
+    
+    [_user release];
 }
 
 // -------------- PLAYER SUBMITSORE CALLBACKS

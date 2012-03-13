@@ -439,7 +439,7 @@
             
             if(!homeTablePlayerAnimationPerformed){
                 CGRect currentFrame = homeTable.frame;
-                homeTable.frame = CGRectMake(currentFrame.origin.x, currentFrame.origin.y+77, currentFrame.size.width, currentFrame.size.height-77);
+                homeTable.frame = CGRectMake(currentFrame.origin.x, currentFrame.origin.y+77, currentFrame.size.width, currentFrame.size.height-70);
                 homeTablePlayerAnimationPerformed = YES;
             }
         }
@@ -457,7 +457,7 @@
                 
                 if(homeTablePlayerAnimationPerformed){
                     CGRect currentFrame = homeTable.frame;
-                    homeTable.frame = CGRectMake(currentFrame.origin.x, currentFrame.origin.y-77, currentFrame.size.width, currentFrame.size.height+77);
+                    homeTable.frame = CGRectMake(currentFrame.origin.x, currentFrame.origin.y-77, currentFrame.size.width, currentFrame.size.height+70);
                     homeTablePlayerAnimationPerformed = NO;
                 }
             }
@@ -476,7 +476,7 @@
 
 - (void)handleNotificationSingleTap:(UITapGestureRecognizer *)sender{
 
-    NSLog(@"BEINTOO APP OREINT %i", [Beintoo appOrientation]);
+    //NSLog(@"BEINTOO APP OREINT %i", [Beintoo appOrientation]);
     
     beintooNotificationListVC   = [[BeintooNotificationListVC alloc] init];    
     notificationNavController = [[UINavigationController alloc] initWithRootViewController:beintooNotificationListVC];
@@ -640,7 +640,7 @@
 
 - (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result{
 	@try {
-            //NSLog(@"result %@",result);
+        NSLog(@"result %@",result);
 		if ([result objectForKey:@"user"]!=nil) {
 			[Beintoo setBeintooPlayer:result];
 			userNick.text  = [[Beintoo getUserIfLogged]objectForKey:@"nickname"];

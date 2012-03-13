@@ -41,6 +41,7 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (void)setNotificationPosition:(NSInteger)_value;
 + (void)initAPI;
 + (void)initPlayerService;
++ (void)initUserService;
 + (void)initVgoodService;
 + (void)initAchievementsService;
 + (void)initMissionService;

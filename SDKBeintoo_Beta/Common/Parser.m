@@ -21,7 +21,7 @@
  
 
 @implementation Parser
-@synthesize delegate,callerID,webpage;
+@synthesize delegate, callerID, webpage, result;
 
 -(id)init {
 	if (self = [super init])
@@ -54,6 +54,7 @@
                 }
                 //[self performSelectorOnMainThread:@selector(parsingEnd:) withObject:nil waitUntilDone:YES];
                 [self parsingEnd:nil];
+                
                 [BeintooNetwork showNoConnectionAlert];
                 return;
             }
@@ -164,12 +165,12 @@
 			// Errors check
 			if (requestError != nil) {
 				NSLog(@"[Parser parsePageAtUrl] connection error: %@",requestError);
-				self.webpage = @"{\"messageID\":-1,\"message\":\"Connection Timed-out\",\"kind\":\"error\"};";
+				webpage = @"{\"messageID\":-1,\"message\":\"Connection Timed-out\",\"kind\":\"error\"};";
 			}
 		}
 		else {
 			// Data correctly received, then converted from byte to string
-			self.webpage = [[NSString alloc] initWithData:urlData encoding:NSUTF8StringEncoding];
+			webpage = [[NSString alloc] initWithData:urlData encoding:NSUTF8StringEncoding];
 		}
 	}@catch (NSException *e) {
 		NSLog(@"[Connection getPageAtUrl] getPage exception: %@",e);
@@ -180,16 +181,16 @@
 	NSError *parseError		= nil;
 	
 	@try {
-		result = [parser objectWithString:self.webpage error:&parseError];
+		result = [parser objectWithString:webpage error:&parseError];
 	}
 	@catch (NSException * e) {
 		NSLog(@"[Connection getPageAtUrl] getPage exception: %@",e);
 	}
 
-	[parser release];	
-	if (self.webpage!=nil) {
-		[self.webpage release];
+	if (webpage != nil) {
+		[webpage release];
 	}
+    [parser release];	
 	
 	[self performSelectorOnMainThread:@selector(parsingEnd:) withObject:result waitUntilDone:YES];
 	[_request release];
@@ -237,7 +238,7 @@
 		}
 		else {
 			// Data correctly received, then converted from byte to string
-			self.webpage = [[NSString alloc] initWithData:urlData encoding:NSUTF8StringEncoding];
+			webpage = [[NSString alloc] initWithData:urlData encoding:NSUTF8StringEncoding];
 		}
 	}@catch (NSException *e) {
 		NSLog(@"[Connection getPageAtUrl] getPage exception: %@",e);
@@ -245,7 +246,7 @@
 	//SBJsonParser *parser	= [[SBJsonParser alloc] init];
 	SBJSON *parser	= [[SBJSON alloc] init];
 	NSError *parseError		= nil;
-	result = [parser objectWithString:self.webpage error:&parseError];
+	result = [parser objectWithString:webpage error:&parseError];
 	[parser release];
 	return result;
 }

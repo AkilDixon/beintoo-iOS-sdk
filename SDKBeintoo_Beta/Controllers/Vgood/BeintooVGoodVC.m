@@ -81,6 +81,8 @@
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
     }
+    
+    NSLog(@"dfdf %@", startingOptions);
 			
 	vgoodNameText.text		= self.theVirtualGood.vGoodName;
 	vgoodEndDateLbl.text	= self.theVirtualGood.vGoodEndDate;

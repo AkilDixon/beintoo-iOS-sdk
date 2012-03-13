@@ -32,7 +32,7 @@
 	NSString			 *vGoodID;
 	NSMutableArray		 *whoAlsoConverted;
 	
-	BOOL				 isRecommendation;
+    BOOL                 isRecommendation;
 	BOOL				 isHTML;
 	BOOL				 isGenerated;
 	BOOL				 isMultipleVgood;
@@ -43,6 +43,7 @@
 - (BOOL)isRecommendation;
 - (BOOL)isHTMLRecommendation;
 - (void)setVgoodContent:(NSDictionary *)_vgood;
+- (id)init;
 
 @property(nonatomic,retain) NSDictionary    *theGood;
 @property(nonatomic,retain) NSArray         *theGoodsList;
@@ -53,6 +54,5 @@
 @property(nonatomic,retain) NSString        *vGoodID;
 @property(nonatomic,retain)	NSData          *vGoodImageData;
 @property(nonatomic,retain) NSMutableArray  *whoAlsoConverted;
-
 	
 @end

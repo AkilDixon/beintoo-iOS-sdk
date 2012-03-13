@@ -19,7 +19,7 @@
 	
 @implementation BeintooPlayer
 
-@synthesize delegate,parser,callingDelegate;
+@synthesize delegate, parser, callingDelegate;
 
 -(id)init {
 	if (self = [super init])
@@ -41,9 +41,11 @@
 	BeintooPlayer *playerService = [Beintoo beintooPlayerService];
 	playerService.callingDelegate = _caller;
 }
+
 + (int)getVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey{
     return [[NSUserDefaults standardUserDefaults] integerForKey:_playerKey];
 }
+
 + (void)setVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey andScore:(int)_score{
     [[NSUserDefaults standardUserDefaults] setInteger:_score forKey:_playerKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -109,16 +111,17 @@
 				  currentGuid, @"guid", nil];
 	}else if (userId!=nil) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", 
-				  userId, @"userExt",[BeintooDevice getUDID], @"deviceUUID", nil];
+				  userId, @"userExt", [BeintooDevice getUDID], @"deviceUUID", nil];
 	} 
 	[playerService.parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGINwDELEG_CALLER_ID];		
 }
 
 + (void)notifyPlayerLoginSuccessWithResult:(NSDictionary *)result{
-	BeintooPlayer *playerService = [Beintoo beintooPlayerService];
+    
+    BeintooPlayer *playerService = [Beintoo beintooPlayerService];
 	id _callingDelegate = playerService.callingDelegate;
-	
-	if ([_callingDelegate respondsToSelector:@selector(playerDidLoginWithResult:)]) {
+    
+    if ([_callingDelegate respondsToSelector:@selector(playerDidLoginWithResult:)]) {
 		[_callingDelegate playerDidLoginWithResult:result];
 	}	
 }	
@@ -234,6 +237,7 @@
     if ([[[Beintoo getAppVgoodThresholds] objectForKey:contestName] intValue] > 0 ) {
         validThreshold = [[[Beintoo getAppVgoodThresholds] objectForKey:contestName] intValue];
     }
+   // NSLog(@"threshold %i", validThreshold);
     
     NSString *playerKey;
     playerKey = [NSString stringWithFormat:@"PlayerThresholdScore_%@_%@",[Beintoo getPlayerID],contestName];
@@ -420,6 +424,37 @@
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGIN_CALLER_ID];
 }
 
+- (void)backgroundLogin:(NSString *)userid{	
+	
+	NSString *res		  = [NSString stringWithFormat:@"%@login/",rest_resource];
+	NSString *currentGuid = [Beintoo getPlayerID]; 
+	[Beintoo updateUserLocation];
+	NSDictionary *params;
+	
+	NSString *isoLanguage = [BeintooDevice getISOLanguage];
+	if (isoLanguage != nil) {
+		res = [res stringByAppendingString:[NSString stringWithFormat:@"?language=%@",isoLanguage]];
+	}	
+    
+	if ( ([userid isEqualToString:@""]) && (currentGuid==nil)) {
+		params = [NSDictionary dictionaryWithObjectsAndKeys:
+                  [Beintoo getApiKey], @"apikey", 
+                  [BeintooDevice getUDID], @"deviceUUID", nil];
+		
+	}else if ( ([userid isEqualToString:@""]) && (currentGuid!=nil) ) {
+		params = [NSDictionary dictionaryWithObjectsAndKeys:
+                  [Beintoo getApiKey], @"apikey", 
+                  [BeintooDevice getUDID], @"deviceUUID", 
+                  currentGuid, @"guid", nil];
+	}else {
+		params = [NSDictionary dictionaryWithObjectsAndKeys:
+                  [Beintoo getApiKey], @"apikey", 
+                  userid, @"userExt",
+                  [BeintooDevice getUDID], @"deviceUUID", nil];
+	}
+	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_BACKGROUND_LOGIN_CALLER_ID];
+}
+
 - (NSDictionary *)blockingLogin:(NSString *)userid{	
 	
 	NSString *res = [NSString stringWithFormat:@"%@login/",rest_resource];
@@ -562,19 +597,26 @@
 			break;
 			
 		case PLAYER_SSCORE_CONT_CALLER_ID:{
-			NSString *resultMessage = [result objectForKey:@"message"];
-			
-            if ([resultMessage isEqualToString:@"OK"]) {
-				[BeintooPlayer notifySubmitScoreSuccessWithResult:[NSString stringWithFormat:@"Beintoo SubmitScore Result: %@",resultMessage]];
-				[BeintooPlayer flushLocallySavedScore];
+            @try {
+                NSLog(@"result of submitscore %@", result);
+                NSString *resultMessage = [NSString stringWithFormat:@"%@", [result objectForKey:@"message"]];
+                
+                if ([resultMessage isEqualToString:@"OK"]) {
+                    [BeintooPlayer notifySubmitScoreSuccessWithResult:[NSString stringWithFormat:@"Beintoo SubmitScore Result: %@", resultMessage]];
+                    [BeintooPlayer flushLocallySavedScore];
 
-                if([Beintoo showScoreNotification]){
-                    [BeintooPlayer showNotificationForSubmitScore];
+                    if([Beintoo showScoreNotification]){
+                        [BeintooPlayer showNotificationForSubmitScore];
+                    }
                 }
-			}
-			else {
-				[BeintooPlayer notifySubmitScoreErrorWithResult:[NSString stringWithFormat:@"Beintoo SubmitScore Error: %@",resultMessage]];
-			}
+                else {
+                    [BeintooPlayer notifySubmitScoreErrorWithResult:[NSString stringWithFormat:@"Beintoo SubmitScore Error: %@", resultMessage]];
+                }
+            }
+            @catch (NSException *exception) {
+                NSLog(@"BEINTOO Exception on submitscore: %@", exception);
+            }
+            
 		}
 			 break;
 			
@@ -648,6 +690,34 @@
 				NSLog(@"Beintoo: Login over quota for this user. Retry in 10 sencods.");
 				if ([[self delegate] respondsToSelector:@selector(playerDidLogin:)]) 
 					[[self delegate] playerDidLogin:self];			
+			}
+		}
+			break;
+            
+        case PLAYER_BACKGROUND_LOGIN_CALLER_ID:{
+            
+            if (![[result objectForKey:@"kind"] isEqualToString:@"error"]) {
+				if ([result objectForKey:@"guid"]!=nil) {
+					
+					NSString *playerGUID	= [result objectForKey:@"guid"];
+					NSString *playerUser	= [result objectForKey:@"user"];
+					
+					if (playerUser != nil && playerGUID != nil) {	
+						[Beintoo setUserLogged:YES];
+					}
+					loginError = LOGIN_NO_ERROR;
+					[Beintoo setBeintooPlayer:result];
+                    
+					if ([[self delegate] respondsToSelector:@selector(playerDidCompleteBackgroundLogin:)]) {
+						[[self delegate] playerDidCompleteBackgroundLogin:result];			
+					}
+				}
+			}
+			else {
+				NSLog(@"Beintoo: Login over quota for this user. Retry in 10 sencods.");
+				if ([[self delegate] respondsToSelector:@selector(playerDidNotCompleteBackgroundLogin)]) {
+                    [[self delegate] playerDidNotCompleteBackgroundLogin];			
+                }		
 			}
 		}
 			break;

@@ -82,7 +82,7 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 	beintooInstance->apiSecret              = [[NSString alloc] init];
 	beintooInstance->locationManager        = [[CLLocationManager alloc] init];
 	beintooInstance->userLocation           = nil;
-	beintooInstance->lastGeneratedGood      = [[BVirtualGood alloc] init];
+    //beintooInstance->lastGeneratedGood      = [[BVirtualGood alloc] init];
 	beintooInstance->prizeView              = [[BPrize alloc] init];
     beintooInstance->missionView            = [[BMissionView alloc] init];
 	beintooInstance->lastLoggedPlayers      = [[NSArray alloc] init];
@@ -170,6 +170,16 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 	[Beintoo sharedInstance]->beintooPlayerService = [[BeintooPlayer alloc] init];
 	NSLog(@"Player API service Initialized at URL: %@",[[Beintoo sharedInstance]->beintooPlayerService restResource]);
 }
+
++ (void)initUserService{
+	if ([Beintoo sharedInstance]->beintooUserService != nil) {
+		[[Beintoo sharedInstance]->beintooUserService release];
+		//[Beintoo sharedInstance]->beintooPlayerService = nil;
+	}
+	[Beintoo sharedInstance]->beintooUserService = [[BeintooUser alloc] init];
+	NSLog(@"User API service Initialized at URL: %@", [[Beintoo sharedInstance]->beintooUserService restResource]);
+}
+
 
 + (void)initAchievementsService{
 	if ([Beintoo sharedInstance]->beintooAchievementsService != nil) {
@@ -337,6 +347,7 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 	[Beintoo sharedInstance]->isOnSandbox = YES;
     [Beintoo initVgoodService];
 	[Beintoo initPlayerService];
+    [Beintoo initUserService];
 	[Beintoo initAchievementsService];
     [Beintoo initMissionService];
     [Beintoo initMarketplaceService];
@@ -350,6 +361,7 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
     [Beintoo sharedInstance]->isOnSandbox = YES;
 	[Beintoo initVgoodService];
 	[Beintoo initPlayerService];
+    [Beintoo initUserService];
 	[Beintoo initAchievementsService];
     [Beintoo initMissionService];
     [Beintoo initMarketplaceService];
@@ -361,28 +373,10 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 	[self initAPI];
 	[Beintoo initVgoodService];
 	[Beintoo initPlayerService];
+    [Beintoo initUserService];
 	[Beintoo initAchievementsService];
     [Beintoo initMissionService];
     [Beintoo initMarketplaceService];
-   
-    /* 
-    NSString *apikey = [[Beintoo getApiKey] copy];
-    NSDictionary *features = [[Beintoo getFeatureList] copy];
-    
-    [Beintoo shutdownBeintoo];
-   
-    [Beintoo initWithApiKey:apikey andApiSecret:nil andBeintooSettings:features andMainDelegate:[Beintoo getMainDelegate]];
-     Beintoo *beintooInstance              = [Beintoo sharedInstance];
-    if (beintooInstance->beintooPanelRootViewController != nil){
-        [beintooInstance->beintooPanelRootViewController release];
-       // beintooInstance->beintooPanelRootViewController = nil;
-        beintooInstance->beintooPanelRootViewController = [[BeintooVC alloc] init];
-    }
-    if (beintooInstance->beintooMarketplaceViewController != nil){
-        [beintooInstance->beintooMarketplaceViewController release];
-        //beintooInstance->beintooMarketplaceViewController = nil;
-        beintooInstance->beintooMarketplaceViewController = [[BeintooMarketplaceVC alloc] init];
-    }*/  
 }
 
 #pragma mark - StatusBar management
@@ -806,10 +800,14 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 
 + (void)_setLastVgood:(BVirtualGood *)_vgood{
 	// IMPOSTARE QUALCHE CONDIZIONE
+    
     if ([Beintoo sharedInstance]->lastGeneratedGood != nil) {
         [[Beintoo sharedInstance]->lastGeneratedGood release];
     }
-	[Beintoo sharedInstance]->lastGeneratedGood = _vgood;
+   
+	[Beintoo sharedInstance]->lastGeneratedGood     = _vgood;
+    
+    //[_vgood release];
 }
 
 + (void)_setLastLoggedPlayers:(NSArray *)_players{

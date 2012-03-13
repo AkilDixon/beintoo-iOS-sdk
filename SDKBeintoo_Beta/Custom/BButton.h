@@ -21,7 +21,7 @@
 
 @interface BButton : UIButton {
 	
-	UIColor *_highColor;		// Top 
+	/*UIColor *_highColor;		// Top 
 	UIColor *_mediumHighColor;	// Medium-top
 	UIColor *_mediumLowColor;	// Medium-low
 	UIColor *_lowColor;			// Low
@@ -29,7 +29,7 @@
 	UIColor *_rollHighColor;		// Top 
 	UIColor *_rollMediumHighColor;	// Medium-top
 	UIColor *_rollMediumLowColor;	// Medium-low
-	UIColor *_rollLowColor;			// Low
+	UIColor *_rollLowColor;			// Low*/
 	
 	BOOL	  isSelected;
 	NSNumber  *textSize;

@@ -19,7 +19,7 @@
 
 @implementation BeintooVgood
 
-@synthesize delegate,parser,generatedVGood,callingDelegate,_player;
+@synthesize delegate, generatedVGood, parser, callingDelegate;
 
 -(id)init {
 	if (self = [super init])
@@ -372,7 +372,7 @@
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
     
     //NSString *body = [NSString stringWithFormat:@"rating=%i&vgood=%@", _rating, _vgoodId];
-    //NSLog(@"res %@ andParams %@", res, params);
+   // NSLog(@"res %@ andParams %@", res, params);
     
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_GET_COMMENTS_LIST_CALLER_ID];
 }
@@ -385,7 +385,7 @@
     
     NSString *body = [NSString stringWithFormat:@"text=%@&vgood=%@", _comment, _vgoodId];
     
-    //NSLog(@"res %@ andParams %@", res, params);
+   // NSLog(@"res %@ andParams %@", res, params);
     
 	[parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:body fromCaller:VGOOD_SET_COMMENT_CALLER_ID];
 }
@@ -461,15 +461,18 @@
 					return;
 				}
 				
-				self.generatedVGood = [vgoodList objectAtIndex:0];
+				generatedVGood = [vgoodList objectAtIndex:0];
 										
 				BVirtualGood *vgood = [[BVirtualGood alloc] init];
-				[vgood setVgoodContent:self.generatedVGood];
-				[vgood setTheGood:self.generatedVGood];
-				[Beintoo setLastGeneratedVgood:[vgood retain]];
-				[vgood release];
+                //BVirtualGood *vgood = [BVirtualGood init];
+                [vgood setVgoodContent:generatedVGood];
+				[vgood setTheGood:generatedVGood];
+				[Beintoo setLastGeneratedVgood:vgood];
+				
 						
 				[Beintoo notifyVGoodGenerationOnMainDelegate];
+                
+                [vgood release];
 			}
 			@catch (NSException * e) {
 				//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
@@ -505,15 +508,18 @@
 					return;
 				}
 				
-				self.generatedVGood = [vgoodList objectAtIndex:0];
+				generatedVGood = [vgoodList objectAtIndex:0];
 								
 				BVirtualGood *vgood = [[BVirtualGood alloc] init];
-				[vgood setVgoodContent:self.generatedVGood];
-				[vgood setTheGood:self.generatedVGood];
-				[Beintoo setLastGeneratedVgood:[vgood retain]];
-				[vgood release];
+                //BVirtualGood *vgood = [BVirtualGood init];
+                [vgood setVgoodContent:generatedVGood];
+				[vgood setTheGood:generatedVGood];
+				[Beintoo setLastGeneratedVgood:vgood];
+				
 				
 				[BeintooVgood notifyVGoodGenerationOnUserDelegate];
+                
+                [vgood release];
 			}
 			@catch (NSException * e) {
 				//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
@@ -552,26 +558,32 @@
 
 				if ([vgoodList count]==1 || ([[vgoodList objectAtIndex:0] objectForKey:@"isBanner"]!=nil) ) {
 					// ------ We received only one vgood or a recommendation
-					self.generatedVGood = [vgoodList objectAtIndex:0];
+					generatedVGood = [vgoodList objectAtIndex:0];
 					
 					BVirtualGood *vgood = [[BVirtualGood alloc] init];
-					[vgood setVgoodContent:self.generatedVGood];
-					[vgood setTheGood:self.generatedVGood];
-					[Beintoo setLastGeneratedVgood:[vgood retain]];
-					[vgood release];
+					//BVirtualGood *vgood = [BVirtualGood init];
+                    [vgood setVgoodContent:generatedVGood];
+					[vgood setTheGood:generatedVGood];
+					[Beintoo setLastGeneratedVgood:vgood];
+					
 					[Beintoo notifyVGoodGenerationOnMainDelegate];
+                    
+                    [vgood release];
 				}
 				if ([vgoodList count]>1 && ([[vgoodList objectAtIndex:0] objectForKey:@"isBanner"]==nil) ) { // ------ We received a list of vgood: this is a real multiple vgood
 					
                     
 					BVirtualGood *vgood = [[BVirtualGood alloc] init];
-					[vgood setTheGoodsList:vgoodList];
+                    //BVirtualGood *vgood = [BVirtualGood init];
+                    [vgood setTheGoodsList:vgoodList];
 					[vgood setVgoodContent:[vgoodList objectAtIndex:0]];
 					[vgood setIsMultiple:YES];
-					[Beintoo setLastGeneratedVgood:[vgood retain]];
-					[vgood release];
+					[Beintoo setLastGeneratedVgood:vgood];
+					
 
 					[Beintoo notifyVGoodGenerationOnMainDelegate];
+                    
+                    [vgood release];
 				}
 			}
 			@catch (NSException * e) {
@@ -611,26 +623,32 @@
 				
 				if ([vgoodList count]==1 || ([[vgoodList objectAtIndex:0] objectForKey:@"isBanner"]!=nil) ) {
 					// ------ We received only one vgood or a recommendation
-					self.generatedVGood = [vgoodList objectAtIndex:0];
+					generatedVGood = [vgoodList objectAtIndex:0];
 					
 					BVirtualGood *vgood = [[BVirtualGood alloc] init];
-					[vgood setVgoodContent:self.generatedVGood];
-					[vgood setTheGood:self.generatedVGood];
-					[Beintoo setLastGeneratedVgood:[vgood retain]];
-					[vgood release];
+                    //BVirtualGood *vgood = [BVirtualGood init];
+                    [vgood setVgoodContent:generatedVGood];
+					[vgood setTheGood:generatedVGood];
+					[Beintoo setLastGeneratedVgood:vgood];
+					
 					
 					[BeintooVgood notifyVGoodGenerationOnUserDelegate];
+                    
+                    [vgood release];
 				}
 				if ([vgoodList count]>1 && ([[vgoodList objectAtIndex:0] objectForKey:@"isBanner"]==nil) ) { // ------ We received a list of vgood: this is a real multiple vgood
 					
-					BVirtualGood *vgood = [[BVirtualGood alloc] init];
-					[vgood setTheGoodsList:vgoodList];
+                    BVirtualGood *vgood = [[BVirtualGood alloc] init];
+					//BVirtualGood *vgood = [BVirtualGood init];
+                    [vgood setTheGoodsList:vgoodList];
 					[vgood setVgoodContent:[vgoodList objectAtIndex:0]];
 					[vgood setIsMultiple:YES];
-					[Beintoo setLastGeneratedVgood:[vgood retain]];
-					[vgood release];
+					[Beintoo setLastGeneratedVgood:vgood];
+					
 					
 					[BeintooVgood notifyVGoodGenerationOnUserDelegate];
+                    
+                    [vgood release];
 				}
 			}	
 			@catch (NSException * e) {

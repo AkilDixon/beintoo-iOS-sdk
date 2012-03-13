@@ -94,6 +94,7 @@
 - (NSDictionary *)blockingLogin:(NSString *)userid;
 - (void)getPlayerByGUID:(NSString *)guid;
 - (void)getPlayerByUserID:(NSString *)userID;
+- (void)backgroundLogin:(NSString *)userid;
 - (void)getAllScores;
 
 // APP REST
@@ -137,6 +138,9 @@
 - (void)playerDidFailGetScoreWithError:(NSString *)error;
 - (void)playerDidSetBalanceWithResult:(NSString *)result;
 - (void)playerDidFailSetBalanceWithError:(NSString *)error;
+- (void)playerDidBackgroundLoginWithResult:(NSDictionary *)result;
+- (void)playerDidCompleteBackgroundLogin:(NSDictionary *)result;
+- (void)playerDidNotCompleteBackgroundLogin;
 
 
 // Internal Callbacks

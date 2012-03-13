@@ -21,17 +21,24 @@
 #define USER_ACCEPT_FRIENDSHIP		54
 
 #import <Foundation/Foundation.h>
+#import "BeintooPlayer.h"
 #import "Parser.h"
 
 @protocol BeintooUserDelegate;
 
-@interface BeintooUser : NSObject <BeintooParserDelegate> {
+@interface BeintooUser : NSObject <BeintooParserDelegate, BeintooPlayerDelegate> {
 
 	id <BeintooUserDelegate> delegate;
 	Parser *parser;
 	
 	NSString *rest_resource;
+    
+    NSMutableDictionary  *userParams;
+
 }
+
+- (NSString *)restResource;
++ (void)setUserDelegate:(id)_caller;
 
 - (void)getUser;
 - (void)getUserByM:(NSString *)m andP:(NSString *)p;
@@ -65,6 +72,9 @@
 - (void)registerUserToGuid:(NSString *)_guid withEmail:(NSString *)_email nickname:(NSString *)_nick password:(NSString *)_pass name:(NSString *)_name
 					  country:(NSString *)_country address:(NSString *)_address gender:(NSString *)_gender sendGreetingsEmail:(BOOL)_sendGreet;
 
+- (void)backgroundRegisterUserToGuid:(NSString *)_guid withEmail:(NSString *)_email nickname:(NSString *)_nick password:(NSString *)_pass name:(NSString *)_name
+                             country:(NSString *)_country address:(NSString *)_address gender:(NSString *)_gender sendGreetingsEmail:(BOOL)_sendGreet;
+
 - (void)updateUser:(NSString *)_userExt withNickname:(NSString *)_nick;
 
 
@@ -72,8 +82,13 @@
 
 - (NSString *)getStatusCode:(int)code;
 
-@property(nonatomic, assign) id <BeintooUserDelegate> delegate;
-@property(nonatomic,retain) Parser *parser;
+@property (nonatomic, assign)   id <BeintooUserDelegate> delegate;
+@property (nonatomic,retain)    Parser *parser;
+@property (nonatomic, assign)   id callingDelegate;
+@property (nonatomic, retain)   NSMutableDictionary *userParams;
+
+- (void)playerDidCompleteBackgroundLogin:(NSDictionary *)result;
+- (void)playerDidNotCompleteBackgroundLogin;
 
 @end
 
@@ -93,6 +108,8 @@
 - (void)didCompleteRegistration:(NSDictionary *)result;
 - (void)didCompleteUserNickUpdate:(NSDictionary *)result;
 - (void)didGetChallangePrerequisites:(NSDictionary *)result;
+- (void)didCompleteBackgroundRegistration:(NSDictionary *)result;
+- (void)didNotCompleteBackgroundRegistration;
 
 @end
 

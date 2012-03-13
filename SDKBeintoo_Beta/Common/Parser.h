@@ -31,6 +31,7 @@
 #define PLAYER_SETBALANCE_CALLER_ID             11
 #define PLAYER_FORCE_SSCORE_CALLER_ID           12
 #define PLAYER_SSCORE_OFFLINE_CALLER_ID         13
+#define PLAYER_BACKGROUND_LOGIN_CALLER_ID       14
 
 // USER:from 30 to 59
 #define USER_GUSERBYMP_CALLER_ID                30
@@ -47,6 +48,7 @@
 #define	USER_REGISTER_CALLER_ID                 41
 #define	USER_NICKUPDATE_CALLER_ID               42
 #define USER_CHALLENGEPREREQ_CALLER_ID          43
+#define USER_BACKGROUND_REGISTER_CALLER_ID      44
 
 // VGOOD:from 60 to 79
 #define VGOOD_SHOWBYUSER_CALLER_ID              60
@@ -113,11 +115,11 @@
 @protocol BeintooParserDelegate;
 
 @interface Parser : NSObject {
-	NSString		*webPage;
+	//NSString		*webPage;
 	NSMutableData	*responseData;
-	NSInteger callerID;
-	NSString *webpage;
-	id result;
+	NSInteger       callerID;
+	//NSString        *webpage;
+	id              result;
 	
 	id <BeintooParserDelegate> delegate;
 }
@@ -131,6 +133,7 @@
 - (void)parsingEnd:(NSDictionary *)theResult;
 
 @property(nonatomic, assign) id <BeintooParserDelegate> delegate;
+@property(nonatomic, assign) id result;
 @property(nonatomic, assign) NSInteger callerID;
 @property(nonatomic, retain) NSString *webpage;
 

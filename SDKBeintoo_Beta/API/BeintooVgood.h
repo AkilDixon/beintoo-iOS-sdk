@@ -29,14 +29,13 @@
 
 @interface BeintooVgood : NSObject <BeintooParserDelegate>{
 	
-	Parser	*parser;
-	BeintooPlayer *_player;
+	Parser                  *parser;
+	BeintooPlayer           *_player;
 	id <BeintooVgoodDelegate> delegate;
-	BOOL    isMultipleVgood;
-	BOOL	isRecommendation;
-	NSDictionary		 *generatedVGood;
+	BOOL                    isMultipleVgood;
+	BOOL                    isRecommendation;
 	
-	NSString *rest_resource;
+	NSString                *rest_resource;
 	
 	id callingDelegate;
 }
@@ -47,6 +46,7 @@
 + (void)getMultipleVirtualGoodWithContest:(NSString *)contestID;
 + (void)getSingleVirtualGoodWithDelegate:(id)_delegate;
 + (void)getMultipleVirtualGoodWithDelegate:(id)_delegate;
+
 // Private vgoods
 + (void)getPlayerPrivateVgoods;
 + (void)assignToPlayerPrivateVgood:(NSString *)vgoodID;
@@ -80,9 +80,8 @@
 
 @property(nonatomic, assign) id <BeintooVgoodDelegate> delegate;
 @property(nonatomic, assign) id  callingDelegate;
-@property(nonatomic,retain) Parser *parser;
-@property(nonatomic,retain) NSDictionary *generatedVGood;
-@property(nonatomic,retain) BeintooPlayer *_player;
+@property(nonatomic,retain) NSDictionary    *generatedVGood;
+@property(nonatomic,retain) Parser          *parser;
 
 @end
 

@@ -167,6 +167,9 @@
         self.table.showsVerticalScrollIndicator = YES;
         [refreshHeaderView release];
     }
+    else {
+        [self dataSourceLoadingError];
+    }
 
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
@@ -239,6 +242,13 @@
         }
     }
     
+    @try {
+        [BLoadingView stopActivity];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"exception");
+    }
+    
     if (needsToReloadData == YES){
             
         [self hideWithAnimationForView:couponView];
@@ -246,12 +256,7 @@
         isLoadMoreActive                    = YES;
         isNewSearch                         = YES;
         
-        @try {
-            [BLoadingView stopActivity];
-        }
-        @catch (NSException *exception) {
-            NSLog(@"exception");
-        }
+        
         
         [BLoadingView startFullScreenActivity:self.view];
         
@@ -390,17 +395,20 @@
 }
 
 - (void)didNotMarketplaceGotContent{
+    NSLog(@"BEINTOO ERROR: error while getting content");
     [marketplaceContent removeAllObjects];
     [marketplaceImages removeAllObjects];
     [buttonsArray removeAllObjects];
     
-    [self performSelector:@selector(dataSourceDidFinishLoadingNewData) withObject:nil afterDelay:0.0];
+    [self dataSourceLoadingError];
+    //[self performSelector:@selector(dataSourceLoadingError) withObject:nil afterDelay:1.0f];
+    
     @try {
-        for (UIView *view in self.view.subviews){
+        /*for (UIView *view in self.view.subviews){
             if ([view isKindOfClass:[BLoadingView class]] == YES){
                 [view removeFromSuperview];
             }
-        }
+        }*/
         [BLoadingView stopActivity];
     }
     @catch (NSException *exception) {
@@ -453,12 +461,13 @@
 }
 
 - (void)didNotMarketplaceGotCategories{
-    
+    NSLog(@"BEINTOO ERROR: error while getting categories");
     [marketplaceContent removeAllObjects];
     [marketplaceImages removeAllObjects];
     [buttonsArray removeAllObjects];
     
-    [self performSelector:@selector(dataSourceDidFinishLoadingNewData) withObject:nil afterDelay:0.0];
+    [self dataSourceLoadingError];
+    
     @try {
         for (UIView *view in self.view.subviews){
             if ([view isKindOfClass:[BLoadingView class]] == YES){
@@ -495,11 +504,14 @@
 }
 
 - (void)didNotMarketplaceGotCategoryContent{
+    
+    NSLog(@"BEINTOO ERROR: error while getting category content");
     [marketplaceContent removeAllObjects];
     [marketplaceImages removeAllObjects];
     [buttonsArray removeAllObjects];
     
-    [self performSelector:@selector(dataSourceDidFinishLoadingNewData) withObject:nil afterDelay:0.0];
+   [self dataSourceLoadingError];
+    
     @try {
         for (UIView *view in self.view.subviews){
             if ([view isKindOfClass:[BLoadingView class]] == YES){
@@ -1883,7 +1895,6 @@
 #pragma mark - Pull To Refresh TableView
 
 - (void)reloadTableViewDataSource{
-	//  qui possiamo richiamare metodi specifici per ricaricare i dati
 	
     isLoadMoreActive = YES;
     isNewSearch = YES;
@@ -1900,7 +1911,7 @@
     @catch (NSException *exception) {
         
     }
-    [BLoadingView startFullScreenHiddenActivity:self.view];
+    //[BLoadingView startFullScreenActivity:self.view];
     
     if (mainSegmentedControl.selectedSegmentIndex == 1){
         [self showChildSegment];
@@ -1945,8 +1956,7 @@
 #pragma mark ScrollView Callbacks
 
 - (void)dataSourceDidFinishLoadingNewData{
-	// settiamo la data corrente come ultimo refresh
-    [UIView beginAnimations:nil context:NULL];
+	[UIView beginAnimations:nil context:NULL];
 	[UIView setAnimationDuration:.3];
 	[self.table setContentInset:UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f)];
 	[UIView commitAnimations];
@@ -1956,13 +1966,11 @@
     [refreshHeaderView setCurrentDate];	
 	//[super dataSourceDidFinishLoadingNewData];
     [self.table reloadData];
-    [table scrollsToTop];
     _reloading = NO;
 }
 
 - (void)dataSourceLoadingError{
-	// errore
-    
+	
 	[UIView beginAnimations:nil context:NULL];
 	[UIView setAnimationDuration:.3];
 	[self.table setContentInset:UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f)];
@@ -1971,7 +1979,7 @@
 	[refreshHeaderView setState:EGOOPullRefreshNormal];
     
     [self.table reloadData];
-    [table scrollsToTop];
+     _reloading = NO;
 }
 
 

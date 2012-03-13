@@ -528,6 +528,15 @@
             } 
         }
         
+        if ([BeintooDevice isiPad]){
+            captionLabel                    = [[UILabel alloc] initWithFrame:CGRectMake(45, 5, [self bounds].size.width-50, 20)];
+            captionLabel.backgroundColor    = [UIColor clearColor];
+            captionLabel.textColor          = [UIColor whiteColor];
+            captionLabel.textAlignment      = UITextAlignmentLeft;
+            captionLabel.font               = [UIFont fontWithName:@"TrebuchetMS-Bold" size:13.0];
+            captionLabel.adjustsFontSizeToFitWidth = YES;
+        }
+        
         [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"submitScoreCount"];
         [[NSUserDefaults standardUserDefaults] synchronize];
 	}

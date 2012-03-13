@@ -237,6 +237,7 @@ NSString *BNSDefIsUserLogged;
 // -----------------------------------
 // Beintoo User
 // -----------------------------------
+
 + (NSDictionary *)getUserIfLogged{
 	return [[NSUserDefaults standardUserDefaults]objectForKey:BNSDefLoggedUser];
 }
@@ -255,6 +256,7 @@ NSString *BNSDefIsUserLogged;
 }
 
 #pragma mark - Thresholds
+
 + (NSDictionary *)getAppVgoodThresholds{
     return [[Beintoo getPlayer] objectForKey:@"vgoodThreshold"];
 }
@@ -262,15 +264,23 @@ NSString *BNSDefIsUserLogged;
 + (BeintooVgood *)beintooVgoodService{
 	return [Beintoo sharedInstance]->beintooVgoodService;
 }
+
 + (BeintooPlayer *)beintooPlayerService{
 	return [Beintoo sharedInstance]->beintooPlayerService;
 }
+
++ (BeintooUser *)beintooUserService{
+	return [Beintoo sharedInstance]->beintooUserService;
+}
+
 + (BeintooAchievements *)beintooAchievementService{
 	return [Beintoo sharedInstance]->beintooAchievementsService;
 }
+
 + (BeintooMission *)beintooMissionService{
     return [Beintoo sharedInstance]->beintooMissionService;
 }
+
 + (BeintooMarketplace *)beintooMarketplaceService{
     return [Beintoo sharedInstance]->beintooMarketplaceService;
 }
@@ -555,6 +565,9 @@ NSString *BNSDefIsUserLogged;
 	/* --------------------------------------------- */
 	[[Beintoo sharedInstance]->beintooPlayerService release];
 	[Beintoo sharedInstance]->beintooPlayerService = nil;
+    /* --------------------------------------------- */
+	[[Beintoo sharedInstance]->beintooUserService release];
+	[Beintoo sharedInstance]->beintooUserService = nil;
 	/* --------------------------------------------- */
 	[beintooInstance->beintooVgoodService release];
 	beintooInstance->beintooVgoodService = nil;	

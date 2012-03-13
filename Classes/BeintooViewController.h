@@ -17,8 +17,7 @@
 #import <UIKit/UIKit.h>
 #import "Beintoo.h"
 
-
-@interface BeintooViewController : UIViewController <BeintooPlayerDelegate, BeintooVgoodDelegate, BeintooMissionDelegate, BeintooMissionDelegate>{
+@interface BeintooViewController : UIViewController <BeintooPlayerDelegate, BeintooVgoodDelegate, BeintooMissionDelegate, BeintooMissionDelegate, BeintooUserDelegate>{
 	
     //---> Buttons
     IBOutlet BButton *playerLogin;
@@ -42,6 +41,7 @@
     IBOutlet UIView     *redMilan;
     IBOutlet UIView     *redSanFrancisco;
     
+    BeintooUser         *_user;
 }
 
 - (IBAction)startBeintoo;
@@ -61,6 +61,9 @@
 
 - (void)buttonsCustomization;
 - (void)manageLocation;
+
+- (void)didNotCompleteBackgroundRegistration;
+- (void)didCompleteBackgroundRegistration:(NSDictionary *)result;
 
 @end
 

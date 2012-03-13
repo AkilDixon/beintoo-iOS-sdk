@@ -19,16 +19,25 @@
 
 @implementation BeintooUser
 
-@synthesize delegate,parser;
+@synthesize delegate, parser, callingDelegate, userParams;
 
 -(id)init {
 	if (self = [super init])
 	{
-        parser = [[Parser alloc] init];
+        parser          = [[Parser alloc] init];
 		parser.delegate = self;
-		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/user/",[Beintoo getRestBaseUrl]]];
+		rest_resource   = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/user/",[Beintoo getRestBaseUrl]]];
 	}
     return self;
+}
+
+- (NSString *)restResource{
+	return rest_resource;
+}
+
++ (void)setUserDelegate:(id)_caller{
+	BeintooUser *userService = [Beintoo beintooUserService];
+	userService.callingDelegate = _caller;
 }
 
 #pragma mark -
@@ -193,6 +202,83 @@
 	[parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_REGISTER_CALLER_ID];
 }
 
+- (void)backgroundRegisterUserToGuid:(NSString *)_guid withEmail:(NSString *)_email nickname:(NSString *)_nick password:(NSString *)_pass name:(NSString *)_name
+                   country:(NSString *)_country address:(NSString *)_address gender:(NSString *)_gender sendGreetingsEmail:(BOOL)_sendGreet{
+   
+    BeintooUser *userService = [Beintoo beintooUserService];
+    
+    if (_guid == nil) {
+        
+        userService.userParams = [[NSMutableDictionary alloc] init];
+        if (_guid != nil)
+            [userService.userParams setObject:[_guid copy] forKey:@"guid"];
+        if (_email != nil)
+            [userService.userParams setObject:[_email copy] forKey:@"email"];
+        if (_nick != nil)
+            [userService.userParams setObject:[_nick copy] forKey:@"nick"];
+        if (_pass != nil)
+            [userService.userParams setObject:[_pass copy] forKey:@"pass"];
+        if (_name != nil)
+            [userService.userParams setObject:[_name copy] forKey:@"name"];
+        if (_address != nil)
+            [userService.userParams setObject:[_address copy] forKey:@"address"];
+        if (_gender != nil)
+            [userService.userParams setObject:[_gender copy] forKey:@"gender"];
+        if (_country != nil)
+            [userService.userParams setObject:[_country copy] forKey:@"country"];
+        if (_sendGreet)
+            [userService.userParams setObject:[NSNumber numberWithBool:_sendGreet] forKey:@"sendGreetings"];
+        
+        [BeintooPlayer setPlayerDelegate:self];
+        [BeintooPlayer login];
+        
+		return;
+	}
+    
+	if (_email == nil) {
+		NSLog(@"* Beintoo * RegisterUser error: email not provided.");
+        
+        if ([[self delegate] respondsToSelector:@selector(didNotCompleteBackgroundRegistration)]) 
+            [[self delegate] didNotCompleteBackgroundRegistration];
+        
+        return;
+	}
+	int userGender;
+	
+	if([_gender isEqualToString:@"MALE"])
+		userGender = 1;
+	else if ([_gender isEqualToString:@"FEMALE"]) 
+		userGender = 2;
+	else
+		userGender = 0;
+	
+	NSString *httpBody;
+	if(!userGender)
+		httpBody = [NSString stringWithFormat:@"email=%@",_email];
+	else
+		httpBody = [NSString stringWithFormat:@"email=%@&gender=%d",_email,userGender];
+	
+	if (_nick != nil) 
+		httpBody = [httpBody stringByAppendingString:[NSString stringWithFormat:@"&nickname=%@",_nick]];
+	if (_pass != nil) 
+		httpBody = [httpBody stringByAppendingString:[NSString stringWithFormat:@"&password=%@",_pass]];
+	if (_name != nil) 
+		httpBody = [httpBody stringByAppendingString:[NSString stringWithFormat:@"&name=%@",_name]];
+	if (_country != nil) 
+		httpBody = [httpBody stringByAppendingString:[NSString stringWithFormat:@"&country=%@",_country]];
+	if (_address != nil) 
+		httpBody = [httpBody stringByAppendingString:[NSString stringWithFormat:@"&address=%@",_address]];
+	if(_sendGreet)
+		httpBody = [httpBody stringByAppendingString:@"&sendGreetingsEmail=true"];
+	else
+		httpBody = [httpBody stringByAppendingString:@"&sendGreetingsEmail=false"];
+	
+	NSString *res			 = [NSString stringWithFormat:@"%@set", userService.restResource];
+	NSDictionary *params	 = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",_guid,@"guid", nil];	
+	[parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_BACKGROUND_REGISTER_CALLER_ID];
+    
+}
+
 - (void)updateUser:(NSString *)_userExt withNickname:(NSString *)_nick{
 	if(_userExt == nil){
 		return;
@@ -255,7 +341,6 @@
 			if ([[self delegate] respondsToSelector:@selector(challengeRequestFinishedWithResult:)]) {
 				[[self delegate] challengeRequestFinishedWithResult:result];
 			}
-			NSLog(@"challenge req result: %@",result);
 		}
 			break;
 			
@@ -263,7 +348,6 @@
 			if ([[self delegate] respondsToSelector:@selector(didGetFriendsByExtid:)]) {
 				[[self delegate] didGetFriendsByExtid:(NSMutableArray *)result];
 			}
-			//NSLog(@"getfriends req result: %@",result);
 		}
 			break;
 			
@@ -306,12 +390,33 @@
 			
 		case USER_REGISTER_CALLER_ID:{
 			if ([result objectForKey:@"message"] != nil) {
-				NSLog(@"Beintoo: error in user registration: %@",[result objectForKey:@"message"]);
+				NSLog(@"Beintoo: error in user registration: %@", [result objectForKey:@"message"]);
             }
             if ([[self delegate]respondsToSelector:@selector(didCompleteRegistration:)]) 
                 [[self delegate]didCompleteRegistration:result];
 		}
 			break;
+            
+        case USER_BACKGROUND_REGISTER_CALLER_ID:{
+            
+            if ([result objectForKey:@"id"]){
+            
+                BeintooPlayer *_player = [Beintoo beintooPlayerService];
+                [_player setDelegate:self];
+                
+                NSString *newUserID = [result objectForKey:@"id"];
+                
+                if (newUserID != nil) {
+                    [_player backgroundLogin:newUserID];
+                }
+            }
+            else {
+                NSLog(@"Beintoo: error in user registration: %@",[result objectForKey:@"message"]);
+                if ([[self delegate] respondsToSelector:@selector(didNotCompleteBackgroundRegistration)]) 
+                    [[self delegate] didNotCompleteBackgroundRegistration];
+            }
+        }
+            break;
 			
 		case USER_NICKUPDATE_CALLER_ID:{
 			if ([result objectForKey:@"message"] != nil) {
@@ -327,6 +432,61 @@
 		}
 			break;
 	}	
+}
+
+- (void)playerDidLoginWithResult:(NSDictionary *)result{
+	
+    BeintooUser *userService = [Beintoo beintooUserService];
+    [BeintooUser setUserDelegate:userService.callingDelegate];
+    
+    NSString *_email = nil;
+    NSString *_nick = nil;
+    NSString *_pass = nil;
+    NSString *_address = nil;
+    NSString *_name = nil;
+    NSString *_gender = nil;
+    NSString *_country = nil;
+    BOOL _sendGreeting;    
+    
+    if ([userService.userParams objectForKey:@"email"])
+        _email = [userService.userParams objectForKey:@"email"];
+    if ([userService.userParams objectForKey:@"name"])
+        _name = [userService.userParams objectForKey:@"name"];
+    if ([userService.userParams objectForKey:@"pass"])
+        _pass = [userService.userParams objectForKey:@"pass"];
+    if ([userService.userParams objectForKey:@"nick"])
+        _nick = [userService.userParams objectForKey:@"nick"];
+    if ([userService.userParams objectForKey:@"address"])
+        _address = [userService.userParams objectForKey:@"address"];
+    if ([userService.userParams objectForKey:@"gender"])
+        _gender = [userService.userParams objectForKey:@"gender"];
+    if ([userService.userParams objectForKey:@"country"])
+        _country = [userService.userParams objectForKey:@"country"];
+    if ([userService.userParams objectForKey:@"sendGreetings"])
+        _sendGreeting = (BOOL) [userService.userParams objectForKey:@"sendGreetings"];
+    
+    [self backgroundRegisterUserToGuid:[Beintoo getPlayerID] withEmail:_email nickname:_nick password:_pass name:_name country:_country address:_address gender:_address sendGreetingsEmail:_sendGreeting];
+    
+    [userService.userParams release];
+    
+}
+
+- (void)playerDidCompleteBackgroundLogin:(NSDictionary *)result{
+    
+    if ([[self delegate] respondsToSelector:@selector(didCompleteBackgroundRegistration:)]) 
+        [[self delegate] didCompleteBackgroundRegistration:result];
+     
+}
+
+- (void)playerDidNotCompleteBackgroundLogin{
+    
+    if ([[self delegate] respondsToSelector:@selector(didNotCompleteBackgroundRegistration)]) 
+        [[self delegate] didNotCompleteBackgroundRegistration];
+   
+}
+
+- (void)playerDidFailLoginWithResult:(NSString *)error{
+	NSLog(@"playerLogin error: %@", error);
 }
 
 - (NSString *)getStatusCode:(int)code{
@@ -346,6 +506,5 @@
 	[rest_resource release];
     [super dealloc];
 }
-
 
 @end

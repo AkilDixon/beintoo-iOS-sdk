@@ -149,7 +149,7 @@
 	detailTextLabel2.backgroundColor	= [UIColor clearColor];
 	detailTextLabel2.autoresizingMask	= UIViewAutoresizingFlexibleWidth;
 	
-	UILabel *movValue			= [[UILabel alloc] initWithFrame:CGRectMake(250, 10, 50, 50)];
+	UILabel *movValue			= [[UILabel alloc] initWithFrame:CGRectMake(230, 10, 70, 50)];
 	NSString *value				= [NSString stringWithFormat:@"%@",[[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"movValue"]];
 	if ([value rangeOfString:@"-"].length <= 0) {
 		value = [NSString stringWithFormat:@"+%@",value];

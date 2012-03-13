@@ -19,13 +19,14 @@
 
 @implementation BVirtualGood
 
-@synthesize theGood,theGoodsList,getItRealURL,vGoodDescription,vGoodImageData,vGoodName,vGoodEndDate,vGoodID,whoAlsoConverted;
+@synthesize theGood,theGoodsList, getItRealURL,vGoodDescription,vGoodImageData,vGoodName,vGoodEndDate,vGoodID,whoAlsoConverted;
 
 -(id)init {
 	if (self = [super init])
 	{
-		theGood      = [[NSDictionary alloc] init];
-		theGoodsList = [[NSArray alloc] init];
+		/*theGood      = [[NSDictionary alloc] init];
+		theGoodsList = [[NSArray alloc] init]; */
+         
 	}
     return self;
 }
@@ -34,7 +35,6 @@
 	if (_vgood != nil /* && ([_vgood objectForKey:@"getRealURL"]!=nil)*/ ) {
 		@try {
 			self.theGood			= _vgood;
-			
 			self.getItRealURL		= [_vgood objectForKey:@"getRealURL"];
 			self.vGoodDescription	= [_vgood objectForKey:@"description"];
 			self.vGoodName			= [_vgood objectForKey:@"name"];
@@ -48,7 +48,7 @@
             }
 			self.whoAlsoConverted	= [_vgood objectForKey:@"whoAlsoConverted"];
 			
-			if ([_vgood objectForKey:@"isBanner"]!=nil){
+			if ([_vgood objectForKey:@"isBanner"] != nil){
 				isRecommendation = TRUE;
 				isHTML			 = FALSE;
 				if ([[_vgood objectForKey:@"contentType"] isEqualToString:@"text/html"]) {
