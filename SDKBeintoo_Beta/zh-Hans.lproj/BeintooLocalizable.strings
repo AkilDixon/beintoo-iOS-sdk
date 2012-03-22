@@ -333,6 +333,7 @@
 
 // AlertMessages
 "submitScoreMsg"                    = "您获得 %@ 分。";
+"submitScoreMsgSinglePoint"         = "您获得 %@ 分。";
 "playerLoginMsg"                    = "欢迎回到 %@";
 "unlockAchievMsg"                   = "战绩解锁！"; 
 "useralreadyregistered"             = "An user with this email is already registered"; /*******TRANSLATE***/

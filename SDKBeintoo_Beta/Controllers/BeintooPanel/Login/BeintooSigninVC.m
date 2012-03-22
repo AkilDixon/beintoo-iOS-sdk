@@ -25,7 +25,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
-	self.title = NSLocalizedStringFromTable(@"signup",@"BeintooLocalizable",@"Login");
+	self.title = NSLocalizedStringFromTable(@"signup", @"BeintooLocalizable", @"Login");
 	
 	registrationVC	 = [BeintooSignupVC alloc];
 	registrationFBVC = [BeintooSignupVC alloc];
@@ -67,7 +67,7 @@
     emailTF.text = @"";
 	emailTF.placeholder = @"email";
 	emailTF.hidden = NO;
-	title1.text = NSLocalizedStringFromTable(@"enteremail",@"BeintooLocalizable",@"");
+	title1.text = NSLocalizedStringFromTable(@"enteremail", @"BeintooLocalizable", @"");
 	title1.numberOfLines = 2;
 	title1.textAlignment = UITextAlignmentCenter;
 	
@@ -346,7 +346,7 @@
 #pragma mark GeneratePlayer
 
 - (void)generatePlayerIfNotExists{
-	if ([Beintoo getPlayerID]==nil) {
+	if ([Beintoo getPlayerID] == nil) {
 		NSDictionary *anonymPlayer = [_player blockingLogin:@""];
 		if ([anonymPlayer objectForKey:@"guid"]==nil) {
 			// This is a critical point, if the anonymPlayer is == nil, we're going to register an invalid user

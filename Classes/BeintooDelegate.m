@@ -50,7 +50,6 @@
 	else {
 		NSLog(@"Single Vgood generated: %@",[theVgood theGood]);
 	}
-	[Beintoo launchPrize];
 }
 
 - (void)didBeintooFailToGenerateAVirtualGoodWithError:(NSDictionary *)error{

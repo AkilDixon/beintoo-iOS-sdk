@@ -21,7 +21,7 @@
 
 @implementation BPrize
 
-@synthesize beintooLogo,prizeImg,prizeThumb,textLabel,detailedTextLabel,delegate,prizeType;
+@synthesize beintooLogo, prizeImg, prizeThumb, textLabel, detailedTextLabel, delegate, prizeType, isVisible, globalDelegate;
 
 -(id)init {
 	if (self = [super init]){
@@ -32,43 +32,48 @@
 
 - (void)setPrizeContentWithWindowSize:(CGSize)windowSize{
 	firstTouch = YES;
-	
+    
 	self.backgroundColor = [UIColor colorWithRed:0.0/255 green:0.0/255 blue:0.0/255 alpha:0.7];
 	self.layer.cornerRadius = 2;
-	self.layer.borderColor  = [UIColor colorWithWhite:1 alpha:0.8].CGColor;
+	self.layer.borderColor  = [UIColor colorWithWhite:1 alpha:0.35].CGColor;
 	self.layer.borderWidth  = 0;
-	
+	self.alpha = 0;
+    
 	BVirtualGood *lastVgood = [Beintoo getLastGeneratedVGood];
 	
 	self.frame = CGRectZero;
 	
+    windowSizeRect = windowSize;
+    
 	// Banner frame initialization: a vgood frame is a little bit smaller than a recommendation
 	int _prizeType = PRIZE_GOOD;
-	CGRect vgoodFrame = CGRectMake(5, windowSize.height-ALERT_HEIGHT_VGOOD, 
+    CGRect vgoodFrame = CGRectMake(5, windowSize.height-ALERT_HEIGHT_VGOOD, 
                                    310, ALERT_HEIGHT_VGOOD);
     
 	if ([lastVgood isRecommendation]) {
 		_prizeType = PRIZE_RECOMMENDATION;
-        vgoodFrame = CGRectMake(1, windowSize.height-(ALERT_HEIGHT_RECOMMENDATION + RECOMMENDATION_TEXTHEIGHT),  
-                                318, ALERT_HEIGHT_RECOMMENDATION + RECOMMENDATION_TEXTHEIGHT);
-
+        vgoodFrame = CGRectMake(1, windowSize.height-(ALERT_HEIGHT_RECOMMENDATION + RECOMMENDATION_TEXTHEIGHT), 318, ALERT_HEIGHT_RECOMMENDATION + RECOMMENDATION_TEXTHEIGHT);
+        
 		if ([lastVgood isHTMLRecommendation]) {
 			_prizeType = PRIZE_RECOMMENDATION_HTML;
-            vgoodFrame = CGRectMake(1,  windowSize.height - (ALERT_HEIGHT_RECOMMENDATION_HTML + RECOMMENDATION_TEXTHEIGHT), 
-                                    318, ALERT_HEIGHT_RECOMMENDATION_HTML + RECOMMENDATION_TEXTHEIGHT);
+            vgoodFrame = CGRectMake(0, 0, windowSize.width, windowSize.height);
+            //  vgoodFrame = CGRectMake(10,  (windowSize.height/2) - (ALERT_HEIGHT_RECOMMENDATION_HTML + RECOMMENDATION_TEXTHEIGHT)/2, 300, ALERT_HEIGHT_RECOMMENDATION_HTML + RECOMMENDATION_TEXTHEIGHT);
 		}
 	}
+    
+    
+    
 	prizeType = _prizeType;
 	
 	[self setFrame:vgoodFrame];
-
+    
 	[self preparePrizeAlertOrientation:vgoodFrame];
 }
 
 - (void)show{
 	
-	self.alpha = 0;
-		
+    isVisible = YES;
+    
 	CATransition *applicationLoadViewIn = [CATransition animation];
 	[applicationLoadViewIn setDuration:0.7f];
 	[applicationLoadViewIn setValue:@"load" forKey:@"name"];
@@ -82,24 +87,61 @@
 	self.alpha = 1;
 }
 
+- (void)showWithAlphaAnimation{
+    
+    isVisible = YES;
+    
+    if (!prizeType == PRIZE_RECOMMENDATION_HTML){
+        
+        CATransition *applicationLoadViewIn = [CATransition animation];
+        [applicationLoadViewIn setDuration:0.7f];
+        [applicationLoadViewIn setValue:@"load" forKey:@"name"];
+        applicationLoadViewIn.removedOnCompletion = YES;
+        [applicationLoadViewIn setType:kCATransitionMoveIn];
+        applicationLoadViewIn.subtype = kCATransitionFade;
+        applicationLoadViewIn.delegate = self;
+        [applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+        [[self layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+        
+        self.alpha = 1;
+    }
+}
+
+- (void)showHtmlWithAlphaAnimation{
+    
+    isVisible = YES;
+    
+    CATransition *applicationLoadViewIn = [CATransition animation];
+    [applicationLoadViewIn setDuration:0.7f];
+    [applicationLoadViewIn setValue:@"load" forKey:@"name"];
+    applicationLoadViewIn.removedOnCompletion = YES;
+    [applicationLoadViewIn setType:kCATransitionMoveIn];
+    applicationLoadViewIn.subtype = kCATransitionFade;
+    applicationLoadViewIn.delegate = self;
+    [applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+    [[self layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+    
+    self.alpha = 1;
+    
+}
+
 - (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag{
 	if ([[animation valueForKey:@"name"] isEqualToString:@"load"]) {
 	}
 }
 
-
 - (void)drawPrize{
 	
-	BVirtualGood *lastVgood = [Beintoo getLastGeneratedVGood];
-
+    BVirtualGood *lastVgood = [Beintoo getLastGeneratedVGood];
+    
 	[self removeViews];
 	[self setThumbnail:lastVgood.vGoodImageData];	
-		
-	self.textLabel = [[UILabel alloc] initWithFrame:CGRectMake(68, 5, [self bounds].size.width-90, 55)];
+    
+	self.textLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 5, windowSizeRect.width - 75, 55)];
     
     // Custom reward text. If there is a text on the retrieved good is shown, otherwise we use the default text
     
-    if ([lastVgood.theGood objectForKey:@"rewardText"]!=nil) {
+    if ([lastVgood.theGood objectForKey:@"rewardText"] != nil) {
         self.textLabel.text = [lastVgood.theGood objectForKey:@"rewardText"];
     }
     else{
@@ -107,37 +149,58 @@
     }
 	self.textLabel.font = [UIFont systemFontOfSize:13];
 	self.textLabel.numberOfLines = 4;
-	self.textLabel.textAlignment = UITextAlignmentCenter;
+	self.textLabel.textAlignment = UITextAlignmentLeft;
 	self.textLabel.backgroundColor = [UIColor clearColor];
 	self.textLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
 	[self.textLabel release];
-		
+    
 	// -- normal vgood:			we need to add two label to give details.
 	// -- recommendation:		the thumbnail frame will be extended to cover all the prizeAlert
 	// -- html recommendation:	we add a small webview as subview, then we load the html content on it
 	
 	if (prizeType == PRIZE_GOOD) {  
 		[self addSubview:self.textLabel];
-	}
+        
+        // --- CLOSE BUTTON --- //
+        //UIImage *closeImg = [UIImage imageNamed:@"bar_close.png"];
+        UIImage *closeImg = [UIImage imageNamed:@"prizeCloseBtn.png"];
+        closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [closeBtn setImage:closeImg forState:UIControlStateNormal];
+        closeBtn.frame = CGRectMake([self bounds].size.width - 20, -10, closeImg.size.width, closeImg.size.height+6);
+        [closeBtn addTarget:self action:@selector(closeBanner) forControlEvents:UIControlEventTouchUpInside];
+        closeBtn.contentMode = UIViewContentModeRedraw;
+        [self addSubview:closeBtn];
+        [self bringSubviewToFront:closeBtn];
+        // -------------------- //
+        
+        [self show];
+        
+    }
 	else if (prizeType == PRIZE_RECOMMENDATION_HTML) {
-		UIWebView *recommWebView = [[UIWebView alloc] initWithFrame:CGRectMake(0, RECOMMENDATION_TEXTHEIGHT, [self bounds].size.width-1, [self bounds].size.height-(RECOMMENDATION_TEXTHEIGHT))];
-        		
-		[recommWebView loadHTMLString:[[lastVgood theGood] objectForKey:@"content"] baseURL:nil];
-
+        
+        UIWebView *recommWebView = [[UIWebView alloc] initWithFrame:CGRectMake(0, RECOMMENDATION_TEXTHEIGHT, [self bounds].size.width-1, [self bounds].size.height-(RECOMMENDATION_TEXTHEIGHT))];
+        NSString *vgoodUrl = [[[lastVgood theGood] objectForKey:@"content"] stringByReplacingOccurrencesOfString:@"<html>" withString:@""];
+        vgoodUrl = [vgoodUrl stringByReplacingOccurrencesOfString:@"<body>" withString:@"<body style=\"font-family:'Lucida Sans Unicode', 'Lucida Grande', sans-serif \">"];
+        
+        vgoodUrl = [vgoodUrl stringByReplacingOccurrencesOfString:@"<head>" withString:@"<head> <meta name=\"viewport\" content=\"width=300;height=480;user-scalable=yes;initial-scale=1.0;\">"];
+        
+        NSString *content = [NSString stringWithFormat:@"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"> <html xmlns=\"http://www.w3.org/1999/xhtml\">%@ </body>", vgoodUrl];
+        
+        [recommWebView loadHTMLString:content baseURL:nil];
+        
         recommWebView.delegate = self;
         recommWebView.scalesPageToFit = NO;
         recommWebView.backgroundColor = [UIColor clearColor];
         
-		//recommWebView.userInteractionEnabled = NO; // this will make the UIWebView transparent to touchess
 		[self addSubview:recommWebView];
 		[self sendSubviewToBack:recommWebView];
         
         NSString *rewardText;
-        if ([lastVgood.theGood objectForKey:@"rewardText"]!=nil) {
+        if ([lastVgood.theGood objectForKey:@"rewardText"] != nil) {
             rewardText = [lastVgood.theGood objectForKey:@"rewardText"];
         }
         else{
-            rewardText = NSLocalizedStringFromTable(@"vgoodMessageAd",@"BeintooLocalizable",@"Pending");
+            rewardText = NSLocalizedStringFromTable(@"vgoodMessageAd", @"BeintooLocalizable", @"Pending");
         }
         UILabel *recommendationLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width-1, RECOMMENDATION_TEXTHEIGHT)];
         recommendationLabel.text            = rewardText;
@@ -145,23 +208,21 @@
         recommendationLabel.textAlignment   = UITextAlignmentCenter;
         recommendationLabel.backgroundColor = [UIColor clearColor];
         recommendationLabel.textColor       = [UIColor whiteColor];
-
+        
         [self addSubview:recommendationLabel];
         [recommendationLabel release];
-	}
-	
-	// --- CLOSE BUTTON --- //
-	//UIImage *closeImg = [UIImage imageNamed:@"bar_close.png"];
-	UIImage *closeImg = [UIImage imageNamed:@"prizeCloseBtn.png"];
-	closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	[closeBtn setImage:closeImg forState:UIControlStateNormal];
-	closeBtn.frame = CGRectMake([self bounds].size.width-27,0,closeImg.size.width+10, closeImg.size.height+6);
-	[closeBtn addTarget:self action:@selector(closeBanner) forControlEvents:UIControlEventTouchUpInside];
-	closeBtn.contentMode = UIViewContentModeRedraw;
-	[self addSubview:closeBtn];
-	[self bringSubviewToFront:closeBtn];
-	// -------------------- //
-	
+        
+        // --- CLOSE BUTTON --- //
+        //UIImage *closeImg = [UIImage imageNamed:@"bar_close.png"];
+        UIImage *closeImg = [UIImage imageNamed:@"prizeCloseBtn.png"];
+        closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [closeBtn setImage:closeImg forState:UIControlStateNormal];
+        [closeBtn addTarget:self action:@selector(closeBanner) forControlEvents:UIControlEventTouchUpInside];
+        closeBtn.contentMode = UIViewContentModeRedraw;
+        [self addSubview:closeBtn];
+        [self bringSubviewToFront:closeBtn];
+        // -------------------- //
+    }
 }
 
 - (void)removeViews {
@@ -174,11 +235,14 @@
 	self.alpha = 0;
 	[self removeViews];
 	[self removeFromSuperview];
-	[[self delegate] userDidTapOnClosePrize];
+    if ([[self delegate] respondsToSelector:@selector(userDidTapOnClosePrize)])
+        [[self delegate] userDidTapOnClosePrize];
+    
+    isVisible = NO;
 }
 
 - (void)setThumbnail:(NSData *)imgData{
-
+    
     BVirtualGood *lastVgood = [Beintoo getLastGeneratedVGood];
     
 	if (prizeType == PRIZE_GOOD) {
@@ -198,11 +262,11 @@
 		[self.prizeThumb release];		
         
         NSString *rewardText;
-        if ([lastVgood.theGood objectForKey:@"rewardText"]!=nil) {
+        if ([lastVgood.theGood objectForKey:@"rewardText"] != nil) {
             rewardText = [lastVgood.theGood objectForKey:@"rewardText"];
         }
         else{
-            rewardText = NSLocalizedStringFromTable(@"vgoodMessageAd",@"BeintooLocalizable",@"Pending");
+            rewardText = NSLocalizedStringFromTable(@"vgoodMessageAd", @"BeintooLocalizable",@"Pending");
         }
         UILabel *recommendationLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width-1, RECOMMENDATION_TEXTHEIGHT)];
         recommendationLabel.text            = rewardText;
@@ -217,6 +281,9 @@
 }
 
 - (void)preparePrizeAlertOrientation:(CGRect)startingFrame{
+    
+    self.alpha = 0;
+    
 	self.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
 	CGRect windowFrame	 = [[Beintoo getAppWindow] bounds];
     
@@ -227,7 +294,7 @@
             alertHeight = ALERT_HEIGHT_RECOMMENDATION * 1.6;
             break;
         case PRIZE_RECOMMENDATION_HTML:
-            alertHeight = ALERT_HEIGHT_RECOMMENDATION_HTML * 1.6;
+            alertHeight = ALERT_HEIGHT_RECOMMENDATION_HTML + RECOMMENDATION_TEXTHEIGHT;
             break;
         case PRIZE_GOOD:
             alertHeight = ALERT_HEIGHT_VGOOD * 1.1;
@@ -240,79 +307,123 @@
 	if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
 		self.frame = startingFrame;
 		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(-90.0));
-		//self.center = CGPointMake(windowFrame.size.width-(alertHeight/2.f), windowFrame.size.height/2.f) ;
         
-        if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
-            self.center = CGPointMake(windowFrame.size.width-(alertHeight/2.f), windowFrame.size.height/2.f) ;
-            transitionEnterSubtype = kCATransitionFromRight;
-            transitionExitSubtype  = kCATransitionFromLeft;
+        if (prizeType == PRIZE_RECOMMENDATION_HTML || prizeType == PRIZE_RECOMMENDATION){
+            CGRect vgoodFrame = CGRectMake(0, 0, windowSizeRect.width, windowSizeRect.height);
+            [self setFrame:vgoodFrame];
         }
-        else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
-            self.center = CGPointMake((alertHeight/2.f), windowFrame.size.height/2.f) ;
-            transitionEnterSubtype = kCATransitionFromLeft;
-            transitionExitSubtype  = kCATransitionFromRight;
+        else {
+            
+            if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
+                self.center = CGPointMake(windowFrame.size.width-(alertHeight/2.f), windowFrame.size.height/2.f) ;
+                transitionEnterSubtype = kCATransitionFromRight;
+                transitionExitSubtype  = kCATransitionFromLeft;
+            }
+            else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
+                self.center = CGPointMake((alertHeight/2.f), windowFrame.size.height/2.f) ;
+                transitionEnterSubtype = kCATransitionFromLeft;
+                transitionExitSubtype  = kCATransitionFromRight;
+            }
         }
 	}
     
 	else if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight) {
 		self.frame = startingFrame;
 		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(90.0));
-		//self.center = CGPointMake(1+(alertHeight/2), windowFrame.size.height/2) ;
         
-        if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
-            self.center = CGPointMake((alertHeight/2), windowFrame.size.height/2) ;
-            transitionEnterSubtype = kCATransitionFromLeft;
-            transitionExitSubtype  = kCATransitionFromRight;
+        if (prizeType == PRIZE_RECOMMENDATION_HTML || prizeType == PRIZE_RECOMMENDATION){
+            CGRect vgoodFrame = CGRectMake(0, 0, windowSizeRect.width, windowSizeRect.height);
+            [self setFrame:vgoodFrame];
         }
-        else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
-            self.center = CGPointMake(windowFrame.size.width-(alertHeight/2.f), windowFrame.size.height/2) ;
-            transitionEnterSubtype = kCATransitionFromRight;
-            transitionExitSubtype  = kCATransitionFromLeft;
+        else {
+            if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
+                self.center = CGPointMake((alertHeight/2), windowFrame.size.height/2) ;
+                transitionEnterSubtype = kCATransitionFromLeft;
+                transitionExitSubtype  = kCATransitionFromRight;
+            }
+            else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
+                self.center = CGPointMake(windowFrame.size.width-(alertHeight/2.f), windowFrame.size.height/2) ;
+                transitionEnterSubtype = kCATransitionFromRight;
+                transitionExitSubtype  = kCATransitionFromLeft;
+            }
         }
-
+        
 	}
 	else if ([Beintoo appOrientation] == UIInterfaceOrientationPortrait) {
 		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
 		self.frame = startingFrame;	
-		//self.center = CGPointMake(windowFrame.size.width/2, windowFrame.size.height-(alertHeight/2.f));
         
-        if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
-            self.center = CGPointMake(windowFrame.size.width/2, windowFrame.size.height-(alertHeight/2.f));
-            transitionEnterSubtype = kCATransitionFromTop;
-            transitionExitSubtype  = kCATransitionFromBottom;
+        if (prizeType == PRIZE_RECOMMENDATION_HTML || prizeType == PRIZE_RECOMMENDATION){
+            CGRect vgoodFrame = CGRectMake(0, 0, windowSizeRect.width, windowSizeRect.height);
+            [self setFrame:vgoodFrame];
         }
-        else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
-            self.center = CGPointMake(windowFrame.size.width/2, (alertHeight/2.f));
-            transitionEnterSubtype = kCATransitionFromBottom;
-            transitionExitSubtype  = kCATransitionFromTop;
+        else {
+            if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
+                self.center = CGPointMake(windowFrame.size.width/2, windowFrame.size.height-(alertHeight/2.f));
+                transitionEnterSubtype = kCATransitionFromTop;
+                transitionExitSubtype  = kCATransitionFromBottom;
+            }
+            else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
+                self.center = CGPointMake(windowFrame.size.width/2, (alertHeight/2.f));
+                transitionEnterSubtype = kCATransitionFromBottom;
+                transitionExitSubtype  = kCATransitionFromTop;
+            }
         }
-
+        
 	}
 	
 	else if ([Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown) {
 		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(180));
-		self.frame = startingFrame;	
-		//self.center = CGPointMake(windowFrame.size.width/2, 1+(alertHeight/2.f));
+		self.frame = startingFrame;
         
-        if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
-            self.center = CGPointMake(windowFrame.size.width/2, (alertHeight/2.f));
-            transitionEnterSubtype = kCATransitionFromBottom;
-            transitionExitSubtype  = kCATransitionFromTop;
+        if (prizeType == PRIZE_RECOMMENDATION_HTML || prizeType == PRIZE_RECOMMENDATION){
+            CGRect vgoodFrame = CGRectMake(0, 0, windowSizeRect.width, windowSizeRect.height);
+            [self setFrame:vgoodFrame];
         }
-        else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
-            self.center = CGPointMake(windowFrame.size.width/2, windowFrame.size.height-(alertHeight/2.f));
-            transitionEnterSubtype = kCATransitionFromTop;
-            transitionExitSubtype  = kCATransitionFromBottom;
+        else {
+            if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
+                self.center = CGPointMake(windowFrame.size.width/2, (alertHeight/2.f));
+                transitionEnterSubtype = kCATransitionFromBottom;
+                transitionExitSubtype  = kCATransitionFromTop;
+            }
+            else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
+                self.center = CGPointMake(windowFrame.size.width/2, windowFrame.size.height-(alertHeight/2.f));
+                transitionEnterSubtype = kCATransitionFromTop;
+                transitionExitSubtype  = kCATransitionFromBottom;
+            }
         }
 	}
-
+    
     [self performSelectorOnMainThread:@selector(drawPrize) withObject:nil waitUntilDone:YES];
-	//[self drawPrize];
+    
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
-    int newHeight    = [[theWebView stringByEvaluatingJavaScriptFromString: @"document.height"] intValue];
-    theWebView.frame = CGRectMake(theWebView.frame.origin.x, theWebView.frame.origin.y, theWebView.frame.size.width, newHeight);
+    
+    CGRect frame = theWebView.frame;
+    frame.size.height = 1;
+    theWebView.frame = frame;
+    CGSize fittingSize = [theWebView sizeThatFits:CGSizeZero];
+    CGPoint fittingPosition;
+    
+    if ([Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown){
+        fittingSize = CGSizeMake(fittingSize.width - 20, fittingSize.height);
+        fittingPosition = CGPointMake(windowSizeRect.width/2 - fittingSize.width/2, windowSizeRect.height/2 - fittingSize.height/2);
+        closeBtn.frame = CGRectMake(windowSizeRect.width - 28, fittingPosition.y - 10, 20+6, 20+6);
+        
+    }
+    else {
+        fittingSize = CGSizeMake(fittingSize.width - 40, fittingSize.height);
+        fittingPosition = CGPointMake(windowSizeRect.height/2 - fittingSize.width/2, windowSizeRect.width/2 - fittingSize.height/2);
+        closeBtn.frame = CGRectMake(windowSizeRect.height - 33, fittingPosition.y - 10, 20+6, 20+6);
+    }
+    
+    frame.size = fittingSize;
+    frame.origin = fittingPosition;
+    theWebView.frame = frame;
+    
+    [self showHtmlWithAlphaAnimation];
+    
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{   
@@ -325,16 +436,16 @@
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
-    if (prizeType == PRIZE_GOOD || prizeType == PRIZE_RECOMMENDATION) {
-        [self setBackgroundColor:[UIColor colorWithRed:0.0/255 green:0.0/255 blue:0.0/255 alpha:0.7]];
+    [self setBackgroundColor:[UIColor colorWithRed:0.0/255 green:0.0/255 blue:0.0/255 alpha:0.7]];
+    if ([[self delegate] respondsToSelector:@selector(userDidTapOnThePrize)])
         [[self delegate] userDidTapOnThePrize];
-        self.alpha  = 0;
-        
-        firstTouch = YES;
-        
-        [self removeViews];
-        [self removeFromSuperview];
-    }
+    
+    self.alpha  = 0;
+    
+    firstTouch = YES;
+    
+    [self removeViews];
+    [self removeFromSuperview];
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
@@ -342,16 +453,12 @@
     NSMutableURLRequest *req    = (NSMutableURLRequest *)request;
     NSString *urlString         = [req.URL absoluteString];    
     
-    //self.frame = CGRectMake(0, 0, 320, 446);
-    //[self setNeedsDisplay];
-    //return  YES;
-
     if(navigationType == UIWebViewNavigationTypeOther && ([urlString rangeOfString:@"about:blank"].location != NSNotFound)){
         return YES;
     }
     
     if(navigationType == UIWebViewNavigationTypeLinkClicked || navigationType == UIWebViewNavigationTypeOther){
-
+        
         NSString *nexageURLToOpen = @"http://";
         if ([urlString rangeOfString:nexageURLToOpen].location != NSNotFound) {
             // We have to open a nexage URL on the webView
@@ -370,11 +477,13 @@
 
 - (void)userClickedOnWebView{
     [self setBackgroundColor:[UIColor colorWithRed:0.0/255 green:0.0/255 blue:0.0/255 alpha:0.7]];
-	[[self delegate] userDidTapOnThePrize];
+    if ([[self delegate] respondsToSelector:@selector(userDidTapOnThePrize)])
+        [[self delegate] userDidTapOnThePrize];
+    
 	self.alpha  = 0;
     
 	firstTouch = YES;
-
+    
     [self removeViews];
 	[self removeFromSuperview];
 }
@@ -383,7 +492,7 @@
 	self.alpha = 0;
 	[self removeViews];
 	[self removeFromSuperview];
-
+    
 }
 
 - (void)dealloc {

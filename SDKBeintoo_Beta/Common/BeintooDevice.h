@@ -25,6 +25,6 @@
 + (NSString *)getISOLanguage;
 + (NSString *)getFormattedTimestampNow;
 + (int)elapsedHoursSinceTimestamp:(NSString *)_timestamp;
-
++ (NSString *)getMacAddress;
 
 @end

@@ -33,7 +33,7 @@
     
     self.view = mainView;
 	
-    notificationTable = [[BTableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, mainView.frame.size.height)];
+    notificationTable = [[BTableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, mainView.frame.size.height - 9)];
     notificationTable.autoresizingMask  = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	self.notificationTable.delegate     = self;
     self.notificationTable.dataSource   = self;
@@ -48,7 +48,6 @@
     
     _notification           = [[BeintooNotification alloc] init];
     _notification.delegate  = self;
-    
     
     // ViewControllers initialization
     messagesVC              = [[BeintooMessagesVC alloc] initWithNibName:@"BeintooMessagesVC" bundle:[NSBundle mainBundle] andOptions:nil];
@@ -75,7 +74,6 @@
     [notificationTable release];
     [noNotificationLabel release];
     
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -98,7 +96,7 @@
 	if ([result count] == 0) {
 		[noNotificationLabel setHidden:NO];
 	}
-    //NSLog(@"----> result <---- %@", result);
+    
     if ([result isKindOfClass:[NSArray class]]) {
 		for (int i=0; i<[result count]; i++) {
 			@try {
@@ -155,7 +153,14 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
 
     NSString *textToMeasure = [[self.notificationArrayList objectAtIndex:indexPath.row] objectForKey:@"localizedMessage"];
-    CGSize maximumLabelSize = CGSizeMake(200,9999);
+    
+    CGSize maximumLabelSize;
+    if ([Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown)
+        maximumLabelSize = CGSizeMake(200, 9999);
+    else 
+        maximumLabelSize = CGSizeMake(400, 9999);
+    
+        
     CGSize expectedLabelSize = [textToMeasure sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
 
     if (expectedLabelSize.height < 30) {
@@ -180,7 +185,13 @@
     }
     
     NSString *textToMeasure     = [[self.notificationArrayList objectAtIndex:indexPath.row] objectForKey:@"localizedMessage"];
-    CGSize maximumLabelSize     = CGSizeMake(200,9999);
+    
+    CGSize maximumLabelSize;
+    if ([Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown)
+        maximumLabelSize = CGSizeMake(200,9999);
+    else 
+        maximumLabelSize = CGSizeMake(400,9999);
+    
     CGSize expectedLabelSize    = [textToMeasure sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
     
     UIImageView *imageView      = [[UIImageView alloc] initWithFrame:CGRectMake(10, 12, 50, 50)];

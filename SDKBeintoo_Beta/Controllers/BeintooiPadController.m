@@ -59,7 +59,7 @@
 	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
 	[popoverController setPopoverContentSize:CGSizeMake(320, 455)];
 	popoverController.delegate = self;
-	
+    	
 	self.view.alpha = 1;
 
 	CATransition *applicationLoadViewIn = [CATransition animation];

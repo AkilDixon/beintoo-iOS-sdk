@@ -189,6 +189,7 @@ extern NSString *BNSDefIsUserLogged;
 + (void)launchWallet;
 + (void)launchLeaderboard;
 + (void)launchPrize;
++ (void)launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate;
 + (void)launchMission;
 + (void)launchIpadLogin;
 + (void)dismissIpadLogin;

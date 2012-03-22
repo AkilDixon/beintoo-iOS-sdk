@@ -104,14 +104,22 @@
 	if (currentGuid==nil) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
 				  [Beintoo getApiKey], @"apikey", 
-				  [BeintooDevice getUDID], @"deviceUUID", nil];
+				  [BeintooDevice getUDID], @"deviceUUID",
+                  [BeintooDevice getMacAddress], @"macaddress",
+                  nil];
 	}else if ( (userId==nil) && (currentGuid!=nil) ) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", 
 				  [BeintooDevice getUDID], @"deviceUUID", 
-				  currentGuid, @"guid", nil];
+				  currentGuid, @"guid", 
+                  [BeintooDevice getMacAddress], @"macaddress",
+                  nil];
 	}else if (userId!=nil) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", 
-				  userId, @"userExt", [BeintooDevice getUDID], @"deviceUUID", nil];
+		params = [NSDictionary dictionaryWithObjectsAndKeys:
+                  [Beintoo getApiKey], @"apikey", 
+				  userId, @"userExt", 
+                  [BeintooDevice getUDID], @"deviceUUID",
+                  [BeintooDevice getMacAddress], @"macaddress",
+                  nil];
 	} 
 	[playerService.parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGINwDELEG_CALLER_ID];		
 }
@@ -160,9 +168,9 @@
 	
 	NSDictionary *params;	
 	if ([_contestName isEqualToString:@""] || _contestName == nil) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",[Beintoo getPlayerID], @"guid", nil];
+		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",[Beintoo getPlayerID], @"guid", [BeintooDevice getMacAddress], @"macaddress", nil];
 	}else {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",[Beintoo getPlayerID], @"guid",_contestName, @"codeID", nil];
+		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",[Beintoo getPlayerID], @"guid",_contestName, @"codeID", [BeintooDevice getMacAddress], @"macaddress", nil];
 	}
 			
 	// Check for internet connection: if available proceed with the submitScore, otherwise save the score locally
@@ -202,7 +210,7 @@
 	else	
 		res	= [NSString stringWithFormat:@"%@submitscore/?lastScore=%d&latitude=%f&longitude=%f&radius=%f",[playerService restResource],_score,loc.coordinate.latitude,loc.coordinate.longitude,loc.horizontalAccuracy];	
 	
-	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",[Beintoo getPlayerID], @"guid", nil];
+	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",[Beintoo getPlayerID], @"guid", [BeintooDevice getMacAddress], @"macaddress", nil];
 	
 	// Check for internet connection: if available proceed with the submitScore, otherwise save the score locally
 	if ([BeintooNetwork connectedToNetwork]) {
@@ -381,14 +389,20 @@
 	if (currentGuid==nil) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
 				  [Beintoo getApiKey], @"apikey", 
-				  [BeintooDevice getUDID], @"deviceUUID", nil];
+				  [BeintooDevice getUDID], @"deviceUUID", 
+                  [BeintooDevice getMacAddress], @"macaddress",
+                  nil];
 	}else if ( (userId==nil) && (currentGuid!=nil) ) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", 
 				  [BeintooDevice getUDID], @"deviceUUID", 
-				  currentGuid, @"guid", nil];
+				  currentGuid, @"guid", 
+                  [BeintooDevice getMacAddress], @"macaddress",
+                  nil];
 	}else if (userId!=nil) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", 
-				  userId, @"userExt",[BeintooDevice getUDID], @"deviceUUID", nil];
+				  userId, @"userExt",[BeintooDevice getUDID], @"deviceUUID", 
+                  [BeintooDevice getMacAddress], @"macaddress",
+                  nil];
 	} 
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGIN_CALLER_ID];		
 }
@@ -408,18 +422,22 @@
 	if ( ([userid isEqualToString:@""]) && (currentGuid==nil)) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
 								[Beintoo getApiKey], @"apikey", 
-								[BeintooDevice getUDID], @"deviceUUID", nil];
+								[BeintooDevice getUDID], @"deviceUUID", [BeintooDevice getMacAddress], @"macaddress",
+                  nil];
 		
 	}else if ( ([userid isEqualToString:@""]) && (currentGuid!=nil) ) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
 									[Beintoo getApiKey], @"apikey", 
 									[BeintooDevice getUDID], @"deviceUUID", 
-									currentGuid, @"guid", nil];
+									currentGuid, @"guid", 
+                  [BeintooDevice getMacAddress], @"macaddress", nil];
 	}else {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
 								[Beintoo getApiKey], @"apikey", 
 								userid, @"userExt",
-								[BeintooDevice getUDID], @"deviceUUID", nil];
+								[BeintooDevice getUDID], @"deviceUUID", 
+                  [BeintooDevice getMacAddress], @"macaddress",
+                  nil];
 	}
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGIN_CALLER_ID];
 }
@@ -439,18 +457,21 @@
 	if ( ([userid isEqualToString:@""]) && (currentGuid==nil)) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
                   [Beintoo getApiKey], @"apikey", 
-                  [BeintooDevice getUDID], @"deviceUUID", nil];
+                  [BeintooDevice getUDID], @"deviceUUID", [BeintooDevice getMacAddress], @"macaddress",
+                  nil];
 		
 	}else if ( ([userid isEqualToString:@""]) && (currentGuid!=nil) ) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
                   [Beintoo getApiKey], @"apikey", 
                   [BeintooDevice getUDID], @"deviceUUID", 
-                  currentGuid, @"guid", nil];
+                  currentGuid, @"guid", [BeintooDevice getMacAddress], @"macaddress",
+                  nil];
 	}else {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
                   [Beintoo getApiKey], @"apikey", 
                   userid, @"userExt",
-                  [BeintooDevice getUDID], @"deviceUUID", nil];
+                  [BeintooDevice getUDID], @"deviceUUID", [BeintooDevice getMacAddress], @"macaddress",
+                  nil];
 	}
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_BACKGROUND_LOGIN_CALLER_ID];
 }
@@ -468,12 +489,16 @@
 	if ([userid isEqualToString:@""]) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
 							[Beintoo getApiKey], @"apikey", 
-							[BeintooDevice getUDID], @"deviceUUID", nil];
+							[BeintooDevice getUDID], @"deviceUUID", 
+                  [BeintooDevice getMacAddress], @"macaddress",
+                  nil];
 	}else {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
 							[Beintoo getApiKey], @"apikey", 
 							userid, @"userExt",
-							[BeintooDevice getUDID], @"deviceUUID", nil];
+							[BeintooDevice getUDID], @"deviceUUID", 
+                  [BeintooDevice getMacAddress], @"macaddress",
+                  nil];
 	}	
 	NSDictionary *result = [parser blockerParsePageAtUrl:res withHeaders:params];
 	

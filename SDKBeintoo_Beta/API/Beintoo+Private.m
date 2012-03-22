@@ -345,6 +345,7 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 + (void)switchToSandbox{ 
 	NSLog(@"Beintoo: Going to sandbox");
 	[Beintoo sharedInstance]->isOnSandbox = YES;
+    [Beintoo sharedInstance]->isOnPrivateSandbox = NO;
     [Beintoo initVgoodService];
 	[Beintoo initPlayerService];
     [Beintoo initUserService];
@@ -358,7 +359,7 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 	NSLog(@"Beintoo: Going to private sandbox");
 	[Beintoo sharedInstance]->restBaseUrl = sandboxBaseUrl;
 	[Beintoo sharedInstance]->isOnPrivateSandbox = YES;
-    [Beintoo sharedInstance]->isOnSandbox = YES;
+    [Beintoo sharedInstance]->isOnSandbox = NO;
 	[Beintoo initVgoodService];
 	[Beintoo initPlayerService];
     [Beintoo initUserService];
@@ -370,6 +371,8 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 
 + (void)production{ 
 	NSLog(@"Beintoo: Going to production");
+    [Beintoo sharedInstance]->isOnPrivateSandbox = NO;
+    [Beintoo sharedInstance]->isOnSandbox = NO;
 	[self initAPI];
 	[Beintoo initVgoodService];
 	[Beintoo initPlayerService];
@@ -557,8 +560,30 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 
 + (void)_launchPrizeOnApp{
 	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	
+    
 	BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
+	
+	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertWillAppear)]) {
+		[_mainDelegate beintooPrizeAlertWillAppear];
+	}
+	
+	[_prizeView setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
+	[[Beintoo getApplicationWindow] addSubview:_prizeView];
+	
+	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertDidAppear)]) {
+		[_mainDelegate beintooPrizeAlertDidAppear];
+	}	
+}
+
++ (void)_launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate{
+    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+	
+    BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
+    _prizeView.globalDelegate = _beintooPrizeDelegate;
+    
+    if ([_beintooPrizeDelegate respondsToSelector:@selector(beintooPrizeAlertWillAppear)]) {
+		[_beintooPrizeDelegate beintooPrizeAlertWillAppear];
+	}
     
 	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertWillAppear)]) {
 		[_mainDelegate beintooPrizeAlertWillAppear];
@@ -566,11 +591,15 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 	
 	[_prizeView setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
 	[[Beintoo getApplicationWindow] addSubview:_prizeView];
-	[_prizeView show];
-	
+    
+    if ([_beintooPrizeDelegate respondsToSelector:@selector(beintooPrizeAlertDidAppear)]) {
+		[_beintooPrizeDelegate beintooPrizeAlertDidAppear];
+	}
+    
 	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertDidAppear)]) {
 		[_mainDelegate beintooPrizeAlertDidAppear];
 	}	
+    
 }
 
 + (void)_launchMissionOnApp{
@@ -896,19 +925,19 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 - (void)userDidTapOnThePrize{
 	
 	BVirtualGood *lastVgood = [Beintoo getLastGeneratedVGood];
+    [Beintoo manageStatusBarOnLaunch];
     
 	BeintooVgoodNavController *iPadVgoodNavigatorController = [Beintoo getVgoodNavigationController];
 	BeintooMainController *mainNavigatorController          = [Beintoo sharedInstance]->mainController;
 	
     id<BeintooMainDelegate>	  _mainDelegate         = [Beintoo sharedInstance]->mainDelegate;
-
+    
     mainNavigatorController.viewControllers     = nil;
     iPadVgoodNavigatorController.viewControllers    = nil;
 	
-    [Beintoo manageStatusBarOnLaunch];
-    
 	if ([lastVgood isRecommendation]) { // ----------  RECOMMENDATION ------------- //
 		// Initialization of the Recommendation Controller with the recommendation URL
+        
 		[mainNavigatorController.recommendationVC initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle] urlToOpen:lastVgood.getItRealURL];
         if ([BeintooDevice isiPad]) {
             [iPadVgoodNavigatorController initWithRootViewController:mainNavigatorController.recommendationVC];
@@ -920,9 +949,9 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 	else if ([lastVgood isMultiple]) {  // ----------  MULTIPLE VGOOD ------------- //
 		// Initialize the Multiple vgood Controller with the list of options
 		NSArray *vgoodList = [Beintoo getLastGeneratedVGood].theGoodsList;
-
+        
 		[mainNavigatorController.multipleVgoodVC initWithNibName:@"BeintooMultipleVgoodVC" bundle:[NSBundle mainBundle] 
-							  andOptions:[NSDictionary dictionaryWithObjectsAndKeys:vgoodList,@"vgoodArray",/*self.popoverVgoodController,@"popoverController",*/nil]];
+                                                      andOptions:[NSDictionary dictionaryWithObjectsAndKeys:vgoodList,@"vgoodArray",/*self.popoverVgoodController,@"popoverController",*/nil]];
         if ([BeintooDevice isiPad]) {
             [iPadVgoodNavigatorController initWithRootViewController:mainNavigatorController.multipleVgoodVC];
         }
@@ -932,7 +961,8 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 	}
 	else {								// ----------  SINGLE VGOOD ------------- //
 		// Initialize the Single vgood Controller with the generated vgood
-		mainNavigatorController.singleVgoodVC.theVirtualGood = [Beintoo getLastGeneratedVGood];
+        
+        mainNavigatorController.singleVgoodVC.theVirtualGood = [Beintoo getLastGeneratedVGood];
         if ([BeintooDevice isiPad]) {
             [iPadVgoodNavigatorController initWithRootViewController:mainNavigatorController.singleVgoodVC];
         }
@@ -940,12 +970,18 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
             [mainNavigatorController initWithRootViewController:mainNavigatorController.singleVgoodVC];
         }
 	}
+    
+    BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
+	if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeWillAppear)]) {
+		[[_prizeView globalDelegate] beintooPrizeWillAppear];
+	}
 	
-	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeWillAppear)]) {
+    if ([_mainDelegate respondsToSelector:@selector(beintooPrizeWillAppear)]) {
 		[_mainDelegate beintooPrizeWillAppear];
-	}	
+	}
+    
 	
-    if (![BeintooDevice isiPad]) { // --- iPhone,iPod
+	if (![BeintooDevice isiPad]) { // --- iPhone,iPod
 		[mainNavigatorController prepareBeintooVgoodOrientation];
 		[[Beintoo getApplicationWindow] addSubview:mainNavigatorController.view];
 		[mainNavigatorController showVgoodNavigationController];
@@ -957,9 +993,19 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 		[[Beintoo getApplicationWindow] addSubview:_iPadController.view];
 		[_iPadController showVgoodPopoverWithVGoodController:iPadVgoodNavigatorController];
 	}
+    
+    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeDidAppear)]) {
+		[[_prizeView globalDelegate] beintooPrizeDidAppear];
+	}
 }
 
 - (void)userDidTapOnClosePrize{
+    
+    BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
+    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeAlertWillDisappear)]) {
+		[[_prizeView globalDelegate] beintooPrizeAlertWillDisappear];
+	}
+    
 	BVirtualGood *lastVgood = [Beintoo getLastGeneratedVGood];
 	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
 	if ([lastVgood isMultiple]) {
@@ -971,11 +1017,18 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 	}
 	[Beintoo sharedInstance]->mainController.view.alpha = 0;
 	
+    
+    
+	if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeAlertDidDisappear)]) {
+		[[_prizeView globalDelegate] beintooPrizeAlertDidDisappear];
+	}
+    
 	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertDidDisappear)]) {
 		[_mainDelegate beintooPrizeAlertDidDisappear];
 	}
     
 }
+
 
 #pragma mark -
 #pragma mark MissionView Delegate

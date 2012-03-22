@@ -44,7 +44,7 @@
 	self.title = @"Beintoo";
 	
 	if (self.navigationItem != nil) {
-		UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+		UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
         [self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
         [barCloseBtn release];
 	}

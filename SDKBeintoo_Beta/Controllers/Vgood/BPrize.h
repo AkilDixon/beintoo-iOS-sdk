@@ -39,10 +39,13 @@
 	
 	NSString		*transitionEnterSubtype;
 	NSString		*transitionExitSubtype;
-	
+	BOOL            isVisible;
 	int				prizeType;
 	
 	id <BeintooPrizeDelegate> delegate;
+    id <BeintooPrizeDelegate> globalDelegate;
+    
+    CGSize windowSizeRect;
 }
 
 @property(nonatomic,retain) UIImageView *beintooLogo;
@@ -51,23 +54,42 @@
 @property(nonatomic,retain) UILabel *textLabel;
 @property(nonatomic,retain) UILabel *detailedTextLabel;
 @property(nonatomic, assign) id <BeintooPrizeDelegate> delegate;
+@property(nonatomic, assign) id <BeintooPrizeDelegate> globalDelegate;
 @property(nonatomic) int prizeType;
+@property(nonatomic, assign) BOOL isVisible;
 
 - (void)setThumbnail:(NSData *)imgData;
 - (void)removeViews;
 - (void)show;
+- (void)showWithAlphaAnimation;
 - (void)drawPrize;
+- (void)drawPrize:(UIWebView *)_webView;
+- (void)showHtmlWithAlphaAnimation;
 - (void)setPrizeContentWithWindowSize:(CGSize)windowSize;
 - (void)preparePrizeAlertOrientation:(CGRect)startingFrame;
 
 - (void)userClickedOnWebView;
 - (void)userDidFailToClickOnWebView;
+
+
 @end
 
 @protocol BeintooPrizeDelegate <NSObject>
 
 @optional
--(void)userDidTapOnThePrize;
--(void)userDidTapOnClosePrize;
+
+- (void)userDidTapOnThePrize;
+- (void)userDidTapOnClosePrize;
+
+- (void)beintooPrizeWillAppear;
+- (void)beintooPrizeDidAppear;    
+- (void)beintooPrizeDidDisappear;
+- (void)beintooPrizeWillDisappear;
+
+- (void)beintooPrizeAlertWillAppear;
+- (void)beintooPrizeAlertDidAppear;    
+- (void)beintooPrizeAlertDidDisappear;
+- (void)beintooPrizeAlertWillDisappear;
+
 @end
 

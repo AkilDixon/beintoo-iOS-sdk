@@ -130,7 +130,7 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
     
-	// ----------- User service initialization ---------------
+    // ----------- User service initialization ---------------
 	_user           = [[BeintooUser alloc]init];
 	beintooPlayer   = [[BeintooPlayer alloc]init];
 	
@@ -439,7 +439,7 @@
             
             if(!homeTablePlayerAnimationPerformed){
                 CGRect currentFrame = homeTable.frame;
-                homeTable.frame = CGRectMake(currentFrame.origin.x, currentFrame.origin.y+77, currentFrame.size.width, currentFrame.size.height-70);
+                homeTable.frame = CGRectMake(currentFrame.origin.x, currentFrame.origin.y+77, currentFrame.size.width, currentFrame.size.height-77);
                 homeTablePlayerAnimationPerformed = YES;
             }
         }
@@ -457,7 +457,7 @@
                 
                 if(homeTablePlayerAnimationPerformed){
                     CGRect currentFrame = homeTable.frame;
-                    homeTable.frame = CGRectMake(currentFrame.origin.x, currentFrame.origin.y-77, currentFrame.size.width, currentFrame.size.height+70);
+                    homeTable.frame = CGRectMake(currentFrame.origin.x, currentFrame.origin.y-77, currentFrame.size.width, currentFrame.size.height+77);
                     homeTablePlayerAnimationPerformed = NO;
                 }
             }
@@ -476,8 +476,6 @@
 
 - (void)handleNotificationSingleTap:(UITapGestureRecognizer *)sender{
 
-    //NSLog(@"BEINTOO APP OREINT %i", [Beintoo appOrientation]);
-    
     beintooNotificationListVC   = [[BeintooNotificationListVC alloc] init];    
     notificationNavController = [[UINavigationController alloc] initWithRootViewController:beintooNotificationListVC];
     
@@ -503,9 +501,19 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [self.featuresArray count];
 }
+
+- (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    return 38;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    return notificationView;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	NSString *CellIdentifier = [NSString stringWithFormat:@"Cell%d",indexPath.row];
 
@@ -630,7 +638,8 @@
         [BLoadingView stopActivity]; 
         if([BeintooDevice isiPad]){ // --- iPad, we need to show the "Login Popover"
             [Beintoo launchIpadLogin];
-        }else {
+        }
+        else if ([BeintooNetwork connectedToNetwork]){
             [self presentModalViewController:self.loginNavController animated:YES];
         }
         isAlreadyLogging = NO;
@@ -640,8 +649,7 @@
 
 - (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result{
 	@try {
-        NSLog(@"result %@",result);
-		if ([result objectForKey:@"user"]!=nil) {
+        if ([result objectForKey:@"user"]!=nil) {
 			[Beintoo setBeintooPlayer:result];
 			userNick.text  = [[Beintoo getUserIfLogged]objectForKey:@"nickname"];
 			bedollars.text = [NSString stringWithFormat:@"%.2f Bedollars",[[[Beintoo getUserIfLogged] objectForKey:@"bedollars"] floatValue]];

@@ -497,15 +497,22 @@
     captionLabel.adjustsFontSizeToFitWidth = YES;
     
     if (kind == 0) {
-        msg = [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsg",@"BeintooLocalizable",@""),lastSubmittedScore];
+        if ([lastSubmittedScore floatValue] == 1)
+            msg = [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsgSinglePoint",@"BeintooLocalizable",@""),lastSubmittedScore];
+        else 
+            msg = [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsg",@"BeintooLocalizable",@""),lastSubmittedScore];
         
         [[NSUserDefaults standardUserDefaults] setInteger:i + 1 forKey:@"submitScoreCount"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
 	else {
         if ([Beintoo isVirtualCurrencyStored]){
-             
-            msg = [NSString stringWithFormat:@"%@ %@",[NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsg",@"BeintooLocalizable",@""),lastSubmittedScore], [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMarketplaceMsg", @"BeintooLocalizable", nil), [Beintoo getVirtualCurrencyBalance], [Beintoo getVirtualCurrencyName]]];
+            
+            if ([lastSubmittedScore floatValue] == 1)
+                msg = [NSString stringWithFormat:@"%@ %@",[NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsgSinglePoint",@"BeintooLocalizable",@""), lastSubmittedScore], [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMarketplaceMsg", @"BeintooLocalizable", nil), [Beintoo getVirtualCurrencyBalance], [Beintoo getVirtualCurrencyName]]];
+            else 
+                msg = [NSString stringWithFormat:@"%@ %@",[NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsg",@"BeintooLocalizable",@""),lastSubmittedScore], [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMarketplaceMsg", @"BeintooLocalizable", nil), [Beintoo getVirtualCurrencyBalance], [Beintoo getVirtualCurrencyName]]];
+            
             CGSize expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:UILineBreakModeWordWrap];
             captionLabel.frame              = CGRectMake(45, 2, [self bounds].size.width-50, expectedSize.height);
             captionLabel.numberOfLines      = 0;
@@ -514,29 +521,29 @@
         }
         else {
             if (![Beintoo isUserLogged]){
-                msg = [NSString stringWithFormat:@"%@ %@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsg",@"BeintooLocalizable",@""),lastSubmittedScore], NSLocalizedStringFromTable(@"submitScoreMarketplacePlayer", @"BeintooLocalizable", nil)];
+                
+                if ([lastSubmittedScore floatValue] == 1)
+                    msg = [NSString stringWithFormat:@"%@ %@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsgSinglePoint",@"BeintooLocalizable",@""),lastSubmittedScore], NSLocalizedStringFromTable(@"submitScoreMarketplacePlayer", @"BeintooLocalizable", nil)];
+                else 
+                    msg = [NSString stringWithFormat:@"%@ %@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsg",@"BeintooLocalizable",@""),lastSubmittedScore], NSLocalizedStringFromTable(@"submitScoreMarketplacePlayer", @"BeintooLocalizable", nil)];
+                
+                
                 CGSize expectedSize = [msg sizeWithFont:captionLabel.font constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:UILineBreakModeWordWrap];
                 captionLabel.frame          = CGRectMake(45, 3, [self bounds].size.width-50, expectedSize.height);
                 captionLabel.numberOfLines  = 0;
             }
             else {
-                msg = [NSString stringWithFormat:@"%@ %@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsg",@"BeintooLocalizable",@""),lastSubmittedScore], [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMarketplaceMsg", @"BeintooLocalizable", nil), [[[Beintoo getUserIfLogged] objectForKey:@"bedollars"] floatValue], NSLocalizedStringFromTable(@"bedollars", @"BeintooLocalizable", nil)]];
+                if ([lastSubmittedScore floatValue] == 1)
+                    msg = [NSString stringWithFormat:@"%@ %@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsgSinglePoint",@"BeintooLocalizable",@""),lastSubmittedScore], [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMarketplaceMsg", @"BeintooLocalizable", nil), [[[Beintoo getUserIfLogged] objectForKey:@"bedollars"] floatValue], NSLocalizedStringFromTable(@"bedollars", @"BeintooLocalizable", nil)]];
+                else 
+                    msg = [NSString stringWithFormat:@"%@ %@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsg",@"BeintooLocalizable",@""),lastSubmittedScore], [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMarketplaceMsg", @"BeintooLocalizable", nil), [[[Beintoo getUserIfLogged] objectForKey:@"bedollars"] floatValue], NSLocalizedStringFromTable(@"bedollars", @"BeintooLocalizable", nil)]];
+                
                 CGSize expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:UILineBreakModeWordWrap];
                 captionLabel.frame          = CGRectMake(45, 2, [self bounds].size.width-50, expectedSize.height);
                 captionLabel.numberOfLines  = 0;
                 captionLabel.font           = [UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0];
-            } 
+            }
         }
-        
-        if ([BeintooDevice isiPad]){
-            captionLabel                    = [[UILabel alloc] initWithFrame:CGRectMake(45, 5, [self bounds].size.width-50, 20)];
-            captionLabel.backgroundColor    = [UIColor clearColor];
-            captionLabel.textColor          = [UIColor whiteColor];
-            captionLabel.textAlignment      = UITextAlignmentLeft;
-            captionLabel.font               = [UIFont fontWithName:@"TrebuchetMS-Bold" size:13.0];
-            captionLabel.adjustsFontSizeToFitWidth = YES;
-        }
-        
         [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"submitScoreCount"];
         [[NSUserDefaults standardUserDefaults] synchronize];
 	}

@@ -35,9 +35,6 @@
     //* SampleBeintoo buttons customization
 	[self buttonsCustomization];
     
-    
-    [Beintoo playerLogout];
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -144,6 +141,7 @@
 	 * This function must be called every time the developer wants to deliver a virtual good to the user. 
 	 * Note that not always a virtual good will be generated from Beintoo. Wait for the generation response from 
 	 * the delegate  */
+    [BeintooVgood setVgoodDelegate:self];
 	[BeintooVgood getMultipleVirtualGood];
     
 }
@@ -273,7 +271,47 @@
 }
 
 - (void)didBeintooFailToGenerateAVirtualGoodWithError:(NSString *)error{
-	NSLog(@"Vgood generation error from user delegate: %@",error);
+	NSLog(@"Main View Controller --- Vgood generation error from user delegate: %@",error);
+}
+
+- (void)beintooPrizeWillAppear{
+    NSLog(@"Main View Controller --- Prize will Appear"); 
+}
+
+- (void)beintooPrizeDidAppear{
+    NSLog(@"Main View Controller --- Prize did Appear");
+}
+
+- (void)beintooPrizeWillDisappear{
+    NSLog(@"Main View Controller --- Prize will Disappear");
+}
+
+- (void)beintooPrizeDidDisappear{
+    NSLog(@"Main View Controller --- Prize did Disappear");
+}
+
+- (void)beintooPrizeAlertWillAppear{
+    NSLog(@"Main View Controller --- Prize alert will Appear");
+}
+
+- (void)beintooPrizeAlertDidDisappear{
+    NSLog(@"Main View Controller --- Prize alert did Disappear");
+}
+
+- (void)beintooPrizeAlertWillDisappear{
+    NSLog(@"Main View Controller --- Prize alert will Disappear");
+}
+
+- (void)beintooPrizeAlertDidAppear{
+    NSLog(@"Main View Controller --- Prize alert did Appear");
+}
+
+- (void)userDidTapOnClosePrize{
+    NSLog(@"Main View Controller --- Tapped on close Prize");
+}
+
+- (void)userDidTapOnThePrize{
+    NSLog(@"Main View Controller --- Tapped on Prize");
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

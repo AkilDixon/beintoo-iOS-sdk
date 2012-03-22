@@ -36,6 +36,10 @@
 	return [[UIDevice currentDevice] uniqueDeviceIdentifier];
 }
 
++ (NSString *)getMacAddress{
+	return [[UIDevice currentDevice] _getMacAddress];
+}
+
 + (NSString *)getISOLanguage{
 	NSString   *language = [[NSLocale preferredLanguages] objectAtIndex:0];
 	if ([language length]==2) {

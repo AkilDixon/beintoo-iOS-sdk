@@ -60,6 +60,7 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (void)_launchWalletOnApp;
 + (void)_launchLeaderboardOnApp;
 + (void)_launchPrizeOnApp;
++ (void)_launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate;
 + (void)_launchMissionOnApp;
 + (void)_launchIpadLogin;
 + (void)_dismissIpadLogin;

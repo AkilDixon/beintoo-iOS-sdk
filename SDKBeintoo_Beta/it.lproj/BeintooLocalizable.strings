@@ -332,7 +332,8 @@
 "missiondownloadnow"    = "Scarica ora";
 
 // AlertMessages
-"submitScoreMsg"		= "Hai guadagnato %@ punto(i).";
+"submitScoreMsg"		= "Hai guadagnato %@ punti.";
+"submitScoreMsgSinglePoint"		= "Hai guadagnato %@ punto.";
 "unlockAchievMsg"		= "Achievement sbloccato!";
 "playerLoginMsg"        = "Welcome back %@";
 "useralreadyregistered" = "Indirizzo email già presente. Utilizzarne uno diverso.";

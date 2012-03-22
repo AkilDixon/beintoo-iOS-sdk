@@ -330,7 +330,8 @@
 "missiondownloadnow"    = "Télécharger maintenant";
 
 // AlertMessages
-"submitScoreMsg"		= "Vous avez gagné %@ point(s).";  
+"submitScoreMsg"		= "Vous avez gagné %@ points.";  
+"submitScoreMsgSinglePoint"		= "Vous avez gagné %@ point.";
 "unlockAchievMsg"		= "Achèvement atteint!";
 "playerLoginMsg"        = "Bienvenue %@";
 "useralreadyregistered" = "Un utilisateur est déjà enregistré avec cet email.";

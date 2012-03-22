@@ -89,6 +89,10 @@ NSString *BNSDefIsUserLogged;
 	[Beintoo _launchPrizeOnApp];
 }
 
++ (void)launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate{
+    [Beintoo _launchPrizeOnAppWithDelegate:_beintooPrizeDelegate];
+}
+
 + (void)launchMission{
     [Beintoo _launchMissionOnApp];
 }
@@ -124,7 +128,7 @@ NSString *BNSDefIsUserLogged;
 }
 								
 + (NSString *)currentVersion{
-	return @"2.8.11beta-ios";
+	return @"2.8.13beta-ios";
 }
 
 + (NSInteger)notificationPosition{
@@ -345,6 +349,11 @@ NSString *BNSDefIsUserLogged;
 + (void)changeBeintooOrientation:(int)_orientation{
 	if ([Beintoo isBeintooInitialized]) {
 		[Beintoo setAppOrientation:_orientation];
+        
+        BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
+        if (_prizeView.alpha == 1){
+            [_prizeView preparePrizeAlertOrientation:_prizeView.frame];
+        }
 	}
 }
 
