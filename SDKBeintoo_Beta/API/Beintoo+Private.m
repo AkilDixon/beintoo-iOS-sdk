@@ -715,8 +715,13 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 
 + (void)_dismissPrize{
 	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-
+    
     [Beintoo manageStatusBarOnDismiss];
+    
+    BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
+    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeWillDisappear)]) {
+		[[_prizeView globalDelegate] beintooPrizeWillDisappear];
+	}
     
 	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeWillDisappear)]) {
 		[_mainDelegate beintooPrizeWillDisappear];
@@ -731,7 +736,11 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
 		[_iPadController.vgoodPopoverController dismissPopoverAnimated:NO];
 		[_iPadController hideVgoodPopover];
-     
+        
+	}
+    
+    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeDidDisappear)]) {
+		[[_prizeView globalDelegate] beintooPrizeDidDisappear];
 	}
 }
 
