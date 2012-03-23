@@ -391,7 +391,7 @@
     rightLabelBuyButton.adjustsFontSizeToFitWidth = YES;
     [buyButton addSubview:rightLabelBuyButton];
     
-    UIImageView *buyButtonImageView     = [[UIImageView alloc] initWithFrame:CGRectMake(278, 13, 20, 20)];
+    UIImageView *buyButtonImageView     = [[UIImageView alloc] initWithFrame:CGRectMake(278, 12.8, 20, 20)];
     buyButtonImageView.backgroundColor  = [UIColor clearColor];
     buyButtonImageView.contentMode      = UIViewContentModeScaleAspectFit;
     [buyButton addSubview:buyButtonImageView];
@@ -417,7 +417,7 @@
     [sendButton addSubview:rightLabelSendButton];
     
     
-    UIImageView *sendButtonImageView    = [[UIImageView alloc] initWithFrame:CGRectMake(278, 13, 20, 20)];
+    UIImageView *sendButtonImageView    = [[UIImageView alloc] initWithFrame:CGRectMake(278, 12.8, 20, 20)];
     sendButtonImageView.backgroundColor = [UIColor clearColor];
     sendButtonImageView.contentMode     = UIViewContentModeScaleAspectFit;
     [sendButton addSubview:sendButtonImageView];

@@ -1752,7 +1752,7 @@
                         
                     }
                      costLabel.frame = CGRectMake(56/2 - size.width/2, costLabel.frame.origin.y + 0.3, size.width, 14);
-                     sendButtonImageView.frame = CGRectMake(costLabel.frame.origin.x + costLabel.frame.size.width - 1.5, sendButtonImageView.frame.origin.y + 0.5, sendButtonImageView.frame.size.width, sendButtonImageView.frame.size.height);
+                     sendButtonImageView.frame = CGRectMake(costLabel.frame.origin.x + costLabel.frame.size.width - 1.5, sendButtonImageView.frame.origin.y + 0.2, sendButtonImageView.frame.size.width, sendButtonImageView.frame.size.height);
                  }
                  
                  costLabel.backgroundColor              = [UIColor clearColor];
