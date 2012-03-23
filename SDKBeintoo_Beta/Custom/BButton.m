@@ -185,6 +185,15 @@
 }
 
 - (void)dealloc {
+    [_highColor release];
+    [_rollHighColor release];
+    [_lowColor release];
+    [_rollLowColor release];
+    [_mediumLowColor release];
+    [_rollMediumLowColor release];
+    [_mediumHighColor release]; 
+    [_rollMediumHighColor release];
+    [textSize release];
     [gradientLayer release];
     [super dealloc];
 }

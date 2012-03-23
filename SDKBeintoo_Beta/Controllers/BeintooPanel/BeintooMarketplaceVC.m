@@ -336,8 +336,6 @@
 #pragma mark - Beintoo delegates
 
 - (void)didMarketplaceGotContent:(NSMutableArray *)result{
-    //NSLog(@"result %@", result);
-    
     if (isNewSearch == YES){
         [marketplaceContent removeAllObjects];
         [marketplaceImages removeAllObjects];
@@ -364,13 +362,6 @@
             
             [buttonsArray addObject:@"Hidden"];
             [marketplaceContent addObject:[result objectAtIndex:i]];
-            
-            /*BImageDownload *download        = [[[BImageDownload alloc] init] autorelease];
-            download.delegate               = self;
-            download.urlString              = [[result objectAtIndex:i] objectForKey:@"imageSmallUrl"];
-            [marketplaceImages addObject:download];
-            [marketplaceContent addObject:[result objectAtIndex:i]];
-            [buttonsArray addObject:@"Hidden"];*/
         }
     }
     @catch (NSException *exception) {
@@ -404,11 +395,6 @@
     //[self performSelector:@selector(dataSourceLoadingError) withObject:nil afterDelay:1.0f];
     
     @try {
-        /*for (UIView *view in self.view.subviews){
-            if ([view isKindOfClass:[BLoadingView class]] == YES){
-                [view removeFromSuperview];
-            }
-        }*/
         [BLoadingView stopActivity];
     }
     @catch (NSException *exception) {
@@ -438,10 +424,6 @@
                 [marketplaceImages addObject:download];
                 
             }
-            /*BImageDownload *download        = [[[BImageDownload alloc] init] autorelease];
-            download.delegate               = self;
-            download.urlString              = [NSString stringWithFormat:@"http://static.beintoo.com/sdk/marketplace_categories/%@.png", [[result objectAtIndex:i] objectForKey:@"id"]];
-            [marketplaceImages addObject:download];*/
             [marketplaceContent addObject:[result objectAtIndex:i]];
             [buttonsArray addObject:@"no"];
         }
@@ -1605,14 +1587,11 @@
              
              
              UIImageView *imageViewItem = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 65, 65)];
-            // NSLog(@"content image %@", [marketplaceImages objectAtIndex:indexPath.row]);
              @try {
                  if ([[marketplaceImages objectAtIndex:indexPath.row] isKindOfClass:[NSString class]]){
-                     //NSLog(@"----> Chached <----");
                      imageViewItem.image        = [UIImage imageWithContentsOfFile:[marketplaceImages objectAtIndex:indexPath.row]];
                  }
                  else {
-                     //NSLog(@"----> Not Chached <----");
                      BImageDownload *download   = [marketplaceImages objectAtIndex:indexPath.row];
                      imageViewItem.image        = download.image;
                      
@@ -1621,10 +1600,6 @@
              @catch (NSException * e) {
                  //NSLog(@"Exception on marketplace table view image imple");
              }
-             /*
-             BImageDownload *download   = [marketplaceImages objectAtIndex:indexPath.row];
-             imageViewItem.image        = download.image;
-              */
              imageViewItem.contentMode  = UIViewContentModeScaleAspectFit;
              imageViewItem.center       = CGPointMake(37, 37);
              [cell addSubview:imageViewItem];
@@ -1720,9 +1695,9 @@
                          
                      }
                      else {
-                         //Bottoni disattivati
-                           costLabel.textColor          = [UIColor grayColor];
-                           currencyLabel.textColor      = [UIColor grayColor];
+                        //Bottoni disattivati
+                        costLabel.textColor          = [UIColor grayColor];
+                        currencyLabel.textColor      = [UIColor grayColor];
                         [button setHighColor:[UIColor colorWithWhite:0.80f alpha:1] andRollover:[UIColor colorWithWhite:0.80f alpha:1]];
                         [button setMediumHighColor:[UIColor colorWithWhite:0.80f alpha:1] andRollover:[UIColor colorWithWhite:0.80f alpha:1]];
                         [button setMediumLowColor:[UIColor colorWithWhite:0.80f alpha:1] andRollover:[UIColor colorWithWhite:0.80f alpha:1]];
@@ -1742,6 +1717,8 @@
                      currency                       = [NSString stringWithFormat:@""];
                      sendButtonImageView.hidden     = NO;
                      sendButtonImageView.frame = CGRectMake(button.frame.size.width - 23, (button.frame.size.height/2) - 8.8, 17, 17);
+                     
+                     CGSize size = [[NSString stringWithFormat:@"%@", [[marketplaceContent objectAtIndex:indexPath.row] objectForKey:@"bedollars"]] sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(60, 14)];
                      
                      if ([[[Beintoo getUserIfLogged] objectForKey:@"bedollars"] floatValue] >= [[[marketplaceContent objectAtIndex:indexPath.row] objectForKey:@"bedollars"] floatValue] || ![Beintoo isUserLogged]){
                          
@@ -1773,15 +1750,15 @@
                          costLabel.shadowColor                  = [UIColor colorWithWhite:1.0 alpha:1.0];
                          costLabel.shadowOffset                 = CGSizeMake(0, -1);
                         
-
-                     }
+                    }
+                     costLabel.frame = CGRectMake(56/2 - size.width/2, costLabel.frame.origin.y + 0.3, size.width, 14);
+                     sendButtonImageView.frame = CGRectMake(costLabel.frame.origin.x + costLabel.frame.size.width - 1.5, sendButtonImageView.frame.origin.y + 0.5, sendButtonImageView.frame.size.width, sendButtonImageView.frame.size.height);
                  }
                  
                  costLabel.backgroundColor              = [UIColor clearColor];
                  costLabel.text                         = cost;
                  costLabel.textAlignment                = UITextAlignmentCenter;
                  costLabel.font                         = [UIFont boldSystemFontOfSize:14.0f];
-                 
                  
                  [button addSubview:costLabel];
                  [costLabel release];
@@ -1791,7 +1768,6 @@
                  currencyLabel.textAlignment            = UITextAlignmentCenter;
                  currencyLabel.font                     = [UIFont boldSystemFontOfSize:12.0f];
                  currencyLabel.numberOfLines            = 0;
-                 
                  
                  [button addSubview:currencyLabel];
                  [currencyLabel release];
@@ -1832,10 +1808,7 @@
                  
                  [button release];
                  [buttonHidden release];
-                 
-                 
              }
-            
          }
     }
 	@catch (NSException * e) {
@@ -1870,15 +1843,12 @@
             if (indexPath.row == totalRows){
                 isNewSearch = NO;
                 [activity startAnimating];
-               /* NSLog(@"currend kind %@", currentKind);
-                NSLog(@"currend sorting %@", currentSorting);*/
                 [_marketplace getMarketplaceContentForKind:currentKind andStart:totalRows andNumberOfRows:TOTAL_ROWS_INCREMENT andSorting:currentSorting];
             }
             else {
             
                 needsToReloadData = YES;
                 marketplaceSelectedItemVC   =   [[BeintooMarketplaceSelectedItemVC alloc] initWithNibName:@"BeintooMarketplaceSelectedItemVC" bundle:[NSBundle mainBundle]];
-                
                 marketplaceSelectedItemVC.selectedVgood = [marketplaceContent objectAtIndex:indexPath.row];
                 marketplaceSelectedItemVC.caller = @"MarketplaceList";
                 marketplaceSelectedItemVC.callerIstance = self;
@@ -1886,7 +1856,6 @@
                 
                 [marketplaceSelectedItemVC release];
                 marketplaceSelectedItemVC = nil;
-                
             }
         }
     }

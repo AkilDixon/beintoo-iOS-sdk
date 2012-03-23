@@ -61,9 +61,7 @@
 		}
 	}
     
-    
-    
-	prizeType = _prizeType;
+    prizeType = _prizeType;
 	
 	[self setFrame:vgoodFrame];
     

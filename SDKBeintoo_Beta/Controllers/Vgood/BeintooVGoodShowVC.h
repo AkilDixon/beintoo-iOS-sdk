@@ -42,6 +42,7 @@
 
 - (void)setIsFromWallet:(BOOL)value;
 - (UIButton *)closeButton;
+-(void)closeBeintoo;
 
 @property (nonatomic, retain) NSString *urlToOpen;
 @property (nonatomic, retain) NSString *caller;

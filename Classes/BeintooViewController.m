@@ -142,19 +142,20 @@
 	 * Note that not always a virtual good will be generated from Beintoo. Wait for the generation response from 
 	 * the delegate  */
     [BeintooVgood setVgoodDelegate:self];
-	[BeintooVgood getMultipleVirtualGood];
+	[BeintooVgood getSingleVirtualGood];
     
 }
 
 - (IBAction)submitAchievement{
 	[BeintooAchievements setAchievementDelegate:self];
 	// These are all possible ways to submit an achievement progress
-	//[BeintooAchievements setAchievement:@"2a27d7032cba8f6fb68c4ba18503c3eb" withScore:10];
-	//[BeintooAchievements setAchievement:@"2a27d7032cba8f6fb68c4ba18503c3eb" withPercentage:50];
-	//[BeintooAchievements incrementAchievement:@"w234567" withScore:5];
-    [BeintooAchievements resetAllLocallyAchievementsUnlocked]; 
-    [BeintooAchievements unlockAchievement:@"w234567"];
+	//[BeintooAchievements setAchievement:@"123456789" withScore:10];
+	//[BeintooAchievements setAchievement:@"123456789" withPercentage:50];
+	//[BeintooAchievements incrementAchievement:@"123456789" withScore:5];
+    [BeintooAchievements unlockAchievement:@"123456789"];
+    
 }
+
 - (IBAction)playerLogout{
 	[Beintoo playerLogout];
     [self manageLocation];
@@ -259,6 +260,12 @@
 }
 - (void)didFailToSubmitAchievementWithError:(NSString *)error{
 	NSLog(@"Beintoo: achievement submit error: %@",error);
+}
+
+- (void)didGetAllUserAchievementsWithResult:(NSArray *)result{
+    NSLog(@"Beintoo: achievement list: %@", result);
+    
+
 }
 
 - (void)didBeintooGenerateAVirtualGood:(BVirtualGood *)theVgood{

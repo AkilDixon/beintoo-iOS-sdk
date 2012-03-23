@@ -27,7 +27,6 @@
     if (self) {
 		registrationFBVC = [[BeintooSigninFacebookVC alloc] initWithNibName:@"BeintooSigninFacebookVC" bundle:[NSBundle mainBundle]];
 		registrationVC	 = [[BeintooSigninVC alloc] initWithNibName:@"BeintooSigninVC" bundle:[NSBundle mainBundle]];
-		self.userImages   = [[NSMutableArray alloc]init];
     }
     return self;
 }
@@ -40,14 +39,15 @@
 	[loginView setTopHeight:53.0];
 	[loginView setBodyHeight:375.0];
 	
-	_player = [[BeintooPlayer alloc] init];
-	_player.delegate = self;
+	_player             = [[BeintooPlayer alloc] init];
+	_player.delegate    = self;
 	
-	self.retrievedUsers = [[NSArray alloc]init];
-
-	useAnotherBtnLabel.text = NSLocalizedStringFromTable(@"useAnotherAccount",@"BeintooLocalizable",@"Use another account");
-	titleLabel1.text = NSLocalizedStringFromTable(@"wehavefound",@"BeintooLocalizable",@"We have found multiple Beintoo players");
-	titleLabel2.text = NSLocalizedStringFromTable(@"selectwhich",@"BeintooLocalizable",@"Select which one to use,");
+	retrievedUsers      = [[NSArray alloc] init];
+    userImages          = [[NSMutableArray alloc] init];
+	
+    useAnotherBtnLabel.text = NSLocalizedStringFromTable(@"useAnotherAccount",@"BeintooLocalizable",@"Use another account");
+	titleLabel1.text        = NSLocalizedStringFromTable(@"wehavefound",@"BeintooLocalizable",@"We have found multiple Beintoo players");
+	titleLabel2.text        = NSLocalizedStringFromTable(@"selectwhich",@"BeintooLocalizable",@"Select which one to use,");
 	
 	[anotherPlayerButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
 	[anotherPlayerButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
@@ -76,28 +76,26 @@
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
     }
-	self.retrievedUsers = [[Beintoo getLastLoggedPlayers] retain];	
+	retrievedUsers = [[Beintoo getLastLoggedPlayers] retain];	
 	
-	if ([self.retrievedUsers count]<1) { // -- no already logged users found. Proceeding to registration.
+	if ([retrievedUsers count]<1) { // -- no already logged users found. Proceeding to registration.
         [self.navigationController pushViewController:registrationVC animated:NO];
 	}else{
-		[self.userImages removeAllObjects];
-		for (int i=0; i<[self.retrievedUsers count]; i++) {
+		[userImages removeAllObjects];
+		for (int i = 0; i < [self.retrievedUsers count]; i++) {
 			@try {
-                if ([self.retrievedUsers isKindOfClass:[NSDictionary class]]) {
+                if ([retrievedUsers isKindOfClass:[NSDictionary class]]) {
                     NSLog(@"Beintoo ERROR: %@",[(NSDictionary *)self.retrievedUsers objectForKey:@"message"]);
                     return;
                 }
-				NSDictionary *user = [self.retrievedUsers objectAtIndex:i];	
+				NSDictionary *user = [retrievedUsers objectAtIndex:i];	
 				BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
 				download.delegate = self;
 				download.urlString = [user objectForKey:@"usersmallimg"];
-				
-
-				[self.userImages addObject:download];
+				[userImages addObject:download];
 			}
 			@catch (NSException * e) {
-				NSLog(@"BeintooException: %@ \n for object: %@",e,[self.retrievedUsers objectAtIndex:i]);
+				NSLog(@"BeintooException: %@ \n for object: %@", e, [retrievedUsers objectAtIndex:i]);
 			}
 		}
 		[retrievedPlayersTable reloadData];		
@@ -120,8 +118,7 @@
     return 1;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    //return [[[BeintooApp sharedInstance] getRetrievedPlayers] count];
-	return [self.retrievedUsers count];
+    return [retrievedUsers count];
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	static NSString *CellIdentifier = @"Cell";
@@ -131,13 +128,13 @@
     if (cell == nil || TRUE) {
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
     }
-    if ([self.retrievedUsers isKindOfClass:[NSDictionary class]]) {
+    if ([retrievedUsers isKindOfClass:[NSDictionary class]]) {
         return cell;
     }
-	NSDictionary *user = [self.retrievedUsers objectAtIndex:indexPath.row];
+	NSDictionary *user = [retrievedUsers objectAtIndex:indexPath.row];
 
 	@try {
-		BImageDownload *download = [self.userImages objectAtIndex:indexPath.row];
+		BImageDownload *download = [userImages objectAtIndex:indexPath.row];
 		UIImage *cellImage  = download.image;
 
 		cell.textLabel.text				= [user objectForKey:@"nickname"];
@@ -153,7 +150,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 		
-	NSDictionary *user	= [self.retrievedUsers objectAtIndex:indexPath.row];	
+	NSDictionary *user	= [retrievedUsers objectAtIndex:indexPath.row];	
 	NSString *userID	= [user objectForKey:@"id"];
 	
 	[BLoadingView startActivity:self.view];
@@ -222,7 +219,7 @@
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
 - (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
-    NSUInteger index = [self.userImages indexOfObject:download]; 
+    NSUInteger index = [userImages indexOfObject:download]; 
     NSUInteger indices[] = {0, index};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
 	[retrievedPlayersTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
@@ -289,9 +286,9 @@
 - (void)dealloc {
 	[registrationFBVC release];
 	[registrationVC release];
-	[self.userImages release];
+	[userImages release];
 	[_player release];
-	[self.retrievedUsers release];
+	[retrievedUsers release];
     [super dealloc];
 }
 

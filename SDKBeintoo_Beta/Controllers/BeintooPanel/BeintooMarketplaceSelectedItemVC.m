@@ -86,6 +86,8 @@
      _beintooShowVgood               = [[BeintooVGoodShowVC alloc] initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle]];
     friendsListVC                   = [[BeintooFriendsListVC alloc] initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle]];
     
+    _beintooShowVgood.caller = @"MarketplaceSelectedCoupon";
+    
     [mainView setTopHeight:33.0f];
     [mainView setBodyHeight:416.0f];
     
@@ -166,12 +168,6 @@
     [rateButton addSubview:vi];
     [vi release];
     
-    /*vi                    = [[UIImageView alloc] initWithFrame:CGRectMake(15.5, 4, 20, 20)];
-    vi.image                = [UIImage imageNamed:@"fan.png"];
-    vi.contentMode          = UIViewContentModeScaleAspectFit;
-    [mapButton addSubview:vi];
-    [vi release];*/
-    
     UILabel *mapLabel           = [[UILabel alloc] initWithFrame:CGRectMake(6, 6, 40, 18)];
     mapLabel.backgroundColor    = [UIColor clearColor];
     mapLabel.textAlignment      = UITextAlignmentCenter;
@@ -181,23 +177,7 @@
     
     [mapButton addSubview:mapLabel];
     [mapLabel release];
-    
-    /*rateView.tag = 9999;
-    
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGesture:)];
-    tapGesture.numberOfTapsRequired = 1;
-    [rateView addGestureRecognizer:tapGesture];
-    [tapGesture release];*/
-
 }
-
-/*
-- (void)tapGesture:(UITapGestureRecognizer *)sender
-{   
-    [self closeDialog:nil];
-}
- */
-
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
@@ -299,8 +279,6 @@
     bigTitleLabel.text              = [selectedVgood objectForKey:@"name"];
     descriptionLabel.text           = [selectedVgood objectForKey:@"description"]; 
     
-    //NSLog(@"usrLocation %@", [Beintoo getUserLocation]);
-    
     CGSize result           = [[selectedVgood objectForKey:@"name"] sizeWithFont:[UIFont systemFontOfSize:15] constrainedToSize:CGSizeMake(self.view.frame.size.width - 20, 40) lineBreakMode:UILineBreakModeWordWrap];
     
     int delta;
@@ -397,7 +375,7 @@
     }
     
     //-------> Buy Button Labels and Image
-    UILabel *leftLabelBuyButton         = [[UILabel alloc] initWithFrame:CGRectMake(10, 12, 140, 20)];
+    UILabel *leftLabelBuyButton         = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 140, 24)];
     leftLabelBuyButton.backgroundColor  = [UIColor clearColor];
     leftLabelBuyButton.textAlignment    = UITextAlignmentLeft;
     leftLabelBuyButton.font             = [UIFont systemFontOfSize:17];
@@ -405,7 +383,7 @@
     leftLabelBuyButton.adjustsFontSizeToFitWidth = YES;
     [buyButton addSubview:leftLabelBuyButton];
     
-    UILabel *rightLabelBuyButton        = [[UILabel alloc] initWithFrame:CGRectMake(140, 13, 140, 20)];
+    UILabel *rightLabelBuyButton        = [[UILabel alloc] initWithFrame:CGRectMake(140, 10, 140, 24)];
     rightLabelBuyButton.backgroundColor = [UIColor clearColor];
     rightLabelBuyButton.textAlignment   = UITextAlignmentRight;
     rightLabelBuyButton.textColor       = [UIColor whiteColor];
@@ -413,13 +391,13 @@
     rightLabelBuyButton.adjustsFontSizeToFitWidth = YES;
     [buyButton addSubview:rightLabelBuyButton];
     
-    UIImageView *buyButtonImageView     = [[UIImageView alloc] initWithFrame:CGRectMake(278, 12.1, 20, 20)];
+    UIImageView *buyButtonImageView     = [[UIImageView alloc] initWithFrame:CGRectMake(278, 13, 20, 20)];
     buyButtonImageView.backgroundColor  = [UIColor clearColor];
     buyButtonImageView.contentMode      = UIViewContentModeScaleAspectFit;
     [buyButton addSubview:buyButtonImageView];
     
     //-------> Send Button Labels and Image
-    UILabel *leftLabelSendButton        = [[UILabel alloc] initWithFrame:CGRectMake(10, 12, 140, 20)];
+    UILabel *leftLabelSendButton        = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 140, 24)];
     leftLabelSendButton.backgroundColor = [UIColor clearColor];
     leftLabelSendButton.textAlignment   = UITextAlignmentLeft;
     leftLabelSendButton.textColor       = [UIColor whiteColor];
@@ -429,7 +407,7 @@
     leftLabelSendButton.adjustsFontSizeToFitWidth = YES;
     [sendButton addSubview:leftLabelSendButton];
     
-    UILabel *rightLabelSendButton       = [[UILabel alloc] initWithFrame:CGRectMake(140, 13, 140, 20)];
+    UILabel *rightLabelSendButton       = [[UILabel alloc] initWithFrame:CGRectMake(140, 10, 140, 24)];
     rightLabelSendButton.backgroundColor = [UIColor clearColor];
     rightLabelSendButton.textAlignment  = UITextAlignmentRight;
     rightLabelSendButton.textColor      = [UIColor whiteColor];
@@ -439,7 +417,7 @@
     [sendButton addSubview:rightLabelSendButton];
     
     
-    UIImageView *sendButtonImageView    = [[UIImageView alloc] initWithFrame:CGRectMake(278, 12.1, 20, 20)];
+    UIImageView *sendButtonImageView    = [[UIImageView alloc] initWithFrame:CGRectMake(278, 13, 20, 20)];
     sendButtonImageView.backgroundColor = [UIColor clearColor];
     sendButtonImageView.contentMode     = UIViewContentModeScaleAspectFit;
     [sendButton addSubview:sendButtonImageView];

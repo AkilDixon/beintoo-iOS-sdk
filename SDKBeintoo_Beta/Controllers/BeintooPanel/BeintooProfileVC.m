@@ -471,9 +471,9 @@
 		lastLabel.font                  = labelFont;
 		lastLabel.textColor             = labelTextColor;
 		
-		totLabel.text                   = [NSString stringWithFormat:@"Tot: %@", [scoresForThisSection objectAtIndex:0]];
-		bestLabel.text                  = [NSString stringWithFormat:@"%@ %@", NSLocalizedStringFromTable(@"best", @"BeintooLocalizable", nil), [scoresForThisSection objectAtIndex:1]];
-		lastLabel.text                  = [NSString stringWithFormat:@"%@ %@", NSLocalizedStringFromTable(@"last", @"BeintooLocalizable", nil),[scoresForThisSection objectAtIndex:2]];
+		totLabel.text                   = [NSString stringWithFormat:@"%@ %@", NSLocalizedStringFromTable(@"totalScore", @"BeintooLocalizable", nil), [scoresForThisSection objectAtIndex:0]];
+		bestLabel.text                  = [NSString stringWithFormat:@"%@ %@", NSLocalizedStringFromTable(@"bestScore", @"BeintooLocalizable", nil), [scoresForThisSection objectAtIndex:1]];
+		lastLabel.text                  = [NSString stringWithFormat:@"%@ %@", NSLocalizedStringFromTable(@"lastScore", @"BeintooLocalizable", nil),[scoresForThisSection objectAtIndex:2]];
         
         totLabel.adjustsFontSizeToFitWidth  = YES;
         bestLabel.adjustsFontSizeToFitWidth = YES;

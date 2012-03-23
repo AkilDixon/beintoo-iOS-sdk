@@ -71,13 +71,14 @@ static BImageCache *sharedInstance = nil;
         NSString *cachedFileDictionary = [currentpath stringByAppendingFormat:@"/%@",[self makeKeyFromUrl:url]];	
         NSData *cachedFile = [filemgr contentsAtPath:cachedFileDictionary]; 
         if (cachedFile != nil){
-            //NSLog(@"--> BeintooImageCache CHECK: File Exists And Doesn't Need To Be Updated");
+            [dateFormatter release];
             return YES;
         }
         else {
-            //NSLog(@"--> BeintooImageCache CHECK: File Doesn't Exist");
+            [dateFormatter release];
             return NO;
         }
+        [dateFormatter release];
     }
     @catch (NSException *exception) {
         NSLog(@"Exception on image cache file check: %@", exception);
@@ -95,20 +96,16 @@ static BImageCache *sharedInstance = nil;
         NSData *cachedFile = [filemgr contentsAtPath:cachedFileDictionary];
 
         if (cachedFile != nil){
-            //NSLog(@"--> BeintooImageCache GET: File Exists");
             return cachedFileDictionary;
         }
         else{
-            //NSLog(@"--> BeintooImageCache GET: File Doesn't Exist");
             return nil;
         }
-    
     }
     @catch (NSException *exception) {
         NSLog(@"Exception on image cache file check: %@", exception);
     }
 
-    //NSLog(@"--> BeintooImageCache GET: File Doesn't Exist");
     return nil;
 }
 
@@ -126,36 +123,34 @@ static BImageCache *sharedInstance = nil;
         
         NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
         [attributes setObject:currDate forKey:NSFileCreationDate];  
-        //NSString *curr = [currentpath stringByAppendingString:cachedFileDictionary];
+        
         NSDictionary *cachedFileAttributes = [filemgr attributesOfItemAtPath:cachedFileDictionary error:NULL];
         NSDate *cacheFileCreationDate = [cachedFileAttributes objectForKey:NSFileCreationDate];
         
         int timeInterval = [currDate timeIntervalSinceDate:cacheFileCreationDate];
         
         if (timeInterval > 3600 * 24 * 7 || cachedFile == nil){
-            //NSLog(@"--> BeintooImageCache SAVE: File Needs To Be Updated");
             [filemgr removeItemAtPath:cachedFileDictionary error:NULL];
             [filemgr createFileAtPath:cachedFileDictionary contents:data attributes:attributes];
             
             if ([self isRemoteFileCached:url]){
-                //NSLog(@"--> BeintooImageCache SAVE: File saved!");
+                [dateFormatter release];
+                [attributes release];
                 return  YES;
             }
             else {
-                //NSLog(@"--> BeintooImageCache SAVE: Error while saving file!");
+                [dateFormatter release];
+                [attributes release];
                 return NO;
             }
         }
-        
+        [dateFormatter release];
         [attributes release];
     }
     @catch (NSException *exception) {
         NSLog(@"Exception on image cache file save: %@", exception);
     }
-    
-    //NSLog(@"--> BeintooImageCache GET: File Doesn't Exist");
     return NO;
-
 }
 
 #pragma mark -
@@ -164,8 +159,7 @@ static BImageCache *sharedInstance = nil;
 - (NSString*)makeKeyFromUrl:(NSString*)url
 {
 	NSString *key = [url stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
-    
-	key = [key stringByReplacingOccurrencesOfString:@":" withString:@"_"];
+    key = [key stringByReplacingOccurrencesOfString:@":" withString:@"_"];
     
 	return key;
 }

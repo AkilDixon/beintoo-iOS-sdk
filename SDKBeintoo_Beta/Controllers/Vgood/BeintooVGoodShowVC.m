@@ -66,9 +66,7 @@
      callerIstanceMP.needsToReloadData = NO;
      }*/
     
-    // NSLog(@"url to open: %@", urlToOpen);
-    
-	[loadingIndicator stopAnimating];
+    [loadingIndicator stopAnimating];
     	
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
@@ -98,7 +96,6 @@
 	didOpenTheRecommendation = NO;
 	
     NSURL *url = request.URL;
-	//NSLog(@"URL %@",url);
 	if (![url.scheme isEqual:@"http"] && ![url.scheme isEqual:@"https"]) {
 		// ******** Remember that this will NOT work on the simulator ******* //
 		if ([[UIApplication sharedApplication]canOpenURL:url]) {
@@ -153,7 +150,11 @@
 -(void)closeBeintoo{
 	if (isFromWallet) { 
 		[Beintoo dismissBeintoo];
-	}else {
+	}
+    else if ([caller isEqualToString:@"MarketplaceList"] == YES || [caller isEqualToString:@"MarketplaceSelectedCoupon"] == YES){
+        [Beintoo dismissBeintoo];
+    }
+    else {
 		[Beintoo dismissPrize];
 	}
 }

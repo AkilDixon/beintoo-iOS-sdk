@@ -18,6 +18,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import "Parser.h"
 #import "BeintooPlayer.h"
+#import "BVirtualGood.h"
 
 #define TO_BE_CONVERTED 40
 #define CONVERTED		41
@@ -38,6 +39,8 @@
 	NSString                *rest_resource;
 	
 	id callingDelegate;
+    
+    BVirtualGood            *vgood;
 }
 
 + (void)getSingleVirtualGood;
@@ -82,6 +85,7 @@
 @property(nonatomic, assign) id  callingDelegate;
 @property(nonatomic,retain) NSDictionary    *generatedVGood;
 @property(nonatomic,retain) Parser          *parser;
+@property(nonatomic,retain) BVirtualGood    *vgood;
 
 @end
 

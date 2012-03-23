@@ -19,7 +19,7 @@
 
 @implementation BeintooVgood
 
-@synthesize delegate, generatedVGood, parser, callingDelegate;
+@synthesize delegate, generatedVGood, parser, callingDelegate, vgood;
 
 -(id)init {
 	if (self = [super init])
@@ -29,6 +29,7 @@
 		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/vgood/",[Beintoo getRestBaseUrl]]];
 
 		_player = [[BeintooPlayer alloc] init];
+        vgood = [[BVirtualGood alloc] init];
 	}
     return self;
 }
@@ -475,13 +476,10 @@
 				
 				generatedVGood = [vgoodList objectAtIndex:0];
 										
-				BVirtualGood *vgood = [[BVirtualGood alloc] init];
-                //BVirtualGood *vgood = [BVirtualGood init];
-                [vgood setVgoodContent:generatedVGood];
+				[vgood setVgoodContent:generatedVGood];
 				[vgood setTheGood:generatedVGood];
 				[Beintoo setLastGeneratedVgood:vgood];
 				
-						
 				[Beintoo notifyVGoodGenerationOnMainDelegate];
                 
                 if (callingDelegate != nil)
@@ -489,8 +487,6 @@
                 else 
                     [Beintoo launchPrize];
 
-                
-                [vgood release];
 			}
 			@catch (NSException * e) {
 				//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
@@ -528,12 +524,9 @@
 				
 				generatedVGood = [vgoodList objectAtIndex:0];
 								
-				BVirtualGood *vgood = [[BVirtualGood alloc] init];
-                //BVirtualGood *vgood = [BVirtualGood init];
-                [vgood setVgoodContent:generatedVGood];
+				[vgood setVgoodContent:generatedVGood];
 				[vgood setTheGood:generatedVGood];
 				[Beintoo setLastGeneratedVgood:vgood];
-				
 				
 				[Beintoo notifyVGoodGenerationOnMainDelegate];
                 
@@ -542,9 +535,7 @@
                 else 
                     [Beintoo launchPrize];
 
-                
-                [vgood release];
-			}
+            }
 			@catch (NSException * e) {
 				//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
 			}
@@ -584,9 +575,7 @@
 					// ------ We received only one vgood or a recommendation
 					generatedVGood = [vgoodList objectAtIndex:0];
 					
-					BVirtualGood *vgood = [[BVirtualGood alloc] init];
-					//BVirtualGood *vgood = [BVirtualGood init];
-                    [vgood setVgoodContent:generatedVGood];
+					[vgood setVgoodContent:generatedVGood];
 					[vgood setTheGood:generatedVGood];
 					[Beintoo setLastGeneratedVgood:vgood];
 					
@@ -597,24 +586,17 @@
                     else 
                         [Beintoo launchPrize];
 
-                    
-                    [vgood release];
-				}
+                }
 				if ([vgoodList count]>1 && ([[vgoodList objectAtIndex:0] objectForKey:@"isBanner"]==nil) ) { // ------ We received a list of vgood: this is a real multiple vgood
 					
-                    
-					BVirtualGood *vgood = [[BVirtualGood alloc] init];
-                    //BVirtualGood *vgood = [BVirtualGood init];
                     [vgood setTheGoodsList:vgoodList];
 					[vgood setVgoodContent:[vgoodList objectAtIndex:0]];
 					[vgood setIsMultiple:YES];
 					[Beintoo setLastGeneratedVgood:vgood];
 					
-
-					[Beintoo notifyVGoodGenerationOnMainDelegate];
+                    [Beintoo notifyVGoodGenerationOnMainDelegate];
                     
-                    [vgood release];
-				}
+                }
 			}
 			@catch (NSException * e) {
 				//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
@@ -655,12 +637,9 @@
 					// ------ We received only one vgood or a recommendation
 					generatedVGood = [vgoodList objectAtIndex:0];
 					
-					BVirtualGood *vgood = [[BVirtualGood alloc] init];
-                    //BVirtualGood *vgood = [BVirtualGood init];
-                    [vgood setVgoodContent:generatedVGood];
+					[vgood setVgoodContent:generatedVGood];
 					[vgood setTheGood:generatedVGood];
 					[Beintoo setLastGeneratedVgood:vgood];
-					
 					
 					[Beintoo notifyVGoodGenerationOnMainDelegate];
                     
@@ -669,22 +648,21 @@
                     else 
                         [Beintoo launchPrize];
 
-                    
-                    [vgood release];
-				}
+                }
 				if ([vgoodList count]>1 && ([[vgoodList objectAtIndex:0] objectForKey:@"isBanner"]==nil) ) { // ------ We received a list of vgood: this is a real multiple vgood
 					
-                    BVirtualGood *vgood = [[BVirtualGood alloc] init];
-					//BVirtualGood *vgood = [BVirtualGood init];
                     [vgood setTheGoodsList:vgoodList];
 					[vgood setVgoodContent:[vgoodList objectAtIndex:0]];
 					[vgood setIsMultiple:YES];
 					[Beintoo setLastGeneratedVgood:vgood];
 					
-					
-					[BeintooVgood notifyVGoodGenerationOnUserDelegate];
+                    [BeintooVgood notifyVGoodGenerationOnUserDelegate];
                     
-                    [vgood release];
+                    if (callingDelegate != nil)
+                        [Beintoo launchPrizeOnAppWithDelegate:callingDelegate];
+                    else 
+                        [Beintoo launchPrize];
+                    
 				}
 			}	
 			@catch (NSException * e) {
@@ -812,6 +790,8 @@
 	[parser release];
 	[_player release];
 	[rest_resource release];
+    [vgood release];
+    
 	[super dealloc];
 }
 
