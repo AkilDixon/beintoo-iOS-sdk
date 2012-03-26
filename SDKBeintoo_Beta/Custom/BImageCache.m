@@ -14,7 +14,6 @@
  * limitations under the License.
  ******************************************************************************/
 
-
 #import "BImageCache.h"
 
 #define kDefaultCacheFile @"imagecache.plist"

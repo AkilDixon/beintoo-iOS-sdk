@@ -14,26 +14,15 @@
  * limitations under the License.
  ******************************************************************************/
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import "Beintoo.h"
+
+@interface BeintooMarketplaceWebViewVC : UIViewController <UIWebViewDelegate> {
+
+    IBOutlet UIWebView      *webView;
+    UIActivityIndicatorView *loadingIndicator;
 
 
-@interface BImageCache : NSObject 
-{
-    NSFileManager *filemgr;
-    
-	NSString *documentsDirectory;
-	NSString *cacheFileUrl;
-    
-	NSDictionary *dictCache;
-    NSString *currentpath;
 }
-
-@property (nonatomic, retain) NSDictionary *dictCache;
-
-+ (BImageCache *)instance;
-
-- (BOOL)isRemoteFileCached:(NSString*)url;
-- (NSString *)getCachedRemoteFile:(NSString*)url;
-- (BOOL)addRemoteFileToCache:(NSString*)url withData:(NSData*)data;
 
 @end

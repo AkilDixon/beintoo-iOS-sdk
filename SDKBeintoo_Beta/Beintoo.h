@@ -88,6 +88,7 @@
 #import "BeintooNotificationListVC.h"
 #import "BeintooMarketplaceVC.h"
 #import "BeintooMarketplace.h"
+#import "BeintooMarketplaceWebViewVC.h"
 
 #define BFEATURE_PROFILE			@"Profile"
 #define BFEATURE_MARKETPLACE		@"Marketplace"
@@ -179,6 +180,8 @@ extern NSString *BNSDefIsUserLogged;
     BeintooWalletVC                 *beintooWalletViewController;
     BeintooLeaderboardVC            *beintooLeaderboardVC;
     BeintooLeaderboardContestVC     *beintooLeaderboardWithContestVC;
+    
+    BeintooMarketplaceWebViewVC     *beintooMarketplaceWebViewVC;
 }
 
 + (void)initWithApiKey:(NSString *)_apikey andApiSecret:(NSString *)_apisecret andBeintooSettings:(NSDictionary *)_settings andMainDelegate:(id<BeintooMainDelegate>)beintooMainDelegate;

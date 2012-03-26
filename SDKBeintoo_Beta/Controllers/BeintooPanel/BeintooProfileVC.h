@@ -72,6 +72,7 @@
     BeintooLoginVC                  *loginVC;
     UINavigationController          *loginNavController;
     UIView                          *signupViewForPlayers;
+    
 }
 
 - (IBAction)logout;

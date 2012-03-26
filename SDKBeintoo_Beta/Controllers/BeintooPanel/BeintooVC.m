@@ -52,7 +52,8 @@
 				[panelElement setObject:NSLocalizedStringFromTable(@"MPmarketplaceTitle",@"BeintooLocalizable", nil) forKey:@"featureName"];
 				[panelElement setObject:NSLocalizedStringFromTable(@"MPdescription",@"BeintooLocalizable", nil) forKey:@"featureDesc"];
 				[panelElement setObject:@"beintoo_marketplace.png" forKey:@"featureImg"];
-				[panelElement setObject:marketplaceVC forKey:@"featureVC"];
+				//[panelElement setObject:marketplaceVC forKey:@"featureVC"];
+                [panelElement setObject:beintooMarketplaceWebViewVC forKey:@"featureVC"];
 			}
 			if ([elem isEqualToString:@"Leaderboard"]){
 				[panelElement setObject:NSLocalizedStringFromTable(@"leaderboard",@"BeintooLocalizable",@"") forKey:@"featureName"];
@@ -145,6 +146,8 @@
 	self.loginVC            = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
 	beintooProfileVC        = [[BeintooProfileVC alloc]initWithNibName:@"BeintooProfileVC" bundle:[NSBundle mainBundle]];
     marketplaceVC           = [[BeintooMarketplaceVC alloc] initWithNibName:@"BeintooMarketplaceVC" bundle:[NSBundle mainBundle]];
+    beintooMarketplaceWebViewVC = [[BeintooMarketplaceWebViewVC alloc] initWithNibName:@"BeintooMarketplaceWebViewVC" bundle:[NSBundle mainBundle]]; 
+    
 	beintooLeaderboardVC    = [[BeintooLeaderboardVC alloc]initWithNibName:@"BeintooLeaderboardVC" bundle:[NSBundle mainBundle]];
 	beintooWalletVC         = [[BeintooWalletVC alloc]initWithNibName:@"BeintooWalletVC" bundle:[NSBundle mainBundle]];
 	beintooChallengesVC     = [[BeintooChallengesVC alloc]initWithNibName:@"BeintooChallengesVC" bundle:[NSBundle mainBundle]];
@@ -387,9 +390,7 @@
     signupViewForPlayers.tag = 1111;
     [self.view addSubview:signupViewForPlayers];
     
-    
-	
-	/*
+    /*
 	 * BeintooLogo + TRY BEINTOO settings
 	 */
 	int appOrientation = [Beintoo appOrientation];
@@ -439,7 +440,7 @@
             
             if(!homeTablePlayerAnimationPerformed){
                 CGRect currentFrame = homeTable.frame;
-                homeTable.frame = CGRectMake(currentFrame.origin.x, currentFrame.origin.y+77, currentFrame.size.width, currentFrame.size.height-77);
+                homeTable.frame = CGRectMake(currentFrame.origin.x, currentFrame.origin.y + 77, currentFrame.size.width, currentFrame.size.height - 77);
                 homeTablePlayerAnimationPerformed = YES;
             }
         }
@@ -457,7 +458,7 @@
                 
                 if(homeTablePlayerAnimationPerformed){
                     CGRect currentFrame = homeTable.frame;
-                    homeTable.frame = CGRectMake(currentFrame.origin.x, currentFrame.origin.y-77, currentFrame.size.width, currentFrame.size.height+77);
+                    homeTable.frame = CGRectMake(currentFrame.origin.x, currentFrame.origin.y - 77, currentFrame.size.width, currentFrame.size.height + 77);
                     homeTablePlayerAnimationPerformed = NO;
                 }
             }
@@ -733,6 +734,9 @@
     [tipsAndForumVC release];
 	[loginVC release];
     [signupViewForPlayers release];
+    [marketplaceVC release];
+    [beintooMarketplaceWebViewVC release];
+    [beintooMarketplaceWebViewVC release];
 	[super dealloc];
 }
 

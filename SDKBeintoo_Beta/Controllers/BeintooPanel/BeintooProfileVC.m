@@ -209,9 +209,7 @@
 #pragma mark delegates
 - (void)player:(BeintooPlayer *)player didGetAllScores:(NSDictionary *)result{
 	
-    NSLog(@"scores %@", result);
-    
-	self.allScores = result; 
+    self.allScores = result; 
 	if (self.allScores == nil) {
 		[noScoreLabel setHidden:NO];
 	}

@@ -92,7 +92,8 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
     beintooInstance->beintooDispatchQueue   = dispatch_queue_create("com.Beintoo.beintooQueue", NULL);
 
     beintooInstance->beintooPanelRootViewController     = [[BeintooVC alloc] init];
-    beintooInstance->beintooMarketplaceViewController   = [[BeintooMarketplaceVC alloc] init];
+    //beintooInstance->beintooMarketplaceViewController = [[BeintooMarketplaceVC alloc] init];
+    beintooInstance->beintooMarketplaceWebViewVC        = [[BeintooMarketplaceWebViewVC alloc] init];
     beintooInstance->beintooWalletViewController        = [[BeintooWalletVC alloc] init];
     beintooInstance->beintooLeaderboardWithContestVC    = [[BeintooLeaderboardContestVC alloc] init];
     beintooInstance->beintooLeaderboardVC               = [[BeintooLeaderboardVC alloc] init];
@@ -469,7 +470,7 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
     
     Beintoo *beintooInstance                                  = [Beintoo sharedInstance];
     beintooInstance->mainNavigationController.viewControllers = nil;
-    [beintooInstance->mainNavigationController initWithRootViewController:beintooInstance->beintooMarketplaceViewController];
+    [beintooInstance->mainNavigationController initWithRootViewController:beintooInstance->beintooMarketplaceWebViewVC];
     
     [Beintoo manageStatusBarOnLaunch];
     

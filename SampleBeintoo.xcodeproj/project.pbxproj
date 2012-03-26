@@ -15,6 +15,8 @@
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		28D7ACF80DDB3853001CB0EB /* BeintooViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* BeintooViewController.m */; };
 		5C68C44F151B961A00826BEE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C68C44E151B961A00826BEE /* main.m */; };
+		5C6B162C15208E3100FA20B8 /* BeintooMarketplaceWebViewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6B162A15208E3100FA20B8 /* BeintooMarketplaceWebViewVC.m */; };
+		5C6B162D15208E3100FA20B8 /* BeintooMarketplaceWebViewVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C6B162B15208E3100FA20B8 /* BeintooMarketplaceWebViewVC.xib */; };
 		5C903FD514E3D1AB00788F4F /* BeintooMapViewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C903FC814E3D1AB00788F4F /* BeintooMapViewVC.m */; };
 		5C903FD614E3D1AB00788F4F /* BeintooMapViewVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C903FC914E3D1AB00788F4F /* BeintooMapViewVC.xib */; };
 		5C903FD714E3D1AB00788F4F /* BeintooMarketplaceCommentsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C903FCB14E3D1AB00788F4F /* BeintooMarketplaceCommentsVC.m */; };
@@ -271,18 +273,21 @@
 		28D7ACF70DDB3853001CB0EB /* BeintooViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeintooViewController.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* Beintoo_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Beintoo_Prefix.pch; sourceTree = "<group>"; };
 		5C68C44E151B961A00826BEE /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5C6B162915208E3100FA20B8 /* BeintooMarketplaceWebViewVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooMarketplaceWebViewVC.h; sourceTree = "<group>"; };
+		5C6B162A15208E3100FA20B8 /* BeintooMarketplaceWebViewVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeintooMarketplaceWebViewVC.m; sourceTree = "<group>"; };
+		5C6B162B15208E3100FA20B8 /* BeintooMarketplaceWebViewVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BeintooMarketplaceWebViewVC.xib; sourceTree = "<group>"; };
 		5C903FC714E3D1AB00788F4F /* BeintooMapViewVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooMapViewVC.h; sourceTree = "<group>"; };
 		5C903FC814E3D1AB00788F4F /* BeintooMapViewVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeintooMapViewVC.m; sourceTree = "<group>"; };
-		5C903FC914E3D1AB00788F4F /* BeintooMapViewVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = BeintooMapViewVC.xib; path = ../../Controllers/BeintooPanel/BeintooMapViewVC.xib; sourceTree = "<group>"; };
+		5C903FC914E3D1AB00788F4F /* BeintooMapViewVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BeintooMapViewVC.xib; sourceTree = "<group>"; };
 		5C903FCA14E3D1AB00788F4F /* BeintooMarketplaceCommentsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooMarketplaceCommentsVC.h; sourceTree = "<group>"; };
 		5C903FCB14E3D1AB00788F4F /* BeintooMarketplaceCommentsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeintooMarketplaceCommentsVC.m; sourceTree = "<group>"; };
-		5C903FCC14E3D1AB00788F4F /* BeintooMarketplaceCommentsVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = BeintooMarketplaceCommentsVC.xib; path = ../../Controllers/BeintooPanel/BeintooMarketplaceCommentsVC.xib; sourceTree = "<group>"; };
+		5C903FCC14E3D1AB00788F4F /* BeintooMarketplaceCommentsVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BeintooMarketplaceCommentsVC.xib; sourceTree = "<group>"; };
 		5C903FCD14E3D1AB00788F4F /* BeintooMarketplaceSelectedItemVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooMarketplaceSelectedItemVC.h; sourceTree = "<group>"; };
 		5C903FCE14E3D1AB00788F4F /* BeintooMarketplaceSelectedItemVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeintooMarketplaceSelectedItemVC.m; sourceTree = "<group>"; };
-		5C903FCF14E3D1AB00788F4F /* BeintooMarketplaceSelectedItemVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = BeintooMarketplaceSelectedItemVC.xib; path = ../../Controllers/BeintooPanel/BeintooMarketplaceSelectedItemVC.xib; sourceTree = "<group>"; };
+		5C903FCF14E3D1AB00788F4F /* BeintooMarketplaceSelectedItemVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BeintooMarketplaceSelectedItemVC.xib; sourceTree = "<group>"; };
 		5C903FD014E3D1AB00788F4F /* BeintooMarketplaceVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooMarketplaceVC.h; sourceTree = "<group>"; };
 		5C903FD114E3D1AB00788F4F /* BeintooMarketplaceVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeintooMarketplaceVC.m; sourceTree = "<group>"; };
-		5C903FD214E3D1AB00788F4F /* BeintooMarketplaceVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = BeintooMarketplaceVC.xib; path = ../../Controllers/BeintooPanel/BeintooMarketplaceVC.xib; sourceTree = "<group>"; };
+		5C903FD214E3D1AB00788F4F /* BeintooMarketplaceVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BeintooMarketplaceVC.xib; sourceTree = "<group>"; };
 		5C903FD314E3D1AB00788F4F /* BPinAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BPinAnnotation.h; path = ../Controllers/BeintooPanel/BPinAnnotation.h; sourceTree = "<group>"; };
 		5C903FD414E3D1AB00788F4F /* BPinAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BPinAnnotation.m; path = ../Controllers/BeintooPanel/BPinAnnotation.m; sourceTree = "<group>"; };
 		5C903FDE14E3D20F00788F4F /* BeintooMarketplace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooMarketplace.h; sourceTree = "<group>"; };
@@ -729,6 +734,7 @@
 		700734CB13A78B39009288D5 /* xib */ = {
 			isa = PBXGroup;
 			children = (
+				5C6B162B15208E3100FA20B8 /* BeintooMarketplaceWebViewVC.xib */,
 				5C903FC914E3D1AB00788F4F /* BeintooMapViewVC.xib */,
 				5C903FCC14E3D1AB00788F4F /* BeintooMarketplaceCommentsVC.xib */,
 				5C903FCF14E3D1AB00788F4F /* BeintooMarketplaceSelectedItemVC.xib */,
@@ -820,6 +826,8 @@
 				7012E3CB13B0A32200469797 /* BeintooVC.m */,
 				7012E3C013B0A32200469797 /* BeintooProfileVC.h */,
 				7012E3C113B0A32200469797 /* BeintooProfileVC.m */,
+				5C6B162915208E3100FA20B8 /* BeintooMarketplaceWebViewVC.h */,
+				5C6B162A15208E3100FA20B8 /* BeintooMarketplaceWebViewVC.m */,
 				5C903FD014E3D1AB00788F4F /* BeintooMarketplaceVC.h */,
 				5C903FD114E3D1AB00788F4F /* BeintooMarketplaceVC.m */,
 				5C903FCD14E3D1AB00788F4F /* BeintooMarketplaceSelectedItemVC.h */,
@@ -1377,6 +1385,7 @@
 				5C90404214E4165400788F4F /* trybeintoo_monetize_portrait@2x.png in Resources */,
 				5CA4A8CA14E5797000FA6CAC /* icon.png in Resources */,
 				5CA4A8CB14E5797000FA6CAC /* icon@2x.png in Resources */,
+				5C6B162D15208E3100FA20B8 /* BeintooMarketplaceWebViewVC.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1477,6 +1486,7 @@
 				5C903FE314E3D30B00788F4F /* BImageCache.m in Sources */,
 				5C903FE714E3D8A400788F4F /* BRefreshTableHeaderView.m in Sources */,
 				5C68C44F151B961A00826BEE /* main.m in Sources */,
+				5C6B162C15208E3100FA20B8 /* BeintooMarketplaceWebViewVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
