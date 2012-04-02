@@ -121,7 +121,7 @@
 	[BeintooPlayer setPlayerDelegate:nil];
 	//[BeintooPlayer submitScore:1 forContest:@"default"]; // Here the contest name instead of "default"
     
-    [BeintooPlayer submitScoreAndGetVgoodForScore:100 andContest:@"default" withThreshold:1000 andVgoodMultiple:YES];
+    [BeintooPlayer submitScoreAndGetVgoodForScore:10 andContest:@"default" withThreshold:100 andVgoodMultiple:YES];
     
 }
 
@@ -178,7 +178,7 @@
 }
 - (IBAction)setLondon{
 	// 51.4925,-0.105057
-    CLLocation *loc = [[CLLocation alloc] initWithLatitude:40.719681 longitude:-73.997726];
+    CLLocation *loc = [[CLLocation alloc] initWithLatitude:51.4925 longitude:-0.105057];
     
 	//CLLocation *loc = [[CLLocation alloc] initWithLatitude:51.492500 longitude:-0.105057];
     [Beintoo _setUserLocation:loc];

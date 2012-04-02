@@ -475,8 +475,8 @@
 				}
 				
 				generatedVGood = [vgoodList objectAtIndex:0];
-										
-				[vgood setVgoodContent:generatedVGood];
+					
+                [vgood setVgoodContent:generatedVGood];
 				[vgood setTheGood:generatedVGood];
 				[Beintoo setLastGeneratedVgood:vgood];
 				

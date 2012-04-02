@@ -46,6 +46,7 @@
     id <BeintooPrizeDelegate> globalDelegate;
     
     CGSize windowSizeRect;
+    
 }
 
 @property(nonatomic,retain) UIImageView *beintooLogo;
