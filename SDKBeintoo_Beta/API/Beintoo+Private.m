@@ -563,44 +563,49 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
     
 	BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
-	
-	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertWillAppear)]) {
-		[_mainDelegate beintooPrizeAlertWillAppear];
-	}
-	
-	[_prizeView setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
-	[[Beintoo getApplicationWindow] addSubview:_prizeView];
-	
-	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertDidAppear)]) {
-		[_mainDelegate beintooPrizeAlertDidAppear];
-	}	
+    
+    if (_prizeView.isVisible == NO){
+        if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertWillAppear)]) {
+            [_mainDelegate beintooPrizeAlertWillAppear];
+        }
+        
+        [_prizeView setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
+        [[Beintoo getApplicationWindow] addSubview:_prizeView];
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertDidAppear)]) {
+            [_mainDelegate beintooPrizeAlertDidAppear];
+        }	
+        [_prizeView setIsVisible:YES];
+    }
 }
 
 + (void)_launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate{
     id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
 	
     BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
-    _prizeView.globalDelegate = _beintooPrizeDelegate;
+    if (_prizeView.isVisible == NO){
+        _prizeView.globalDelegate = _beintooPrizeDelegate;
     
-    if ([_beintooPrizeDelegate respondsToSelector:@selector(beintooPrizeAlertWillAppear)]) {
-		[_beintooPrizeDelegate beintooPrizeAlertWillAppear];
-	}
-    
-	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertWillAppear)]) {
-		[_mainDelegate beintooPrizeAlertWillAppear];
-	}
-	
-	[_prizeView setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
-	[[Beintoo getApplicationWindow] addSubview:_prizeView];
-    
-    if ([_beintooPrizeDelegate respondsToSelector:@selector(beintooPrizeAlertDidAppear)]) {
-		[_beintooPrizeDelegate beintooPrizeAlertDidAppear];
-	}
-    
-	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertDidAppear)]) {
-		[_mainDelegate beintooPrizeAlertDidAppear];
-	}	
-    
+        if ([_beintooPrizeDelegate respondsToSelector:@selector(beintooPrizeAlertWillAppear)]) {
+            [_beintooPrizeDelegate beintooPrizeAlertWillAppear];
+        }
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertWillAppear)]) {
+            [_mainDelegate beintooPrizeAlertWillAppear];
+        }
+        
+        [_prizeView setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
+        [[Beintoo getApplicationWindow] addSubview:_prizeView];
+        
+        if ([_beintooPrizeDelegate respondsToSelector:@selector(beintooPrizeAlertDidAppear)]) {
+            [_beintooPrizeDelegate beintooPrizeAlertDidAppear];
+        }
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertDidAppear)]) {
+            [_mainDelegate beintooPrizeAlertDidAppear];
+        }
+        [_prizeView setIsVisible:YES];
+    }    
 }
 
 + (void)_launchMissionOnApp{
@@ -743,6 +748,8 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
     if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeDidDisappear)]) {
 		[[_prizeView globalDelegate] beintooPrizeDidDisappear];
 	}
+    
+    [_prizeView setIsVisible:NO];
 }
 
 + (void)_dismissRecommendation{
@@ -837,16 +844,14 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 	}
 }
 
-+ (void)_setLastVgood:(BVirtualGood *)_vgood{
-	// IMPOSTARE QUALCHE CONDIZIONE
-    
-    if ([Beintoo sharedInstance]->lastGeneratedGood != nil) {
-        [[Beintoo sharedInstance]->lastGeneratedGood release];
++ (void)_setLastVgood:(BVirtualGood *)_vgood{  
+    BPrize *_prize = [Beintoo sharedInstance]->prizeView;
+    if (_prize.isVisible == NO){
+        if ([Beintoo sharedInstance]->lastGeneratedGood != nil) {
+            [[Beintoo sharedInstance]->lastGeneratedGood release];
+        }
+        [Beintoo sharedInstance]->lastGeneratedGood     = _vgood;
     }
-   
-	[Beintoo sharedInstance]->lastGeneratedGood     = _vgood;
-    
-    //[_vgood release];
 }
 
 + (void)_setLastLoggedPlayers:(NSArray *)_players{
@@ -854,7 +859,6 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 		return;
 	}
 	[Beintoo sharedInstance]->lastLoggedPlayers = _players;
-	//[[NSUserDefaults standardUserDefaults] setObject:_players forKey:BNSDefLastLoggedPlayers];
 }
 
 - (void)initDelegates{
@@ -1037,6 +1041,7 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 		[_mainDelegate beintooPrizeAlertDidDisappear];
 	}
     
+    [_prizeView setIsVisible:NO];
 }
 
 

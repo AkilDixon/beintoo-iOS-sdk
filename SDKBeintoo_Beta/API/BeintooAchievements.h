@@ -20,6 +20,8 @@
 
 @protocol BeintooAchievementsDelegate;
 
+NSString *currentGlobalAchievementId;
+
 @interface BeintooAchievements : NSObject <BeintooParserDelegate>{
 	
 	id <BeintooAchievementsDelegate> delegate;
@@ -32,6 +34,8 @@
 	NSString *currentAchievementID;
 	int currentPercentage;
 	int currentScore;
+    
+    
 }
 
 - (NSString *)restResource;
@@ -43,6 +47,7 @@
 + (void)notifyAchievementSubmitSuccessWithResult:(NSDictionary *)result;
 + (void)notifyAchievementSubmitErrorWithResult:(NSString *)error;
 + (void)setAchievementDelegate:(id)_caller;
++ (void)getAchievementStatusAndPercentage:(NSString *)_achievementId;
 
 + (void)saveUnlockedAchievementLocally:(NSDictionary *)_theAchievement;
 + (NSMutableArray *)getAllLocalAchievements;
@@ -72,6 +77,7 @@
 - (void)didGetAllUserAchievementsWithResult:(NSArray *)result;
 - (void)didSubmitAchievementWithResult:(NSDictionary *)result;
 - (void)didFailToSubmitAchievementWithError:(NSString *)error;
+- (void)didGetAchievementStatus:(NSString *)_status andPercentage:(int)_percentage forAchievementId:(NSString *)_achievementId;
 @end
 
 

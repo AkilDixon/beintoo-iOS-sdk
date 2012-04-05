@@ -149,10 +149,10 @@
 - (IBAction)submitAchievement{
 	[BeintooAchievements setAchievementDelegate:self];
 	// These are all possible ways to submit an achievement progress
-	//[BeintooAchievements setAchievement:@"123456789" withScore:10];
-	//[BeintooAchievements setAchievement:@"123456789" withPercentage:50];
+	//[BeintooAchievements setAchievement:@"w234567" withScore:10];
+	//[BeintooAchievements setAchievement:@"w234567" withPercentage:50];
 	//[BeintooAchievements incrementAchievement:@"123456789" withScore:5];
-    [BeintooAchievements unlockAchievement:@"123456789"];
+    [BeintooAchievements unlockAchievement:@"w234567"];
     
 }
 
@@ -265,6 +265,11 @@
 - (void)didGetAllUserAchievementsWithResult:(NSArray *)result{
     NSLog(@"Beintoo: achievement list: %@", result);
     
+}
+
+- (void)didGetAchievementStatus:(NSString *)_status andPercentage:(int)_percentage forAchievementId:(NSString *)_achievementId{
+
+    NSLog(@"Achieve %@ || status %@ || precentage %i", _achievementId, _status, _percentage);
 
 }
 

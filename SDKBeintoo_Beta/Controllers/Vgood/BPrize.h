@@ -47,6 +47,8 @@
     
     CGSize windowSizeRect;
     
+    UIWebView *recommWebView;
+    
 }
 
 @property(nonatomic,retain) UIImageView *beintooLogo;

@@ -58,7 +58,7 @@
 + (void)submitScore:(int)_score;
 + (void)submitScore:(int)_score forContest:(NSString *)_contestName;
 + (void)submitScoreAndGetVgoodForScore:(int)_score andContest:(NSString *)_contestName withThreshold:(int)_threshold andVgoodMultiple:(BOOL)_isMultiple;
-
++ (void)resetVgoodThresholdScoreForContest:(NSString *)_codeId;
 /* 
  * PLAYER GETSCORE: 
  *	
@@ -113,7 +113,8 @@
 // Player Score Threshold methods
 + (int)getVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey;
 + (void)setVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey andScore:(int)_score;
-
++ (void)resetVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey andScore:(int)_score;
+    
 // Offline SubmitScore handlers
 + (void)addScoreToLocallySavedScores:(NSString *)scoreValue forContest:(NSString *)codeID;
 + (void)flushLocallySavedScore;

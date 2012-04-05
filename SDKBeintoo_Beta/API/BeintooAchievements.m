@@ -101,7 +101,7 @@
 	achievementsService.currentPercentage =_percentageFromZeroTo100;
 	
 	NSString *res		 = [NSString stringWithFormat:@"%@",[achievementsService restResource]];
-	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",playerID,@"guid",nil];
+	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",playerID,@"guid",nil];
 	[achievementsService.parser parsePageAtUrl:res withHeaders:params fromCaller:ACHIEVEMENTS_GETSUBMITPERCENT_CALLER_ID];	
 }
 
@@ -117,7 +117,7 @@
 	
 	BOOL isTheAchievementAlreadyUlocked = [BeintooAchievements checkIfAchievementIsSavedLocally:_achievementID];
 	if (isTheAchievementAlreadyUlocked) {
-		[BeintooAchievements notifyAchievementSubmitErrorWithResult:[NSString stringWithFormat:@"Achievement %@ already unlocked.",_achievementID]];
+		[BeintooAchievements notifyAchievementSubmitErrorWithResult:[NSString stringWithFormat:@"Achievement %@ already unlocked.", _achievementID]];
 		return;
 	}
 		
@@ -137,13 +137,13 @@
 	BeintooAchievements *achievementsService = [Beintoo beintooAchievementService];
 
 	if (playerID == nil) {
-		[BeintooAchievements notifyAchievementSubmitErrorWithResult:[NSString stringWithFormat:@"Can't submit achievement %@: no player logged.",_achievementID]];
+		[BeintooAchievements notifyAchievementSubmitErrorWithResult:[NSString stringWithFormat:@"Can't submit achievement %@: no player logged.", _achievementID]];
 		return;
 	}
 	
 	BOOL isTheAchievementAlreadyUlocked = [BeintooAchievements checkIfAchievementIsSavedLocally:_achievementID];
 	if (isTheAchievementAlreadyUlocked) {
-		[BeintooAchievements notifyAchievementSubmitErrorWithResult:[NSString stringWithFormat:@"Achievement %@ already unlocked.",_achievementID]];
+		[BeintooAchievements notifyAchievementSubmitErrorWithResult:[NSString stringWithFormat:@"Achievement %@ already unlocked.", _achievementID]];
 		return;
 	}
 	
@@ -156,6 +156,21 @@
 	NSString *res		 = [NSString stringWithFormat:@"%@",[achievementsService restResource]];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",playerID,@"guid",nil];
 	[achievementsService.parser parsePageAtUrl:res withHeaders:params fromCaller:ACHIEVEMENTS_GETINCREMENTSCORE_CALLER_ID];			
+}
+
++ (void)getAchievementStatusAndPercentage:(NSString *)_achievementId{
+    currentGlobalAchievementId = [[NSString alloc] init];
+    currentGlobalAchievementId = [_achievementId copy];
+    [self getAchievementsForCurrentPlayer];
+}
+
++ (void)getAchievementsForCurrentPlayer{
+	NSString *playerID	 = [Beintoo getPlayerID];
+	BeintooAchievements *achievementsService = [Beintoo beintooAchievementService];
+    
+	NSString *res		 = [NSString stringWithFormat:@"%@", [achievementsService restResource]];
+	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",playerID,@"guid",nil];
+	[achievementsService.parser parsePageAtUrl:res withHeaders:params fromCaller:ACHIEVEMENTS_GET_PRIVATE_CALLER_ID];
 }
 
 + (void)notifyAchievementSubmitSuccessWithResult:(NSDictionary *)result{
@@ -194,8 +209,13 @@
 + (void)saveUnlockedAchievementLocally:(NSDictionary *)_theAchievement{
 	NSMutableArray *currentAchievemList = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"locallySavedAchievements"]];
 	
-	if (![BeintooAchievements checkIfAchievementIsSavedLocally:[[_theAchievement objectForKey:@"achievement"]objectForKey:@"id"]]) {
-		[currentAchievemList addObject:_theAchievement];
+	if (![BeintooAchievements checkIfAchievementIsSavedLocally:[[_theAchievement objectForKey:@"achievement"] objectForKey:@"id"]]) {
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        dict = [_theAchievement mutableCopy];
+        [[dict objectForKey:@"achievement"] setObject:[Beintoo getPlayerID] forKey:@"guid"];
+		[currentAchievemList addObject:dict];
+        [dict release];
+        
 	}
 	[[NSUserDefaults standardUserDefaults] setObject:currentAchievemList forKey:@"locallySavedAchievements"];
 	[[NSUserDefaults standardUserDefaults] synchronize];
@@ -209,7 +229,7 @@
 	NSMutableArray *currentAchievemList = [[NSUserDefaults standardUserDefaults] objectForKey:@"locallySavedAchievements"];
 
 	for (NSDictionary *achievement in currentAchievemList) {
-		if ([[[achievement objectForKey:@"achievement"]objectForKey:@"id"] isEqualToString:_achievementID]) {
+		if ([[[achievement objectForKey:@"achievement"] objectForKey:@"id"] isEqualToString:_achievementID] && [[[achievement objectForKey:@"achievement"] objectForKey:@"guid"] isEqualToString:[Beintoo getPlayerID]]) {
 			return YES;
 		}
 	}
@@ -499,10 +519,10 @@
 			
 		}
 			break;
-			
+        
 		case ACHIEVEMENTS_SUBMIT_SCORE_ID:{
             
-            if ([result objectForKey:@"message"]!=nil) {  // ERROR - notify the error to the developer
+            if ([result objectForKey:@"message"] != nil) {  // ERROR - notify the error to the developer
                 [BeintooAchievements notifyAchievementSubmitErrorWithResult:[result objectForKey:@"message"]];
             }
 			else {
@@ -588,7 +608,30 @@
             }			
 		}
 			break;
-		default:{
+            
+        case ACHIEVEMENTS_GET_PRIVATE_CALLER_ID:{
+            if ([result isKindOfClass:[NSDictionary class]]){
+                for (NSDictionary *_dict in result){
+                    if ([[[_dict objectForKey:@"achievement"] objectForKey:@"id"] isEqualToString:currentGlobalAchievementId]){
+                        
+                        NSString *status = [_dict objectForKey:@"status"];
+                        int percentage = 0;
+                        if ([_dict objectForKey:@"percentage"])
+                            percentage = [[_dict objectForKey:@"percentage"] intValue];
+                        
+                        if ([achievementsService.callingDelegate respondsToSelector:@selector(didGetAchievementStatus:andPercentage:forAchievementId:)]){
+                            [achievementsService.callingDelegate didGetAchievementStatus:status andPercentage:percentage forAchievementId:currentGlobalAchievementId];
+                            
+                            break;
+                        }
+                    }
+                }
+            }
+            [currentGlobalAchievementId release];
+        }
+            break;
+            
+        default:{
 			//statements
 		}
 			break;

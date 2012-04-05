@@ -16,12 +16,6 @@
 
 #import "BImageCache.h"
 
-#define kDefaultCacheFile @"imagecache.plist"
-
-@interface BImageCache (private)
-- (NSString*) makeKeyFromUrl:(NSString*)url;
-@end//private ImageCache interface
-
 static BImageCache *sharedInstance = nil;
 
 @implementation BImageCache

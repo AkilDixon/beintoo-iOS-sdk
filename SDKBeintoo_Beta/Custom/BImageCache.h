@@ -35,5 +35,6 @@
 - (BOOL)isRemoteFileCached:(NSString*)url;
 - (NSString *)getCachedRemoteFile:(NSString*)url;
 - (BOOL)addRemoteFileToCache:(NSString*)url withData:(NSData*)data;
+- (NSString*) makeKeyFromUrl:(NSString*)url;
 
 @end

@@ -75,15 +75,72 @@
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
     }
 	eTF.text = @"";
-	//[eTF becomeFirstResponder];
 	pTF.text = @"";
+    [eTF becomeFirstResponder];
+    
+    [UIView beginAnimations:nil context:nil];
+	[UIView setAnimationDuration:0.5];
+    
+    if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+        [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
+        if ([eTF isFirstResponder])
+            self.view.frame = CGRectMake(self.view.frame.origin.x, -eTF.frame.origin.y + 10, self.view.frame.size.width, self.view.frame.size.height);
+        else if ([pTF isFirstResponder])
+            self.view.frame = CGRectMake(self.view.frame.origin.x, -eTF.frame.origin.y + 10, self.view.frame.size.width, self.view.frame.size.height);
+        else 
+            self.view.frame = CGRectMake(self.view.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height);
+	}
+	[UIView commitAnimations];
+    
+}
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+    [UIView beginAnimations:nil context:nil];
+	[UIView setAnimationDuration:0.5];
+    
+    if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+        [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
+        if ([eTF isFirstResponder])
+            self.view.frame = CGRectMake(self.view.frame.origin.x, -eTF.frame.origin.y + 10, self.view.frame.size.width, self.view.frame.size.height);
+        else if ([pTF isFirstResponder])
+            self.view.frame = CGRectMake(self.view.frame.origin.x, -eTF.frame.origin.y + 10, self.view.frame.size.width, self.view.frame.size.height);
+        else 
+            self.view.frame = CGRectMake(self.view.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height);
+	}
+	[UIView commitAnimations];
+    
+    return YES;
+    
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
-	[textField resignFirstResponder];
+    if ([textField isFirstResponder]){
+        UITextField *_textfield = (UITextField *)[self.view viewWithTag:(textField.tag + 10)];
+        if (_textfield){
+            [_textfield becomeFirstResponder];
+        }
+        else{
+            [textField resignFirstResponder];
+            [self login];
+        }
+    }
+    
+    [UIView beginAnimations:nil context:nil];
+	[UIView setAnimationDuration:0.5];
+    
+    if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+        [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
+        if ([eTF isFirstResponder])
+            self.view.frame = CGRectMake(self.view.frame.origin.x, -eTF.frame.origin.y + 10, self.view.frame.size.width, self.view.frame.size.height);
+        else if ([pTF isFirstResponder])
+            self.view.frame = CGRectMake(self.view.frame.origin.x, -eTF.frame.origin.y + 10, self.view.frame.size.width, self.view.frame.size.height);
+        else 
+            self.view.frame = CGRectMake(self.view.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height);
+	}
+	[UIView commitAnimations];
+    
 	return YES;
 }
-
 
 - (IBAction)login{
 	

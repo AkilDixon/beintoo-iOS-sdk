@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">568.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-			<string key="NS.object.0">1179</string>
+			<string key="NS.object.0">1181</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -840,7 +840,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBUILabel" id="485867290">
 								<reference key="NSNextResponder" ref="563429741"/>
-								<int key="NSvFlags">294</int>
+								<int key="NSvFlags">290</int>
 								<string key="NSFrame">{{2, 1}, {20, 25}}</string>
 								<reference key="NSSuperview" ref="563429741"/>
 								<reference key="NSWindow"/>
@@ -918,7 +918,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBUILabel" id="848665633">
 								<reference key="NSNextResponder" ref="909177434"/>
-								<int key="NSvFlags">294</int>
+								<int key="NSvFlags">290</int>
 								<string key="NSFrame">{{2, 1}, {29, 25}}</string>
 								<reference key="NSSuperview" ref="909177434"/>
 								<reference key="NSWindow"/>
@@ -1411,8 +1411,8 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="198641593"/>
-							<reference ref="964195329"/>
 							<reference ref="525370490"/>
+							<reference ref="964195329"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -2306,6 +2306,6 @@
 				<string>{147, 149}</string>
 			</object>
 		</object>
-		<string key="IBCocoaTouchPluginVersion">1179</string>
+		<string key="IBCocoaTouchPluginVersion">1181</string>
 	</data>
 </archive>

@@ -51,6 +51,17 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+/*+ (void)resetVgoodThresholdScoreForContest:(NSString *)_codeId{
+    NSString *playerKey = [NSString stringWithFormat:@"PlayerThresholdScore_%@_%@", [Beintoo getPlayerID], _codeId];
+    [self resetVgoodThresholdScoreForPlayerKey:(NSString *)playerKey andScore:0];
+}
+
++ (void)resetVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey andScore:(int)_score{
+    [[NSUserDefaults standardUserDefaults] setInteger:_score forKey:_playerKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+ */
+
 #pragma mark -
 #pragma mark SubmitScore Notification
 
@@ -242,13 +253,13 @@
     NSString *contestName = (_contestName != nil) ? _contestName : @"default";
 
     int validThreshold = _threshold;
-    if ([[[Beintoo getAppVgoodThresholds] objectForKey:contestName] intValue] > 0 ) {
+    if ([[[Beintoo getAppVgoodThresholds] objectForKey:contestName] intValue] > 0) {
         validThreshold = [[[Beintoo getAppVgoodThresholds] objectForKey:contestName] intValue];
     }
    // NSLog(@"threshold %i", validThreshold);
     
     NSString *playerKey;
-    playerKey = [NSString stringWithFormat:@"PlayerThresholdScore_%@_%@",[Beintoo getPlayerID],contestName];
+    playerKey = [NSString stringWithFormat:@"PlayerThresholdScore_%@_%@", [Beintoo getPlayerID],contestName];
     
     int currentTempScore = [BeintooPlayer getVgoodThresholdScoreForPlayerKey:playerKey];
     currentTempScore = currentTempScore + _score;
