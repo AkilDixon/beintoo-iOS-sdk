@@ -110,27 +110,25 @@
     [activityForReceiverImage startAnimating];
     [activityForReceiverImage hidesWhenStopped];
     
-    remainToDowload = 0;
-    [BLoadingView startFullScreenActivity:shadowView];
+    [BLoadingView startActivity:self];
+    
     [_user getChallangePrereequisitesFromUser:[challengeSender objectForKey:@"id"] toUser:[challengeReceiver objectForKey:@"id"] forContest:[[NSUserDefaults standardUserDefaults] objectForKey:@"selectedContest"]];
     
 }
 
 #pragma mark - User Delegate
 - (void)didGetChallangePrerequisites:(NSDictionary *)result{
-    
     challengeSenderDef      = [[[result objectForKey:@"playerFrom"] objectForKey:@"user"] copy];
     challengeReceiverDef    = [[[result objectForKey:@"playerTo"] objectForKey:@"user"] copy];
     challengeContest        = [[result objectForKey:@"contest"] copy];
+    
     [elementsTable reloadData];
     
-    remainToDowload++;
-    if (remainToDowload == 3)
-        [BLoadingView stopActivity];
+    [BLoadingView stopActivity];
 }
 
 - (void)challengeRequestFinishedWithResult:(NSDictionary *)result{
-	if ([result objectForKey:@"messageID"]!=nil) {
+	if ([result objectForKey:@"messageID"] != nil) {
         
         [BLoadingView stopActivity];
 		
@@ -184,7 +182,6 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     CGFloat cellHeight;
     
-    // Note: the sum of the 3 cell sizes should exactly fill the table. Otherwise we'll generate a scroll (not nice)
     switch (indexPath.row) {
         case 0:
             cellHeight = 115;
@@ -474,22 +471,18 @@
                 }
 
                 UIImageView *imageViewSender        = [[UIImageView alloc] initWithFrame:CGRectMake(8, 12, 45, 45)];
-                UIImage *cellImage1;
                 
-                // ----------- Image Sender -------------
-                if ([imagesArray count] > 0){
-                    if (![[imagesArray objectAtIndex:0] isKindOfClass:[UIImage class]]){
-                        BImageDownload *image1              = [imagesArray objectAtIndex:0];
-                        image1.tag                          = 11;
-                        cellImage1                          = image1.image;
-                        [imageViewSender addSubview:activityForSenderImage];
-                        activityForSenderImage.center = CGPointMake(imageViewSender.frame.size.width/2, imageViewSender.frame.size.height/2);
-                    }
-                    else {
-                        [activityForSenderImage stopAnimating];
-                        cellImage1                          = [imagesArray objectAtIndex:0];
-                        [imageViewSender setImage:cellImage1];
-                    }
+                BImageDownload *image1              = [imagesArray objectAtIndex:0];
+                image1.tag                          = 11;
+                imageViewSender.image               = image1.image;
+                
+                if (image1.image == nil){
+                    
+                    [cell addSubview:activityForSenderImage];
+                    activityForSenderImage.center = CGPointMake(imageViewSender.frame.size.width/2, imageViewSender.frame.size.height/2);
+                }
+                else {
+                    [activityForSenderImage stopAnimating];
                 }
                 
                 imageViewSender.contentMode         = UIViewContentModeScaleAspectFit;
@@ -519,23 +512,18 @@
                 
                 // ----------- Image Receiver -------------
                 UIImageView *imageViewReceiver      = [[UIImageView alloc]initWithFrame:CGRectMake(111+(offset*2), 12, 45, 45)];
-                UIImage *cellImage2;
                 
-                
-                if ([imagesArray count] > 0){
-                    if (![[imagesArray objectAtIndex:1] isKindOfClass:[UIImage class]]){
-                        BImageDownload *image2              = [imagesArray objectAtIndex:1];
-                        image2.tag                          = 12;
-                        cellImage2                          = image2.image;
-                        [imageViewReceiver addSubview:activityForReceiverImage];
-                        activityForReceiverImage.center = CGPointMake(imageViewReceiver.frame.size.width/2, imageViewReceiver.frame.size.height/2);
-                    }
-                    else {
-                        [activityForReceiverImage stopAnimating];
-                        cellImage2                          = [imagesArray objectAtIndex:1];
-                        [imageViewReceiver setImage:cellImage2];
-                    }
+                BImageDownload *image2              = [imagesArray objectAtIndex:1];
+                image2.tag                          = 12;
+                imageViewReceiver.image             = image2.image;
+                if (image2.image == nil){
+                    [cell addSubview:activityForReceiverImage];
+                    activityForReceiverImage.center = CGPointMake(imageViewReceiver.frame.size.width/2, imageViewReceiver.frame.size.height/2);
                 }
+                else {
+                    [activityForReceiverImage stopAnimating];
+                }
+                
                 imageViewReceiver.contentMode       = UIViewContentModeScaleAspectFit;
                 imageViewReceiver.backgroundColor   = [UIColor clearColor];
                 [cell addSubview:imageViewReceiver];
@@ -803,18 +791,7 @@
 - (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
     NSIndexPath *rowToReload    = [NSIndexPath indexPathForRow:2 inSection:0];
     NSArray *rowsToReload       = [NSArray arrayWithObjects:rowToReload, nil];  
-    if (download.tag == 11){
-        [imagesArray replaceObjectAtIndex:0 withObject:download.image];
-        remainToDowload++;
-        if (remainToDowload == 3)
-            [BLoadingView stopActivity];
-    }
-    else if (download.tag == 12){
-        [imagesArray replaceObjectAtIndex:1 withObject:download.image];
-        remainToDowload++;
-        if (remainToDowload == 3)
-            [BLoadingView stopActivity];
-    }  
+    
     [elementsTable reloadRowsAtIndexPaths:rowsToReload withRowAnimation:UITableViewRowAnimationNone];
     download.delegate = nil;
 }
@@ -838,8 +815,7 @@
     if (_user != nil) {
         [_user release];
     }
-    //[elementsTable release];
-    //[shadowView release]; 
+    
     [elementsArrayList release];
     [imagesArray release];
     [activityForReceiverImage release];

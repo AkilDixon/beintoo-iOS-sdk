@@ -186,12 +186,14 @@
 			
 	// Check for internet connection: if available proceed with the submitScore, otherwise save the score locally
 	if ([BeintooNetwork connectedToNetwork]) {
-		[[NSUserDefaults standardUserDefaults]setObject:[NSString stringWithFormat:@"%d",_score] forKey:@"lastSubmittedScore"];
-		[[NSUserDefaults standardUserDefaults]synchronize];
+		[[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%d",_score] forKey:@"lastSubmittedScore"];
+		[[NSUserDefaults standardUserDefaults] synchronize];
 		[playerService.parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_SSCORE_CONT_CALLER_ID];
 	}
 	else {
 		[BeintooPlayer addScoreToLocallySavedScores:[NSString stringWithFormat:@"%d",_score] forContest:_contestName];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%d",_score] forKey:@"lastSubmittedScore"];
+		[[NSUserDefaults standardUserDefaults] synchronize];
         if([Beintoo showScoreNotification]){
             [BeintooPlayer showNotificationForSubmitScore];
         }
@@ -231,6 +233,8 @@
 	}
 	else {
 		[BeintooPlayer addScoreToLocallySavedScores:[NSString stringWithFormat:@"%d",_score] forContest:nil];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%d",_score] forKey:@"lastSubmittedScore"];
+		[[NSUserDefaults standardUserDefaults] synchronize];
         if([Beintoo showScoreNotification]){
             [BeintooPlayer showNotificationForSubmitScore];
         }
@@ -670,7 +674,24 @@
 				[BeintooPlayer notifySubmitScoreErrorWithResult:[NSString stringWithFormat:@"Beintoo SubmitScore Error: %@",resultMessage]];
 			}
 		}
-			break;			 
+			break;
+            
+        case PLAYER_SSCORE_NOCONT_WITH_NOTIFICATION_CALLER_ID:{
+            NSString *resultMessage = [result objectForKey:@"message"];
+			if ([resultMessage isEqualToString:@"OK"]) {
+				[BeintooPlayer notifySubmitScoreSuccessWithResult:[NSString stringWithFormat:@"Beintoo SubmitScore Result: %@",resultMessage]];
+				[BeintooPlayer flushLocallySavedScore];
+                
+                if([Beintoo showScoreNotification]){
+                    [BeintooPlayer showNotificationForSubmitScore];
+                }
+			}
+			else {
+				[BeintooPlayer notifySubmitScoreErrorWithResult:[NSString stringWithFormat:@"Beintoo SubmitScore Error: %@",resultMessage]];
+			}
+		}
+			break;
+        
 		
 		case PLAYER_GSCOREFORCONT_CALLER_ID:{
 			NSDictionary *getScoreResult;
