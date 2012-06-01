@@ -675,23 +675,6 @@
 			}
 		}
 			break;
-            
-        case PLAYER_SSCORE_NOCONT_WITH_NOTIFICATION_CALLER_ID:{
-            NSString *resultMessage = [result objectForKey:@"message"];
-			if ([resultMessage isEqualToString:@"OK"]) {
-				[BeintooPlayer notifySubmitScoreSuccessWithResult:[NSString stringWithFormat:@"Beintoo SubmitScore Result: %@",resultMessage]];
-				[BeintooPlayer flushLocallySavedScore];
-                
-                if([Beintoo showScoreNotification]){
-                    [BeintooPlayer showNotificationForSubmitScore];
-                }
-			}
-			else {
-				[BeintooPlayer notifySubmitScoreErrorWithResult:[NSString stringWithFormat:@"Beintoo SubmitScore Error: %@",resultMessage]];
-			}
-		}
-			break;
-        
 		
 		case PLAYER_GSCOREFORCONT_CALLER_ID:{
 			NSDictionary *getScoreResult;
