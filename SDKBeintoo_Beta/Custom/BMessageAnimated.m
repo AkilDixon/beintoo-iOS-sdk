@@ -143,7 +143,10 @@
     }
     
     int appOrientation = [Beintoo appOrientation];
-    		
+    int offset = 0;
+    if ([Beintoo isStatusBarHiddenOnApp] == NO)
+        offset = 20;
+    
 	if (appOrientation == UIInterfaceOrientationLandscapeLeft) {
 		self.frame = startingFrame;
 		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(-90.0));
@@ -154,7 +157,7 @@
             transitionExitSubtype  = kCATransitionFromLeft;
         }
         else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
-            self.center = CGPointMake((notificationHeight/2.f), windowFrame.size.height/2.f) ;
+            self.center = CGPointMake((notificationHeight/2.f) + offset, windowFrame.size.height/2.f) ;
             transitionEnterSubtype = kCATransitionFromLeft;
             transitionExitSubtype  = kCATransitionFromRight;
         }
@@ -169,7 +172,7 @@
             transitionExitSubtype  = kCATransitionFromRight;
         }
         else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
-            self.center = CGPointMake(windowFrame.size.width-(notificationHeight/2.f), windowFrame.size.height/2) ;
+            self.center = CGPointMake(windowFrame.size.width-(notificationHeight/2.f) - offset, windowFrame.size.height/2) ;
             transitionEnterSubtype = kCATransitionFromRight;
             transitionExitSubtype  = kCATransitionFromLeft;
         }
@@ -185,7 +188,7 @@
             transitionExitSubtype  = kCATransitionFromBottom;
         }
         else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
-            self.center = CGPointMake(windowFrame.size.width/2, (notificationHeight/2.f));
+            self.center = CGPointMake(windowFrame.size.width/2, (notificationHeight/2.f) + offset);
             transitionEnterSubtype = kCATransitionFromBottom;
             transitionExitSubtype  = kCATransitionFromTop;
         }
@@ -201,13 +204,13 @@
             transitionExitSubtype  = kCATransitionFromTop;
         }
         else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
-            self.center = CGPointMake(windowFrame.size.width/2, windowFrame.size.height-(notificationHeight/2.f));
+            self.center = CGPointMake(windowFrame.size.width/2, windowFrame.size.height-(notificationHeight/2.f) - offset);
             transitionEnterSubtype = kCATransitionFromTop;
             transitionExitSubtype  = kCATransitionFromBottom;
         }
 	}
-	
-	switch (notificationType) {
+    
+    switch (notificationType) {
 		case NOTIFICATION_TYPE_ACHIEV:
 			[self drawAchievement];
 			break;
