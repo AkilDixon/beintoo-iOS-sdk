@@ -150,7 +150,7 @@
     int appOrientation = [Beintoo appOrientation];
     
     int offset = 0;
-    if ([Beintoo isStatusBarHiddenOnApp] == NO)
+    if ([Beintoo isStatusBarHiddenOnApp] == NO && [[UIApplication sharedApplication] isStatusBarHidden] == NO)
         offset = 20;
     
 	if (appOrientation == UIInterfaceOrientationLandscapeLeft) {
@@ -683,7 +683,7 @@
     int appOrientation = [Beintoo appOrientation];
     
     int offset = 0;
-    if ([Beintoo isStatusBarHiddenOnApp] == NO)
+    if ([Beintoo isStatusBarHiddenOnApp] == NO && [[UIApplication sharedApplication] isStatusBarHidden] == NO)
         offset = 20;
     
 	if (appOrientation == UIInterfaceOrientationLandscapeLeft) {
