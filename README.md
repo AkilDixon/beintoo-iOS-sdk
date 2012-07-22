@@ -13,7 +13,7 @@ To integrate Beintoo with an existing application, follow these steps:
 
  	https://github.com/Beintoo/beintoo-iOS-sdk
 
-2. Did you get your apikey? If not, register your application on Beintoo (http://www.beintoo.com/business/signup.html). Simply register and create a your app from the developer dashboard to obtain your apikey.
+2. Did you get your apikey? If not, register your application on Beintoo (http://www.beintoo.com/business). Simply register and create a your app from the developer dashboard to obtain your apikey.
 
 3. Copy the entire SDKBeintoo_Beta folder inside your Xcode project. Simply drag and drop the folder into your application's project and check "Copy items into destination group's folder" when Xcode asks.
 	
