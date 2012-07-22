@@ -1156,8 +1156,7 @@
 				7067A00D139E1C2A00457107 /* SBJsonWriter.h */,
 				7067A00E139E1C2A00457107 /* SBJsonWriter.m */,
 			);
-			name = JSON;
-			path = Social/facebook/JSON;
+			path = JSON;
 			sourceTree = "<group>";
 		};
 		70BF8501139E736E00FB8391 /* Controllers */ = {

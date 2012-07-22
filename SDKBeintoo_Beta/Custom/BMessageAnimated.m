@@ -25,6 +25,7 @@
 -(id)init {
 	if (self = [super init])
 	{
+       
     }
     return self;
 }
@@ -51,6 +52,8 @@
 
 - (void)closeNotification{
 	
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"OrientationChanged" object:nil];
+    
 	self.alpha = 0;
 	CATransition *popupExitAnimation = [CATransition animation];
 	[popupExitAnimation setDuration:0.5f];
@@ -102,6 +105,8 @@
 }
 
 - (void)prepareNotificationOrientation:(CGRect)startingFrame{
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged) name:@"OrientationChanged" object:nil];
+    
 	self.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
 	CGRect windowFrame	 = [[Beintoo getAppWindow] bounds];
     
@@ -143,6 +148,7 @@
     }
     
     int appOrientation = [Beintoo appOrientation];
+    
     int offset = 0;
     if ([Beintoo isStatusBarHiddenOnApp] == NO)
         offset = 20;
@@ -628,6 +634,122 @@
 	[current_achievement release];
     [achievement_to_complete_mission release];
     [super dealloc];
+}
+
+- (void)orientationChanged{
+    
+    [UIView beginAnimations:nil context:nil];
+    
+    self.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
+	CGRect windowFrame	 = [[Beintoo getAppWindow] bounds];
+    
+    int notificationHeight;
+    
+    int kind = 0;
+    int i = [[NSUserDefaults standardUserDefaults] integerForKey:@"submitScoreCount"];
+    for (NSString *elem in [Beintoo getFeatureList]){
+        if ([elem isEqualToString:@"Marketplace"]){
+            if (i >= [[[Beintoo getPlayer] objectForKey:@"minSubmitPerMarketplace"] intValue]){
+                kind = 1;
+                break;
+            }
+        }
+    }
+    
+    switch (notificationType) {
+        case NOTIFICATION_TYPE_PLOGIN:
+            notificationHeight = NOTIFICATION_HEIGHT_PLOGIN;
+            break;
+        case NOTIFICATION_TYPE_ACHIEV:
+            notificationHeight = NOTIFICATION_HEIGHT_ACHIEV;
+            break;
+        case NOTIFICATION_TYPE_SSCORE:
+            if (kind == 1 && [Beintoo isVirtualCurrencyStored] && ![BeintooDevice isiPad])
+                notificationHeight = NOTIFICATION_HEIGHT_SSCORE + 18;
+            else 
+                notificationHeight = NOTIFICATION_HEIGHT_SSCORE;
+            break;
+        case NOTIFICATION_TYPE_NTDISPATCH:
+            notificationHeight = NOTIFICATION_HEIGHT_NTDISP;
+            break;
+        case NOTIFICATION_TYPE_ACHIEV_MSN:
+            notificationHeight = NOTIFICATION_HEIGHT_ACHIEV_MSN;
+            break;
+            
+        default:
+            break;
+    }
+    
+    int appOrientation = [Beintoo appOrientation];
+    
+    int offset = 0;
+    if ([Beintoo isStatusBarHiddenOnApp] == NO)
+        offset = 20;
+    
+	if (appOrientation == UIInterfaceOrientationLandscapeLeft) {
+		//self.frame = startingFrame;
+		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(-90.0));
+        
+        if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
+            self.center = CGPointMake(windowFrame.size.width-(notificationHeight/2.f), windowFrame.size.height/2.f) ;
+            transitionEnterSubtype = kCATransitionFromRight;
+            transitionExitSubtype  = kCATransitionFromLeft;
+        }
+        else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
+            self.center = CGPointMake((notificationHeight/2.f) + offset, windowFrame.size.height/2.f) ;
+            transitionEnterSubtype = kCATransitionFromLeft;
+            transitionExitSubtype  = kCATransitionFromRight;
+        }
+    }
+	else if (appOrientation == UIInterfaceOrientationLandscapeRight) {
+		//self.frame = startingFrame;
+		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(90.0));
+        
+        if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
+            self.center = CGPointMake((notificationHeight/2), windowFrame.size.height/2) ;
+            transitionEnterSubtype = kCATransitionFromLeft;
+            transitionExitSubtype  = kCATransitionFromRight;
+        }
+        else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
+            self.center = CGPointMake(windowFrame.size.width-(notificationHeight/2.f) - offset, windowFrame.size.height/2) ;
+            transitionEnterSubtype = kCATransitionFromRight;
+            transitionExitSubtype  = kCATransitionFromLeft;
+        }
+        
+	}
+	else if (appOrientation == UIInterfaceOrientationPortrait) {
+		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
+		//self.frame = startingFrame;	
+        
+        if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
+            self.center = CGPointMake(windowFrame.size.width/2, windowFrame.size.height-(notificationHeight/2.f));
+            transitionEnterSubtype = kCATransitionFromTop;
+            transitionExitSubtype  = kCATransitionFromBottom;
+        }
+        else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
+            self.center = CGPointMake(windowFrame.size.width/2, (notificationHeight/2.f) + offset);
+            transitionEnterSubtype = kCATransitionFromBottom;
+            transitionExitSubtype  = kCATransitionFromTop;
+        }
+	}
+	
+	else if (appOrientation == UIInterfaceOrientationPortraitUpsideDown) {
+		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(180));
+		//self.frame = startingFrame;	
+        
+        if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
+            self.center = CGPointMake(windowFrame.size.width/2, (notificationHeight/2.f));
+            transitionEnterSubtype = kCATransitionFromBottom;
+            transitionExitSubtype  = kCATransitionFromTop;
+        }
+        else if([Beintoo notificationPosition] == BeintooNotificationPositionTop){
+            self.center = CGPointMake(windowFrame.size.width/2, windowFrame.size.height-(notificationHeight/2.f) - offset);
+            transitionEnterSubtype = kCATransitionFromTop;
+            transitionExitSubtype  = kCATransitionFromBottom;
+        }
+	}
+    
+    [UIView commitAnimations];
 }
 
 @end

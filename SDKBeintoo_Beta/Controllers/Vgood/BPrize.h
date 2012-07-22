@@ -66,7 +66,6 @@
 - (void)show;
 - (void)showWithAlphaAnimation;
 - (void)drawPrize;
-- (void)drawPrize:(UIWebView *)_webView;
 - (void)showHtmlWithAlphaAnimation;
 - (void)setPrizeContentWithWindowSize:(CGSize)windowSize;
 - (void)preparePrizeAlertOrientation:(CGRect)startingFrame;

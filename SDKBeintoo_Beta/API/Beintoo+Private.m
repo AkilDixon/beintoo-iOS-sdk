@@ -246,6 +246,9 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 
 
 + (void)setAppOrientation:(int)_appOrientation{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"OrientationChanged" 
+     object:self];
+    
 	[Beintoo sharedInstance]->appOrientation = _appOrientation;
 	NSLog(@"Beintoo: new App orientation set: %d",[Beintoo sharedInstance]->appOrientation);
 }
@@ -1098,7 +1101,7 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
 	_locationManager.delegate = [Beintoo sharedInstance];
 	
 	if ([_locationManager respondsToSelector:@selector(locationServicesEnabled)]) {
-		isLocationServicesEnabled = [_locationManager locationServicesEnabled];	       
+		isLocationServicesEnabled = [CLLocationManager locationServicesEnabled];	       
 	}else {
         isLocationServicesEnabled = _locationManager.locationServicesEnabled;
 	}

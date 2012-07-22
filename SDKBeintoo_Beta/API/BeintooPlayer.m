@@ -51,7 +51,7 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-/*+ (void)resetVgoodThresholdScoreForContest:(NSString *)_codeId{
++ (void)resetVgoodThresholdScoreForContest:(NSString *)_codeId{
     NSString *playerKey = [NSString stringWithFormat:@"PlayerThresholdScore_%@_%@", [Beintoo getPlayerID], _codeId];
     [self resetVgoodThresholdScoreForPlayerKey:(NSString *)playerKey andScore:0];
 }
@@ -60,7 +60,6 @@
     [[NSUserDefaults standardUserDefaults] setInteger:_score forKey:_playerKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
- */
 
 #pragma mark -
 #pragma mark SubmitScore Notification
