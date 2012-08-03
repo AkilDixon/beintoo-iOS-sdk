@@ -14,17 +14,15 @@
  * limitations under the License.
  ******************************************************************************/
 
-#import <UIKit/UIKit.h>
-#import "Beintoo.h"
+#import "BeintooUrlParser.h"
 
-@interface BeintooMarketplaceWebViewVC : UIViewController <UIWebViewDelegate, BeintooPlayerDelegate> {
-
-    IBOutlet UIWebView      *webView;
-    UIActivityIndicatorView *loadingIndicator;
-    
-    BeintooPlayer *beintooPlayer;
-
-
+@interface BeintooUrlParser: NSObject {
+    NSArray *variables;
 }
+
+@property (nonatomic, retain) NSArray *variables;
+
+- (id)initWithURLString:(NSString *)url;
+- (NSString *)valueForVariable:(NSString *)varName;
 
 @end

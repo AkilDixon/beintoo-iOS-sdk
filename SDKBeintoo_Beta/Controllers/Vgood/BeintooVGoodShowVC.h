@@ -15,10 +15,11 @@
  ******************************************************************************/
 
 #import <UIKit/UIKit.h>
+#import "BeintooPlayer.h"
 
 @class BeintooFriendsListVC, BeintooMarketplaceVC;
 
-@interface BeintooVGoodShowVC : UIViewController <UIWebViewDelegate,UINavigationBarDelegate>{
+@interface BeintooVGoodShowVC : UIViewController <UIWebViewDelegate, UINavigationBarDelegate, BeintooPlayerDelegate>{
 
 	IBOutlet UIWebView		*vGoodWebView;
 	UIActivityIndicatorView *loadingIndicator;
@@ -30,6 +31,8 @@
 	
 	BOOL					isFromWallet;
 	BOOL					didOpenTheRecommendation;
+    
+    BeintooPlayer           *beintooPlayer;
 	
 }
 

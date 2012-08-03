@@ -26,6 +26,10 @@
 "last"					= "Last: %@";
 "nickname"				= "Nick:";
 
+// Give Bedollars
+"giveBedollarMsg"      = "You just earned %i Bedollar! Use your Bedollars to redeem great offers on Beintoo";
+"giveBedollarsMsg"      = "You just earned %i Bedollars! Use your Bedollars to redeem great offers on Beintoo";
+
 // Dashboard
 "profileDesc"			= "your stats, messages and friends";
 "leaderboardDesc"		= "view the global scoring";
@@ -53,9 +57,9 @@
 
 //Marketplace 
 "bedollars"                     = "Bedollars";
-"MPmarketplaceTitle"            = "Marketplace";
+"MPmarketplaceTitle"            = "Redeem";
 "MPtextDescriptionLong"         = "Redeem your coupons or send them as gifts";
-"MPdescription"                 = "choose your offers";
+"MPdescription"                 = "Use your Bedollars to redeem offers";
 "MPcredits"                     = "Your credits:";
 "MPmainSegmentedIndexTitle0"    = "Featured";
 "MPmainSegmentedIndexTitle1"    = "National";
@@ -89,9 +93,8 @@
 "upToDate"                      = "Up-to-date.";
 "MPwriteNewComment"             = "Write a comment";
 "MPorderByPrice"                = "Order by price";
-"submitScoreMarketplaceMsg"     = "You've got now %.2f %@, don't loose them! Use them in the Marketplace!";
-"submitScoreMarketplacePlayer"  = "Go now to Marketplace!";
-
+"submitScoreMarketplaceMsg"     = "You've got now %.0f %@, don't lose them! Use them to redeem your premium offers!";
+"submitScoreMarketplacePlayer"  = "";
 
 //Try Beintoo
 "tryBeintooHeader"              = "Join the community and get great discounts around you as reward for your achievements in this app!";

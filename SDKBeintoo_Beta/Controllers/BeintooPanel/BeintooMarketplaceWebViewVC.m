@@ -21,6 +21,8 @@
 - (void)viewDidLoad{
     [super viewDidLoad];
     
+    beintooPlayer = [[BeintooPlayer alloc] init];
+    
     int appOrientation = [Beintoo appOrientation];
 	
 	UIImageView *logo;
@@ -48,6 +50,8 @@
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
+    
+    beintooPlayer.delegate = self;
     
     loadingIndicator.frame = CGRectMake((self.view.frame.size.width/2) - (loadingIndicator.frame.size.width/2), (self.view.frame.size.height/2) - (loadingIndicator.frame.size.height/2), loadingIndicator.frame.size.width, loadingIndicator.frame.size.height);
     [loadingIndicator startAnimating];
@@ -86,6 +90,8 @@
             urlAddress      = [urlAddress stringByAppendingFormat:@"&developer_user_guid=%@&virtual_currency_amount=%f", [Beintoo getDeveloperUserId], [Beintoo getVirtualCurrencyBalance]];
         }
         
+        urlAddress = [urlAddress stringByAppendingFormat:@"&os_source=ios"];
+        
         //Create a URL object.
         NSURL *url = [NSURL URLWithString:urlAddress];
         
@@ -102,6 +108,8 @@
 
 - (void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:animated];
+    
+    beintooPlayer.delegate = nil;
     
     @try {
         [loadingIndicator stopAnimating];
@@ -129,6 +137,53 @@
     return _vi;
 }
 
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
+    
+    NSMutableURLRequest *_request = (NSMutableURLRequest *)request;
+	
+    NSURL *url = _request.URL;
+	NSString *urlString = [url path];
+	
+    NSURL *urlToGetParams = _request.URL;
+	NSString *urlStringToGet = [urlToGetParams absoluteString];
+    
+    if ([urlString isEqualToString:@"/m/set_app_and_redirect.html"]) {
+        
+        BeintooUrlParser *urlParser = [[BeintooUrlParser alloc] initWithURLString:urlStringToGet];
+        
+        if ([urlParser valueForVariable:@"guid"])
+            [beintooPlayer getPlayerByGUID:[urlParser valueForVariable:@"guid"]];
+        
+        [urlParser release];
+        
+		return YES;
+	}
+	
+    return YES;
+}
+
+- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result{
+    if (![[result objectForKey:@"kind"] isEqualToString:@"error"]) {
+        if ([result objectForKey:@"guid"] != nil) {
+            
+            NSString *playerGUID	= [result objectForKey:@"guid"];
+            NSString *playerUser	= [result objectForKey:@"user"];
+            
+            if (playerUser != nil && playerGUID != nil) {	
+                [Beintoo setUserLogged:YES];
+            }
+            [Beintoo setBeintooPlayer:result];
+            
+            // Alliance check
+            if ([result objectForKey:@"alliance"] != nil) {
+                [BeintooAlliance setUserWithAlliance:YES];
+            }else{
+                [BeintooAlliance setUserWithAlliance:NO];
+            }
+        }
+    }
+}
+
 -(void)closeBeintoo{
     [Beintoo dismissBeintoo];
 }
@@ -143,6 +198,13 @@
 
 - (void)webViewDidStartLoad:(UIWebView *)webView{
    
+}
+
+- (void)dealloc{
+    [loadingIndicator release];
+    [beintooPlayer release];
+    
+    [super dealloc];
 }
 
 @end

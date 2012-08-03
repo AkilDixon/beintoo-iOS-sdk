@@ -27,6 +27,7 @@
 #define NOTIFICATION_HEIGHT_ACHIEV_MSN  95  // pixels. Achievement + Mission text
 #define NOTIFICATION_HEIGHT_SSCORE      35  // pixels. Submit score
 #define NOTIFICATION_HEIGHT_PLOGIN      45  // pixels. Submit score
+#define NOTIFICATION_HEIGHT_GIVE_BEDOLLARS      45  // pixels. Submit score
 #define NOTIFICATION_HEIGHT_NTDISP      50  // pixels. Nothing to dispatch
 #define NOTIFICATION_HEIGHT_MISSION     140 // pixels. Get Mission
 #define NOTIFICATION_MARGIN             10
@@ -35,6 +36,7 @@
 #define NOTIFICATION_PLOGIN_SECONDS     3.0 // seconds
 #define NOTIFICATION_ACHIEVEM_SECONDS   4.5 // seconds
 #define NOTIFICATION_NTODISP_SECONDS    3.5 // seconds
+#define NOTIFICATION_GIVE_BEDOLLARS_SECONDS     3.0 // seconds
 
 #define NOTIFICATION_TYPE_SSCORE        123
 #define NOTIFICATION_TYPE_ACHIEV        124
@@ -42,6 +44,7 @@
 #define NOTIFICATION_TYPE_ACHIEV_MSN    126
 #define NOTIFICATION_TYPE_MISSION       127
 #define NOTIFICATION_TYPE_PLOGIN        128
+#define NOTIFICATION_TYPE_GIVE_BEDOLLARS  129
 
 #define BEINTOO_ERROR_MESSAGE 99
 
@@ -81,6 +84,7 @@
 - (void)setNotificationContentForSubmitScore:(NSDictionary *)_theScore WithWindowSize:(CGSize)windowSize;
 - (void)setNotificationContentForPlayerLogin:(NSDictionary *)_theScore WithWindowSize:(CGSize)windowSize;
 - (void)setNotificationContentForNothingToDispatchWithWindowSize:(CGSize)windowSize;
+- (void)setNotificationContentForGiveBedollars:(NSDictionary *)_theScore WithWindowSize:(CGSize)windowSize;
 
 
 + (NSString *)getMessageFromCode:(int)code;

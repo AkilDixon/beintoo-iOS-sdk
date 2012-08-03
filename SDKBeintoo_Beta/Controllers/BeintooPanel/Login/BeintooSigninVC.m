@@ -82,6 +82,15 @@
     [super viewWillAppear:animated];
     newUserButton.clipsToBounds = YES;
     
+    emailTF.text = @"";
+	emailTF.placeholder = @"email";
+	emailTF.hidden = NO;
+    title1.text = NSLocalizedStringFromTable(@"enteremail", @"BeintooLocalizable", @"");
+    
+    self.navigationItem.hidesBackButton = NO;
+    newUserButton.alpha = 1.0;
+    newUserButton.userInteractionEnabled = YES;
+    
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
     }
@@ -177,6 +186,8 @@
 	
 	[BLoadingView startActivity:self.view];
 
+    newUserButton.userInteractionEnabled = NO;
+    newUserButton.alpha = 0.5;
 	[user registerUserToGuid:[Beintoo getPlayerID] withEmail:userEmail nickname:self.nickname password:nil name:nil country:nil address:nil gender:nil sendGreetingsEmail:YES];
 }
 
@@ -184,11 +195,15 @@
 #pragma mark Player-User Delegates
 
 - (void)didCompleteRegistration:(NSDictionary *)result{
+    
     if ([result objectForKey:@"message"] != nil) {
         [BLoadingView stopActivity];
         UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"useralreadyregistered",@"BeintooLocalizable",@"")  delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [av show];
         [av release];
+        
+        newUserButton.userInteractionEnabled = YES;
+        newUserButton.alpha = 1.0;
     }
     else{
         NSString *newUserID = [result objectForKey:@"id"];
@@ -201,9 +216,13 @@
 
 - (void)playerDidLogin:(BeintooPlayer *)player{
    
+    newUserButton.userInteractionEnabled = YES;
+    newUserButton.alpha = 1.0;
+    
     if ([Beintoo getUserID]!=nil) {
 		[BLoadingView stopActivity];
-		[self startNickAnimation];
+        self.navigationItem.hidesBackButton = YES;
+        [self startNickAnimation];
 	}
     else{
         [BLoadingView stopActivity];
@@ -215,6 +234,10 @@
 
 - (void)confirmNickname{
 	NSString *newNickname = emailTF.text;
+    
+    newUserButton.userInteractionEnabled = NO;
+    newUserButton.alpha = 0.5;
+    
 	[BLoadingView startActivity:self.view];
 	[user updateUser:[Beintoo getUserID] withNickname:newNickname];
 	[emailTF resignFirstResponder];
@@ -250,6 +273,9 @@
 		}
         
 	}
+    
+    newUserButton.userInteractionEnabled = YES;
+    newUserButton.alpha = 1.0;
 }
 
 #pragma mark -
@@ -389,7 +415,10 @@
 - (void)viewWillDisappear:(BOOL)animated{
 
     @try {
-		[BLoadingView stopActivity];
+        for (UIView *subview in [self.view subviews]){
+            if ([subview isKindOfClass:[BLoadingView class]])
+                [subview removeFromSuperview];
+        }
 	}
 	@catch (NSException * e) {
 	}

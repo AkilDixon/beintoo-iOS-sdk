@@ -52,8 +52,6 @@
 		5C90402114E3E8EB00788F4F /* arrow_up@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C90401014E3E8EB00788F4F /* arrow_up@2x.png */; };
 		5C90402214E3E8EB00788F4F /* bar_close_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C90401114E3E8EB00788F4F /* bar_close_button.png */; };
 		5C90402314E3E8EB00788F4F /* bar_close_button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C90401214E3E8EB00788F4F /* bar_close_button@2x.png */; };
-		5C90402414E3E8EB00788F4F /* beintoo_marketplace.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C90401314E3E8EB00788F4F /* beintoo_marketplace.png */; };
-		5C90402514E3E8EB00788F4F /* beintoo_marketplace@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C90401414E3E8EB00788F4F /* beintoo_marketplace@2x.png */; };
 		5C90402614E3E8EB00788F4F /* fan.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C90401514E3E8EB00788F4F /* fan.png */; };
 		5C90402714E3E8EB00788F4F /* messages.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C90401614E3E8EB00788F4F /* messages.png */; };
 		5C90402814E3E8EB00788F4F /* new_message_button_off.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C90401714E3E8EB00788F4F /* new_message_button_off.png */; };
@@ -74,6 +72,9 @@
 		5C90404214E4165400788F4F /* trybeintoo_monetize_portrait@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C90403D14E4165400788F4F /* trybeintoo_monetize_portrait@2x.png */; };
 		5CA4A8CA14E5797000FA6CAC /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CA4A8C814E5797000FA6CAC /* icon.png */; };
 		5CA4A8CB14E5797000FA6CAC /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CA4A8C914E5797000FA6CAC /* icon@2x.png */; };
+		5CB0D37815CC3B2000893595 /* BeintooUrlParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB0D37715CC3B2000893595 /* BeintooUrlParser.m */; };
+		5CE2602F15CC0910002FE283 /* beintoo_marketplace.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CE2602D15CC090F002FE283 /* beintoo_marketplace.png */; };
+		5CE2603015CC0910002FE283 /* beintoo_marketplace@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CE2602E15CC0910002FE283 /* beintoo_marketplace@2x.png */; };
 		7005C46E143CB2AF002F4D6C /* beintoo_forum.png in Resources */ = {isa = PBXBuildFile; fileRef = 7005C46C143CB2AF002F4D6C /* beintoo_forum.png */; };
 		7005C46F143CB2AF002F4D6C /* beintoo_forum@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7005C46D143CB2AF002F4D6C /* beintoo_forum@2x.png */; };
 		700734E313A78B39009288D5 /* BeintooVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 700734CC13A78B39009288D5 /* BeintooVC.xib */; };
@@ -264,7 +265,7 @@
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* BeintooAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* BeintooAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeintooAppDelegate.m; sourceTree = "<group>"; };
-		1D6058910D05DD3D006BFB54 /* Beintoo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Beintoo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D6058910D05DD3D006BFB54 /* Beintoo iOS Sdk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Beintoo iOS Sdk.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		2899E5210DE3E06400AC0155 /* BeintooViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = BeintooViewController.xib; path = Resources/xib/BeintooViewController.xib; sourceTree = "<group>"; };
@@ -319,8 +320,6 @@
 		5C90401014E3E8EB00788F4F /* arrow_up@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "arrow_up@2x.png"; sourceTree = "<group>"; };
 		5C90401114E3E8EB00788F4F /* bar_close_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bar_close_button.png; sourceTree = "<group>"; };
 		5C90401214E3E8EB00788F4F /* bar_close_button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bar_close_button@2x.png"; sourceTree = "<group>"; };
-		5C90401314E3E8EB00788F4F /* beintoo_marketplace.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = beintoo_marketplace.png; path = ../buttons/beintoo_marketplace.png; sourceTree = "<group>"; };
-		5C90401414E3E8EB00788F4F /* beintoo_marketplace@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "beintoo_marketplace@2x.png"; path = "../buttons/beintoo_marketplace@2x.png"; sourceTree = "<group>"; };
 		5C90401514E3E8EB00788F4F /* fan.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fan.png; sourceTree = "<group>"; };
 		5C90401614E3E8EB00788F4F /* messages.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = messages.png; sourceTree = "<group>"; };
 		5C90401714E3E8EB00788F4F /* new_message_button_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = new_message_button_off.png; sourceTree = "<group>"; };
@@ -341,6 +340,10 @@
 		5C90403D14E4165400788F4F /* trybeintoo_monetize_portrait@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "trybeintoo_monetize_portrait@2x.png"; sourceTree = "<group>"; };
 		5CA4A8C814E5797000FA6CAC /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		5CA4A8C914E5797000FA6CAC /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
+		5CB0D37615CC3B2000893595 /* BeintooUrlParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooUrlParser.h; sourceTree = "<group>"; };
+		5CB0D37715CC3B2000893595 /* BeintooUrlParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeintooUrlParser.m; sourceTree = "<group>"; };
+		5CE2602D15CC090F002FE283 /* beintoo_marketplace.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = beintoo_marketplace.png; sourceTree = "<group>"; };
+		5CE2602E15CC0910002FE283 /* beintoo_marketplace@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "beintoo_marketplace@2x.png"; sourceTree = "<group>"; };
 		7005C46C143CB2AF002F4D6C /* beintoo_forum.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = beintoo_forum.png; sourceTree = "<group>"; };
 		7005C46D143CB2AF002F4D6C /* beintoo_forum@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "beintoo_forum@2x.png"; sourceTree = "<group>"; };
 		700734CC13A78B39009288D5 /* BeintooVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BeintooVC.xib; sourceTree = "<group>"; };
@@ -651,7 +654,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1D6058910D05DD3D006BFB54 /* Beintoo.app */,
+				1D6058910D05DD3D006BFB54 /* Beintoo iOS Sdk.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -889,8 +892,8 @@
 		7058B0AA1498E614005BE188 /* dashboardImg */ = {
 			isa = PBXGroup;
 			children = (
-				5C90401314E3E8EB00788F4F /* beintoo_marketplace.png */,
-				5C90401414E3E8EB00788F4F /* beintoo_marketplace@2x.png */,
+				5CE2602D15CC090F002FE283 /* beintoo_marketplace.png */,
+				5CE2602E15CC0910002FE283 /* beintoo_marketplace@2x.png */,
 				7058B0AB1498E614005BE188 /* beintoo_challenges_24.png */,
 				7058B0AC1498E614005BE188 /* beintoo_challenges_24@2x.png */,
 				7058B0AD1498E614005BE188 /* beintoo_challenges_horiz.png */,
@@ -954,6 +957,8 @@
 		70679F68139E1C2A00457107 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				5CB0D37615CC3B2000893595 /* BeintooUrlParser.h */,
+				5CB0D37715CC3B2000893595 /* BeintooUrlParser.m */,
 				70218F2A13A608AB0080C807 /* BeintooAlerts.h */,
 				70218F2B13A608AB0080C807 /* BeintooAlerts.m */,
 				70218EF313A602810080C807 /* BeintooGraphic.h */,
@@ -1178,9 +1183,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1D6058900D05DD3D006BFB54 /* Beintoo */ = {
+		1D6058900D05DD3D006BFB54 /* Beintoo iOS Sdk */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "Beintoo" */;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "Beintoo iOS Sdk" */;
 			buildPhases = (
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
@@ -1190,9 +1195,9 @@
 			);
 			dependencies = (
 			);
-			name = Beintoo;
+			name = "Beintoo iOS Sdk";
 			productName = Beintoo;
-			productReference = 1D6058910D05DD3D006BFB54 /* Beintoo.app */;
+			productReference = 1D6058910D05DD3D006BFB54 /* Beintoo iOS Sdk.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1223,7 +1228,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1D6058900D05DD3D006BFB54 /* Beintoo */,
+				1D6058900D05DD3D006BFB54 /* Beintoo iOS Sdk */,
 			);
 		};
 /* End PBXProject section */
@@ -1362,8 +1367,6 @@
 				5C90402114E3E8EB00788F4F /* arrow_up@2x.png in Resources */,
 				5C90402214E3E8EB00788F4F /* bar_close_button.png in Resources */,
 				5C90402314E3E8EB00788F4F /* bar_close_button@2x.png in Resources */,
-				5C90402414E3E8EB00788F4F /* beintoo_marketplace.png in Resources */,
-				5C90402514E3E8EB00788F4F /* beintoo_marketplace@2x.png in Resources */,
 				5C90402614E3E8EB00788F4F /* fan.png in Resources */,
 				5C90402714E3E8EB00788F4F /* messages.png in Resources */,
 				5C90402814E3E8EB00788F4F /* new_message_button_off.png in Resources */,
@@ -1385,6 +1388,8 @@
 				5CA4A8CA14E5797000FA6CAC /* icon.png in Resources */,
 				5CA4A8CB14E5797000FA6CAC /* icon@2x.png in Resources */,
 				5C6B162D15208E3100FA20B8 /* BeintooMarketplaceWebViewVC.xib in Resources */,
+				5CE2602F15CC0910002FE283 /* beintoo_marketplace.png in Resources */,
+				5CE2603015CC0910002FE283 /* beintoo_marketplace@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1486,6 +1491,7 @@
 				5C903FE714E3D8A400788F4F /* BRefreshTableHeaderView.m in Sources */,
 				5C68C44F151B961A00826BEE /* main.m in Sources */,
 				5C6B162C15208E3100FA20B8 /* BeintooMarketplaceWebViewVC.m in Sources */,
+				5CB0D37815CC3B2000893595 /* BeintooUrlParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1529,7 +1535,7 @@
 				INFOPLIST_FILE = "Resources/Beintoo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = Beintoo;
+				PRODUCT_NAME = "Beintoo iOS Sdk";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1553,7 +1559,7 @@
 				INFOPLIST_FILE = "Resources/Beintoo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = Beintoo;
+				PRODUCT_NAME = "Beintoo iOS Sdk";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1588,6 +1594,7 @@
 					armv6,
 					"$(ARCHS_STANDARD_32_BIT)",
 				);
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_THUMB_SUPPORT = NO;
@@ -1606,7 +1613,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "Beintoo" */ = {
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "Beintoo iOS Sdk" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,

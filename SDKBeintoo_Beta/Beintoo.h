@@ -89,6 +89,7 @@
 #import "BeintooMarketplaceVC.h"
 #import "BeintooMarketplace.h"
 #import "BeintooMarketplaceWebViewVC.h"
+#import "BeintooUrlParser.h"
 
 #define BFEATURE_PROFILE			@"Profile"
 #define BFEATURE_MARKETPLACE		@"Marketplace"

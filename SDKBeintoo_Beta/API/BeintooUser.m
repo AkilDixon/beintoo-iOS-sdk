@@ -17,9 +17,11 @@
 #import "BeintooUser.h"
 #import "Beintoo.h"
 
+
+
 @implementation BeintooUser
 
-@synthesize delegate, parser, callingDelegate, userParams;
+@synthesize delegate, parser, callingDelegate, userParams, showGiveBedollarsNotification;
 
 -(id)init {
 	if (self = [super init])
@@ -27,6 +29,7 @@
         parser          = [[Parser alloc] init];
 		parser.delegate = self;
 		rest_resource   = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/user/",[Beintoo getRestBaseUrl]]];
+        app_rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/app/",[Beintoo getRestBaseUrl]]];
 	}
     return self;
 }
@@ -35,9 +38,24 @@
 	return rest_resource;
 }
 
+- (NSString *)appRestResource{
+	return app_rest_resource;
+}
+
 + (void)setUserDelegate:(id)_caller{
 	BeintooUser *userService = [Beintoo beintooUserService];
 	userService.callingDelegate = _caller;
+}
+
+- (void)showGiveBedollarsAlert{
+	
+	BMessageAnimated *_notification = [[[BMessageAnimated alloc] init] autorelease];
+	UIWindow *appWindow = [Beintoo getAppWindow];
+    
+	[_notification setNotificationContentForGiveBedollars:nil WithWindowSize:appWindow.bounds.size];
+	
+	[appWindow addSubview:_notification];
+	[_notification showNotification];
 }
 
 #pragma mark -
@@ -72,6 +90,7 @@
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:USER_SHOWCHALLENGES_CALLER_ID];
 }
+
 - (void)challengeRequestfrom:(NSString *)userIDFrom	to:(NSString *)userIDTo withAction:(NSString *)action forContest:(NSString *)contest withBedollarsToBet:(NSString *)_bedollars andScoreToReach:(NSString *)_scoreToReach forKindOfChallenge:(NSString *)_challengeKind andActor:(NSString *)actor{
 	
     NSString *res		 = [NSString stringWithFormat:@"%@challenge/%@/%@/%@",rest_resource,userIDFrom,action,userIDTo];
@@ -98,6 +117,7 @@
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", codeID, @"codeID", nil];
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:USER_CHALLENGEPREREQ_CALLER_ID];  
 }
+
 - (void)getFriendsByExtid{
 	NSString *res		 = [NSString stringWithFormat:@"%@friend/%@/",rest_resource,[Beintoo getUserID]];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
@@ -293,6 +313,56 @@
 	[parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_NICKUPDATE_CALLER_ID];
 }
 
++ (void)giveBedollars:(NSString *)_reason showNotification:(BOOL)_showNotification{
+    
+    if (![Beintoo getUserID]){
+        BeintooLOG(@"Give Bedollars: no user found");
+        return;
+    }
+    
+    if (!_reason){
+        BeintooLOG(@"Give Bedollars: no reason provided");
+        return;
+    }
+    
+    BeintooUser *userService = [Beintoo beintooUserService];
+	
+    userService.showGiveBedollarsNotification = _showNotification;
+    
+    NSString *res		 = [NSString stringWithFormat:@"%@givebedollars/%@", userService.appRestResource, [Beintoo getUserID]];
+	NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   [Beintoo getApiKey], @"apikey",
+                                   nil];
+    
+    NSString *httpBody = [NSString stringWithFormat:@"reason=%@", _reason];
+    
+    [userService.parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_GIVE_BEDOLLARS_CALLER_ID];
+}
+
+- (void)giveBedollars:(NSString *)_reason showNotification:(BOOL)_showNotification{
+    
+    if (![Beintoo getUserID]){
+        BeintooLOG(@"Give Bedollars: no user found");
+        return;
+    }
+    
+    if (!_reason){
+        BeintooLOG(@"Give Bedollars: no reason provided");
+        return;
+    }
+    
+    showGiveBedollarsNotification = _showNotification;
+    
+    NSString *res		 = [NSString stringWithFormat:@"%@givebedollars/%@",app_rest_resource, [Beintoo getUserID]];
+	NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   [Beintoo getApiKey], @"apikey",
+                                   nil];
+
+    NSString *httpBody = [NSString stringWithFormat:@"reason=%@", _reason];
+    
+    [parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_GIVE_BEDOLLARS_CALLER_ID];
+}
+
 
 #pragma mark -
 #pragma mark parser delegate response
@@ -424,6 +494,30 @@
             }
             if ([[self delegate]respondsToSelector:@selector(didCompleteUserNickUpdate:)]) 
                 [[self delegate]didCompleteUserNickUpdate:result];
+		}
+			break;
+            
+        case USER_GIVE_BEDOLLARS_CALLER_ID:{
+            if ([result objectForKey:@"message"]) {
+				NSLog(@"Beintoo: error in Give Bedollars call: %@",[result objectForKey:@"message"]);
+            }
+            
+            if ([[self delegate]respondsToSelector:@selector(didReceiveGiveBedollarsResponse:)]) 
+                [[self delegate] didReceiveGiveBedollarsResponse:result];
+            
+            if (showGiveBedollarsNotification == YES){
+                int bedollarsAmount = 0;
+                if ([[result objectForKey:@"reason"] isEqualToString:GIVE_1_BEDOLLAR])
+                    bedollarsAmount = 1;
+                else if ([[result objectForKey:@"reason"] isEqualToString:GIVE_2_BEDOLLAR])
+                    bedollarsAmount = 2;
+                else if ([[result objectForKey:@"reason"] isEqualToString:GIVE_5_BEDOLLAR])
+                    bedollarsAmount = 5;
+                
+                [[NSUserDefaults standardUserDefaults] setInteger:bedollarsAmount forKey:@"lastGiveBedollarsAmount"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                [self showGiveBedollarsAlert];
+            }
 		}
 			break;
 			

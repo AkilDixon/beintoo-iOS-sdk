@@ -130,11 +130,6 @@
 	[BeintooPlayer getScore];
 }
 
-- (IBAction)setBalance{
-	[BeintooPlayer setPlayerDelegate:self];
-	[BeintooPlayer setBalance:0 forContest:@"default"];
-}
-
 - (IBAction)getVgood{
 	/**
 	 * VGOOD GET VIRTUAL GOOD : 
@@ -148,12 +143,29 @@
 
 - (IBAction)submitAchievement{
 	[BeintooAchievements setAchievementDelegate:self];
-	// These are all possible ways to submit an achievement progress
+	
+    // These are all possible ways to submit an achievement progress
 	//[BeintooAchievements setAchievement:@"w234567" withScore:10];
 	//[BeintooAchievements setAchievement:@"w234567" withPercentage:50];
 	//[BeintooAchievements incrementAchievement:@"123456789" withScore:5];
+    
     [BeintooAchievements unlockAchievement:@"w234567"];
     
+}
+
+- (IBAction)giveBedollars{
+    
+    /* Possibile values to give bedollars:
+    ** GIVE_1_BEDOLLAR --> to give 1 bedollar
+    ** GIVE_2_BEDOLLAR --> to give 2 bedollars
+    ** GIVE_5_BEDOLLAR --> to give 5 bedollars
+    ** 
+    ** choose if a notification show be shown in case of successfull callback by YES, 
+    ** else choose NO
+    */
+    
+    [BeintooUser setUserDelegate:self];
+    [BeintooUser giveBedollars:GIVE_2_BEDOLLAR showNotification:YES];
 }
 
 - (IBAction)playerLogout{
@@ -192,11 +204,6 @@
     [Beintoo _setUserLocation:loc];
     
     [self manageLocation];
-}
-
-- (IBAction)getMission{
-    //Please, note that if app uses missions, one will be shown just one time every 24 hours, to avoid that it appears everytime a user open the app
-    [BeintooMission getMission];
 }
 
 #pragma mark -
@@ -246,14 +253,6 @@
 	NSLog(@"Beintoo: player getscore error: %@",error);
 }
 
-// -------------- PLAYER SETBALANCE CALLBACKS
-- (void)playerDidSetBalanceWithResult:(NSString *)result{
-	NSLog(@"Beintoo: player setBalance result: %@",result);
-}
-- (void)playerDidFailSetBalanceWithError:(NSString *)error{
-	NSLog(@"Beintoo: player setBalance error: %@",error);
-}
-
 // -------------- ACHIEVEMENT SUBMIT CALLBACKS
 - (void)didSubmitAchievementWithResult:(NSDictionary *)result{
 	NSLog(@"Beintoo: achievement submitted with result: %@",result);
@@ -271,6 +270,11 @@
 
     NSLog(@"Achieve %@ || status %@ || precentage %i", _achievementId, _status, _percentage);
 
+}
+
+// GIVE BEDOLLARS
+- (void)didReceiveGiveBedollarsResponse:(NSDictionary *)result{
+    NSLog(@"Give Bedollars response %@", result);
 }
 
 - (void)didBeintooGenerateAVirtualGood:(BVirtualGood *)theVgood{
@@ -363,12 +367,6 @@
     [submitScoreForContest setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
     [submitScoreForContest setTextSize:[NSNumber numberWithInt:14]];
     
-    [setBalance setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[setBalance setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[setBalance setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [setBalance setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-    [setBalance setTextSize:[NSNumber numberWithInt:14]];
-    
     [getScoreForContest setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
 	[getScoreForContest setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
 	[getScoreForContest setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
@@ -399,12 +397,11 @@
     [sanFrancisco setLowColor:[UIColor colorWithRed:7.0/255 green:64.0/255 blue:163.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
     [sanFrancisco setTextSize:[NSNumber numberWithInt:14]];
     
-    [mission setHighColor:[UIColor colorWithRed:10.0/255 green:90.0/255 blue:229.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-	[mission setMediumHighColor:[UIColor colorWithRed:8.0/255 green:72.0/255 blue:183.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-	[mission setMediumLowColor:[UIColor colorWithRed:8.0/255 green:72.0/255 blue:183.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-    [mission setLowColor:[UIColor colorWithRed:7.0/255 green:64.0/255 blue:163.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-    [mission setTextSize:[NSNumber numberWithInt:14]];
-
+    [giveBedollars setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
+	[giveBedollars setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
+	[giveBedollars setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
+    [giveBedollars setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
+    [giveBedollars setTextSize:[NSNumber numberWithInt:14]];
 
 }
 

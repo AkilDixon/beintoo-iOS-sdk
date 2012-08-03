@@ -43,6 +43,7 @@ NSString *BNSDefIsUserLogged;
 	[Beintoo initLocallySavedAchievementsArray];
     [Beintoo initUserAgent];
 	[Beintoo initPlayerService];
+    [Beintoo initUserService];
 	[Beintoo initVgoodService];
 	[Beintoo initAchievementsService];
     [Beintoo initMissionService];
@@ -128,7 +129,7 @@ NSString *BNSDefIsUserLogged;
 }
 								
 + (NSString *)currentVersion{
-	return @"2.8.13beta-ios";
+	return @"2.8.16beta-ios";
 }
 
 + (NSInteger)notificationPosition{

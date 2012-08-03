@@ -49,6 +49,7 @@
 #define	USER_NICKUPDATE_CALLER_ID               42
 #define USER_CHALLENGEPREREQ_CALLER_ID          43
 #define USER_BACKGROUND_REGISTER_CALLER_ID      44
+#define USER_GIVE_BEDOLLARS_CALLER_ID           45
 
 // VGOOD:from 60 to 79
 #define VGOOD_SHOWBYUSER_CALLER_ID              60

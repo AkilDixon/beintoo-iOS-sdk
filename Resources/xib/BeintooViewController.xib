@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="7.10">
 	<data>
-		<int key="IBDocument.SystemTarget">1280</int>
-		<string key="IBDocument.SystemVersion">10K549</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
-		<string key="IBDocument.AppKitVersion">1038.36</string>
-		<string key="IBDocument.HIToolboxVersion">461.00</string>
+		<int key="IBDocument.SystemTarget">1296</int>
+		<string key="IBDocument.SystemVersion">11E53</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2182</string>
+		<string key="IBDocument.AppKitVersion">1138.47</string>
+		<string key="IBDocument.HIToolboxVersion">569.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-			<string key="NS.object.0">933</string>
+			<string key="NS.object.0">1181</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -87,7 +87,7 @@
 						<string key="NSFrame">{{156, 255}, {155, 40}}</string>
 						<reference key="NSSuperview" ref="774585933"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="207869214"/>
+						<reference key="NSNextKeyView"/>
 						<reference key="IBUIBackgroundColor" ref="374575456"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -123,10 +123,10 @@
 						<string key="NSFrame">{{10, 48}, {120, 28}}</string>
 						<reference key="NSSuperview" ref="774585933"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
-						<object class="NSColor" key="IBUIBackgroundColor" id="23373406">
-							<int key="NSColorSpace">1</int>
-							<bytes key="NSRGB">MC42NjY4NTQ1Nzc2IDAuNzE5Mzg3NzU1MSAwLjIyODgyNzk4NDgAA</bytes>
+						<reference key="NSNextKeyView" ref="427881198"/>
+						<object class="NSColor" key="IBUIBackgroundColor" id="428403227">
+							<int key="NSColorSpace">2</int>
+							<bytes key="NSRGB">MC42OTQxMTc2NjUzIDAuNzg0MzEzNzk4IDAuMjIzNTI5NDI4MgA</bytes>
 						</object>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -146,7 +146,10 @@
 						<reference key="NSSuperview" ref="774585933"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="980832420"/>
-						<reference key="IBUIBackgroundColor" ref="23373406"/>
+						<object class="NSColor" key="IBUIBackgroundColor" id="23373406">
+							<int key="NSColorSpace">1</int>
+							<bytes key="NSRGB">MC42NjY4NTQ1Nzc2IDAuNzE5Mzg3NzU1MSAwLjIyODgyNzk4NDgAA</bytes>
+						</object>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 						<int key="IBUIContentHorizontalAlignment">0</int>
@@ -171,25 +174,6 @@
 						<int key="IBUIContentHorizontalAlignment">0</int>
 						<int key="IBUIContentVerticalAlignment">0</int>
 						<string key="IBUINormalTitle">SubmScoreForContest</string>
-						<reference key="IBUIHighlightedTitleColor" ref="395754833"/>
-						<reference key="IBUINormalTitleColor" ref="395754833"/>
-						<reference key="IBUINormalTitleShadowColor" ref="584488259"/>
-						<reference key="IBUIFontDescription" ref="270767973"/>
-						<reference key="IBUIFont" ref="874097994"/>
-					</object>
-					<object class="IBUIButton" id="463232277">
-						<reference key="NSNextResponder" ref="774585933"/>
-						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{10, 213}, {120, 28}}</string>
-						<reference key="NSSuperview" ref="774585933"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="168278326"/>
-						<reference key="IBUIBackgroundColor" ref="23373406"/>
-						<bool key="IBUIOpaque">NO</bool>
-						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<int key="IBUIContentHorizontalAlignment">0</int>
-						<int key="IBUIContentVerticalAlignment">0</int>
-						<string key="IBUINormalTitle">SetBalance</string>
 						<reference key="IBUIHighlightedTitleColor" ref="395754833"/>
 						<reference key="IBUINormalTitleColor" ref="395754833"/>
 						<reference key="IBUINormalTitleShadowColor" ref="584488259"/>
@@ -325,7 +309,7 @@
 						<string key="NSFrame">{{237, 179}, {74, 28}}</string>
 						<reference key="NSSuperview" ref="774585933"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="463232277"/>
+						<reference key="NSNextKeyView"/>
 						<reference key="IBUIBackgroundColor" ref="355811664"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -410,26 +394,32 @@
 						</object>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 					</object>
-					<object class="IBUIButton" id="207869214">
+					<object class="IBUIButton" id="427881198">
 						<reference key="NSNextResponder" ref="774585933"/>
 						<int key="NSvFlags">289</int>
-						<string key="NSFrame">{{192, 48}, {120, 28}}</string>
+						<string key="NSFrame">{{173, 48}, {140, 28}}</string>
 						<reference key="NSSuperview" ref="774585933"/>
 						<reference key="NSWindow"/>
-						<object class="NSColor" key="IBUIBackgroundColor">
-							<int key="NSColorSpace">1</int>
-							<bytes key="NSRGB">MC42NjY4NTQ1Nzc2IDAuNzE5Mzg3NzU1MSAwLjIyODgyNzk4NDgAA</bytes>
-						</object>
+						<reference key="NSNextKeyView" ref="927950605"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<reference key="IBUIBackgroundColor" ref="428403227"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 						<int key="IBUIContentHorizontalAlignment">0</int>
 						<int key="IBUIContentVerticalAlignment">0</int>
-						<string key="IBUINormalTitle">Get Mission</string>
+						<string key="IBUINormalTitle">Give Bedollars [2]</string>
 						<reference key="IBUIHighlightedTitleColor" ref="395754833"/>
 						<reference key="IBUINormalTitleColor" ref="395754833"/>
 						<reference key="IBUINormalTitleShadowColor" ref="584488259"/>
-						<reference key="IBUIFontDescription" ref="270767973"/>
-						<reference key="IBUIFont" ref="874097994"/>
+						<object class="IBUIFontDescription" key="IBUIFontDescription">
+							<int key="type">2</int>
+							<double key="pointSize">12</double>
+						</object>
+						<object class="NSFont" key="IBUIFont">
+							<string key="NSName">Helvetica-Bold</string>
+							<double key="NSSize">12</double>
+							<int key="NSfFlags">16</int>
+						</object>
 					</object>
 				</object>
 				<string key="NSFrameSize">{320, 460}</string>
@@ -521,14 +511,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">setBalance</string>
-						<reference key="source" ref="372490531"/>
-						<reference key="destination" ref="463232277"/>
-					</object>
-					<int key="connectionID">94</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">submitScore</string>
 						<reference key="source" ref="372490531"/>
 						<reference key="destination" ref="324467331"/>
@@ -593,11 +575,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">mission</string>
+						<string key="label">giveBedollars</string>
 						<reference key="source" ref="372490531"/>
-						<reference key="destination" ref="207869214"/>
+						<reference key="destination" ref="427881198"/>
 					</object>
-					<int key="connectionID">122</int>
+					<int key="connectionID">125</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
@@ -664,15 +646,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
-						<string key="label">setBalance</string>
-						<reference key="source" ref="463232277"/>
-						<reference key="destination" ref="372490531"/>
-						<int key="IBEventType">7</int>
-					</object>
-					<int key="connectionID">54</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchEventConnection" key="connection">
 						<string key="label">submitAchievement</string>
 						<reference key="source" ref="632206757"/>
 						<reference key="destination" ref="372490531"/>
@@ -718,12 +691,12 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
-						<string key="label">getMission</string>
-						<reference key="source" ref="207869214"/>
+						<string key="label">giveBedollars</string>
+						<reference key="source" ref="427881198"/>
 						<reference key="destination" ref="372490531"/>
 						<int key="IBEventType">7</int>
 					</object>
-					<int key="connectionID">123</int>
+					<int key="connectionID">126</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -760,7 +733,6 @@
 							<reference ref="498145007"/>
 							<reference ref="53893643"/>
 							<reference ref="921504403"/>
-							<reference ref="463232277"/>
 							<reference ref="632206757"/>
 							<reference ref="482954504"/>
 							<reference ref="665498537"/>
@@ -772,7 +744,7 @@
 							<reference ref="63941690"/>
 							<reference ref="96598770"/>
 							<reference ref="311219959"/>
-							<reference ref="207869214"/>
+							<reference ref="427881198"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -809,11 +781,6 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">35</int>
 						<reference key="object" ref="965612961"/>
-						<reference key="parent" ref="774585933"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">52</int>
-						<reference key="object" ref="463232277"/>
 						<reference key="parent" ref="774585933"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -881,8 +848,8 @@
 						<string key="objectName">Green Milan</string>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">120</int>
-						<reference key="object" ref="207869214"/>
+						<int key="objectID">124</int>
+						<reference key="object" ref="427881198"/>
 						<reference key="parent" ref="774585933"/>
 					</object>
 				</object>
@@ -901,8 +868,8 @@
 					<string>104.IBPluginDependency</string>
 					<string>105.IBPluginDependency</string>
 					<string>106.IBPluginDependency</string>
-					<string>120.CustomClassName</string>
-					<string>120.IBPluginDependency</string>
+					<string>124.CustomClassName</string>
+					<string>124.IBPluginDependency</string>
 					<string>24.CustomClassName</string>
 					<string>24.IBPluginDependency</string>
 					<string>26.CustomClassName</string>
@@ -915,8 +882,6 @@
 					<string>33.IBPluginDependency</string>
 					<string>35.CustomClassName</string>
 					<string>35.IBPluginDependency</string>
-					<string>52.CustomClassName</string>
-					<string>52.IBPluginDependency</string>
 					<string>6.IBPluginDependency</string>
 					<string>71.CustomClassName</string>
 					<string>71.IBPluginDependency</string>
@@ -929,7 +894,7 @@
 					<string>8.IBPluginDependency</string>
 					<string>83.IBPluginDependency</string>
 				</object>
-				<object class="NSMutableArray" key="dict.values">
+				<object class="NSArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>BeintooViewController</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -940,8 +905,6 @@
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-					<string>BButton</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>BButton</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -982,7 +945,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">123</int>
+			<int key="maxID">126</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1002,9 +965,9 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>getMission</string>
 							<string>getScoreForContest</string>
 							<string>getVgood</string>
+							<string>giveBedollars</string>
 							<string>playerLogin</string>
 							<string>playerLogout</string>
 							<string>setBalance</string>
@@ -1017,7 +980,7 @@
 							<string>submitScore</string>
 							<string>submitScoreForContest</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>id</string>
 							<string>id</string>
@@ -1039,9 +1002,9 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>getMission</string>
 							<string>getScoreForContest</string>
 							<string>getVgood</string>
+							<string>giveBedollars</string>
 							<string>playerLogin</string>
 							<string>playerLogout</string>
 							<string>setBalance</string>
@@ -1054,18 +1017,18 @@
 							<string>submitScore</string>
 							<string>submitScoreForContest</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBActionInfo">
-								<string key="name">getMission</string>
-								<string key="candidateClassName">id</string>
-							</object>
 							<object class="IBActionInfo">
 								<string key="name">getScoreForContest</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">getVgood</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">giveBedollars</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -1121,13 +1084,13 @@
 							<string>achievements</string>
 							<string>getScoreForContest</string>
 							<string>getVgood</string>
+							<string>giveBedollars</string>
 							<string>greenLondon</string>
 							<string>greenMilan</string>
 							<string>greenSanFrancisco</string>
 							<string>logout</string>
 							<string>london</string>
 							<string>milan</string>
-							<string>mission</string>
 							<string>playerLogin</string>
 							<string>redLondon</string>
 							<string>redMilan</string>
@@ -1137,15 +1100,15 @@
 							<string>submitScore</string>
 							<string>submitScoreForContest</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>BButton</string>
 							<string>BButton</string>
 							<string>BButton</string>
-							<string>UIView</string>
-							<string>UIView</string>
-							<string>UIView</string>
 							<string>BButton</string>
+							<string>UIView</string>
+							<string>UIView</string>
+							<string>UIView</string>
 							<string>BButton</string>
 							<string>BButton</string>
 							<string>BButton</string>
@@ -1166,13 +1129,13 @@
 							<string>achievements</string>
 							<string>getScoreForContest</string>
 							<string>getVgood</string>
+							<string>giveBedollars</string>
 							<string>greenLondon</string>
 							<string>greenMilan</string>
 							<string>greenSanFrancisco</string>
 							<string>logout</string>
 							<string>london</string>
 							<string>milan</string>
-							<string>mission</string>
 							<string>playerLogin</string>
 							<string>redLondon</string>
 							<string>redMilan</string>
@@ -1182,7 +1145,7 @@
 							<string>submitScore</string>
 							<string>submitScoreForContest</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBToOneOutletInfo">
 								<string key="name">achievements</string>
@@ -1194,6 +1157,10 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">getVgood</string>
+								<string key="candidateClassName">BButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">giveBedollars</string>
 								<string key="candidateClassName">BButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
@@ -1218,10 +1185,6 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">milan</string>
-								<string key="candidateClassName">BButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">mission</string>
 								<string key="candidateClassName">BButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
@@ -1267,6 +1230,10 @@
 		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaTouchFramework</string>
+		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
+			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaTouchPlugin.iPhoneOS</string>
+			<real value="1296" key="NS.object.0"/>
+		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDevelopmentDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaTouchPlugin.InterfaceBuilder3</string>
 			<integer value="3100" key="NS.object.0"/>
@@ -1280,12 +1247,12 @@
 				<string>beintoo_full_logo.png</string>
 				<string>beintoo_marketplace.png</string>
 			</object>
-			<object class="NSMutableArray" key="dict.values">
+			<object class="NSArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<string>{100, 25}</string>
 				<string>{62, 56}</string>
 			</object>
 		</object>
-		<string key="IBCocoaTouchPluginVersion">933</string>
+		<string key="IBCocoaTouchPluginVersion">1181</string>
 	</data>
 </archive>

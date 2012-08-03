@@ -42,6 +42,8 @@
     [super viewDidLoad];
 	
 	self.title = @"Beintoo";
+    
+    beintooPlayer = [[BeintooPlayer alloc] init];
 	
 	if (self.navigationItem != nil) {
 		UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
@@ -58,13 +60,9 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
     
-    /*if (caller == @"MarketplaceSendAsAGift"){
-     callerIstance.backFromWebView = YES;
-     }
-     if (caller == @"MarketplaceList"){
-     callerIstanceMP.needsToReloadData = NO;
-     }*/
+    beintooPlayer.delegate = self;
     
     [loadingIndicator stopAnimating];
     	
@@ -84,19 +82,44 @@
         }
     }
 	
+    urlToOpen = [urlToOpen stringByAppendingFormat:@"&os_source=ios"];
+    
 	[vGoodWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlToOpen]]];
+}
+
+- (void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    
+    beintooPlayer.delegate = nil;
 }
 
 #pragma mark -
 #pragma mark webViewDelegates
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)req navigationType:(UIWebViewNavigationType)navigationType {
+    
+    
     NSMutableURLRequest *request = (NSMutableURLRequest *)req;
 	
-	didOpenTheRecommendation = NO;
-	
     NSURL *url = request.URL;
-	if (![url.scheme isEqual:@"http"] && ![url.scheme isEqual:@"https"]) {
+	NSString *urlString = [url path];
+	
+    NSURL *urlToGetParams = request.URL;
+	NSString *urlStringToGet = [urlToGetParams absoluteString];
+    
+    if ([urlString isEqualToString:@"/m/set_app_and_redirect.html"]) {
+        
+        BeintooUrlParser *urlParser = [[BeintooUrlParser alloc] initWithURLString:urlStringToGet];
+        
+        if ([urlParser valueForVariable:@"guid"])
+            [beintooPlayer getPlayerByGUID:[urlParser valueForVariable:@"guid"]];
+        
+        [urlParser release];
+    }
+    
+    didOpenTheRecommendation = NO;
+	
+    if (![url.scheme isEqual:@"http"] && ![url.scheme isEqual:@"https"]) {
 		// ******** Remember that this will NOT work on the simulator ******* //
 		if ([[UIApplication sharedApplication]canOpenURL:url]) {
 			[[UIApplication sharedApplication]openURL:url];
@@ -110,6 +133,28 @@
 		}
 	}
     return YES; 
+}
+
+- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result{
+    if (![[result objectForKey:@"kind"] isEqualToString:@"error"]) {
+        if ([result objectForKey:@"guid"] != nil) {
+            
+            NSString *playerGUID	= [result objectForKey:@"guid"];
+            NSString *playerUser	= [result objectForKey:@"user"];
+            
+            if (playerUser != nil && playerGUID != nil) {	
+                [Beintoo setUserLogged:YES];
+            }
+            [Beintoo setBeintooPlayer:result];
+            
+            // Alliance check
+            if ([result objectForKey:@"alliance"] != nil) {
+                [BeintooAlliance setUserWithAlliance:YES];
+            }else{
+                [BeintooAlliance setUserWithAlliance:NO];
+            }
+        }
+    }
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)theWebView{
@@ -166,19 +211,16 @@
 - (void)viewWillDisappear:(BOOL)animated {
 	[vGoodWebView loadHTMLString:@"<html><head></head><body></body></html>" baseURL:nil];
 }
+
 #ifdef UI_USER_INTERFACE_IDIOM
 - (void)setRecommendationPopoverController:(UIPopoverController *)_recommPopover{
 	recommendPopoverController = _recommPopover;
 }
 #endif
-- (void)viewDidDisappear:(BOOL)animated{
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
 
 - (void)dealloc {
+    [loadingIndicator release];
+    [beintooPlayer release];
     [super dealloc];
 }
 

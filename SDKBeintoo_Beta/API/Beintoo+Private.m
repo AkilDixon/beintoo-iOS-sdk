@@ -586,6 +586,7 @@ NSString *BNSDefDeveloperLoggedUserId   = @"beintooDeveloperLoggedUserId";
     id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
 	
     BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
+    
     if (_prizeView.isVisible == NO){
         _prizeView.globalDelegate = _beintooPrizeDelegate;
     

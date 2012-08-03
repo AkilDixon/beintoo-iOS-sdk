@@ -78,6 +78,9 @@
 		case NOTIFICATION_TYPE_SSCORE:
             notificationTimeOnScreen = NOTIFICATION_SSCORE_SECONDS;
 			break;
+        case NOTIFICATION_TYPE_GIVE_BEDOLLARS:
+            notificationTimeOnScreen = NOTIFICATION_GIVE_BEDOLLARS_SECONDS;
+			break;
         case NOTIFICATION_TYPE_NTDISPATCH:
             notificationTimeOnScreen = NOTIFICATION_NTODISP_SECONDS; 
             break;
@@ -135,6 +138,9 @@
                 notificationHeight = NOTIFICATION_HEIGHT_SSCORE + 18;
             else 
                 notificationHeight = NOTIFICATION_HEIGHT_SSCORE;
+            break;
+        case NOTIFICATION_TYPE_GIVE_BEDOLLARS:
+            notificationHeight = NOTIFICATION_HEIGHT_PLOGIN;
             break;
         case NOTIFICATION_TYPE_NTDISPATCH:
             notificationHeight = NOTIFICATION_HEIGHT_NTDISP;
@@ -231,6 +237,9 @@
             break;
         case NOTIFICATION_TYPE_PLOGIN:
             [self drawPlayerLogin];
+            break;
+        case NOTIFICATION_TYPE_GIVE_BEDOLLARS:
+            [self drawGiveBedollars];
             break;
 		default:
 			break;
@@ -434,6 +443,28 @@
 	[self prepareNotificationOrientation:notification_frame];
 }
 
+- (void)setNotificationContentForGiveBedollars:(NSDictionary *)_theScore WithWindowSize:(CGSize)windowSize{
+	
+	notificationType = NOTIFICATION_TYPE_GIVE_BEDOLLARS;
+    
+	CGSize callerFrameSize = windowSize;
+	
+    self.frame = CGRectZero;
+    CGRect notification_frame;
+    
+    notification_frame = CGRectMake(0, callerFrameSize.height - NOTIFICATION_HEIGHT_GIVE_BEDOLLARS, callerFrameSize.width, NOTIFICATION_HEIGHT_GIVE_BEDOLLARS);
+    
+	[self setFrame:notification_frame];
+    
+	self.backgroundColor = [UIColor colorWithRed:0.0/255 green:0.0/255 blue:0.0/255 alpha:0.8];
+	self.layer.cornerRadius = 2;
+	self.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.8].CGColor;
+	self.layer.borderWidth = 1;
+	
+	[self prepareNotificationOrientation:notification_frame];
+}
+
+
 - (void)drawPlayerLogin{
     [self removeViews];
 	
@@ -556,6 +587,38 @@
         [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"submitScoreCount"];
         [[NSUserDefaults standardUserDefaults] synchronize];
 	}
+	captionLabel.text               = msg;
+    
+    [self addSubview:captionLabel];
+    [self addSubview:beintooLogo];
+    
+	[captionLabel release];
+	[beintooLogo release];
+}
+
+- (void)drawGiveBedollars{
+	[self removeViews];
+	
+	NSString *msg;
+    
+    beintooLogo		= [[UIImageView alloc] initWithFrame:CGRectMake(7, 10, 24, 24)];	
+	[beintooLogo setImage:[UIImage imageNamed:@"beintoo_icon.png"]];
+	
+    int bedollarsAmount = [[NSUserDefaults standardUserDefaults] integerForKey:@"lastGiveBedollarsAmount"];
+    if (bedollarsAmount == 1)
+        msg = [NSString stringWithFormat:@"%@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"giveBedollarMsg",@"BeintooLocalizable", nil), bedollarsAmount]];
+    else 
+        msg = [NSString stringWithFormat:@"%@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"giveBedollarsMsg",@"BeintooLocalizable", nil), bedollarsAmount]];
+    
+    captionLabel                    = [[UILabel alloc] initWithFrame:CGRectMake(45, 0, [self bounds].size.width - 55, NOTIFICATION_HEIGHT_GIVE_BEDOLLARS)];
+	captionLabel.backgroundColor    = [UIColor clearColor];
+	captionLabel.textColor          = [UIColor whiteColor];
+    captionLabel.textAlignment      = UITextAlignmentLeft;
+    captionLabel.font               = [UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0];
+    captionLabel.adjustsFontSizeToFitWidth = YES;
+    captionLabel.minimumFontSize = 10.0;
+    captionLabel.numberOfLines = 0;
+    
 	captionLabel.text               = msg;
     
     [self addSubview:captionLabel];

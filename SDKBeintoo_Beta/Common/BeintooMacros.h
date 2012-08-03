@@ -23,8 +23,10 @@
 #define BeintooLOG(...) do {} while (0)
 
 #elif BEINTOO_DEBUG == 1
-#define BeintooLOG(...) BeintooLOG(__VA_ARGS__)
+//#define BeintooLOG(...) NSLog(__VA_ARGS__)
+#define BeintooLOG(message, ...) NSLog(@"[Beintoo Log]: " message, ## __VA_ARGS__)
 #endif 
+ 
 
 
 

@@ -24,20 +24,26 @@
 #import "BeintooPlayer.h"
 #import "Parser.h"
 
+static NSString *GIVE_1_BEDOLLAR = @"GIVE_BEDOLLARS_1";
+static NSString *GIVE_2_BEDOLLAR = @"GIVE_BEDOLLARS_2";
+static NSString *GIVE_5_BEDOLLAR = @"GIVE_BEDOLLARS_5";
+
 @protocol BeintooUserDelegate;
 
 @interface BeintooUser : NSObject <BeintooParserDelegate, BeintooPlayerDelegate> {
 
 	id <BeintooUserDelegate> delegate;
-	Parser *parser;
+	Parser      *parser;
 	
-	NSString *rest_resource;
+	NSString    *rest_resource;
+    NSString    *app_rest_resource;
     
     NSMutableDictionary  *userParams;
 
 }
 
 - (NSString *)restResource;
+- (NSString *)appRestResource;
 + (void)setUserDelegate:(id)_caller;
 
 - (void)getUser;
@@ -55,6 +61,16 @@
 - (void)sendFriendshipRequestTo:(NSString *)toUserExt;		
 - (void)getFriendRequests;
 - (void)replyToFriendshipRequestWithAnswer:(NSInteger)answer toUser:(NSString *)toUserExt;
+
+/* --> GIVE BEDOLLARS
+    reason can be:
+        GIVE_1_BEDOLLAR
+        GIVE_2_BEDOLLAR
+        GIVE_5_BEDOLLAR
+    refer to the static string
+*/
++ (void)giveBedollars:(NSString *)_reason showNotification:(BOOL)_showNotification;
+- (void)giveBedollars:(NSString *)_reason showNotification:(BOOL)_showNotification;
 
 /*
  *	REGISTER USER
@@ -86,6 +102,7 @@
 @property (nonatomic,retain)    Parser *parser;
 @property (nonatomic, assign)   id callingDelegate;
 @property (nonatomic, retain)   NSMutableDictionary *userParams;
+@property (nonatomic, assign)   BOOL showGiveBedollarsNotification;
 
 - (void)playerDidCompleteBackgroundLogin:(NSDictionary *)result;
 - (void)playerDidNotCompleteBackgroundLogin;
@@ -110,6 +127,7 @@
 - (void)didGetChallangePrerequisites:(NSDictionary *)result;
 - (void)didCompleteBackgroundRegistration:(NSDictionary *)result;
 - (void)didNotCompleteBackgroundRegistration;
+- (void)didReceiveGiveBedollarsResponse:(NSDictionary *)result;
 
 @end
 

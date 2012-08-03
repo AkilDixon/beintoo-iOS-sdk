@@ -27,11 +27,10 @@
     IBOutlet BButton *achievements;
     IBOutlet BButton *getVgood;
     IBOutlet BButton *getScoreForContest;
-    IBOutlet BButton *setBalance;
     IBOutlet BButton *london;
     IBOutlet BButton *milan;
     IBOutlet BButton *sanFrancisco;
-    IBOutlet BButton *mission;
+    IBOutlet BButton *giveBedollars;
     
     IBOutlet UIView     *greenLondon;
     IBOutlet UIView     *greenMilan;
@@ -51,13 +50,12 @@
 - (IBAction)submitScoreForContest;
 - (IBAction)getVgood;
 - (IBAction)getScoreForContest;
-- (IBAction)setBalance;
 - (IBAction)playerLogout;
 - (IBAction)submitAchievement;
 - (IBAction)setMilan;
 - (IBAction)setSanFrancisco;
 - (IBAction)setLondon;
-- (IBAction)getMission;
+- (IBAction)giveBedollars;
 
 - (void)buttonsCustomization;
 - (void)manageLocation;

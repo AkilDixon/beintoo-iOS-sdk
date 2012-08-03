@@ -23,7 +23,7 @@
 
 @synthesize beintooLogo, prizeImg, prizeThumb, textLabel, detailedTextLabel, delegate, prizeType, isVisible, globalDelegate;
 
--(id)init {
+/*-(id)init {
 	if (self = [super init]){
         self.textLabel = [[UILabel alloc] init];
 	}
@@ -65,6 +65,35 @@
 	[self setFrame:vgoodFrame];
     
 	[self preparePrizeAlertOrientation:vgoodFrame];
+}*/
+
+-(id)init {
+	if (self = [super init]){
+        recommWebView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
+	}
+    return self;
+}
+
+- (void)setPrizeContentWithWindowSize:(CGSize)windowSize{
+	firstTouch  = YES;
+    isVisible   = YES;
+    
+    self.backgroundColor = [UIColor clearColor];
+    self.layer.cornerRadius = 2;
+	self.layer.borderColor  = [UIColor colorWithWhite:1 alpha:0.35].CGColor;
+	self.layer.borderWidth  = 0;
+	self.alpha = 0;
+    
+    self.frame = CGRectZero;
+	
+    windowSizeRect = windowSize;
+    
+	CGRect vgoodFrame = CGRectMake(0, 0, windowSize.width, windowSize.height);
+    
+	prizeType = PRIZE_RECOMMENDATION_HTML;
+	
+	[self setFrame:vgoodFrame];
+    [self preparePrizeAlertOrientation:vgoodFrame];
 }
 
 - (void)show{
@@ -119,6 +148,7 @@
 	}
 }
 
+/*
 - (void)drawPrize{
 	
     BVirtualGood *lastVgood = [Beintoo getLastGeneratedVGood];
@@ -232,6 +262,46 @@
         // -------------------- //
     }
 }
+*/
+
+- (void)drawPrize{
+	
+    BVirtualGood *lastVgood = [Beintoo getLastGeneratedVGood];
+    
+	[self removeViews];
+	
+    recommWebView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
+    
+    if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight)
+        recommWebView.frame = CGRectMake(0, 0, windowSizeRect.height, windowSizeRect.width);
+    
+    NSString *vgoodUrl = [[lastVgood theGood] objectForKey:@"content"];
+    vgoodUrl = [vgoodUrl stringByReplacingOccurrencesOfString:@"<body>" withString:@"<body style=\"font-family:'Lucida Sans Unicode', 'Lucida Grande', sans-serif\">"];
+    
+    NSString *content = [NSString stringWithFormat:@"%@", vgoodUrl];
+    
+    recommWebView.delegate = self;
+    recommWebView.scalesPageToFit = NO;
+    recommWebView.opaque = NO;
+    recommWebView.backgroundColor = [UIColor clearColor];
+    self.backgroundColor = [UIColor clearColor];
+    
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+        recommWebView.scrollView.scrollEnabled = NO;
+    else {
+        for (UIView *subview in [recommWebView subviews]){
+            if ([subview isKindOfClass:[UIScrollView class]]){
+                UIScrollView *_scrollSubView = (UIScrollView *)subview;
+                _scrollSubView.scrollEnabled = NO;
+            }
+        }
+    }
+    
+    [self addSubview:recommWebView];
+    [self sendSubviewToBack:recommWebView];
+    
+    [recommWebView loadHTMLString:content baseURL:nil];
+}
 
 - (void)removeViews {
 	for (UIView *subview in [self subviews]) {
@@ -285,6 +355,7 @@
 	}
 }
 
+/*
 - (void)preparePrizeAlertOrientation:(CGRect)startingFrame{
     
     self.alpha = 0;
@@ -343,11 +414,48 @@
 	}
     
     [self drawPrize];
+}*/
+
+- (void)preparePrizeAlertOrientation:(CGRect)startingFrame{
+    
+    self.alpha = 0;
+    self.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
+	
+    if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
+		self.frame = startingFrame;
+		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(-90.0));
+        
+        CGRect vgoodFrame = CGRectMake(0, 0, windowSizeRect.width, windowSizeRect.height);
+        [self setFrame:vgoodFrame];
+	}
+    else if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight) {
+		self.frame = startingFrame;
+		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(90.0));
+        
+        CGRect vgoodFrame = CGRectMake(0, 0, windowSizeRect.width, windowSizeRect.height);
+        [self setFrame:vgoodFrame];
+	}
+	else if ([Beintoo appOrientation] == UIInterfaceOrientationPortrait) {
+		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
+		self.frame = startingFrame;	
+        
+        CGRect vgoodFrame = CGRectMake(0, 0, windowSizeRect.width, windowSizeRect.height);
+        [self setFrame:vgoodFrame];
+    }
+	else if ([Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown) {
+		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(180));
+		self.frame = startingFrame;
+        
+        CGRect vgoodFrame = CGRectMake(0, 0, windowSizeRect.width, windowSizeRect.height);
+        [self setFrame:vgoodFrame];
+    }
+    
+    [self drawPrize];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
     
-    CGRect frame = theWebView.frame;
+    /*CGRect frame = theWebView.frame;
     frame.size.height = 1;
     theWebView.frame = frame;
     CGSize fittingSize = [theWebView sizeThatFits:CGSizeZero];
@@ -367,22 +475,22 @@
     
     frame.size = fittingSize;
     frame.origin = fittingPosition;
-    theWebView.frame = frame;
+    theWebView.frame = frame;*/
     
     [self showHtmlWithAlphaAnimation];
     
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{   
-	if (firstTouch && (prizeType == PRIZE_GOOD || prizeType == PRIZE_RECOMMENDATION) ) {
+	/*if (firstTouch && (prizeType == PRIZE_GOOD || prizeType == PRIZE_RECOMMENDATION) ) {
 		[self setBackgroundColor:[UIColor colorWithRed:50.0/255 green:50.0/255 blue:50.0/255 alpha:0.7]];
 		if (prizeType == PRIZE_RECOMMENDATION) {
 			self.prizeThumb.alpha = 0.7;
 		}
-	}
+	}*/
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
+/*- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
     
     UITouch * touch = [touches anyObject];
     CGPoint pos = [touch locationInView:self];
@@ -404,12 +512,29 @@
     
     [self removeViews];
     [self removeFromSuperview];
+}*/
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
+    
+    if ([[self delegate] respondsToSelector:@selector(userDidTapOnThePrize)])
+        [[self delegate] userDidTapOnThePrize];
+    
+    self.alpha  = 0;
+    
+    firstTouch = YES;
+    
+    [self removeViews];
+    [self removeFromSuperview];
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
     
     NSMutableURLRequest *req    = (NSMutableURLRequest *)request;
     NSString *urlString         = [req.URL absoluteString];    
+    
+    if (navigationType == UIWebViewNavigationTypeLinkClicked  && ([urlString rangeOfString:@"#ios-close"].location != NSNotFound)){
+        self.isVisible = NO;
+    }
     
     if(navigationType == UIWebViewNavigationTypeOther && ([urlString rangeOfString:@"about:blank"].location != NSNotFound)){
         return YES;
@@ -454,7 +579,7 @@
 }
 
 - (void)dealloc {
-    [self.textLabel release];
+   // [self.textLabel release];
     [super dealloc];
 }
 
