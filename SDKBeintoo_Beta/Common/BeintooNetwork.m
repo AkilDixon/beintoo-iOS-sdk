@@ -74,7 +74,7 @@
 + (NSString *)getUserAgent{
     return [[NSUserDefaults standardUserDefaults]objectForKey:@"beintooDeviceUserAgent"];
     /*
-    NSString *userAgent = [[NSUserDefaults standardUserDefaults]objectForKey:@"userAgent"];
+    NSString *userAgent = [[NSUserDefaults standardUserDefaults] objectForKey:@"userAgent"];
 	if (userAgent!=nil) {
 		return userAgent;
 	}

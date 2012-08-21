@@ -54,5 +54,6 @@
 @property(nonatomic,retain) NSString        *vGoodID;
 @property(nonatomic,retain)	NSData          *vGoodImageData;
 @property(nonatomic,retain) NSMutableArray  *whoAlsoConverted;
+@property(nonatomic, assign) BOOL openInBrowser;
 	
 @end

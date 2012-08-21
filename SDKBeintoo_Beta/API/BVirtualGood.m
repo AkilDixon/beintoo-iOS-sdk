@@ -19,7 +19,7 @@
 
 @implementation BVirtualGood
 
-@synthesize theGood,theGoodsList, getItRealURL,vGoodDescription,vGoodImageData,vGoodName,vGoodEndDate,vGoodID,whoAlsoConverted;
+@synthesize theGood,theGoodsList, getItRealURL,vGoodDescription,vGoodImageData,vGoodName,vGoodEndDate,vGoodID,whoAlsoConverted, openInBrowser;
 
 -(id)init {
 	if (self = [super init])
@@ -40,6 +40,7 @@
 			self.vGoodName			= [_vgood objectForKey:@"name"];
 			self.vGoodEndDate		= [_vgood objectForKey:@"enddate"];
 			self.vGoodID			= [_vgood objectForKey:@"id"];
+            self.openInBrowser      = [[_vgood objectForKey:@"openInBrowser"] boolValue];
             if ([_vgood objectForKey:@"imageUrl"] != nil) {
                 self.vGoodImageData		= [BeintooNetwork getSynchImageWithUA:[_vgood objectForKey:@"imageUrl"]];
                 if ([UIImage imageWithData:vGoodImageData] == nil) {

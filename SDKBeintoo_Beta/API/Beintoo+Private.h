@@ -89,6 +89,7 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (NSString *)getLastTimeForTryBeintooShowTimestamp;
 + (void)setLastTimeForTryBeintooShowTimestamp:(NSString *)_value;
 
+
 - (void)initDelegates;
 
 //--> Currency Management

@@ -31,6 +31,8 @@
 // Give Bedollars
 "giveBedollarMsg"      = "Acabas de ganar %i Bedollar! Úsa tus Bedollars para disfrutar de grandes ofertas en Beintoo";
 "giveBedollarsMsg"      = "Acabas de ganar %i Bedollars! Úsa tus Bedollars para disfrutar de grandes ofertas en Beintoo";
+"giveBedollarFloatMsg"      = "Acabas de ganar %.1f Bedollar! Úsa tus Bedollars para disfrutar de grandes ofertas en Beintoo";
+"giveBedollarsFloatMsg"      = "Acabas de ganar %.1f Bedollars! Úsa tus Bedollars para disfrutar de grandes ofertas en Beintoo";
 
 // Home
 "profileDesc"			= "ve tu estadísticas";

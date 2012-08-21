@@ -604,11 +604,22 @@
     beintooLogo		= [[UIImageView alloc] initWithFrame:CGRectMake(7, 10, 24, 24)];	
 	[beintooLogo setImage:[UIImage imageNamed:@"beintoo_icon.png"]];
 	
-    int bedollarsAmount = [[NSUserDefaults standardUserDefaults] integerForKey:@"lastGiveBedollarsAmount"];
-    if (bedollarsAmount == 1)
-        msg = [NSString stringWithFormat:@"%@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"giveBedollarMsg",@"BeintooLocalizable", nil), bedollarsAmount]];
-    else 
-        msg = [NSString stringWithFormat:@"%@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"giveBedollarsMsg",@"BeintooLocalizable", nil), bedollarsAmount]];
+    float bedollarsAmount = [[NSUserDefaults standardUserDefaults] floatForKey:@"lastGiveBedollarsAmount"];
+    int bedollarsIntAmount = [[NSUserDefaults standardUserDefaults] floatForKey:@"lastGiveBedollarsAmount"];
+    
+    float quot = bedollarsAmount - bedollarsIntAmount;
+    if (quot == 0){
+        if (bedollarsAmount == 1)
+            msg = [NSString stringWithFormat:@"%@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"giveBedollarMsg",@"BeintooLocalizable", nil), bedollarsIntAmount]];
+        else 
+            msg = [NSString stringWithFormat:@"%@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"giveBedollarsMsg",@"BeintooLocalizable", nil), bedollarsIntAmount]];
+    }
+    else {
+        if (bedollarsAmount == 1)
+            msg = [NSString stringWithFormat:@"%@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"giveBedollarFloatMsg",@"BeintooLocalizable", nil), bedollarsAmount]];
+        else 
+            msg = [NSString stringWithFormat:@"%@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"giveBedollarsFloatMsg",@"BeintooLocalizable", nil), bedollarsAmount]];
+    }
     
     captionLabel                    = [[UILabel alloc] initWithFrame:CGRectMake(45, 0, [self bounds].size.width - 55, NOTIFICATION_HEIGHT_GIVE_BEDOLLARS)];
 	captionLabel.backgroundColor    = [UIColor clearColor];

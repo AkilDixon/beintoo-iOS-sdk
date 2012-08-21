@@ -29,6 +29,8 @@
 // Give Bedollars
 "giveBedollarMsg"      = "Hai appena guadagnato %i Bedollar! Usa i tuoi Bedollar per ottenere esclusive offerte su Beintoo";
 "giveBedollarsMsg"      = "Hai appena guadagnato %i Bedollars! Usa i tuoi Bedollar per ottenere esclusive offerte su Beintoo";
+"giveBedollarFloatMsg"      = "Hai appena guadagnato %.1f Bedollar! Usa i tuoi Bedollar per ottenere esclusive offerte su Beintoo";
+"giveBedollarsFloatMsg"      = "Hai appena guadagnato %.1f Bedollars! Usa i tuoi Bedollar per ottenere esclusive offerte su Beintoo";
 
 // Home
 "profileDesc"			= "statistiche, messaggi, amici";

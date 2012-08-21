@@ -69,8 +69,10 @@ static NSString *GIVE_5_BEDOLLAR = @"GIVE_BEDOLLARS_5";
         GIVE_5_BEDOLLAR
     refer to the static string
 */
-+ (void)giveBedollars:(NSString *)_reason showNotification:(BOOL)_showNotification;
-- (void)giveBedollars:(NSString *)_reason showNotification:(BOOL)_showNotification;
++ (void)giveBedollarsByString:(NSString *)_reason showNotification:(BOOL)_showNotification;
+- (void)giveBedollarsByString:(NSString *)_reason showNotification:(BOOL)_showNotification;
++ (void)giveBedollars:(float)_amount showNotification:(BOOL)_showNotification;
+- (void)giveBedollars:(float)_amount showNotification:(BOOL)_showNotification;
 
 /*
  *	REGISTER USER

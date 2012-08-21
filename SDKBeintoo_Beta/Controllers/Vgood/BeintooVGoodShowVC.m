@@ -17,7 +17,6 @@
 #import "BeintooVGoodShowVC.h"
 #import "Beintoo.h"
 
-
 @implementation BeintooVGoodShowVC
 
 @synthesize urlToOpen, caller, callerIstance, callerIstanceMP;
@@ -82,7 +81,8 @@
         }
     }
 	
-    urlToOpen = [urlToOpen stringByAppendingFormat:@"&os_source=ios"];
+    if ([Beintoo getLastGeneratedVGood].openInBrowser == NO)
+        urlToOpen = [urlToOpen stringByAppendingFormat:@"&os_source=ios"];
     
 	[vGoodWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlToOpen]]];
 }

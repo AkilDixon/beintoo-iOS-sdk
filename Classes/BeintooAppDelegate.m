@@ -58,7 +58,7 @@
                                      [NSNumber numberWithInt:1], BeintooAchievementNotification,
                                      [NSNumber numberWithInt:1], BeintooLoginNotification,
                                      [NSNumber numberWithInt:1], BeintooScoreNotification,
-                                     [NSNumber numberWithInt:1], BeintooNoRewardNotification,
+                                     [NSNumber numberWithInt:0], BeintooNoRewardNotification,
                                      [NSNumber numberWithInt:1], BeintooDismissAfterRegistration,
                                      [NSNumber numberWithInt:0], BeintooForceRegistration,
                                      [NSNumber numberWithInt:1], BeintooTryBeintooWithRewardImage,

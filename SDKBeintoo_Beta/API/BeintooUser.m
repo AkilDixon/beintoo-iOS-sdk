@@ -17,8 +17,6 @@
 #import "BeintooUser.h"
 #import "Beintoo.h"
 
-
-
 @implementation BeintooUser
 
 @synthesize delegate, parser, callingDelegate, userParams, showGiveBedollarsNotification;
@@ -313,7 +311,7 @@
 	[parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_NICKUPDATE_CALLER_ID];
 }
 
-+ (void)giveBedollars:(NSString *)_reason showNotification:(BOOL)_showNotification{
++ (void)giveBedollarsByString:(NSString *)_reason showNotification:(BOOL)_showNotification{
     
     if (![Beintoo getUserID]){
         BeintooLOG(@"Give Bedollars: no user found");
@@ -339,7 +337,7 @@
     [userService.parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_GIVE_BEDOLLARS_CALLER_ID];
 }
 
-- (void)giveBedollars:(NSString *)_reason showNotification:(BOOL)_showNotification{
+- (void)giveBedollarsByString:(NSString *)_reason showNotification:(BOOL)_showNotification{
     
     if (![Beintoo getUserID]){
         BeintooLOG(@"Give Bedollars: no user found");
@@ -357,12 +355,61 @@
 	NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                    [Beintoo getApiKey], @"apikey",
                                    nil];
-
+    
     NSString *httpBody = [NSString stringWithFormat:@"reason=%@", _reason];
     
     [parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_GIVE_BEDOLLARS_CALLER_ID];
 }
 
++ (void)giveBedollars:(float)_amount showNotification:(BOOL)_showNotification{
+    
+    if (![Beintoo getUserID]){
+        BeintooLOG(@"Give Bedollars: no user found");
+        return;
+    }
+    
+    if (!_amount){
+        BeintooLOG(@"Give Bedollars: no amount provided");
+        return;
+    }
+    
+    BeintooUser *userService = [Beintoo beintooUserService];
+	
+    userService.showGiveBedollarsNotification = _showNotification;
+    
+    NSString *res		 = [NSString stringWithFormat:@"%@givebedollars/%@", userService.appRestResource, [Beintoo getUserID]];
+	NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   [Beintoo getApiKey], @"apikey",
+                                   nil];
+    
+    NSString *httpBody = [NSString stringWithFormat:@"amount=%f", _amount];
+    
+    [userService.parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_GIVE_BEDOLLARS_CALLER_ID];
+}
+
+- (void)giveBedollars:(float)_amount showNotification:(BOOL)_showNotification{
+    
+    if (![Beintoo getUserID]){
+        BeintooLOG(@"Give Bedollars: no user found");
+        return;
+    }
+    
+    if (!_amount){
+        BeintooLOG(@"Give Bedollars: no amount provided");
+        return;
+    }
+    
+    showGiveBedollarsNotification = _showNotification;
+    
+    NSString *res		 = [NSString stringWithFormat:@"%@givebedollars/%@",app_rest_resource, [Beintoo getUserID]];
+	NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   [Beintoo getApiKey], @"apikey",
+                                   nil];
+    
+    NSString *httpBody = [NSString stringWithFormat:@"amount=%f", _amount];
+    
+    [parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_GIVE_BEDOLLARS_CALLER_ID];
+}
 
 #pragma mark -
 #pragma mark parser delegate response
@@ -506,17 +553,13 @@
                 [[self delegate] didReceiveGiveBedollarsResponse:result];
             
             if (showGiveBedollarsNotification == YES){
-                int bedollarsAmount = 0;
-                if ([[result objectForKey:@"reason"] isEqualToString:GIVE_1_BEDOLLAR])
-                    bedollarsAmount = 1;
-                else if ([[result objectForKey:@"reason"] isEqualToString:GIVE_2_BEDOLLAR])
-                    bedollarsAmount = 2;
-                else if ([[result objectForKey:@"reason"] isEqualToString:GIVE_5_BEDOLLAR])
-                    bedollarsAmount = 5;
+                float bedollarsAmount = [[result objectForKey:@"value"] floatValue];
                 
-                [[NSUserDefaults standardUserDefaults] setInteger:bedollarsAmount forKey:@"lastGiveBedollarsAmount"];
-                [[NSUserDefaults standardUserDefaults] synchronize];
-                [self showGiveBedollarsAlert];
+                if (bedollarsAmount > 0){
+                    [[NSUserDefaults standardUserDefaults] setFloat:bedollarsAmount forKey:@"lastGiveBedollarsAmount"];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                    [self showGiveBedollarsAlert];
+                }
             }
 		}
 			break;

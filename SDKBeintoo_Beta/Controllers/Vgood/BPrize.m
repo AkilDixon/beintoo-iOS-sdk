@@ -544,9 +544,11 @@
         
         NSString *nexageURLToOpen = @"http://";
         if ([urlString rangeOfString:nexageURLToOpen].location != NSNotFound) {
+            
             // We have to open a nexage URL on the webView
             [Beintoo getLastGeneratedVGood].getItRealURL = urlString;
             [self userClickedOnWebView];
+            
         }
         else{
             [self userDidFailToClickOnWebView];

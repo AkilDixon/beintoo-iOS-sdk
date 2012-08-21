@@ -419,18 +419,21 @@
 	[parser parsePageAtUrlWithPOST:res withHeaders:params fromCaller:MARKET_GOODSTOBUY_CALLER_ID];
 	NSLog(@"CALL %@ with params %@",res,params);
 }
+
 - (void)showGoodsToBuyFeatured{
 	NSString *res  = [NSString stringWithFormat:@"%@/marketplace/show/?featured=true",rest_resource];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
 	[parser parsePageAtUrlWithPOST:res withHeaders:params fromCaller:MARKET_GOODSTOBUY_CALLER_ID];
 	NSLog(@"CALL %@ with params %@",res,params);
 }
+
 - (void)buyGoodFromUser:(NSString *)vGood_Id{
 	NSString *res  = [NSString stringWithFormat:@"%@/marketplace/buy/%@/%@",rest_resource,vGood_Id,[Beintoo getUserID]];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
 	[parser parsePageAtUrlWithPOST:res withHeaders:params fromCaller:MARKET_BUYVGOOD_CALLER_ID];
 	NSLog(@"CALL %@ with params %@",res,params);
 }
+
 - (void)buyGoodFeatured:(NSString *)vGood_Id{
 	NSString *res  = [NSString stringWithFormat:@"%@/marketplace/featured/buy/%@/%@",rest_resource,vGood_Id,[Beintoo getUserID]];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
@@ -444,7 +447,8 @@
 
 - (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID{	
 	switch (callerID){
-			
+            
+        BeintooLOG(@"result %@", result);
 		case VGOOD_SINGLE_CALLER_ID:{  // -------------------- SINGLE NO DELEGATE
 			@try {
 				NSLog(@"single vgood result %@",result);

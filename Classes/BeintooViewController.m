@@ -155,17 +155,25 @@
 
 - (IBAction)giveBedollars{
     
-    /* Possibile values to give bedollars:
-    ** GIVE_1_BEDOLLAR --> to give 1 bedollar
-    ** GIVE_2_BEDOLLAR --> to give 2 bedollars
-    ** GIVE_5_BEDOLLAR --> to give 5 bedollars
+    /* Give Bedollars method: give bedollars to user choosing one float value between 0 and 5 values.
     ** 
-    ** choose if a notification show be shown in case of successfull callback by YES, 
+    ** Choose if a notification show be shown in case of successfull callback by YES, 
     ** else choose NO
     */
     
     [BeintooUser setUserDelegate:self];
-    [BeintooUser giveBedollars:GIVE_2_BEDOLLAR showNotification:YES];
+    [BeintooUser giveBedollars:0.5 showNotification:YES];
+    
+    /* in alternative, it's possible to use the giveBedollarsByString:showNotification: method 
+    ** using the built in GIVE_*_BEDOLLAR enum
+    ** Possibile values to give bedollars:
+    ** GIVE_1_BEDOLLAR --> to give 1 bedollar
+    ** GIVE_2_BEDOLLAR --> to give 2 bedollars
+    ** GIVE_5_BEDOLLAR --> to give 5 bedollars
+    **
+    ** ex.:
+    ** [BeintooUser giveBedollarsByString:GIVE_1_BEDOLLAR showNotification:YES];
+    */
 }
 
 - (IBAction)playerLogout{
@@ -256,6 +264,10 @@
 // -------------- ACHIEVEMENT SUBMIT CALLBACKS
 - (void)didSubmitAchievementWithResult:(NSDictionary *)result{
 	NSLog(@"Beintoo: achievement submitted with result: %@",result);
+    
+    if ([[result objectForKey:@"status"] isEqualToString:@"UNLOCKED"]){
+        [BeintooVgood getSingleVirtualGood];
+    }
 }
 - (void)didFailToSubmitAchievementWithError:(NSString *)error{
 	NSLog(@"Beintoo: achievement submit error: %@",error);
