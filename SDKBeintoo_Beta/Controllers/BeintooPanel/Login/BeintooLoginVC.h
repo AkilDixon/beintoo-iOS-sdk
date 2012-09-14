@@ -33,6 +33,9 @@
 	
 	IBOutlet UILabel		*titleLabel1;
 	IBOutlet UILabel		*titleLabel2;
+    
+    IBOutlet UIToolbar      *toolBar;
+    IBOutlet UIBarButtonItem    *buttonItem;
 	
 	BeintooSigninFacebookVC	*registrationFBVC;
 	BeintooSigninVC			*registrationVC;
@@ -47,10 +50,9 @@
 - (UIButton *)closeButton;
 - (void)generatePlayerIfNotExists;
 
-@property(nonatomic,retain) NSArray *retrievedUsers;
-@property(nonatomic,retain) NSMutableArray *userImages;
-@property (nonatomic,retain) BeintooMarketplaceVC       *callerIstance;
-@property (nonatomic,retain) NSString                   *caller;
-
+@property (nonatomic,retain) NSArray                *retrievedUsers;
+@property (nonatomic,retain) NSMutableArray         *userImages;
+@property (nonatomic,retain) BeintooMarketplaceVC   *callerIstance;
+@property (nonatomic,retain) NSString               *caller;
 
 @end

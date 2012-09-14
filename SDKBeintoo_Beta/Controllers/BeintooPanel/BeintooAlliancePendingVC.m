@@ -32,9 +32,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
-	self.title			= NSLocalizedStringFromTable(@"allianceviewpending",@"BeintooLocalizable",@"Select A Friend");
-	titleLabel.text		= NSLocalizedStringFromTable(@"friendReqTitle",@"BeintooLocalizable",@"");
-	noResultLabel.text	= NSLocalizedStringFromTable(@"noRequest",@"BeintooLocalizable",@"");
+	self.title			= NSLocalizedStringFromTable(@"allianceviewpending", @"BeintooLocalizable", nil);
+	titleLabel.text		= NSLocalizedStringFromTable(@"friendReqTitle", @"BeintooLocalizable", nil);
+	noResultLabel.text	= NSLocalizedStringFromTable(@"allianceNoResult", @"BeintooLocalizable", nil);
 	
 	[friendsActionView setTopHeight:40];
 	[friendsActionView setBodyHeight:387];
@@ -48,7 +48,7 @@
 	friendsVC		= [BeintooFriendsListVC alloc];
 	findFriendsVC	= [BeintooFindFriendsVC alloc];
 			
-	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];
 		
@@ -58,6 +58,8 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
     }
@@ -216,9 +218,30 @@
     download.delegate = nil;
 }
 - (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
-    NSLog(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
+    BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
+}
+
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
+}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return NO;

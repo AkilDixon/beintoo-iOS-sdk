@@ -32,6 +32,7 @@
 }
 
 - (void)getAllianceWithID:(NSString *)_allianceID;
+- (void)getAllianceWithAdminDetailsWithID:(NSString *)_allianceID;
 - (void)getAllianceListWithQueryText:(NSString *)_queryText;
 - (void)createAllianceWithName:(NSString *)_allianceName andCreatorId:(NSString *)_creatorUserExt;
 - (void)performActionOnAlliance:(NSString *)_allianceID withAction:(NSString *)_actionType forUser:(NSString *)_userID;
@@ -46,9 +47,10 @@
 + (BOOL)userIsAllianceAdmin;
 + (void)setUserAllianceAdmin:(BOOL)_adminValue;
 + (NSString *)userAllianceID;
++ (NSString *)userAllianceName;
 
 @property(nonatomic, assign) id <BeintooAllianceDelegate> delegate;
-@property(nonatomic,retain) Parser *parser;
+@property(nonatomic, retain) Parser *parser;
 
 @end
 
@@ -56,6 +58,7 @@
 
 @optional
 - (void)didGetAlliance:(NSDictionary *)result;
+- (void)didGetAlliancesAdminList:(NSDictionary *)result;
 - (void)didGetAlliancesList:(NSArray *)result;
 - (void)didCreateAlliance:(NSDictionary *)result;
 - (void)didGetPendingRequests:(NSArray *)result;

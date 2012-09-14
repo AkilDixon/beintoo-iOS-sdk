@@ -20,7 +20,7 @@
 @implementation BeintooiPadController
 
 #ifdef UI_USER_INTERFACE_IDIOM
-    @synthesize popoverController,loginPopoverController,vgoodPopoverController;
+    @synthesize popoverController,loginPopoverController,vgoodPopoverController, privateSignupPopoverController, privateNotificationsPopoverController, notificationsPopoverController;
 #endif
 @synthesize isLoginOngoing;
 
@@ -57,7 +57,7 @@
 		popoverController = nil;
 	}
 	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
-	[popoverController setPopoverContentSize:CGSizeMake(320, 455)];
+	[popoverController setPopoverContentSize:CGSizeMake(320, 475)];
 	popoverController.delegate = self;
     	
 	self.view.alpha = 1;
@@ -91,6 +91,51 @@
 	
 	isMainPopoverVisible = NO;
 }
+
+- (void)showBestorePopover{
+	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
+    self.view.frame = [Beintoo getAppWindow].bounds;
+	
+	BeintooNavigationController *beintooBestoreNavController = [Beintoo getBestoreNavigationController];
+	if (popoverController != nil) {
+		[popoverController release];
+		popoverController = nil;
+	}
+	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooBestoreNavController];
+	[popoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	popoverController.delegate = self;
+    
+	self.view.alpha = 1;
+    
+	CATransition *applicationLoadViewIn = [CATransition animation];
+	[applicationLoadViewIn setDuration:0.1f];
+	[applicationLoadViewIn setValue:@"loadMainPopover" forKey:@"name"];
+	applicationLoadViewIn.removedOnCompletion = YES;
+	[applicationLoadViewIn setType:kCATransitionReveal];
+	applicationLoadViewIn.subtype = transitionEnterSubtype;
+	applicationLoadViewIn.delegate = self;
+	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+	
+	[popoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
+	isMainPopoverVisible = YES;
+}
+
+- (void)hideBestorePopover{
+    
+	self.view.alpha = 0;
+	CATransition *applicationUnloadViewIn = [CATransition animation];
+	[applicationUnloadViewIn setDuration:0.01f];
+	[applicationUnloadViewIn setValue:@"unloadMainPopover" forKey:@"name"];
+	applicationUnloadViewIn.removedOnCompletion = YES;
+	[applicationUnloadViewIn setType:kCATransitionReveal];
+	applicationUnloadViewIn.subtype = transitionEnterSubtype;
+	applicationUnloadViewIn.delegate = self;
+	[applicationUnloadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
+	
+	isMainPopoverVisible = NO;
+}
 #endif
 
 
@@ -106,7 +151,7 @@
 	}
 	[loginNavController popToRootViewControllerAnimated:NO];
 	loginPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:loginNavController];
-	[loginPopoverController setPopoverContentSize:CGSizeMake(320, 455)];
+	[loginPopoverController setPopoverContentSize:CGSizeMake(320, 475)];
 	loginPopoverController.delegate = self;
 			
 	[popoverController dismissPopoverAnimated:NO];
@@ -212,6 +257,86 @@
 	isVgoodPopoverVisible= NO;
 }
 
+- (void)showPrivateNotificationsPopover{
+    
+	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
+    self.view.frame = [Beintoo getAppWindow].bounds;
+	
+    BeintooNavigationController *beintooPrivateNotificationController = [Beintoo getPrivateNotificationsNavigationController];
+    
+	if (privateNotificationsPopoverController != nil) {
+        [privateNotificationsPopoverController release];
+		privateNotificationsPopoverController = nil;
+	}
+    
+    [beintooPrivateNotificationController popToRootViewControllerAnimated:NO];
+	privateNotificationsPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooPrivateNotificationController];
+	[privateNotificationsPopoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	privateNotificationsPopoverController.delegate = self;
+    
+	[popoverController dismissPopoverAnimated:NO];
+    
+	self.view.alpha = 1;
+    
+	CATransition *applicationLoadViewIn = [CATransition animation];
+	[applicationLoadViewIn setDuration:0.1f];
+	[applicationLoadViewIn setValue:@"loadPrivareNotifications" forKey:@"name"];
+	applicationLoadViewIn.removedOnCompletion = YES;
+	[applicationLoadViewIn setType:kCATransitionReveal];
+	applicationLoadViewIn.subtype = transitionEnterSubtype;
+	applicationLoadViewIn.delegate = self;
+	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+	
+	[privateNotificationsPopoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
+}
+
+- (void)hidePrivateNotificationsPopover{
+    
+	[privateNotificationsPopoverController dismissPopoverAnimated:NO];
+	[popoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:NO];
+}
+
+- (void)showPrivateSignupPopover{
+    
+	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
+    self.view.frame = [Beintoo getAppWindow].bounds;
+	
+    BeintooNavigationController *beintooSignupController = [Beintoo getPrivateSignupNavigationController];
+    
+	if (privateSignupPopoverController != nil) {
+        [privateSignupPopoverController release];
+		privateSignupPopoverController = nil;
+	}
+    
+    [beintooSignupController popToRootViewControllerAnimated:NO];
+	privateSignupPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooSignupController];
+	[privateSignupPopoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	privateSignupPopoverController.delegate = self;
+    
+	[popoverController dismissPopoverAnimated:NO];
+    
+	self.view.alpha = 1;
+    
+	CATransition *applicationLoadViewIn = [CATransition animation];
+	[applicationLoadViewIn setDuration:0.1f];
+	[applicationLoadViewIn setValue:@"loadPrivareSignup" forKey:@"name"];
+	applicationLoadViewIn.removedOnCompletion = YES;
+	[applicationLoadViewIn setType:kCATransitionReveal];
+	applicationLoadViewIn.subtype = transitionEnterSubtype;
+	applicationLoadViewIn.delegate = self;
+	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+	
+	[privateSignupPopoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
+}
+
+- (void)hidePrivateSignupPopover{
+    
+	[privateSignupPopoverController dismissPopoverAnimated:NO];
+	[popoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:NO];
+}
+
 #endif
 
 
@@ -278,13 +403,15 @@
 	// Here we need to call the Beintoo dismiss, with respect to the actual popover. 
 	// This will call the main or vgood "hide" method here to remove the iPadController from the window.
 	
-	if (isMainPopoverVisible) {  
+	/*if (isMainPopoverVisible) {  
 		[Beintoo dismissBeintoo];
 	}
 	if (isVgoodPopoverVisible) {  
 		[Beintoo dismissPrize];
 	}
-	return YES;
+	return YES;*/
+    
+    return NO;
 }
 
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {

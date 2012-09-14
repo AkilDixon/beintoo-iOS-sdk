@@ -29,6 +29,9 @@
 	UIPopoverController *popoverController;
 	UIPopoverController *loginPopoverController;
 	UIPopoverController *vgoodPopoverController;
+    UIPopoverController *notificationsPopoverController;
+    UIPopoverController *privateNotificationsPopoverController;
+    UIPopoverController *privateSignupPopoverController;
 #endif
     
 	UINavigationController	*loginNavController;
@@ -48,6 +51,9 @@
     @property(nonatomic,retain) UIPopoverController *popoverController;
     @property(nonatomic,retain) UIPopoverController *loginPopoverController;
     @property(nonatomic,retain) UIPopoverController *vgoodPopoverController;
+    @property(nonatomic,retain) UIPopoverController *notificationsPopoverController;
+    @property(nonatomic,retain) UIPopoverController *privateNotificationsPopoverController;
+    @property(nonatomic,retain) UIPopoverController *privateSignupPopoverController;
 #endif
 @property(nonatomic,assign) BOOL isLoginOngoing;
 
@@ -59,6 +65,18 @@
 - (void)hideVgoodPopover;
 - (void)showMissionVgoodPopoverWithVGoodController:(UINavigationController *)_vgoodNavController;
 - (void)hideMissionVgoodPopover;
+
+/*- (void)showNotificationsPopover;
+- (void)hideNotificationsPopover;*/
+
+- (void)showBestorePopover;
+- (void)hideBestorePopover;
+
+- (void)showPrivateNotificationsPopover;
+- (void)hidePrivateNotificationsPopover;
+- (void)showPrivateSignupPopover;
+- (void)hidePrivateSignupPopover;
+
 
 - (void)preparePopoverOrientation;
 

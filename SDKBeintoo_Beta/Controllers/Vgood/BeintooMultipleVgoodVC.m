@@ -228,13 +228,21 @@
 	[Beintoo dismissPrize];
 }
 
-- (UIButton *)closeButton{
-	UIImage *closeImg = [UIImage imageNamed:@"bar_close.png"];
-	UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	[closeBtn setImage:closeImg forState:UIControlStateNormal];
-	closeBtn.frame = CGRectMake(0,0, closeImg.size.width+7, closeImg.size.height);
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
 	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
-	return closeBtn;
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

@@ -42,23 +42,22 @@
     [self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
     [barCloseBtn release];
     
-    loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-	loadingIndicator.hidesWhenStopped = YES;
-    [webView addSubview:loadingIndicator];
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
+    if ([BeintooDevice isiPad]) {
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+    }
+    
     beintooPlayer.delegate = self;
     
-    loadingIndicator.frame = CGRectMake((self.view.frame.size.width/2) - (loadingIndicator.frame.size.width/2), (self.view.frame.size.height/2) - (loadingIndicator.frame.size.height/2), loadingIndicator.frame.size.width, loadingIndicator.frame.size.height);
-    [loadingIndicator startAnimating];
+    [BLoadingView startActivity:self.view];
     
     if (![BeintooNetwork connectedToNetwork]){
         
-        [loadingIndicator stopAnimating];
+        [BLoadingView stopActivity];
         
         [BeintooNetwork showNoConnectionAlert];
         
@@ -102,22 +101,30 @@
         
         //Load the request in the UIWebView.
         [webView loadRequest:requestObj];
-        
+    
     }
 }
 
 - (void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:animated];
     
+    [webView loadHTMLString:@"<html><head></head><body></body></html>" baseURL:nil];
+    
     beintooPlayer.delegate = nil;
+    webView.delegate = nil;
     
     @try {
-        [loadingIndicator stopAnimating];
+        
+        [BLoadingView stopActivity];
+        for (UIView *view in [self.view subviews]) {
+            if([view isKindOfClass:[BLoadingView class]]){
+                [view removeFromSuperview];
+            }
+        }
     }
     @catch (NSException *exception) {
         
     }
-    
 }
 
 - (UIView *)closeButton{
@@ -184,16 +191,17 @@
     }
 }
 
--(void)closeBeintoo{
-    [Beintoo dismissBeintoo];
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)_webView{
-    [loadingIndicator stopAnimating];
+    [BLoadingView stopActivity];
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error{
-   [loadingIndicator stopAnimating];
+   [BLoadingView stopActivity];
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)webView{
@@ -201,7 +209,6 @@
 }
 
 - (void)dealloc{
-    [loadingIndicator release];
     [beintooPlayer release];
     
     [super dealloc];

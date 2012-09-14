@@ -40,7 +40,7 @@
 	elementsArrayList   = [[NSMutableArray alloc] init];
 	_player				= [[BeintooPlayer alloc] init];
 		
-	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];
 		
@@ -67,6 +67,8 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
     }
@@ -77,19 +79,25 @@
 		[self.navigationController popToRootViewControllerAnimated:NO];
     }
     else{
-        [BLoadingView startActivity:self.view];
         [_player getPlayerByGUID:[Beintoo getPlayerID]];
     }
     
-    self.elementsArrayList = [NSArray arrayWithObjects:@"alliance_create",@"alliance_list",nil];	
-    if([BeintooAlliance userHasAlliance]){	
-        self.elementsArrayList = [NSArray arrayWithObjects:@"alliance_your",@"alliance_list", nil];	
+    [elementsArrayList removeAllObjects];
+    [elementsArrayList addObject:@"alliance_create"];
+    [elementsArrayList addObject:@"alliance_list"];
+    
+    if([BeintooAlliance userHasAlliance]){
+        [elementsArrayList removeAllObjects];
+        [elementsArrayList addObject:@"alliance_your"];
+        [elementsArrayList addObject:@"alliance_list"];
     }
+    
+    [elementsTable reloadData];
 }
 
 - (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result{
     
-    if ([result objectForKey:@"user"]!=nil){
+    if ([result objectForKey:@"user"] != nil){
         [Beintoo setBeintooPlayer:result];
     }
     
@@ -100,14 +108,18 @@
         [BeintooAlliance setUserWithAlliance:NO];
     }
     
-    self.elementsArrayList = [NSArray arrayWithObjects:@"alliance_create",@"alliance_list",nil];
+    [elementsArrayList removeAllObjects];
+    [elementsArrayList addObject:@"alliance_create"];
+    [elementsArrayList addObject:@"alliance_list"];
     
     if([BeintooAlliance userHasAlliance]){
-        self.elementsArrayList = [NSArray arrayWithObjects:@"alliance_your",@"alliance_list", nil];
+        [elementsArrayList removeAllObjects];
+        [elementsArrayList addObject:@"alliance_your"];
+        [elementsArrayList addObject:@"alliance_list"];
     }
     
     [BLoadingView stopActivity];
-    [self.elementsTable reloadData];
+    [elementsTable reloadData];
 
 }
 
@@ -117,9 +129,11 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	return [self.elementsArrayList count];
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     static NSString *CellIdentifier = @"Cell";
@@ -131,15 +145,16 @@
     }
 	
 	NSString *choicheCode			= [self.elementsArrayList objectAtIndex:indexPath.row];
-	NSString *choicheDesc			= [NSString stringWithFormat:@"%@Desc",choicheCode];
-	cell.textLabel.text				= NSLocalizedStringFromTable(choicheCode,@"BeintooLocalizable",@"Select A Friend");
+	NSString *choicheDesc			= [NSString stringWithFormat:@"%@Desc", choicheCode];
+	cell.textLabel.text				= NSLocalizedStringFromTable(choicheCode, @"BeintooLocalizable", nil);
 	cell.textLabel.font				= [UIFont systemFontOfSize:16];
 	cell.detailTextLabel.text		= NSLocalizedStringFromTable(choicheDesc,@"BeintooLocalizable",@"");;
 	cell.detailTextLabel.font		= [UIFont systemFontOfSize:14];
 
-	cell.imageView.image	= [UIImage imageNamed:[NSString stringWithFormat:@"beintoo_%@.png",choicheCode]];
+	cell.imageView.image	= [UIImage imageNamed:[NSString stringWithFormat:@"beintoo_%@.png", choicheCode]];
     return cell;
 }
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	NSString *selectedElem = [self.elementsArrayList objectAtIndex:indexPath.row];
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -166,6 +181,28 @@
 
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
+
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
+}
+
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
+}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return NO;

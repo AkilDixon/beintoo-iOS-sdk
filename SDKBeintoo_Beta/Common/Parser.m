@@ -34,7 +34,7 @@
 
     // Dispatching asynchronously a task for the request on the main FIFO queue
     dispatch_async([Beintoo beintooDispatchQueue], ^{
-        NSLog(@"resource called %@ with parameters %@ on GET", URL, headers);
+        BeintooLOG(@"resource called %@ with parameters %@ on GET", URL, headers);
         @synchronized(self){		
             self.callerID = caller;
             if (![BeintooNetwork connectedToNetwork]) {
@@ -47,7 +47,7 @@
                     caller == MISSION_GET_CALLER_ID || caller == MISSION_REFUSE_CALLER_ID ||
                     caller == VGOOD_SINGLE_CALLER_ID || caller == VGOOD_SINGLEwDELEG_CALLER_ID ||
                     caller == VGOOD_MULTIPLE_CALLER_ID || caller == VGOOD_MULTIPLEwDELEG_CALLER_ID) {
-                    NSLog(@"Beintoo - no connection available, check the last action performed!");
+                    BeintooLOG(@"Beintoo - no connection available, check the last action performed!");
                     //[self performSelectorOnMainThread:@selector(parsingEnd:) withObject:nil waitUntilDone:YES];
                     [self parsingEnd:nil];
                     return;
@@ -90,7 +90,7 @@
     
     // Dispatching asynchronously a task for the request on the main FIFO queue
     dispatch_async([Beintoo beintooDispatchQueue], ^{
-        NSLog(@"resource called %@ with parameters %@ on POST",URL,headers);
+        BeintooLOG(@"resource called %@ with parameters %@ on POST",URL,headers);
         
         self.callerID = caller;
         if (![BeintooNetwork connectedToNetwork]) {
@@ -120,7 +120,7 @@
     
     // Dispatching asynchronously a task for the request on the main FIFO queue
     dispatch_async([Beintoo beintooDispatchQueue], ^{
-        NSLog(@"resource called %@ with parameters %@ and httpBody %@ on POST",URL,headers,httpBody);
+        BeintooLOG(@"resource called %@ with parameters %@ and httpBody %@ on POST",URL,headers,httpBody);
         
         self.callerID = caller;
         if (![BeintooNetwork connectedToNetwork]) {
@@ -203,12 +203,12 @@
                 [[self delegate]didFinishToParsewithResult:theResult forCaller:self.callerID];
             }
             else {
-                NSLog(@"Beintoo Parser caller not available: the caller isn't set anymore");
+                BeintooLOG(@"Beintoo Parser caller not available: the caller isn't set anymore");
             }
         }
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception on Beintoo Parser: %@", exception);
+        BeintooLOG(@"Exception on Beintoo Parser: %@", exception);
     }
 }
 
@@ -233,7 +233,7 @@
 		if (response == nil) {
 			// Errors check
 			if (requestError != nil) {
-				NSLog(@"[Parser parsePageAtUrl] connection error: %@",requestError);
+				BeintooLOG(@"[Parser parsePageAtUrl] connection error: %@",requestError);
 			}
 		}
 		else {
@@ -241,7 +241,7 @@
 			webpage = [[NSString alloc] initWithData:urlData encoding:NSUTF8StringEncoding];
 		}
 	}@catch (NSException *e) {
-		NSLog(@"[Connection getPageAtUrl] getPage exception: %@",e);
+		BeintooLOG(@"[Connection getPageAtUrl] getPage exception: %@",e);
 	}
 	//SBJsonParser *parser	= [[SBJsonParser alloc] init];
 	SBJSON *parser	= [[SBJSON alloc] init];
@@ -259,13 +259,13 @@
 		[parserWriter release];		
 	}
 	@catch (NSException * e) {
-		NSLog(@"[CreateJson getPageAtUrl] exception: %@",e);
+		BeintooLOG(@"[CreateJson getPageAtUrl] exception: %@",e);
 	}
 	return json;
 }
 
 - (void)dealloc {
-	[super dealloc];
+    [super dealloc];
 }	
 
 @end

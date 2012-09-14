@@ -20,7 +20,7 @@
 
 @implementation BeintooLeaderboardContestVC
 
-@synthesize segControl,players,leaderboardEntries,leaderboardImages,selectedPlayer;
+@synthesize segControl, players, leaderboardEntries, leaderboardImages, selectedPlayer, isFromNotification, isFromDirectLaunch;
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
@@ -28,8 +28,8 @@
 	
 	self.title = NSLocalizedStringFromTable(@"leaderboard",@"BeintooLocalizable",@"Leaderboard");
 
-	[leaderboardContestView setTopHeight:60];
-	[leaderboardContestView setBodyHeight:367];
+	[leaderboardContestView setTopHeight:40];
+	[leaderboardContestView setBodyHeight:387];
 	
     noScoresLabel.hidden = YES;
     noScoresLabel.text = NSLocalizedStringFromTable(@"errorMessage",@"BeintooLocalizable",@"All");
@@ -40,7 +40,7 @@
    
     segControl.tintColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1];
 
-	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];	
 	
@@ -257,45 +257,66 @@
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
     }
 	
-	if (indexPath.row == [self.leaderboardEntries count]) {
+	if (indexPath.row == [leaderboardEntries count]) {
 		
 		UILabel *loadMoreLabel			= [[UILabel alloc] initWithFrame:CGRectMake(110, 20, 110, 14)];
 		loadMoreLabel.autoresizingMask	= UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
 		loadMoreLabel.backgroundColor	= [UIColor clearColor];
 		loadMoreLabel.font				= [UIFont systemFontOfSize:17];		
-		loadMoreLabel.text				= @"Load more";
+		loadMoreLabel.text				= NSLocalizedStringFromTable(@"loadmoreButton", @"BeintooLocalizable", nil);
 		
 		[cell addSubview:loadMoreLabel];
 		[loadMoreLabel release];
-
-	}
+        
+    }
 	else {
         UIImage *cellImage;
-        if ([self.leaderboardImages count]>0) {
-            BImageDownload *download = [self.leaderboardImages objectAtIndex:indexPath.row];
+        if ([leaderboardImages count] > 0){
+            BImageDownload *download = [leaderboardImages objectAtIndex:indexPath.row];
             cellImage  = download.image;
-        }
-        
-        if ([self.leaderboardEntries count]>0) {
-            NSDictionary *userToShow = [[self.leaderboardEntries objectAtIndex:indexPath.row] objectForKey:@"user"];
             
-            cell.textLabel.text             = [userToShow objectForKey:@"nickname"];
-            cell.detailTextLabel.text       = [NSString stringWithFormat:@"%@: %@",NSLocalizedStringFromTable(@"score",@"BeintooLocalizable",@"Score"),[[self.leaderboardEntries objectAtIndex:indexPath.row] objectForKey:@"score"]];
-            cell.textLabel.font             = [UIFont systemFontOfSize:14];
-            cell.detailTextLabel.textColor  = [UIColor blackColor];
-            cell.detailTextLabel.font       = [UIFont systemFontOfSize:12];
+            NSDictionary *userToShow = [[leaderboardEntries objectAtIndex:indexPath.row] objectForKey:@"user"];
             
-            cell.imageView.image = cellImage;
-            
-            UILabel *positionLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 35, 17)];
+            UILabel *positionLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, 25, 17)];
             positionLabel.backgroundColor = [UIColor clearColor];
-            positionLabel.font = positionFont;
+            positionLabel.font = [UIFont boldSystemFontOfSize:12];
             positionLabel.adjustsFontSizeToFitWidth = YES;
-            positionLabel.text = [NSString stringWithFormat:@"%@",[[self.leaderboardEntries objectAtIndex:indexPath.row] objectForKey:@"position"]];
+            positionLabel.textAlignment = UITextAlignmentCenter;
+            positionLabel.minimumFontSize = 8.0;
+            positionLabel.text = [NSString stringWithFormat:@"%@",[[leaderboardEntries objectAtIndex:indexPath.row] objectForKey:@"position"]];
             
-            cell.accessoryView = positionLabel;
+            [cell addSubview:positionLabel];
+            [positionLabel release];
             
-            [positionLabel release];		   
+            UIImageView *imageViewPhoto = [[UIImageView alloc] initWithFrame:CGRectMake(25, 5, 50, 50)];
+            imageViewPhoto.image = cellImage;
+            [cell addSubview:imageViewPhoto];
+            [imageViewPhoto release];
+            
+            UILabel *nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 10 , self.view.frame.size.width - 90 - 30, 20)];
+            nameLabel.backgroundColor = [UIColor clearColor];
+            nameLabel.font = positionFont;
+            nameLabel.adjustsFontSizeToFitWidth = YES;
+            nameLabel.text = [NSString stringWithFormat:@"%@", [userToShow objectForKey:@"nickname"]];
+            
+            [cell addSubview:nameLabel];
+            [nameLabel release];
+            
+            UILabel *descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 30 , self.view.frame.size.width - 90 - 30, 20)];
+            descriptionLabel.backgroundColor = [UIColor clearColor];
+            descriptionLabel.font = [UIFont systemFontOfSize:12];
+            descriptionLabel.adjustsFontSizeToFitWidth = YES;
+            descriptionLabel.text = [NSString stringWithFormat:@"%@: %@",NSLocalizedStringFromTable(@"score", @"BeintooLocalizable", @"Score"),[[leaderboardEntries objectAtIndex:indexPath.row] objectForKey:@"score"]];
+            
+            [cell addSubview:descriptionLabel];
+            [descriptionLabel release];
+            
+            if ([Beintoo isAFriendOfMine:[userToShow objectForKey:@"id"]]){
+                UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 30, 20)];
+                imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"beintoo_yourfriends.png"]];
+                cell.accessoryView = imageView;
+                [imageView release];
+            }
         }
     }
     
@@ -323,11 +344,32 @@
         // -- 2. View profile
         // -- 3. Add as friend
         
-		self.selectedPlayer = [self.leaderboardEntries objectAtIndex:indexPath.row];
+		/*self.selectedPlayer = [self.leaderboardEntries objectAtIndex:indexPath.row];
 		NSString *myUserID = [Beintoo getUserID];
 		if (![[[self.selectedPlayer objectForKey:@"user"] objectForKey:@"id"] isEqualToString:myUserID]) {
 			[self openSelectedPlayer];
 		}else {
+			[leaderboardContestTable deselectRowAtIndexPath:[leaderboardContestTable indexPathForSelectedRow] animated:YES];
+		}*/
+        
+        selectedPlayer = [leaderboardEntries objectAtIndex:indexPath.row];
+		
+        
+        NSString *myUserID = [Beintoo getUserID];
+		if (![[[selectedPlayer objectForKey:@"user"] objectForKey:@"id"] isEqualToString:myUserID]) {
+			//[self openSelectedPlayer];
+            NSDictionary *profileOptions = [NSDictionary dictionaryWithObjectsAndKeys:@"friendsProfile",@"caller",
+                                            [[self.selectedPlayer objectForKey:@"user"] objectForKey:@"id"],@"friendUserID",
+                                            [[self.selectedPlayer objectForKey:@"user"] objectForKey:@"nickname"],@"friendNickname",nil];
+            profileVC = [[BeintooProfileVC alloc] initWithNibName:@"BeintooProfileVC" bundle:[NSBundle mainBundle] andOptions:profileOptions];
+            if (isFromDirectLaunch)
+                profileVC.isFromDirectLaunch = YES;
+            
+            [self.navigationController pushViewController:profileVC animated:YES];
+            [profileVC release];
+            
+		}
+        else {
 			[leaderboardContestTable deselectRowAtIndexPath:[leaderboardContestTable indexPathForSelectedRow] animated:YES];
 		}
 	}
@@ -496,15 +538,9 @@
 	}
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    
     user.delegate       = nil;
     _player.delegate    = nil;
     
@@ -521,6 +557,8 @@
 }
 
 - (void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    
     @try {
         UIView *sendChallenge  = [self.view viewWithTag:BSENDCHALLENGE_VIEW_TAG];
         [sendChallenge removeFromSuperview];
@@ -537,6 +575,28 @@
 	}
 	@catch (NSException * e) {
     }
+}
+
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
+}
+
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

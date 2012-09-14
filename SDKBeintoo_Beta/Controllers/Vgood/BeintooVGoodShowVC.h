@@ -22,7 +22,6 @@
 @interface BeintooVGoodShowVC : UIViewController <UIWebViewDelegate, UINavigationBarDelegate, BeintooPlayerDelegate>{
 
 	IBOutlet UIWebView		*vGoodWebView;
-	UIActivityIndicatorView *loadingIndicator;
 	NSString				*urlToOpen;
 
 #ifdef UI_USER_INTERFACE_IDIOM
@@ -50,6 +49,5 @@
 @property (nonatomic, retain) NSString *urlToOpen;
 @property (nonatomic, retain) NSString *caller;
 @property (nonatomic, retain) BeintooFriendsListVC *callerIstance;
-@property (nonatomic, retain) BeintooMarketplaceVC *callerIstanceMP;
 
 @end

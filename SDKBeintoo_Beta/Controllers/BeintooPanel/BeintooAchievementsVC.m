@@ -35,10 +35,11 @@
 	walletLabel.text		= NSLocalizedStringFromTable(@"hereiswallet",@"BeintooLocalizable",@"");
 	
 
-	_achievements			 = [[BeintooAchievements alloc] init];
-	_player					 = [[BeintooPlayer alloc] init];
+	_achievements               = [[BeintooAchievements alloc] init];
+	_player                     = [[BeintooPlayer alloc] init];
+    archiveAchievements         = [[NSMutableArray alloc] init];
 
-	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];
 	
@@ -47,7 +48,8 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
-	
+	[super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
     }
@@ -83,44 +85,91 @@
 		return;
 	}
 	
-	for (int i=0; i<[result count]; i++) {
+	for (int i = 0; i < [result count]; i++) {
+        NSMutableDictionary *achievementEntry = [[NSMutableDictionary alloc] init];
+        BImageDownload *download = [[BImageDownload alloc] init];
 		@try {
-			NSMutableDictionary *achievementEntry = [[NSMutableDictionary alloc]init];
+			
 			NSDictionary *currentAchievement = [[result objectAtIndex:i] objectForKey:@"achievement"];
             
-			
 			NSString *name          = [currentAchievement objectForKey:@"name"]; 
 			NSString *description   = [currentAchievement objectForKey:@"description"]; 
 			NSString *bedollarsVal	= [currentAchievement objectForKey:@"bedollars"];
 			NSString *imageURL		= [currentAchievement objectForKey:@"imageURL"];
-			
+            
 			NSString *blockedBy		= [currentAchievement objectForKey:@"blockedBy"];
 			BOOL isBlockedByOthers = FALSE;
 			if (blockedBy != nil) {
 				isBlockedByOthers = TRUE;
 			}
-
-			BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
+            
 			download.delegate = self;
 			download.urlString = [currentAchievement objectForKey:@"imageURL"];
 			
-			[achievementEntry setObject:name forKey:@"name"];
-			[achievementEntry setObject:description	forKey:@"description"];
-			[achievementEntry setObject:bedollarsVal forKey:@"bedollarsValue"];
-			[achievementEntry setObject:imageURL forKey:@"imageURL"];
+            [achievementEntry setObject:name forKey:@"name"];
+            
+            if ([description length] > 0) 
+                [achievementEntry setObject:description	forKey:@"description"];
+            
+            [achievementEntry setObject:bedollarsVal forKey:@"bedollarsValue"];
+            
+            if ([imageURL length] > 0) 
+                [achievementEntry setObject:imageURL forKey:@"imageURL"];
+            
+            
 			if (isBlockedByOthers) {
 				[achievementEntry setObject:blockedBy forKey:@"blockedBy"];
 			}
-			[self.achievementsArrayList addObject:achievementEntry];
-			[self.achievementsImages addObject:download];
-			[achievementEntry release];
+			[achievementsArrayList addObject:achievementEntry];
+			[achievementsImages addObject:download];
+            
 		}
 		@catch (NSException * e) {
-			NSLog(@"BeintooException: %@ \n for object: %@",e,[result objectAtIndex:i]);
+			BeintooLOG(@"BeintooException: %@ \n for object: %@", e, [result objectAtIndex:i]);
 		}
+        [download release];
+        [achievementEntry release];
 	}
+    
+    archiveAchievements = [result mutableCopy];
+    
 	[achievementsTable reloadData];
 	[BLoadingView stopActivity];
+    
+    [self performSelector:@selector(updateProgress) withObject:nil afterDelay:0.2];
+}
+
+- (void)updateProgress{
+    for (int i = 0; i < [archiveAchievements count]; i++){
+        if ([[archiveAchievements objectAtIndex:i] objectForKey:@"percentage"]){
+            NSString *percentage   = [[archiveAchievements objectAtIndex:i] objectForKey:@"percentage"];
+            [[achievementsArrayList objectAtIndex:i] setObject:percentage forKey:@"percentage"];
+            NSUInteger indices[] = {0, i};
+            NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
+            UITableViewCell *cell = [achievementsTable cellForRowAtIndexPath:path];
+            for (UIView *subview in cell.subviews){
+                if ([subview isKindOfClass:[UIProgressView class]]){
+                    UIProgressView *progessView = (UIProgressView *)subview;
+                    [progessView setProgress:[percentage floatValue]/100 animated:YES];
+                }
+            }
+            [path release];
+        }
+        else if ([[[archiveAchievements objectAtIndex:i] objectForKey:@"status"] isEqualToString:@"UNLOCKED"]) {
+            [[achievementsArrayList objectAtIndex:i] setObject:@"100" forKey:@"percentage"];
+            NSUInteger indices[] = {0, i};
+            NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
+            UITableViewCell *cell = [achievementsTable cellForRowAtIndexPath:path];
+            for (UIView *subview in cell.subviews){
+                if ([subview isKindOfClass:[UIProgressView class]]){
+                    UIProgressView *progessView = (UIProgressView *)subview;
+                    [progessView setProgress:1.0 animated:YES];
+                }
+            }
+            [path release];
+        }
+    }
+    
 }
 
 #pragma mark -
@@ -144,21 +193,21 @@
 	
 	@try {
 
-		UILabel *textLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 10, 180, 20)];
-		textLabel.text = [[self.achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"name"];
+		UILabel *textLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 5, 180, 18)];
+		textLabel.text = [[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"name"];
 		textLabel.font = [UIFont systemFontOfSize:13];
 		textLabel.backgroundColor = [UIColor clearColor];
 		textLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-
-		UILabel *detailTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 27, 180, 40)];
-		detailTextLabel.text = [[self.achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"description"];
+        
+		UILabel *detailTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 25, 180, 18)];
+		detailTextLabel.text = [[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"description"];
 		detailTextLabel.font = [UIFont systemFontOfSize:12];
-		detailTextLabel.numberOfLines = 2;
+		detailTextLabel.numberOfLines = 1;
 		detailTextLabel.textColor = [UIColor colorWithWhite:0 alpha:0.7];
 		detailTextLabel.backgroundColor = [UIColor clearColor];
 		detailTextLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 		
-		UILabel *bedollars = [[UILabel alloc] initWithFrame:CGRectMake(240, 10, 70, 20)];
+		UILabel *bedollars = [[UILabel alloc] initWithFrame:CGRectMake(240, 5, 70, 20)];
 		bedollars.text = @"Bedollars";
 		bedollars.font = [UIFont systemFontOfSize:11];
 		bedollars.textColor = [UIColor colorWithWhite:0 alpha:0.6];
@@ -167,8 +216,8 @@
 		bedollars.autoresizingMask	= UIViewAutoresizingFlexibleLeftMargin;
 		bedollars.autoresizingMask	= UIViewAutoresizingFlexibleWidth;
 		
-		NSString *value = [NSString stringWithFormat:@"%@",[[self.achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"bedollarsValue"]]; 
-		UILabel *bedollarsValue = [[UILabel alloc] initWithFrame:CGRectMake(240, 20, 70, 50)];
+		NSString *value = [NSString stringWithFormat:@"%@",[[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"bedollarsValue"]]; 
+		UILabel *bedollarsValue = [[UILabel alloc] initWithFrame:CGRectMake(240, 18, 70, 50)];
 		bedollarsValue.text = [NSString stringWithFormat:@"+%@",value]; 
 		bedollarsValue.font = [UIFont systemFontOfSize:20];
 		bedollarsValue.textColor = [UIColor colorWithWhite:0 alpha:0.6];
@@ -181,10 +230,23 @@
 			[cell addSubview:bedollars];
 			[cell addSubview:bedollarsValue];
 		}
-
-		BImageDownload *download = [self.achievementsImages objectAtIndex:indexPath.row];
+        
+        UIProgressView *progressBar = [[UIProgressView alloc] initWithFrame:CGRectMake(70, 50, self.view.frame.size.width - 70 - 70, 40)];
+        progressBar.progressViewStyle = UIProgressViewStyleBar;
+        progressBar.opaque = YES;
+        progressBar.progress = 0.0;
+        
+        if ([[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"percentage"])
+            [progressBar setProgress:([[[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"percentage"] floatValue] / 100) animated:YES];
+        else if ([[[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"status"] isEqualToString:@"UNLOCKED"])
+            [progressBar setProgress:100 animated:NO];
+        
+        [cell addSubview: progressBar];
+        [progressBar release];
+        
+		BImageDownload *download = [achievementsImages objectAtIndex:indexPath.row];
 		UIImage *cellImage  = download.image;
-
+        
 		UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(6, 6, 55, 55)];
 		imageView.contentMode = UIViewContentModeScaleAspectFit;
 		imageView.backgroundColor = [UIColor clearColor];
@@ -193,7 +255,7 @@
 		[cell addSubview:textLabel];
 		[cell addSubview:detailTextLabel];
 		[cell addSubview:imageView];
-
+        
 		[textLabel release];
 		[detailTextLabel release];
 		[imageView release];
@@ -223,7 +285,29 @@
 }
 
 - (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
-    NSLog(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
+    BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
+}
+
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
+}
+
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -253,6 +337,7 @@
 	[self.achievementsImages	release];
 	[_player release];
 	[_achievements release];
+    [archiveAchievements release];
     [super dealloc];
 }
 

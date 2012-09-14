@@ -55,6 +55,7 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (void)privateSandbox;
 + (void)_launchBeintooOnApp;
 + (void)_launchBeintooOnAppWithDeveloperCurrencyValue:(float)_value;
++ (void)_launchNotificationsOnApp;
 + (void)_launchMarketplaceOnApp;
 + (void)_launchMarketplaceOnAppWithDeveloperCurrencyValue:(float)_value;
 + (void)_launchWalletOnApp;
@@ -62,9 +63,15 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (void)_launchPrizeOnApp;
 + (void)_launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate;
 + (void)_launchMissionOnApp;
++ (void)_launchSignupOnApp;
++ (void)_launchPrivateSignupOnApp;
++ (void)_launchPrivateNotificationsOnApp;
 + (void)_launchIpadLogin;
 + (void)_dismissIpadLogin;
++ (void)_launchIpadNotifications;
++ (void)_dismissIpadNotifications;
 + (void)_dismissBeintoo;
++ (void)_dismissBeintoo:(int)type;
 + (void)_dismissBeintooNotAnimated;
 + (void)_dismissPrize;
 + (void)_dismissMission;
@@ -88,7 +95,9 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (BOOL)isBeintooInitialized;
 + (NSString *)getLastTimeForTryBeintooShowTimestamp;
 + (void)setLastTimeForTryBeintooShowTimestamp:(NSString *)_value;
-
++ (void)_setBeintooUserFriends:(NSArray *)friends;
++ (NSArray *)_getBeintooUserFriends;
++ (BOOL)_isAFriendOfMine:(NSString *)_friendID;
 
 - (void)initDelegates;
 
@@ -107,5 +116,8 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (void)manageStatusBarOnLaunch;
 + (void)manageStatusBarOnDismiss;
 + (void)_setIsStatusBarHiddenOnApp:(BOOL)_value;
+
++ (void)_beintooUserDidLogin;
++ (void)_beintooUserDidSignup;
 
 @end

@@ -22,7 +22,6 @@
 	
 	UIView *hudView;
 	UIActivityIndicatorView *activityIndicatorView;
-	UILabel	*captionLabel;
 }
 
 - (id)initWithFrame:(CGRect)frame;

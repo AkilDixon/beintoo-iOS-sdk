@@ -211,7 +211,7 @@
     NSDictionary *params;
     if (!contestID) {
         params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", [BeintooDevice getMacAddress], @"macaddress", nil];
-        NSLog(@"Beintoo warning: you called getVirtualGood with contestID, but the constestID you passed is nil");
+        BeintooLOG(@"Beintoo warning: you called getVirtualGood with contestID, but the constestID you passed is nil");
     }
     else{
         params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",contestID,@"codeID", [BeintooDevice getMacAddress], @"macaddress",
@@ -243,7 +243,7 @@
 	NSDictionary *params;
     if (!contestID) {
         params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", [BeintooDevice getMacAddress], @"macaddress", nil];
-        NSLog(@"Beintoo warning: you called getVirtualGood with contestID, but the constestID you passed is nil");
+        BeintooLOG(@"Beintoo warning: you called getVirtualGood with contestID, but the constestID you passed is nil");
     }
     else{
         params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",contestID,@"codeID",  [BeintooDevice getMacAddress], @"macaddress", nil];
@@ -260,7 +260,7 @@
     BeintooVgood *vgoodService = [Beintoo beintooVgoodService];
     
     if (guid == nil) {
-        NSLog(@"Beintoo: unable to generate a private vgood. No user logged.");
+        BeintooLOG(@"Beintoo: unable to generate a private vgood. No user logged.");
         return;
     }
     
@@ -279,7 +279,7 @@
     BeintooVgood *vgoodService = [Beintoo beintooVgoodService];
     
     if (guid == nil) {
-        NSLog(@"Beintoo error. No user logged.");
+        BeintooLOG(@"Beintoo error. No user logged.");
         return;
     }
     
@@ -294,7 +294,7 @@
     BeintooVgood *vgoodService = [Beintoo beintooVgoodService];
 
     if (guid == nil) {
-        NSLog(@"Beintoo error. No user logged.");
+        BeintooLOG(@"Beintoo error. No user logged.");
         return;
     }
     
@@ -676,7 +676,7 @@
 			break;
             
         case VGOOD_GETPRIVATEVGOODS_CALLER_ID:{
-            NSLog(@"get private result %@",result);
+            BeintooLOG(@"get private result %@",result);
             if ([[self delegate] respondsToSelector:@selector(didGetAllPrivateVgoods:)]){
                 [[self delegate] didGetAllPrivateVgoods:(NSArray *)result];
             }
@@ -684,7 +684,7 @@
 			break;
             
         case VGOOD_ASSIGNPRIVATEVGOOD_CALLER_ID:{
-            NSLog(@"assign private %@",result);
+            BeintooLOG(@"assign private %@",result);
             if ([[self delegate] respondsToSelector:@selector(didAssignPrivateVgoodToPlayerWithResult:)]) {
                 [[self delegate] didAssignPrivateVgoodToPlayerWithResult:result];
             }
@@ -735,7 +735,7 @@
                 }
             }
             else {
-                NSLog(@"Beintoo Vgood set rating: did encour an error");
+                BeintooLOG(@"Beintoo Vgood set rating: did encour an error");
             }
 		}
 			break;

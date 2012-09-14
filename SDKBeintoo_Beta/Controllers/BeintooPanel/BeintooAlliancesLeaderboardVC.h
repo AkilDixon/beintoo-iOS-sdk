@@ -21,7 +21,7 @@
 #import "BImageDownload.h"
 #import "BeintooAlliance.h"
 
-#define NUMBER_OF_ROWS_ALLIANCE	5
+#define NUMBER_OF_ROWS_ALLIANCE	25
 
 @class BView,BTableView;
 
@@ -49,5 +49,8 @@
 @property(nonatomic,retain) NSMutableArray *leaderboardEntries;
 @property(nonatomic,retain) NSMutableArray *leaderboardImages;
 @property(nonatomic,retain) NSDictionary *selectedPlayer;
+
+@property(nonatomic, assign) BOOL   isFromAlliances;
+@property(nonatomic, assign) BOOL   isFromDirectLaunch;
 
 @end

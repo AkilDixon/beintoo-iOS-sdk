@@ -14,21 +14,22 @@
  * limitations under the License.
  ******************************************************************************/
 
-#define GRADIENT_BODY               1
-#define GRADIENT_HEADER             2
-#define GRADIENT_BUTTONS            3
-#define GRADIENT_FOOTER             4
-#define GRADIENT_CELL_HEAD          5
-#define GRADIENT_CELL_BODY          6
-#define GRADIENT_CELL_SELECTED      7
-#define GRADIENT_TOOLBAR            8
-#define GRADIENT_CELL_SPECIAL       9
-#define GRADIENT_CELL_GRAY          10
-#define GRADIENT_BORDERED_VIEW      11
-#define GRADIENT_CELL_PLAIN         12
-#define GRADIENT_FOOTER_LIGHT       13
-#define GRADIENT_NOTIF_UNDREAD_CELL 14
-#define GRADIENT_NOTIF_CELL         15
+#define GRADIENT_BODY                   1
+#define GRADIENT_HEADER                 2
+#define GRADIENT_BUTTONS                3
+#define GRADIENT_FOOTER                 4
+#define GRADIENT_CELL_HEAD              5
+#define GRADIENT_CELL_BODY              6
+#define GRADIENT_CELL_SELECTED          7
+#define GRADIENT_TOOLBAR                8
+#define GRADIENT_CELL_SPECIAL           9
+#define GRADIENT_CELL_GRAY              10
+#define GRADIENT_BORDERED_VIEW          11
+#define GRADIENT_CELL_PLAIN             12
+#define GRADIENT_FOOTER_LIGHT           13
+#define GRADIENT_NOTIF_UNDREAD_CELL     14
+#define GRADIENT_NOTIF_CELL             15
+#define GRADIENT_UNDREAD_MESSAGE_ICON   16
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>

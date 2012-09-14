@@ -44,7 +44,7 @@
 	[vgoodShowVC setIsFromWallet:YES];
 	friendsListVC	 = [BeintooFriendsListVC alloc];
 
-	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];
 	
@@ -271,23 +271,38 @@
     download.delegate = nil;
 }
 - (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
-    NSLog(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
+    BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return NO;
 }
 
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
     vGood.delegate   = nil;
     
     @try {
@@ -300,7 +315,7 @@
 - (void)dealloc {
 	[self.vGoodArrayList release];
 	[self.walletImages	release];
-	[vGood release];
+	//[vGood release];
 	[vgoodShowVC release];
 	[_player release];
 	[friendsListVC release];

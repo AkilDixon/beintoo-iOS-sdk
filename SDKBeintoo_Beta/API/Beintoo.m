@@ -17,7 +17,6 @@
 #import "Beintoo.h"
 #import "Beintoo+Private.h"
 
-
 @implementation Beintoo
 
 NSString *BNSDefIsUserLogged;
@@ -53,7 +52,7 @@ NSString *BNSDefIsUserLogged;
 	[Beintoo initBeintooSettings:_settings];
 
 	// Beintoo main controllers initialization
-	[Beintoo initMainNavigationController];
+	//[Beintoo initMainNavigationController];
 	[Beintoo initMainController];
 	[Beintoo initVgoodNavigationController];
 	[Beintoo initiPadController];
@@ -72,6 +71,10 @@ NSString *BNSDefIsUserLogged;
 	[Beintoo _launchBeintooOnAppWithDeveloperCurrencyValue:_value];
 }
 
++ (void)launchNotifications{
+	[Beintoo _launchNotificationsOnApp];
+}
+
 + (void)launchMarketplace{
     [Beintoo _launchMarketplaceOnApp];
 }
@@ -83,9 +86,11 @@ NSString *BNSDefIsUserLogged;
 + (void)launchWallet{
 	[Beintoo _launchWalletOnApp];
 }
+
 + (void)launchLeaderboard{
 	[Beintoo _launchLeaderboardOnApp];
 }
+
 + (void)launchPrize{
 	[Beintoo _launchPrizeOnApp];
 }
@@ -104,6 +109,26 @@ NSString *BNSDefIsUserLogged;
 
 + (void)dismissIpadLogin{
 	[Beintoo _dismissIpadLogin];
+}
+
++ (void)launchIpadNotifications{
+	[Beintoo _launchIpadNotifications];
+}
+
++ (void)dismissIpadNotifications{
+	[Beintoo _dismissIpadNotifications];
+}
+
++ (void)launchSignup{
+	[Beintoo _launchSignupOnApp];
+}
+
++ (void)_launchPrivateSignup{
+	[Beintoo _launchPrivateSignupOnApp];
+}
+
++ (void)_launchPrivateNotifications{
+	[Beintoo _launchPrivateNotificationsOnApp];
 }
 
 + (NSString *)getApiKey{
@@ -129,7 +154,7 @@ NSString *BNSDefIsUserLogged;
 }
 								
 + (NSString *)currentVersion{
-	return @"2.8.16beta-ios";
+	return @"2.8.17beta-ios";
 }
 
 + (NSInteger)notificationPosition{
@@ -208,20 +233,58 @@ NSString *BNSDefIsUserLogged;
 + (NSString *)getMissionTimestamp{
     return [[NSUserDefaults standardUserDefaults] objectForKey:@"LastSeenMissionTimestamp"];
 }
+
 + (void)setMissionTimestamp:(NSString *)_timestamp{
     [[NSUserDefaults standardUserDefaults] setObject:_timestamp forKey:@"LastSeenMissionTimestamp"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-
 + (UIViewController *)getMainController{
 	return [Beintoo sharedInstance]->mainController;
 }
+
 + (BeintooNavigationController *)getMainNavigationController{
 	return [Beintoo sharedInstance]->mainNavigationController;
 }
+
++ (BeintooNavigationController *)getBestoreNavigationController{
+	return [Beintoo sharedInstance]->bestoreNavigationController;
+}
+
++ (BeintooNavigationController *)getLeaderboardsNavigationController{
+	return [Beintoo sharedInstance]->leaderboardNavigationController;
+}
+
++ (BeintooNavigationController *)getMyOffersNavigationController{
+	return [Beintoo sharedInstance]->myoffersNavigationController;
+}
+
++ (BeintooNavigationController *)getAchievementsNavigationController{
+	return [Beintoo sharedInstance]->achievementsNavigationController;
+}
+
++ (BeintooNavigationController *)getNotificationsNavigationController{
+	return [Beintoo sharedInstance]->notificationsNavigationController;
+}
+
++ (BeintooNavigationController *)getSignupNavigationController{
+	return [Beintoo sharedInstance]->signupNavigationController;
+}
+
++ (BeintooNavigationController *)getPrivateNotificationsNavigationController{
+	return [Beintoo sharedInstance]->privateNotificationsNavigationController;
+}
+
++ (BeintooNavigationController *)getPrivateSignupNavigationController{
+	return [Beintoo sharedInstance]->privateSignupNavigationController;
+}
+
 + (BeintooVgoodNavController *)getVgoodNavigationController{
 	return [Beintoo sharedInstance]->vgoodNavigationController;
+}
+
++ (BeintooNotificationListVC *)getPrivateNotificationsViewController{
+	return [Beintoo sharedInstance]->beintooNotificationsVC;
 }
 
 // -----------------------------------
@@ -243,11 +306,29 @@ NSString *BNSDefIsUserLogged;
 // Beintoo User
 // -----------------------------------
 
-+ (NSDictionary *)getUserIfLogged{
++ (NSDictionary *)getUserIfLogged
+{
 	return [[NSUserDefaults standardUserDefaults]objectForKey:BNSDefLoggedUser];
 }
-+ (void)setBeintooUser:(NSDictionary *)_user{
+
++ (void)setBeintooUser:(NSDictionary *)_user
+{
 	[self _setBeintooUser:_user];
+}
+
++ (void)setBeintooUserFriends:(NSArray *)friends
+{
+    [Beintoo _setBeintooUserFriends:friends];    
+}
+
++ (NSArray *)getBeintooUserFriends
+{
+    return [Beintoo _getBeintooUserFriends];
+}    
+
++ (BOOL)isAFriendOfMine:(NSString *)_friendID
+{
+    return [Beintoo _isAFriendOfMine:_friendID];
 }
 
 // -----------------------------------
@@ -369,12 +450,21 @@ NSString *BNSDefIsUserLogged;
 	}
 	return nil;
 }
+
 + (NSString *)getUserID{
 	NSDictionary *_beintooUser = [Beintoo getUserIfLogged];
 	if(_beintooUser!= nil){
 		return [_beintooUser objectForKey:@"id"];
 	}
 	return nil;	
+}
+
++ (void)postNotificationBeintooUserDidLogin{
+	[Beintoo _beintooUserDidLogin];		
+}
+
++ (void)postNotificationBeintooUserDidSignup{
+	[Beintoo _beintooUserDidSignup];		
 }
 
 + (void)switchBeintooToSandbox{
@@ -407,22 +497,6 @@ NSString *BNSDefIsUserLogged;
 	}	
 }
 
-+ (void)notifyRetrievedMisionOnMainDelegateWithMission:(NSDictionary *)_mission{
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	
-	if ([_mainDelegate respondsToSelector:@selector(didBeintooGetAMission:)]) {
-		[_mainDelegate didBeintooGetAMission:_mission];
-	}	
-}
-
-+ (void)notifyRetrievedMisionErrorOnMainDelegateWithMission:(NSDictionary *)_error{
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	
-	if ([_mainDelegate respondsToSelector:@selector(didBeintooFailToGetAMission:)]) {
-		[_mainDelegate didBeintooFailToGetAMission:_error];
-	}	
-}
-
 + (NSString *)getUserLocationForURL{
 	CLLocation *loc = [Beintoo getUserLocation];
 	NSString *locationForURL = nil;
@@ -439,9 +513,11 @@ NSString *BNSDefIsUserLogged;
 + (BeintooVC *)getBeintooPanelRootViewController{
 	return [Beintoo sharedInstance]->beintooPanelRootViewController;
 }
+
 + (UIWindow *)getAppWindow{
 	return [Beintoo getApplicationWindow];
 }
+
 + (BMessageAnimated *)getNotificationView{
 	return [Beintoo sharedInstance]->notificationView;
 }
@@ -453,6 +529,7 @@ NSString *BNSDefIsUserLogged;
 + (void)updateUserLocation{
 	[self _updateUserLocation];
 }
+
 + (CLLocation *)getUserLocation{
 	return [Beintoo sharedInstance]->userLocation;
 }
@@ -463,6 +540,10 @@ NSString *BNSDefIsUserLogged;
 
 + (void)dismissBeintoo{
 	[Beintoo _dismissBeintoo];
+}
+
++ (void)dismissBeintoo:(int)type{
+	[Beintoo _dismissBeintoo:type];
 }
 
 + (void)dismissBeintooNotAnimated{

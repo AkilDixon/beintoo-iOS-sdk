@@ -50,6 +50,7 @@ static NSString *GIVE_5_BEDOLLAR = @"GIVE_BEDOLLARS_5";
 - (void)getUserByM:(NSString *)m andP:(NSString *)p;
 - (void)getUserByUDID;
 - (void)showChallengesbyStatus:(int)status;
+- (void)challengeRequestfrom:(NSString *)userIDFrom	to:(NSString *)userIDTo withAction:(NSString *)action forContest:(NSString *)contest;
 - (void)challengeRequestfrom:(NSString *)userIDFrom	to:(NSString *)userIDTo withAction:(NSString *)action forContest:(NSString *)contest withBedollarsToBet:(NSString *)_bedollars andScoreToReach:(NSString *)_scoreToReach forKindOfChallenge:(NSString *)_challengeKind andActor:(NSString *)actor;
 
 - (void)getChallangePrereequisitesFromUser:(NSString *)userIDFrom toUser:(NSString *)userIDTo forContest:(NSString *)codeID;
@@ -59,6 +60,7 @@ static NSString *GIVE_5_BEDOLLAR = @"GIVE_BEDOLLARS_5";
 - (void)getBalanceFrom:(int)start andRowns:(int)numOfRows;
 - (void)getUsersByQuery:(NSString *)query andSkipFriends:(BOOL)skip;
 - (void)sendFriendshipRequestTo:(NSString *)toUserExt;		
+- (void)sendUnfriendshipRequestTo:(NSString *)toUserExt;
 - (void)getFriendRequests;
 - (void)replyToFriendshipRequestWithAnswer:(NSInteger)answer toUser:(NSString *)toUserExt;
 
@@ -73,6 +75,8 @@ static NSString *GIVE_5_BEDOLLAR = @"GIVE_BEDOLLARS_5";
 - (void)giveBedollarsByString:(NSString *)_reason showNotification:(BOOL)_showNotification;
 + (void)giveBedollars:(float)_amount showNotification:(BOOL)_showNotification;
 - (void)giveBedollars:(float)_amount showNotification:(BOOL)_showNotification;
+
+- (void)forgotPassword:(NSString *)email;
 
 /*
  *	REGISTER USER
@@ -123,6 +127,7 @@ static NSString *GIVE_5_BEDOLLAR = @"GIVE_BEDOLLARS_5";
 - (void)didGetBalance:(NSMutableArray *)result;
 - (void)didGetUserByQuery:(NSMutableArray *)result;
 - (void)didGetFriendRequestResponse:(NSDictionary *)result;
+- (void)didGetUnfriendRequestResponse:(NSDictionary *)result;
 - (void)didGetFriendRequests:(NSMutableArray *)result;
 - (void)didCompleteRegistration:(NSDictionary *)result;
 - (void)didCompleteUserNickUpdate:(NSDictionary *)result;
@@ -130,6 +135,7 @@ static NSString *GIVE_5_BEDOLLAR = @"GIVE_BEDOLLARS_5";
 - (void)didCompleteBackgroundRegistration:(NSDictionary *)result;
 - (void)didNotCompleteBackgroundRegistration;
 - (void)didReceiveGiveBedollarsResponse:(NSDictionary *)result;
+- (void)didCompleteForgotPassword:(NSDictionary *)result;
 
 @end
 

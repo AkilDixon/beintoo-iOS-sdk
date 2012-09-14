@@ -16,12 +16,12 @@
 
 #import "BeintooAlliancesLeaderboardVC.h"
 #import "Beintoo.h"
+#import "BeintooViewAllianceVC.h"
 
 @implementation BeintooAlliancesLeaderboardVC
 
-@synthesize players,leaderboardEntries,leaderboardImages,selectedPlayer;
+@synthesize players, leaderboardEntries, leaderboardImages, selectedPlayer, isFromAlliances, isFromDirectLaunch;
 
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
@@ -30,9 +30,10 @@
 	[leaderboardContestView setTopHeight:10];
 	[leaderboardContestView setBodyHeight:427];
 	    
+    ///TO BE TRANSLATED
     noAlliancesLabel.text = @"No active alliances on this contest.";
 
-	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];	
 	
@@ -52,6 +53,8 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
     }
@@ -214,7 +217,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	
-	if (indexPath.row == [self.leaderboardEntries count]) {
+	/*if (indexPath.row == [self.leaderboardEntries count]) {
 		startRows = startRows + NUMBER_OF_ROWS_ALLIANCE;
 
 		// Adding new elements to the tableview, depending on the segmentcontrol we use the userId or not to load only friends
@@ -223,6 +226,28 @@
 	}
 	else { 
         [leaderboardContestTable deselectRowAtIndexPath:[leaderboardContestTable indexPathForSelectedRow] animated:YES];
+	}*/
+    
+    if (indexPath.row == [leaderboardEntries count]) {
+		startRows = startRows + NUMBER_OF_ROWS_ALLIANCE;
+        
+		// Adding new elements to the tableview, depending on the segmentcontrol we use the userId or not to load only friends
+        [_alliance topScoreFrom:startRows andRows:NUMBER_OF_ROWS_ALLIANCE forContest:[[NSUserDefaults standardUserDefaults] objectForKey:@"selectedContest"]];
+		[BLoadingView startActivity:self.view];
+	}
+	else { 
+        if ([Beintoo isUserLogged]){
+            BeintooViewAllianceVC *beintooViewAllianceVC   = [[BeintooViewAllianceVC alloc] initWithNibName:@"BeintooViewAllianceVC" bundle:[NSBundle mainBundle] andOptions:[leaderboardEntries objectAtIndex:indexPath.row]];
+            beintooViewAllianceVC.isFromLeaderboard  = YES;
+            
+            if (isFromDirectLaunch)
+                beintooViewAllianceVC.isFromDirectLaunch = YES;
+            
+            [self.navigationController pushViewController:beintooViewAllianceVC animated:YES];
+            
+            [beintooViewAllianceVC release];
+        }
+        [leaderboardContestTable deselectRowAtIndexPath:[leaderboardContestTable indexPathForSelectedRow] animated:NO];
 	}
 }
 
@@ -237,22 +262,14 @@
     [path release];
     download.delegate = nil;
 }
+
 - (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
-    NSLog(@"BeintooImageError: %@", [error localizedDescription]);
-}
-
-#pragma mark -
-#pragma mark ActionSheetCall
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
+    BeintooLOG(@"BeintooImageError: %@", [error localizedDescription]);
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    
     user.delegate			 = nil;
     _player.delegate		 = nil;
     _alliance.delegate       = nil;
@@ -262,6 +279,28 @@
 	}
 	@catch (NSException * e) {
 	}
+}
+
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
+}
+
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

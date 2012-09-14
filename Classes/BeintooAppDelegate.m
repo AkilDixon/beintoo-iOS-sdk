@@ -59,9 +59,8 @@
                                      [NSNumber numberWithInt:1], BeintooLoginNotification,
                                      [NSNumber numberWithInt:1], BeintooScoreNotification,
                                      [NSNumber numberWithInt:0], BeintooNoRewardNotification,
-                                     [NSNumber numberWithInt:1], BeintooDismissAfterRegistration,
+                                     [NSNumber numberWithInt:0], BeintooDismissAfterRegistration,
                                      [NSNumber numberWithInt:0], BeintooForceRegistration,
-                                     [NSNumber numberWithInt:1], BeintooTryBeintooWithRewardImage,
                                      [NSNumber numberWithInt:BeintooNotificationPositionBottom], BeintooNotificationPosition,
 									 [NSNumber numberWithInt:UIInterfaceOrientationPortrait],BeintooAppOrientation,
 									 nil];
@@ -69,7 +68,7 @@
 	sampleDelegate = [[BeintooDelegate alloc] init];
 	
 	[Beintoo initWithApiKey:your_apikey_here andApiSecret:nil andBeintooSettings:beintooSettings andMainDelegate:sampleDelegate];
-    
+  
     /*
      *
      *  If your app uses Virtual Currency, and you'd like to show your users the products of 

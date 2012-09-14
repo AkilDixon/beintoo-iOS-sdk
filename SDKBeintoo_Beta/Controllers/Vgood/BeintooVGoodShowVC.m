@@ -19,11 +19,12 @@
 
 @implementation BeintooVGoodShowVC
 
-@synthesize urlToOpen, caller, callerIstance, callerIstanceMP;
+@synthesize urlToOpen, caller, callerIstance;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil urlToOpen:(NSString *)URL {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
+        self.urlToOpen = [[NSString alloc] init];
 		self.urlToOpen = URL;
     }
     return self;
@@ -44,32 +45,25 @@
     
     beintooPlayer = [[BeintooPlayer alloc] init];
 	
-	if (self.navigationItem != nil) {
-		UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
-        [self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-        [barCloseBtn release];
-	}
-	
-	loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-	loadingIndicator.hidesWhenStopped = YES;
-	[self.view addSubview:loadingIndicator];
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
+	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
+	[barCloseBtn release];
 		
-	vGoodWebView.delegate = self;
+	
 	vGoodWebView.scalesPageToFit = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
+    vGoodWebView.delegate = self;
     beintooPlayer.delegate = self;
     
-    [loadingIndicator stopAnimating];
+    [BLoadingView startActivity:self.view];
     	
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
-	
-	loadingIndicator.center = CGPointMake((self.view.bounds.size.width/2)-5, (self.view.bounds.size.height/2)-30);
 	
 	/*
 	 *  Check if the vgood is pushed from a multipleVgoodVC, if yes hides back button.
@@ -80,17 +74,30 @@
             [self.navigationItem setHidesBackButton:YES];
         }
     }
-	
-    if ([Beintoo getLastGeneratedVGood].openInBrowser == NO)
+    
+    if ([urlToOpen rangeOfString: @"?"].location == NSNotFound)
+        urlToOpen = [urlToOpen stringByAppendingFormat:@"?os_source=ios"];
+    else 
         urlToOpen = [urlToOpen stringByAppendingFormat:@"&os_source=ios"];
     
-	[vGoodWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlToOpen]]];
+	[vGoodWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[urlToOpen retain]]]];
 }
 
 - (void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:animated];
     
     beintooPlayer.delegate = nil;
+    vGoodWebView.delegate = nil;
+    @try {
+		[BLoadingView stopActivity];
+        for (UIView *view in [self.view subviews]) {
+            if([view isKindOfClass:[BLoadingView class]]){	
+                [view removeFromSuperview];
+            }
+        }
+	}
+	@catch (NSException * e) {
+	}
 }
 
 #pragma mark -
@@ -123,10 +130,17 @@
 		// ******** Remember that this will NOT work on the simulator ******* //
 		if ([[UIApplication sharedApplication]canOpenURL:url]) {
 			[[UIApplication sharedApplication]openURL:url];
-			[loadingIndicator stopAnimating];
+			[BLoadingView stopActivity];
 			didOpenTheRecommendation = YES;
 			if (didOpenTheRecommendation) {
-				[Beintoo dismissRecommendation];
+                //[Beintoo dismissRecommendation];
+                if (isFromWallet) { 
+                    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+                    [Beintoo dismissBeintoo:navController.type];
+                }
+                else {
+                    [Beintoo dismissPrize];
+                }
 			}
 			
 			return NO;
@@ -158,10 +172,10 @@
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)theWebView{
-	[loadingIndicator startAnimating];
+    
 }
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView{
-	[loadingIndicator stopAnimating];
+	[BLoadingView stopActivity];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
@@ -171,34 +185,35 @@
     // Ignore "Fame Load Interrupted" errors. Seen after app store links.
     if (error.code == 102 && [error.domain isEqual:@"WebKitErrorDomain"]) return;
 	
-	[loadingIndicator stopAnimating];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    
+	[BLoadingView stopActivity];
 }
 
 - (void)setIsFromWallet:(BOOL)value{
 	isFromWallet = value;
 }
 
-- (UIButton *)closeButton{
-	UIImage *closeImg = [UIImage imageNamed:@"bar_close.png"];
-	UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	[closeBtn setImage:closeImg forState:UIControlStateNormal];
-	closeBtn.frame = CGRectMake(0,0, closeImg.size.width+7, closeImg.size.height);
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
 	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
-	return closeBtn;
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
 }
 
--(void)closeBeintoo{
+- (void)closeBeintoo{
 	if (isFromWallet) { 
-		[Beintoo dismissBeintoo];
+		BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+        [Beintoo dismissBeintoo:navController.type];
 	}
-    else if ([caller isEqualToString:@"MarketplaceList"] == YES || [caller isEqualToString:@"MarketplaceSelectedCoupon"] == YES){
-        [Beintoo dismissBeintoo];
-    }
     else {
 		[Beintoo dismissPrize];
 	}
@@ -219,7 +234,6 @@
 #endif
 
 - (void)dealloc {
-    [loadingIndicator release];
     [beintooPlayer release];
     [super dealloc];
 }

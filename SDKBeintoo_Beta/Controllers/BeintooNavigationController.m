@@ -17,9 +17,8 @@
 #import "BeintooNavigationController.h"
 #import "Beintoo.h"
 
-
 @implementation BeintooNavigationController
-
+@synthesize type;
 
 - (void)show{
 	self.view.alpha = 1;
@@ -34,7 +33,8 @@
 		
 	CATransition *applicationLoadViewIn = [CATransition animation];
 	[applicationLoadViewIn setDuration:0.5f];
-	[applicationLoadViewIn setValue:@"load" forKey:@"name"];
+    if (type != NAV_TYPE_SIGNUP_PRIVATE && type != NAV_TYPE_NOTIFICATIONS_PRIVATE)
+        [applicationLoadViewIn setValue:@"load" forKey:@"name"];
 	applicationLoadViewIn.removedOnCompletion = YES;
 	[applicationLoadViewIn setType:kCATransitionMoveIn];
 	applicationLoadViewIn.subtype = transitionEnterSubtype;
@@ -46,7 +46,9 @@
 - (void)hide{
 	CATransition *applicationUnloadViewIn = [CATransition animation];
 	[applicationUnloadViewIn setDuration:0.5f];
-	[applicationUnloadViewIn setValue:@"unload" forKey:@"name"];
+    
+    if (type != NAV_TYPE_SIGNUP_PRIVATE && type != NAV_TYPE_NOTIFICATIONS_PRIVATE)
+        [applicationUnloadViewIn setValue:@"unload" forKey:@"name"];
 	applicationUnloadViewIn.removedOnCompletion = YES;
 	[applicationUnloadViewIn setType:kCATransitionReveal];
 	applicationUnloadViewIn.subtype = transitionExitSubtype;
@@ -57,16 +59,7 @@
 }
 
 - (void)hideNotAnimated{
-    /*CATransition *applicationUnloadViewIn = [CATransition animation];
-	[applicationUnloadViewIn setDuration:0.0f];
-	[applicationUnloadViewIn setValue:@"unload" forKey:@"name"];
-	applicationUnloadViewIn.removedOnCompletion = YES;
-	[applicationUnloadViewIn setType:kCATransitionReveal];
-	applicationUnloadViewIn.subtype = transitionExitSubtype;
-	applicationUnloadViewIn.delegate = self;
-	[applicationUnloadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];*/
-	self.view.alpha = 0;
+    self.view.alpha = 0;
 }
 
 - (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag{
@@ -111,12 +104,6 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return (interfaceOrientation == [Beintoo appOrientation]);
-}
-
-
-- (void)didReceiveMemoryWarning {
-
-    [super didReceiveMemoryWarning];
 }
 
 - (void)dealloc {

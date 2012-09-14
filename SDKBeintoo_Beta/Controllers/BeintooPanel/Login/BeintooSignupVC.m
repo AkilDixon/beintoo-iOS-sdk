@@ -16,8 +16,7 @@
 
 #import "BeintooSigninVC.h"
 #import "Beintoo.h"
-
-//static NSString* kAppId = @"152837841401121";
+#import "BeintooTutorialVC.h"
 
 @implementation BeintooSignupVC
 
@@ -34,30 +33,44 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
-	self.title = @"Beintoo";
+	int appOrientation = [Beintoo appOrientation];
 	
-	/* Loading indicator */
-	loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-	loadingIndicator.hidesWhenStopped = YES;
-	[self.view addSubview:loadingIndicator];	
+	UIImageView *logo;
+    if( !([BeintooDevice isiPad]) && 
+       (appOrientation == UIInterfaceOrientationLandscapeLeft || appOrientation == UIInterfaceOrientationLandscapeRight) )
+		logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bar_logo_34.png"]];
+    else
+        logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bar_logo.png"]];
+    
+    self.navigationItem.titleView = logo;
+	[logo release];
 	
 	// Registration View Initial Settings
-	self.registrationWebView.delegate = self;
-	self.registrationWebView.scalesPageToFit = YES;
+	registrationWebView.delegate = self;
+	registrationWebView.scalesPageToFit = YES;
+    
+    UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
+	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
+	[barCloseBtn release];
 	
 	_player = [[BeintooPlayer alloc] init];
 	_player.delegate = self;
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+    }
+    
+    kindOfDelegateNotification = 0;
+    
+    if ([Beintoo isUserLogged]){
+        [Beintoo playerLogout];
     }
 
-    [loadingIndicator stopAnimating];
-    loadingIndicator.center = CGPointMake((self.view.bounds.size.width/2)-5, (self.view.bounds.size.height/2)-30);
-    
-	NSHTTPCookie *cookie;
+    NSHTTPCookie *cookie;
 	NSHTTPCookieStorage *storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
 	
     // Here we delete all facebbok cookies, to prevent the auto-login of another user
@@ -67,10 +80,9 @@
         }
 	}
     
-	
-	//[_facebook logout:self];
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlToOpen]];
 	[request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+    [BLoadingView startActivity:self.view];
 	[self.registrationWebView loadRequest:request];	
 }
 
@@ -78,19 +90,29 @@
 #pragma mark WebViewDelegates
 
 - (void)webViewDidStartLoad:(UIWebView *)theWebView{
-    [loadingIndicator startAnimating];}
+    [BLoadingView startActivity:self.view];
+}
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView{
+    [BLoadingView stopActivity];
     
-    [loadingIndicator stopAnimating];
-	
-	@try {
+    [BLoadingView stopActivity];
+    for (UIView *view in [self.view subviews]) {
+        if([view isKindOfClass:[BLoadingView class]]){
+            [view removeFromSuperview];
+        }
+    }
+    
+    @try {
 		NSString *url = [[[theWebView request] URL] absoluteString];
 		NSRange id_range		= [url rangeOfString:@"userext="];
 		NSString *ext_id = nil;
 		
-		//NSLog(@"url :%@ \n\n",url);
-
+        if ([url rangeOfString:@"landing_register_ok.html"].location != NSNotFound)
+            kindOfDelegateNotification = BEINTOO_FACEBOOK_SIGNUP;
+        else if ([url rangeOfString:@"landing_logged.html"].location != NSNotFound)
+            kindOfDelegateNotification = BEINTOO_FACEBOOK_LOGIN;
+        
 		if( (id_range.location < 200) && ([url rangeOfString:@"#close"].location>200) && ([url rangeOfString:@"already_logged.html"].location>200) ) {
 			ext_id = [url substringFromIndex:(id_range.location+id_range.length)];
 			[_player login:ext_id];	
@@ -114,27 +136,15 @@
 		}
 		
 		if (logged_ok.location != NSNotFound) {
-			//[player getPlayerByGUID:[Beintoo getPlayerID]]; 
-            if ([caller isEqualToString:@"MarketplaceList"] || [caller isEqualToString:@"MarketplaceSelectedCoupon"]){
-                if([BeintooDevice isiPad]){
-                    [Beintoo dismissIpadLogin];
-                }
-                else {
-                    [self dismissModalViewControllerAnimated:YES];
-                }
-            }
-            else if([BeintooDevice isiPad]){
-				[Beintoo dismissIpadLogin];
-			}else {
-				[self dismissModalViewControllerAnimated:YES];
-			}
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
+			[self closeButton];
 		}
+        
 		if (backButton.location != NSNotFound) {
 			[self.navigationController popViewControllerAnimated:YES];
 		}
 	}
 	@catch (NSException * e) {
-		//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
 
 	}
 	return YES;
@@ -146,54 +156,31 @@
 	[_player login];
 	[Beintoo setUserLogged:YES];
 	
-    if ([caller isEqualToString:@"MarketplaceList"] || [caller isEqualToString:@"MarketplaceSelectedCoupon"]){
-        if([BeintooDevice isiPad]){
-            [Beintoo dismissIpadLogin];
-        }
-        else {
-            [self dismissModalViewControllerAnimated:YES];
-        }
-    }
-	else if([BeintooDevice isiPad]){
-		[Beintoo dismissIpadLogin];
-	}else {
-		[self dismissModalViewControllerAnimated:YES];
-	}
 }
 
 - (void)playerDidLogin:(BeintooPlayer *)player{
 	if ([Beintoo getUserIfLogged] != nil) {
         
-        if ([caller isEqualToString:@"MarketplaceList"] || [caller isEqualToString:@"MarketplaceSelectedCoupon"]){
-            if([BeintooDevice isiPad]){
-                [Beintoo dismissIpadLogin];
-            }
-            else {
-                [self dismissModalViewControllerAnimated:YES];
-            }
+        if (kindOfDelegateNotification == BEINTOO_FACEBOOK_LOGIN){
+            [Beintoo postNotificationBeintooUserDidLogin];
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
+            
+            kindOfDelegateNotification = 0;
+            
+            BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+            [Beintoo dismissBeintoo:navController.type]; 
         }
-        else if([BeintooDevice isiPad]){
-            if ([Beintoo dismissBeintooOnRegistrationEnd]) {
-                [Beintoo dismissBeintoo];
-            }
-            else{
-                [Beintoo dismissIpadLogin];
-            }
-        }else {
-            if ([Beintoo dismissBeintooOnRegistrationEnd]) {
-                [Beintoo dismissBeintooNotAnimated];
-                [self dismissModalViewControllerAnimated:YES];
-            }
-            else{
-                [self dismissModalViewControllerAnimated:YES];
-            }
+        else if (kindOfDelegateNotification == BEINTOO_FACEBOOK_SIGNUP){
+            [Beintoo postNotificationBeintooUserDidSignup];
+            
+            kindOfDelegateNotification = 0;
+            
+            BeintooTutorialVC *beintooTutorialVC = [[BeintooTutorialVC alloc] initWithNibName:@"BeintooTutorialVC" bundle:[NSBundle mainBundle]];
+            [self.navigationController pushViewController:beintooTutorialVC animated:YES];
+            
+            [beintooTutorialVC release];
         }
-        
-		/*if([BeintooDevice isiPad]){
-			[Beintoo dismissIpadLogin];
-		}else {
-			[self dismissModalViewControllerAnimated:NO];
-		}*/
 	}
 }
 
@@ -201,26 +188,48 @@
 	return (interfaceOrientation == [Beintoo appOrientation]);
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];    
-}
-
-- (void):(BOOL)animated {
+- (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
-	[self.registrationWebView loadHTMLString:@"<html><head></head><body></body></html>" baseURL:nil];
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
+    
+    [registrationWebView loadHTMLString:@"<html><head></head><body></body></html>" baseURL:nil];
+    registrationWebView.delegate = nil;
+    
     @try {
-		[BLoadingView stopActivity];
+		[BLoadingView stopActivity]; 
+        for (UIView *view in [self.view subviews]) {
+            if([view isKindOfClass:[BLoadingView class]]){
+                [view removeFromSuperview];
+            }
+        }
 	}
 	@catch (NSException * e) {
 	}
 }
+
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
+}
+
+- (void)closeBeintoo{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
+    
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
+}
+
 - (void)dealloc {
 	[_player release];
     [super dealloc];

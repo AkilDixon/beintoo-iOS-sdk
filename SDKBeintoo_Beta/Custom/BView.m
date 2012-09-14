@@ -61,6 +61,10 @@
 	[self sendSubviewToBack:self.bodyView];
 	[self sendSubviewToBack:self.topView];
 	[self sendSubviewToBack:self.footerView];
+    
+    [self.topView release];
+	[self.bodyView release];
+	[self.footerView release];
 }
 
 - (void) removeViews {
@@ -70,9 +74,7 @@
 }
 
 - (void)dealloc {
-	[self.topView release];
-	[self.bodyView release];
-	[self.footerView release];
+	
     [super dealloc];
 }	
 @end

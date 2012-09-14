@@ -17,12 +17,14 @@
 #import <UIKit/UIKit.h>
 #import "BeintooPlayer.h"
 #import "BeintooUser.h"
+#import "BeintooAlliance.h"
+#import "BPickerView.h"
 
 #define POPUP_DETACH	44
 #define POPUP_LOGOUT	55
 #define POPUP_FRIENDS	66
 
-@class BView, BGradientView, BButton, BTableView, BeintooMessagesVC, BeintooFriendsListVC, BeintooNewMessageVC, BeintooBalanceVC,BeintooFriendActionsVC,BeintooAllianceActionsVC,BGradientView,BeintooLoginVC;
+@class BView, BGradientView, BButton, BTableView, BeintooMessagesVC, BeintooFriendsListVC, BeintooNewMessageVC, BeintooBalanceVC,BeintooFriendActionsVC,BeintooAllianceActionsVC,BGradientView,BeintooLoginVC, BeintooWebViewVC;
 
 @interface BeintooProfileVC : UIViewController <UITableViewDelegate,UIActionSheetDelegate,BeintooUserDelegate,BeintooPlayerDelegate> {
 	
@@ -39,20 +41,24 @@
 	IBOutlet BButton	 *logoutButton;
 	IBOutlet BButton	 *detachButton;
 	IBOutlet BButton	 *newMessageButton;
+    IBOutlet UIToolbar   *toolBar;
+    IBOutlet UILabel	 *alliancekey;
+	IBOutlet UILabel	 *allianceValue;
     
-	
 	IBOutlet BGradientView *toolbarView;
 	IBOutlet UILabel	   *friendsToolbarLabel;
 	IBOutlet UILabel	   *balanceToolbarLabel;
 	IBOutlet UILabel	   *messagesToolbarLabel;
 	IBOutlet UILabel	   *unreadMessagesLabel;
     IBOutlet UILabel       *alliancesLabel;
+    IBOutlet UILabel       *settingsLabel;
 	
 	BeintooMessagesVC		*messagesVC;
 	BeintooNewMessageVC		*newMessageVC;
 	BeintooBalanceVC		*balanceVC;
 	BeintooFriendActionsVC	*friendActionsVC;
     BeintooAllianceActionsVC *alliancesActionVC;
+    BeintooWebViewVC        *webview;
 	
 	NSMutableArray		 *listOfContests;
 	NSDictionary		 *allScores;
@@ -61,7 +67,10 @@
 
 	BeintooPlayer *_player;
 	BeintooUser	  *_user;
-		
+    BeintooAlliance     *_alliance;
+    
+    BPickerView             *bPickerView;
+    
     BOOL isAlreadyLogging;
     
 	NSMutableArray *arrayWithScoresForAllContests;
@@ -82,6 +91,7 @@
 - (IBAction)openFriends;
 - (IBAction)openBalance;
 - (IBAction)openAlliances;
+- (IBAction)openSettings;
 
 // If is a friend profile
 - (IBAction)sendMessage;
@@ -95,5 +105,7 @@
 @property(nonatomic,retain) NSMutableArray	*allContests;
 @property(nonatomic,retain) NSMutableArray	*allScoresForContest;
 @property(nonatomic,retain) NSMutableArray	*arrayWithScoresForAllContests;
+@property(nonatomic,assign) BOOL            isFromNotification;
+@property(nonatomic,assign) BOOL            isFromDirectLaunch;
 
 @end

@@ -25,8 +25,9 @@
 	IBOutlet BView				*challengesView;
 	IBOutlet BTableView			*challengesTable;
 	IBOutlet UISegmentedControl *segControl;
+    IBOutlet UIToolbar			*toolBar;
+    IBOutlet UIBarButtonItem    *sendNewChallengeButton;
 	IBOutlet UILabel			*titleLabel;
-	
 	IBOutlet UILabel			*titleLabel1;
 	IBOutlet UILabel			*titleLabel2;
 
@@ -37,9 +38,13 @@
 	BeintooPlayer	*_player;
 	BeintooShowChallengeVC *showChallengeVC;
 	NSData *myImage;
+    
+    NSMutableArray          *challengesPlayerFromImagesArray;
+    NSMutableArray          *challengesPlayerToImagesArray;
 }
 
 - (IBAction) segmentedControlIndexChanged;
+- (IBAction)sendNewChallenge;
 
 @property(nonatomic,retain) NSMutableArray *challengesArrayList;
 @property(nonatomic,retain) NSDictionary *selectedChallenge;
@@ -48,7 +53,5 @@
 @property(nonatomic,retain) IBOutlet UILabel *titleLabel;
 @property(nonatomic,retain) NSData *myImage;
 @property(nonatomic,retain) NSMutableArray *challengeImages;
-
-
 
 @end

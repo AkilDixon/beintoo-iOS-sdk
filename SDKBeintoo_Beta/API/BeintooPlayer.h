@@ -122,7 +122,7 @@
 
 @property(nonatomic, assign) id <BeintooPlayerDelegate> delegate;
 @property(nonatomic, assign) id  callingDelegate;
-@property(nonatomic,retain) Parser *parser;
+@property(nonatomic, retain) Parser *parser;
 
 @end
 

@@ -20,10 +20,8 @@
 @interface BeintooMarketplaceWebViewVC : UIViewController <UIWebViewDelegate, BeintooPlayerDelegate> {
 
     IBOutlet UIWebView      *webView;
-    UIActivityIndicatorView *loadingIndicator;
     
     BeintooPlayer *beintooPlayer;
-
 
 }
 

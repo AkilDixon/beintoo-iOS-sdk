@@ -32,6 +32,55 @@
 "giveBedollarFloatMsg"      = "You just earned %.1f Bedollar! Use your Bedollars to redeem great offers on Beintoo";
 "giveBedollarsFloatMsg"      = "You just earned %.1f Bedollars! Use your Bedollars to redeem great offers on Beintoo";
 
+// Post Signup Tutorial
+"tutorialFirstSentenceBold" = "PLAY";
+"tutorialFirstSentence" = "/ Engage with favourite Apps in the Beintoo network";
+"tutorialSecondSentenceBold" = "EARN";
+"tutorialSecondSentence" = "/ Collect Bedollars from your activities";
+"tutorialThirdSentenceBold" = "REDEEM";
+"tutorialThirdSentence" = "/ Get real world offers in the Beintoo store";
+
+"tutorialProceedButton" = "Start now!";
+
+"signupMainSentence1" = "Join";
+"signupMainSentence2" = " the community to "; 
+"signupMainSentence3" = "earn"; 
+"signupMainSentence4" = "bedollars and ";
+"signupMainSentence5" = "redeem"; 
+"signupMainSentence6" = "high value real world offers";
+
+"signupOrLabel"       = "o";
+
+"new_login_title" = "Continue earning Bedollars and redeem offers from here!";
+
+"signupTextFieldPlaceholder" = "Signup with your email";
+
+"loginEmailPlaceholder" = "Email";
+"loginPasswordPlaceholder" = "Password";
+
+"successfullyUnfrined" = "%@ successfully removed from friends";
+"friendshipRequestSent" = "Friend request successfully sent to %@";
+"noFriendsAlliance" = "Make some new friends to invite them into your new alliance!";
+"noAlliancesInContest" = "No active alliances in this contest yet!";
+"noNotifications"               = "You don't have any notifications at the moment!";
+"noChallengesCompleted" = "You haven't completed any challenges yet!";
+
+"connectWithFacebook" = "Connect with Facebook";
+
+"noAlliances"           = "None";
+
+"no" = "No";
+
+"settingsLabel"         = "设置";
+
+"forgotPasswordButton" = "Forgot your password?";
+"forgotPasswordTitle" = "To reset your password, please insert your email";
+"forgotPasswordSendEmail" = "Send a new password";
+"forgotPasswordAlertTitle" = "Successfully sent!";
+"forgotPasswordAlertSuccess" = "A new password has been sent to your account";
+"forgotPasswordAlertTitleError" = "Error";
+"forgotPasswordAlertError" = "The email entered doesn't belong to any account";
+
 // Home
 "profileDesc"                       = "您的状态、消息和好友";
 "leaderboardDesc"                   = "查看总分";
@@ -100,7 +149,6 @@
 "tryBeintooDescNoCurrency"      = "Earn Bedollars by using this app and choose the customized offer that fits better for you!";
 "tryBeintooAcceptButton"        = "Join the community";
 "tryBeintooRefuseButton"        = "No, I don't want to play&earn";
-
 
 // Notifications  ----------- TO TRANSLATE !!
 "notifications"                 = "Notifications";
@@ -287,6 +335,7 @@
 "allianceleaveareyousure"           = "您确定脱离组队吗？";
 "allianceaddfriends"                = "把好友添加到组队";
 "alliancenametooshort"              = "组队的名称最短为3个字符";
+"allianceNoResult"                = "You have no pending requests right now.";
 
 // Labels
 "wehavefound"                       = "选择您想要使用的档案？";

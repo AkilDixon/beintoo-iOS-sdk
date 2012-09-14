@@ -29,20 +29,23 @@
 	challengesTable.delegate	= self;
 	challengesTable.rowHeight	= 60.0;
 	
-	[challengesView setTopHeight:60.0];
-	[challengesView setBodyHeight:370.0];
+	[challengesView setTopHeight:40.0];
+	[challengesView setBodyHeight:385.0];
 	
 	[segControl setTitle:NSLocalizedStringFromTable(@"pending",@"BeintooLocalizable",@"Pending") forSegmentAtIndex:0];
 	[segControl setTitle:NSLocalizedStringFromTable(@"ongoing",@"BeintooLocalizable",@"Ongoing") forSegmentAtIndex:1];
 	[segControl setTitle:NSLocalizedStringFromTable(@"ended",@"BeintooLocalizable",@"Ended") forSegmentAtIndex:2];
 
     segControl.tintColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1];
+    [toolBar setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
 	
 	titleLabel.text = NSLocalizedStringFromTable(@"nochallenges",@"BeintooLocalizable",@"You don't have any challenge in this state");
 	titleLabel1.text = NSLocalizedStringFromTable(@"hereare",@"BeintooLocalizable",@"Here are your challenges");
 	titleLabel2.text = NSLocalizedStringFromTable(@"itstimeto",@"BeintooLocalizable",@"It's time to win!");
+    
+    sendNewChallengeButton.title = NSLocalizedStringFromTable(@"leadSendChall",@"BeintooLocalizable",nil);
 	
-	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];		
 		
@@ -50,13 +53,17 @@
 	self.challengesArrayList    = [[NSMutableArray alloc] init];
     self.challengeImages        = [[NSMutableArray alloc] init];
 	self.showChallengeVC        = [BeintooShowChallengeVC alloc];
+    
+    challengesPlayerFromImagesArray     = [[NSMutableArray alloc] init];
+    challengesPlayerToImagesArray      = [[NSMutableArray alloc] init];
 
 	user = [[BeintooUser alloc] init];
 	_player = [[BeintooPlayer alloc] init];
 }
 
 - (void)viewWillAppear:(BOOL)animated{
-
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
     }
@@ -80,16 +87,24 @@
 
 #pragma mark -
 #pragma mark Delegates
+
 - (void)didShowChallengesByStatus:(NSArray *)result{
     	
     [self.challengesArrayList removeAllObjects];
     [self.challengeImages removeAllObjects];
 		
 	if ([result count] == 0) {
-		[self.titleLabel setHidden:NO];
+		[titleLabel setHidden:NO];
 	}else {
-		[self.titleLabel setHidden:YES];
+		[titleLabel setHidden:YES];
 	}
+    
+    if (segControl.selectedSegmentIndex == 0 || segControl.selectedSegmentIndex == 1){
+        titleLabel.text = NSLocalizedStringFromTable(@"nochallenges", @"BeintooLocalizable", nil);
+    }
+    else {
+        titleLabel.text = NSLocalizedStringFromTable(@"noChallengesCompleted", @"BeintooLocalizable", nil);
+    }
 
 	if([result isKindOfClass:[NSDictionary class]]){
 		NSDictionary *errorRes = (NSDictionary *)result;
@@ -101,7 +116,7 @@
 	}
 	
 	for (int i=0; i<[result count]; i++) {
-		@try {
+		/*@try {
 			NSMutableDictionary *challengeEntry = [[NSMutableDictionary alloc]init];
 			
             NSString *imgUrlFrom = [[[[result objectAtIndex:i] objectForKey:@"playerFrom"] objectForKey:@"user"] objectForKey:@"usersmallimg"];
@@ -189,7 +204,104 @@
 		}
 	}
 	[BLoadingView stopActivity];
+	[challengesTable reloadData];*/
+        
+        
+        BImageDownload *downloadPlayerFrom = [[BImageDownload alloc] init];
+        BImageDownload *downloadPlayerTo = [[BImageDownload alloc] init];
+        
+        NSMutableDictionary *challengeEntry = [[NSMutableDictionary alloc] init];
+        
+		@try {
+			
+			
+			NSString *imgUrlFrom = [[[[result objectAtIndex:i] objectForKey:@"playerFrom"] objectForKey:@"user"] objectForKey:@"usersmallimg"];
+			NSString *imgUrlTo = [[[[result objectAtIndex:i] objectForKey:@"playerTo"] objectForKey:@"user"] objectForKey:@"usersmallimg"];
+			
+			NSString *status		= [[result objectAtIndex:i] objectForKey:@"status"];
+			NSString *playerFromScore;
+			NSString *playerToScore;
+			NSString *startDate;
+			NSString *endDate;
+			NSString *winner;
+			
+			if (![status isEqualToString:@"TO_BE_ACCEPTED"]) {
+				playerFromScore	= [[result objectAtIndex:i] objectForKey:@"playerFromScore"];
+				playerToScore	= [[result objectAtIndex:i] objectForKey:@"playerToScore"];
+				startDate		= [[result objectAtIndex:i] objectForKey:@"startdate"];
+				endDate		= [[result objectAtIndex:i] objectForKey:@"enddate"];
+			}
+			if ([status isEqualToString:@"ENDED"]) {
+				winner			= [[[result objectAtIndex:i] objectForKey:@"winner"] objectForKey:@"user"];
+			}
+			NSString *playerFrom	= [[[[result objectAtIndex:i] objectForKey:@"playerFrom"] objectForKey:@"user"] objectForKey:@"nickname"];
+			NSString *playerTo		= [[[[result objectAtIndex:i] objectForKey:@"playerTo"] objectForKey:@"user"] objectForKey:@"nickname"];
+			NSString *userExtFrom	= [[[[result objectAtIndex:i] objectForKey:@"playerFrom"] objectForKey:@"user"] objectForKey:@"id"];
+			NSString *userExtTo		= [[[[result objectAtIndex:i] objectForKey:@"playerTo"] objectForKey:@"user"] objectForKey:@"id"];
+			NSString *contestName	= [[[result objectAtIndex:i] objectForKey:@"contest"] objectForKey:@"name"];
+			NSString *contestCodeID = [[[result objectAtIndex:i] objectForKey:@"contest"] objectForKey:@"codeID"];
+            
+			
+            downloadPlayerFrom.urlString = imgUrlFrom;
+            downloadPlayerFrom.delegate = self;
+            
+            downloadPlayerTo.urlString = imgUrlTo;
+            downloadPlayerTo.delegate = self;
+            
+            NSString *price			= [[result objectAtIndex:i] objectForKey:@"price"];
+			NSString *prize			= [[result objectAtIndex:i] objectForKey:@"prize"];
+			
+			[challengeEntry setObject:playerFrom forKey:@"playerFrom"];
+			[challengeEntry setObject:playerTo forKey:@"playerTo"];
+			if (![status isEqualToString:@"TO_BE_ACCEPTED"]) {
+				[challengeEntry setObject:playerFromScore forKey:@"playerFromScore"];
+				[challengeEntry setObject:playerToScore forKey:@"playerToScore"];
+				[challengeEntry setObject:startDate forKey:@"startDate"];
+				[challengeEntry setObject:endDate forKey:@"endDate"];
+			}
+			if ([status isEqualToString:@"ENDED"]) {
+				if (winner!=nil) {
+					[challengeEntry setObject:winner forKey:@"winner"];
+				}
+			}
+			[challengeEntry setObject:userExtFrom forKey:@"userExtFrom"];
+			[challengeEntry setObject:userExtTo forKey:@"userExtTo"];
+			[challengeEntry setObject:contestName forKey:@"contestName"];
+			[challengeEntry setObject:contestCodeID forKey:@"contestCodeID"];
+			[challengeEntry setObject:status forKey:@"status"];
+			[challengeEntry setObject:downloadPlayerFrom forKey:@"imgPlayerFrom"];
+			[challengeEntry setObject:price	forKey:@"price"];
+			[challengeEntry setObject:prize forKey:@"prize"];
+			[challengeEntry setObject:downloadPlayerTo forKey:@"imgPlayerTo"];		
+            
+            [challengesPlayerFromImagesArray addObject:downloadPlayerFrom];
+            [challengesPlayerToImagesArray addObject:downloadPlayerTo];
+			
+			[challengesArrayList addObject:challengeEntry];            
+            
+		}
+		@catch (NSException * e) {
+			BeintooLOG(@"BeintooException: %@ \n for object: %@",e,[result objectAtIndex:i]);
+		}
+        [downloadPlayerFrom release];
+        [downloadPlayerTo release];
+        [challengeEntry release];
+	}
+    
+	[BLoadingView stopActivity];
 	[challengesTable reloadData];
+}
+
+- (IBAction)sendNewChallenge{
+    
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:@"challenges", @"caller", nil];
+    
+    BeintooFriendsListVC *friendsListVC = [[BeintooFriendsListVC alloc] initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle] andOptions:options];
+    /*if (isFromNotification == YES)
+        friendsListVC.isFromNotification = YES;*/
+    [self.navigationController pushViewController:friendsListVC animated:YES];
+    [friendsListVC release];
+    
 }
 
 - (IBAction) segmentedControlIndexChanged{
@@ -245,7 +357,7 @@
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
     }
     
-    UILabel *textLabel              = [[UILabel alloc] initWithFrame:CGRectMake(75, 10, 230, 24)];
+   /* UILabel *textLabel              = [[UILabel alloc] initWithFrame:CGRectMake(75, 10, 230, 24)];
     textLabel.text                  = [NSString stringWithFormat:@"%@",[[self.challengesArrayList objectAtIndex:indexPath.row] objectForKey:@"contestName"]];
     textLabel.font                  = [UIFont systemFontOfSize:18];
     textLabel.autoresizingMask      = UIViewAutoresizingFlexibleWidth;
@@ -273,7 +385,45 @@
     
     [imageView release];
     [textLabel release];
-    [detailTextLabel release];
+    [detailTextLabel release];*/
+    
+    UILabel *contestLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 5, self.view.frame.size.width - 120, 20)];
+    contestLabel.backgroundColor = [UIColor clearColor];
+    contestLabel.textAlignment = UITextAlignmentCenter;
+    contestLabel.font = [UIFont systemFontOfSize:15];
+    contestLabel.adjustsFontSizeToFitWidth = YES;
+	contestLabel.text =  [NSString stringWithFormat:@"%@ %@ %@", [[challengesArrayList objectAtIndex:indexPath.row] objectForKey:@"playerFrom"],
+                          NSLocalizedStringFromTable(@"to",@"BeintooLocalizable",@""),
+                          [[challengesArrayList objectAtIndex:indexPath.row] objectForKey:@"playerTo"]];
+    [cell addSubview:contestLabel];
+    [contestLabel release];
+    
+    UILabel *detailsLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 25, self.view.frame.size.width - 120, 20)];
+    detailsLabel.backgroundColor = [UIColor clearColor];
+    detailsLabel.textAlignment = UITextAlignmentCenter;
+    detailsLabel.font = [UIFont systemFontOfSize:12];
+    detailsLabel.adjustsFontSizeToFitWidth = YES;
+	detailsLabel.text = [NSString stringWithFormat:@"%@",[[challengesArrayList objectAtIndex:indexPath.row] objectForKey:@"contestName"]];
+    
+    [cell addSubview:detailsLabel];
+    [detailsLabel release];
+    
+	
+    UIImageView *imageViewFrom = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 50, 50)];
+    imageViewFrom.contentMode = UIViewContentModeScaleAspectFit;
+    BImageDownload  *downloadPlayerFrom = [challengesPlayerFromImagesArray objectAtIndex:indexPath.row];
+    downloadPlayerFrom.tag = 1;
+	imageViewFrom.image = downloadPlayerFrom.image;
+    [cell addSubview:imageViewFrom];
+    [imageViewFrom release];
+    
+    UIImageView *imageViewTo = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 55, 5, 50, 50)];
+    imageViewTo.contentMode = UIViewContentModeScaleAspectFit;
+    BImageDownload  *downloadPlayerTo = [challengesPlayerToImagesArray objectAtIndex:indexPath.row];
+    downloadPlayerFrom.tag = 2;
+	imageViewTo.image = downloadPlayerTo.image;
+    [cell addSubview:imageViewTo];
+    [imageViewTo release];
     
     return cell;
 }
@@ -281,43 +431,66 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	self.selectedChallenge = [self.challengesArrayList objectAtIndex:indexPath.row];
 	[self.showChallengeVC initWithNibName:@"BeintooShowChallengeVC" bundle:[NSBundle mainBundle] andChallengeStatus:self.selectedChallenge];
-	NSString *devicePlayer = [[Beintoo getUserIfLogged] objectForKey:@"nickname"];
-	if ([[self.selectedChallenge objectForKey:@"status"]isEqualToString:@"TO_BE_ACCEPTED"]) {
+	//NSString *devicePlayer = [[Beintoo getUserIfLogged] objectForKey:@"nickname"];
+	/*if ([[self.selectedChallenge objectForKey:@"status"]isEqualToString:@"TO_BE_ACCEPTED"]) {
 		if (![[self.selectedChallenge objectForKey:@"playerFrom"] isEqualToString:devicePlayer]){
 			[self.navigationController pushViewController:self.showChallengeVC animated:YES];
 		}
 	}
 	else 
-		[self.navigationController pushViewController:self.showChallengeVC animated:YES];
+	*/	
+    
+    [self.navigationController pushViewController:self.showChallengeVC animated:YES];
 
 	[challengesTable deselectRowAtIndexPath:[challengesTable indexPathForSelectedRow] animated:YES];
 }
 
 #pragma mark - ImageDownload Delegate
-- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
-    NSUInteger index = [self.challengeImages indexOfObject:download]; 
+
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
+    NSUInteger index;
+    if (download.tag == 1)
+        index = [challengesPlayerFromImagesArray indexOfObject:download]; 
+    else if (download.tag == 2)
+        index = [challengesPlayerToImagesArray indexOfObject:download]; 
+    
     NSUInteger indices[] = {0, index};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
     [challengesTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
     [path release];
     download.delegate = nil;
 }
+
 - (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
-    NSLog(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
+    BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
+}
+
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
+}
+
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
 }
 
 #pragma mark - UIViewController end methods
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return NO;
-}
-
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -330,6 +503,8 @@
 }
 
 - (void)dealloc {
+    [challengesPlayerFromImagesArray     release];
+    [challengesPlayerToImagesArray      release];
 	[user release];
     [self.challengesArrayList release];
     [self.challengeImages release];

@@ -152,7 +152,6 @@ static BLoadingView *loading;
 - (void)dealloc {
 	[hudView release];
 	[activityIndicatorView release];
-	[captionLabel release];
 	[super dealloc];
 }
 

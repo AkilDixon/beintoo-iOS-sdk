@@ -24,25 +24,50 @@
 @class BeintooPlayer;
 @class BeintooSigninAlreadyVC;
 
-@interface BeintooSigninVC : UIViewController <UITextFieldDelegate,BeintooPlayerDelegate,BeintooUserDelegate,UIAlertViewDelegate> {
+@interface BeintooSigninVC : UIViewController <UITextFieldDelegate, BeintooPlayerDelegate, BeintooUserDelegate, UIAlertViewDelegate, UIWebViewDelegate> {
 
+    BeintooUser             *user;
+	BeintooPlayer           *_player;
+	BeintooSignupVC         *registrationVC;
+	BeintooSignupVC         *registrationFBVC;
+	 
+    IBOutlet UIView         *mainView;
 	IBOutlet UIScrollView *scrollView;
 	IBOutlet BView		 *beintooView;
+    IBOutlet BView		 *beintooViewLand;
 	IBOutlet UITextField *emailTF;
 	IBOutlet UITextField *nickTF;
 	IBOutlet UILabel	 *title1;
+    IBOutlet UILabel	 *orLabel;
 	IBOutlet UITextView	 *disclaimer;
 	IBOutlet UIButton	 *facebookButton;
 	IBOutlet BButton	 *newUserButton;
 	IBOutlet UIButton	 *loginWithDifferent;
+    
+    IBOutlet UITextField *emailTFLand;
+	IBOutlet UITextField *nickTFLand;
+	IBOutlet UILabel	 *title1Land;
+    IBOutlet UILabel	 *orLabelLand;
+	IBOutlet UITextView	 *disclaimerLand;
+	IBOutlet UIButton	 *facebookButtonLand;
+	IBOutlet BButton	 *newUserButtonLand;
+	IBOutlet UIButton	 *loginWithDifferentLand;
+    
+    UIToolbar            *keyboardToolbar;
 	
-	BeintooUser		*user;
-	BeintooPlayer	*_player;
-	BeintooSignupVC *registrationVC;
-	BeintooSignupVC *registrationFBVC;
-	BeintooSigninAlreadyVC *alreadyRegisteredSigninVC;
-	NSString		*newUSerURL;
-	NSString		*nickname;
+	
+	NSString                *newUSerURL;
+	NSString                *nickname;
+    BOOL                    isAccessoryInputViewNotSupported;
+    
+    UIWebView               *webview;
+    UIWebView               *webviewLand;
+    UILabel                 *registrazioneComplete;
+    UILabel                 *registrazioneCompleteLand;
+    UILabel                 *confirmNickname;
+    UILabel                 *confirmNicknameLand;
+    BButton                 *fbButton;
+    BButton                 *fbButtonLand;
 }
 
 - (IBAction)newUser;
@@ -53,7 +78,8 @@
 - (void)generatePlayerIfNotExists;
 
 
-@property(nonatomic,retain) NSString *nickname;
-@property(nonatomic,retain) NSString *caller;
+@property (nonatomic, retain) NSString *nickname;
+@property (nonatomic, retain) NSString *caller;
+@property (nonatomic, assign) BOOL     isFromDirectLaunch;
 
 @end

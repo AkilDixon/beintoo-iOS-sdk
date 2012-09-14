@@ -61,9 +61,11 @@
 - (IBAction) segmentedControlIndexChanged;
 
 @property(nonatomic,retain) IBOutlet UISegmentedControl *segControl;
-@property(nonatomic,retain) NSMutableArray *players;
-@property(nonatomic,retain) NSMutableArray *leaderboardEntries;
-@property(nonatomic,retain) NSMutableArray *leaderboardImages;
-@property(nonatomic,retain) NSDictionary *selectedPlayer;
+@property(nonatomic,retain) NSMutableArray  *players;
+@property(nonatomic,retain) NSMutableArray  *leaderboardEntries;
+@property(nonatomic,retain) NSMutableArray  *leaderboardImages;
+@property(nonatomic,retain) NSDictionary    *selectedPlayer;
+@property(nonatomic,assign) BOOL            isFromNotification;
+@property(nonatomic,assign) BOOL            isFromDirectLaunch;
 
 @end

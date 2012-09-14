@@ -116,19 +116,25 @@
 				  [Beintoo getApiKey], @"apikey", 
 				  [BeintooDevice getUDID], @"deviceUUID",
                   [BeintooDevice getMacAddress], @"macaddress",
+                  [BeintooOpenUDID value], @"openudid",
                   nil];
-	}else if ( (userId==nil) && (currentGuid!=nil) ) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", 
+	}
+    else if ( (userId == nil) && (currentGuid != nil) ) {
+		params = [NSDictionary dictionaryWithObjectsAndKeys:
+                  [Beintoo getApiKey], @"apikey", 
 				  [BeintooDevice getUDID], @"deviceUUID", 
 				  currentGuid, @"guid", 
                   [BeintooDevice getMacAddress], @"macaddress",
+                  [BeintooOpenUDID value], @"openudid",
                   nil];
-	}else if (userId!=nil) {
+	}
+    else if (userId != nil) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
                   [Beintoo getApiKey], @"apikey", 
 				  userId, @"userExt", 
                   [BeintooDevice getUDID], @"deviceUUID",
                   [BeintooDevice getMacAddress], @"macaddress",
+                  [BeintooOpenUDID value], @"openudid",
                   nil];
 	} 
 	[playerService.parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGINwDELEG_CALLER_ID];		
@@ -162,7 +168,7 @@
     
     NSString *guid = [Beintoo getPlayerID];
     if (guid == nil) {
-        NSLog(@"Beintoo: unable to submit a score. No user logged. Use the PlayerLogin first");
+        BeintooLOG(@"Beintoo: unable to submit a score. No user logged. Use the PlayerLogin first");
         return;
     }
     
@@ -196,7 +202,7 @@
         if([Beintoo showScoreNotification]){
             [BeintooPlayer showNotificationForSubmitScore];
         }
-        NSLog(@"Beintoo: Score saved locally.");
+        BeintooLOG(@"Beintoo: Score saved locally.");
 	}
 }
 
@@ -209,7 +215,7 @@
     
     NSString *guid = [Beintoo getPlayerID];
     if (guid == nil) {
-        NSLog(@"Beintoo: unable to submit a score. No user logged. Use the PlayerLogin first");
+        BeintooLOG(@"Beintoo: unable to submit a score. No user logged. Use the PlayerLogin first");
         return;
     }
 	
@@ -237,7 +243,7 @@
         if([Beintoo showScoreNotification]){
             [BeintooPlayer showNotificationForSubmitScore];
         }
-        NSLog(@"Beintoo: Score saved locally.");
+        BeintooLOG(@"Beintoo: Score saved locally.");
 	}
 }
 
@@ -249,7 +255,7 @@
     NSString *guid = [Beintoo getPlayerID];
     
     if (guid == nil) {
-        NSLog(@"Beintoo: unable to submit a score. No user logged. Use the PlayerLogin first");
+        BeintooLOG(@"Beintoo: unable to submit a score. No user logged. Use the PlayerLogin first");
         return;
     }
     
@@ -259,8 +265,7 @@
     if ([[[Beintoo getAppVgoodThresholds] objectForKey:contestName] intValue] > 0) {
         validThreshold = [[[Beintoo getAppVgoodThresholds] objectForKey:contestName] intValue];
     }
-   // NSLog(@"threshold %i", validThreshold);
-    
+   
     NSString *playerKey;
     playerKey = [NSString stringWithFormat:@"PlayerThresholdScore_%@_%@", [Beintoo getPlayerID],contestName];
     
@@ -313,7 +318,7 @@
     
     NSString *guid = [Beintoo getPlayerID];
     if (guid == nil) {
-        NSLog(@"Beintoo: unable to retrieve a score. No user logged. Use the PlayerLogin first");
+        BeintooLOG(@"Beintoo: unable to retrieve a score. No user logged. Use the PlayerLogin first");
         return;
     }
 
@@ -400,22 +405,29 @@
 		res = [res stringByAppendingString:[NSString stringWithFormat:@"?language=%@",isoLanguage]];
 	}
 	
-	if (currentGuid==nil) {
+	if (currentGuid == nil) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
 				  [Beintoo getApiKey], @"apikey", 
 				  [BeintooDevice getUDID], @"deviceUUID", 
                   [BeintooDevice getMacAddress], @"macaddress",
+                  [BeintooOpenUDID value], @"openudid",
                   nil];
-	}else if ( (userId==nil) && (currentGuid!=nil) ) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", 
+	}
+    else if ( (userId == nil) && (currentGuid != nil) ) {
+		params = [NSDictionary dictionaryWithObjectsAndKeys:
+                  [Beintoo getApiKey], @"apikey", 
 				  [BeintooDevice getUDID], @"deviceUUID", 
 				  currentGuid, @"guid", 
                   [BeintooDevice getMacAddress], @"macaddress",
+                  [BeintooOpenUDID value], @"openudid",
                   nil];
-	}else if (userId!=nil) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", 
+	}
+    else if (userId != nil) {
+		params = [NSDictionary dictionaryWithObjectsAndKeys:
+                  [Beintoo getApiKey], @"apikey", 
 				  userId, @"userExt",[BeintooDevice getUDID], @"deviceUUID", 
                   [BeintooDevice getMacAddress], @"macaddress",
+                  [BeintooOpenUDID value], @"openudid",
                   nil];
 	} 
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGIN_CALLER_ID];		
@@ -435,23 +447,28 @@
 		
 	if ( ([userid isEqualToString:@""]) && (currentGuid==nil)) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
-								[Beintoo getApiKey], @"apikey", 
-								[BeintooDevice getUDID], @"deviceUUID", [BeintooDevice getMacAddress], @"macaddress",
-                  nil];
+                        [Beintoo getApiKey], @"apikey", 
+                        [BeintooDevice getUDID], @"deviceUUID", 
+                        [BeintooDevice getMacAddress], @"macaddress",
+                        [BeintooOpenUDID value], @"openudid",
+                        nil];
 		
 	}else if ( ([userid isEqualToString:@""]) && (currentGuid!=nil) ) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
-									[Beintoo getApiKey], @"apikey", 
-									[BeintooDevice getUDID], @"deviceUUID", 
-									currentGuid, @"guid", 
-                  [BeintooDevice getMacAddress], @"macaddress", nil];
+                        [Beintoo getApiKey], @"apikey", 
+                        [BeintooDevice getUDID], @"deviceUUID", 
+                        currentGuid, @"guid", 
+                        [BeintooDevice getMacAddress], @"macaddress", 
+                        [BeintooOpenUDID value], @"openudid",
+                        nil];
 	}else {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
-								[Beintoo getApiKey], @"apikey", 
-								userid, @"userExt",
-								[BeintooDevice getUDID], @"deviceUUID", 
-                  [BeintooDevice getMacAddress], @"macaddress",
-                  nil];
+                        [Beintoo getApiKey], @"apikey", 
+                        userid, @"userExt",
+                        [BeintooDevice getUDID], @"deviceUUID", 
+                        [BeintooDevice getMacAddress], @"macaddress",
+                        [BeintooOpenUDID value], @"openudid",
+                        nil];
 	}
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGIN_CALLER_ID];
 }
@@ -471,20 +488,26 @@
 	if ( ([userid isEqualToString:@""]) && (currentGuid==nil)) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
                   [Beintoo getApiKey], @"apikey", 
-                  [BeintooDevice getUDID], @"deviceUUID", [BeintooDevice getMacAddress], @"macaddress",
+                  [BeintooDevice getUDID], @"deviceUUID", 
+                  [BeintooDevice getMacAddress], @"macaddress",
+                  [BeintooOpenUDID value], @"openudid",
                   nil];
 		
 	}else if ( ([userid isEqualToString:@""]) && (currentGuid!=nil) ) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
                   [Beintoo getApiKey], @"apikey", 
                   [BeintooDevice getUDID], @"deviceUUID", 
-                  currentGuid, @"guid", [BeintooDevice getMacAddress], @"macaddress",
+                  currentGuid, @"guid", 
+                  [BeintooDevice getMacAddress], @"macaddress",
+                  [BeintooOpenUDID value], @"openudid",
                   nil];
 	}else {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
                   [Beintoo getApiKey], @"apikey", 
                   userid, @"userExt",
-                  [BeintooDevice getUDID], @"deviceUUID", [BeintooDevice getMacAddress], @"macaddress",
+                  [BeintooDevice getUDID], @"deviceUUID", 
+                  [BeintooDevice getMacAddress], @"macaddress",
+                  [BeintooOpenUDID value], @"openudid",
                   nil];
 	}
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_BACKGROUND_LOGIN_CALLER_ID];
@@ -502,17 +525,19 @@
 	
 	if ([userid isEqualToString:@""]) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
-							[Beintoo getApiKey], @"apikey", 
-							[BeintooDevice getUDID], @"deviceUUID", 
-                  [BeintooDevice getMacAddress], @"macaddress",
-                  nil];
+                    [Beintoo getApiKey], @"apikey", 
+                    [BeintooDevice getUDID], @"deviceUUID", 
+                    [BeintooDevice getMacAddress], @"macaddress",
+                    [BeintooOpenUDID value], @"openudid",
+                    nil];
 	}else {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
-							[Beintoo getApiKey], @"apikey", 
-							userid, @"userExt",
-							[BeintooDevice getUDID], @"deviceUUID", 
-                  [BeintooDevice getMacAddress], @"macaddress",
-                  nil];
+                    [Beintoo getApiKey], @"apikey", 
+                    userid, @"userExt",
+                    [BeintooDevice getUDID], @"deviceUUID", 
+                    [BeintooDevice getMacAddress], @"macaddress",
+                    [BeintooOpenUDID value], @"openudid",
+                    nil];
 	}	
 	NSDictionary *result = [parser blockerParsePageAtUrl:res withHeaders:params];
 	
@@ -583,7 +608,6 @@
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:APP_GTOPSCORES_CALLER_ID];	
 }
 
-
 - (void)showContestList{
 	NSString *res		 = [NSString stringWithFormat:@"%@contest/show/?onlyPublic=true",app_rest_resource];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
@@ -637,7 +661,7 @@
 			
 		case PLAYER_SSCORE_CONT_CALLER_ID:{
             @try {
-                NSLog(@"result of submitscore %@", result);
+               
                 NSString *resultMessage = [NSString stringWithFormat:@"%@", [result objectForKey:@"message"]];
                 
                 if ([resultMessage isEqualToString:@"OK"]) {
@@ -653,7 +677,7 @@
                 }
             }
             @catch (NSException *exception) {
-                NSLog(@"BEINTOO Exception on submitscore: %@", exception);
+                BeintooLOG(@"BEINTOO Exception on submitscore: %@", exception);
             }
             
 		}
@@ -883,6 +907,8 @@
 - (int)loginError{return loginError;}
 
 - (void)dealloc {
+    parser.delegate = nil;
+    
 	[parser release];
 	[app_rest_resource release];
 	[rest_resource release];

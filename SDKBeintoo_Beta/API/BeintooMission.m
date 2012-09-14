@@ -92,7 +92,7 @@
             
             if ([result objectForKey:@"messageID"]) {
                 // An error occurred. a notification is sent to the main delegate
-                [Beintoo notifyRetrievedMisionErrorOnMainDelegateWithMission:result];
+                //[Beintoo notifyRetrievedMisionErrorOnMainDelegateWithMission:result];
                 return;
             }
             
@@ -105,7 +105,7 @@
             [Beintoo setLastRetrievedMission:result];
             [Beintoo launchMission];
             
-            [Beintoo notifyRetrievedMisionOnMainDelegateWithMission:result];
+           // [Beintoo notifyRetrievedMisionOnMainDelegateWithMission:result];
 		}
 			break;
             

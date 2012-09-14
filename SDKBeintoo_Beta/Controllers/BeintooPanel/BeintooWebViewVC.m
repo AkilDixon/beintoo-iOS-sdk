@@ -38,28 +38,20 @@
 	
 	self.title = @"Beintoo";
 		
-	loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-	loadingIndicator.hidesWhenStopped = YES;
-	[self.view addSubview:loadingIndicator];
-		
 	_webView.delegate = self;
 	_webView.scalesPageToFit = YES;
     
-    if (allowCloseWebViewAndDismissBeintoo) {
-        UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
-		[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-		[barCloseBtn release];
-    }
+    UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
+    [self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
+    [barCloseBtn release];
 }
 
 - (void)viewWillAppear:(BOOL)animated{
-	[loadingIndicator stopAnimating];
-	
-    if ([BeintooDevice isiPad]) {
+    [super viewWillAppear:animated];
+    
+	if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
     }
-	
-	loadingIndicator.center = CGPointMake((self.view.bounds.size.width/2)-5, (self.view.bounds.size.height/2)-30);
 	
 	/*
 	 *  Check if the vgood is pushed from a multipleVgoodVC, if yes hides back button.
@@ -71,6 +63,7 @@
 		}
 	 }
 	
+    [BLoadingView startActivity:self.view];
 	[_webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlToOpen]]];
 }
 
@@ -82,9 +75,8 @@
 	
     NSURL *url = request.URL;
 	NSString *urlString = [url absoluteString];
-	//NSLog(@"URL %@",url);
 	
-	if ([urlString isEqualToString:@"http://www.beintoo.com/m/sdkandroid/dismisssmartwebui"]) {
+    if ([urlString isEqualToString:@"http://www.beintoo.com/m/sdkandroid/dismisssmartwebui"]) {
 		[self.navigationController popViewControllerAnimated:YES];
 		return YES;
 	}
@@ -93,44 +85,58 @@
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)theWebView{
-	[loadingIndicator startAnimating];
 }
+
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView{
-	[loadingIndicator stopAnimating];
- }
+	[BLoadingView stopActivity];
+}
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
-	
-	[loadingIndicator stopAnimating];
+	[BLoadingView stopActivity];
 }
 
-- (UIButton *)closeButton{
-	UIImage *closeImg = [UIImage imageNamed:@"bar_close.png"];
-	UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	[closeBtn setImage:closeImg forState:UIControlStateNormal];
-	closeBtn.frame = CGRectMake(0,0, closeImg.size.width+7, closeImg.size.height);
-	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
-	return closeBtn;
-}
-
--(void)closeBeintoo{
-    [Beintoo dismissMission];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
+}
+
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return NO;
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-	[_webView loadHTMLString:@"<html><head></head><body></body></html>" baseURL:nil];
-}
-
 - (void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    
+    [_webView loadHTMLString:@"<html><head></head><body></body></html>" baseURL:nil];
+    _webView.delegate = nil;
+    
+    @try {
+        [BLoadingView stopActivity];
+        for (UIView *view in [self.view subviews]) {
+            if([view isKindOfClass:[BLoadingView class]]){
+                [view removeFromSuperview];
+            }
+        }
+	}
+	@catch (NSException * e) {
+	}
 }
 
 - (void)viewDidUnload {

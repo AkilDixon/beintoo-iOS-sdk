@@ -50,6 +50,8 @@
 #define USER_CHALLENGEPREREQ_CALLER_ID          43
 #define USER_BACKGROUND_REGISTER_CALLER_ID      44
 #define USER_GIVE_BEDOLLARS_CALLER_ID           45
+#define USER_FORGOT_PASSWORD_CALLER_ID          46
+#define	USER_SEND_UNFRIENDSHIP_CALLER_ID        47
 
 // VGOOD:from 60 to 79
 #define VGOOD_SHOWBYUSER_CALLER_ID              60
@@ -100,6 +102,7 @@
 #define ALLIANCE_ADMINACTION_CALLER_ID           124
 #define ALLIANCE_TOPSCORE_CALLER_ID              125
 #define ALLIANCE_INVITEFRIENDS_CALLER_ID         126
+#define ALLIANCE_ADMIN_GET_CALLER_ID             127
 
 // MISSION: from 130 to 139
 #define MISSION_GET_CALLER_ID                    130
@@ -117,12 +120,10 @@
 @protocol BeintooParserDelegate;
 
 @interface Parser : NSObject {
-	//NSString		*webPage;
-	NSMutableData	*responseData;
-	NSInteger       callerID;
-	//NSString        *webpage;
-	id              result;
 	
+    NSMutableData	*responseData;
+	NSInteger       callerID;
+	id              result;
 	id <BeintooParserDelegate> delegate;
 }
 

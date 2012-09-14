@@ -16,7 +16,7 @@
 
 #import "BeintooFriendsListVC.h"
 #import "Beintoo.h"
-#import "BeintooMarketplaceSelectedItemVC.h"
+#import "BPickerView.h"
 
 @implementation BeintooFriendsListVC
 
@@ -33,6 +33,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
+    UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
+	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
+	[barCloseBtn release];
+    
 	self.title			 	= NSLocalizedStringFromTable(@"friends",@"BeintooLocalizable",@"Friends");
 	noFriendsLabel.text		= NSLocalizedStringFromTable(@"nofriendslabel",@"BeintooLocalizable",@"");
 	
@@ -56,22 +60,15 @@
 	
 	vGood = [[BeintooVgood alloc] init];
 	vGood.delegate = self;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reloadFriendsList) 
+                                                 name:@"ReloadFriendsList"
+                                               object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated{
-    
-    if(backFromWebView){
-        callerIstance.needsToReloadData = YES;
-        [self.navigationController popViewControllerAnimated:NO];
-        
-    }
-    if ([caller isEqualToString:@"MarketplaceList"]){
-        callerIstance.needsToReloadData = NO;
-    }
-    
-    if ([caller isEqualToString:@"MarketplaceCoupon"]){
-        
-    }
+    [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
@@ -87,6 +84,17 @@
 		[user getFriendsByExtid];	
 		[self.friendsTable deselectRowAtIndexPath:[self.friendsTable indexPathForSelectedRow] animated:YES];
 	}	
+}
+
+- (void)reloadFriendsList{
+    
+    if (![Beintoo isUserLogged])
+		[self.navigationController popToRootViewControllerAnimated:NO];
+	else {
+		[BLoadingView startActivity:self.view];
+		[user getFriendsByExtid];	
+		[friendsTable deselectRowAtIndexPath:[friendsTable indexPathForSelectedRow] animated:YES];
+	}
 }
 
 - (void)didGetFriendsByExtid:(NSMutableArray *)result{
@@ -119,7 +127,6 @@
 			}
 			@catch (NSException * e) {
 				NSLog(@"BeintooException - FriendList: %@ \n for object: %@",e,[result objectAtIndex:i]);
-				//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
 			}
 		}
 	}
@@ -134,9 +141,11 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	return [friendsArrayList count];
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     static NSString *CellIdentifier = @"Cell";
@@ -156,6 +165,7 @@
 
     return cell;
 }
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	selectedFriend = [self.friendsArrayList objectAtIndex:indexPath.row];
 	
@@ -163,17 +173,17 @@
 	if ([[self.startingOptions objectForKey:@"caller"] isEqualToString:@"sendAsAGift"]) 
 		[self openSelectedFriendToSendAGift];
 	
-    // Act as "Marketplace Send as a gift"
-	if ([[self.startingOptions objectForKey:@"caller"] isEqualToString:@"MarketplaceSendAsAGift"]) 
-		[self openSelectedFriendToSendAGift];
-
-	// Act as "New message"
+    // Act as "New message"
 	if ([[self.startingOptions objectForKey:@"caller"] isEqualToString:@"newMessage"]) 
 		[self pickAFriendToSendMessage];
 	
 	// Act as "Friend list"
 	if ([[self.startingOptions objectForKey:@"caller"] isEqualToString:@"profile"]) 
 		[self pickaFriendToShowProfile];
+    
+    // Act as "Challenges"
+	if ([[self.startingOptions objectForKey:@"caller"] isEqualToString:@"challenges"]) 
+		[self pickaFriendToSendChallenge];
 }
 
 - (void)openSelectedFriendToSendAGift {	
@@ -222,6 +232,28 @@
 	}
 }
 
+
+- (void)pickaFriendToSendChallenge 
+{	
+	[friendsTable deselectRowAtIndexPath:[friendsTable indexPathForSelectedRow] animated:YES];
+	
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                             [self.selectedFriend objectForKey:@"userExt"], @"friendUserID",
+                             [self.selectedFriend objectForKey:@"nickname"],@"friendNickname",
+                             nil];
+    
+    bPickerView = [[BPickerView alloc] initWithFrame:self.view.frame andOptions:options];
+    [self.view addSubview:bPickerView];
+    
+    [bPickerView startPickerFilling];
+}
+
+- (void)removeBPickerViewFromSuperView:(NSNotification *)note
+{
+    [bPickerView removeFromSuperview];
+    
+}
+
 #pragma mark -
 #pragma mark actionSheet sendAsAGift
 
@@ -234,17 +266,6 @@
         }
         else {
             
-            if ([caller isEqualToString:@"MarketplaceList"]){
-                callerIstance.selectedFriend    = [selectedFriend objectForKey:@"userExt"];
-                callerIstance.caller            = self.caller;
-                callerIstance.selectedVgood     = startingOptions;
-                
-            }
-            else if ([caller isEqualToString:@"MarketplaceSelectedCoupon"]){
-                callerIstanceSC.selectedFriend          = [selectedFriend objectForKey:@"userExt"];
-                callerIstanceSC.caller                  = self.caller;
-                callerIstanceSC.vGoodToBeSentAsAGift    = startingOptions;
-            }
             [startingOptions release];
             [self.navigationController popViewControllerAnimated:NO];
         }
@@ -297,19 +318,33 @@
     download.delegate = nil;
 }
 - (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
-    NSLog(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
+    BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return (interfaceOrientation == [Beintoo appOrientation]);
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -320,9 +355,6 @@
 	}
 	@catch (NSException * e) {
 	}
-}
-
-- (void)viewDidDisappear:(BOOL)animated{
 }
 
 - (void)dealloc {

@@ -25,16 +25,15 @@
 	self.title = NSLocalizedStringFromTable(@"leaderboard",@"BeintooLocalizable",@"pickContest");
 	//leaderboardLabel.text = NSLocalizedStringFromTable(@"pickacontest",@"BeintooLocalizable",@"pickContest");
 	
-	[leaderboardView setTopHeight:57];
-	[leaderboardView setBodyHeight:372];
+	[leaderboardView setTopHeight:40];
+	[leaderboardView setBodyHeight:387];
     
     [segControl setTitle:NSLocalizedStringFromTable(@"people",@"BeintooLocalizable",@"All") forSegmentAtIndex:0];
 	[segControl setTitle:NSLocalizedStringFromTable(@"alliances",@"BeintooLocalizable",@"Friends") forSegmentAtIndex:1];
 
     segControl.tintColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1];
 
-
-	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];	
 	
@@ -57,6 +56,8 @@
     }
     player.delegate		= self;
 	
+    [leaderboardsTable scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+    
     if (segControl.selectedSegmentIndex == 0) {
         isAllianceLeaderboard = NO;
     }else if(segControl.selectedSegmentIndex == 1){
@@ -179,6 +180,28 @@
 	return NO;
 }
 
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
+}
+
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
+}
+
 - (void)viewWillDisappear:(BOOL)animated {
     player.delegate    = nil;
     
@@ -195,9 +218,9 @@
 
 - (void)dealloc {
 	[contestListToShow release];
-    [leaderboardContestVC release];
+    //[leaderboardContestVC release];
     [allianceLeaderboardVC release];
-	[allContests release];
+	//[allContests release];
 	[contestCodeID release];
 	[player release];
     [super dealloc];

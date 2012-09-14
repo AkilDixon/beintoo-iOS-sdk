@@ -17,12 +17,15 @@
 #import <UIKit/UIKit.h>
 #import "BeintooPlayer.h"
 
-@interface BeintooSignupVC : UIViewController<UIWebViewDelegate, BeintooPlayerDelegate> /*<UITextFieldDelegate,FBRequestDelegate, FBDialogDelegate>*/{
+#define BEINTOO_FACEBOOK_SIGNUP     1
+#define BEINTOO_FACEBOOK_LOGIN      2
+
+@interface BeintooSignupVC : UIViewController<UIWebViewDelegate, BeintooPlayerDelegate>{
 
     IBOutlet UIWebView		*registrationWebView;
-	UIActivityIndicatorView *loadingIndicator;
 	NSString				*urlToOpen;
 	BeintooPlayer			*_player;
+    int                     kindOfDelegateNotification;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil urlToOpen:(NSString *)URL;

@@ -20,9 +20,7 @@
 
 @implementation BMessageAnimated
 
-// ----------------- NEW -------------------------->
-
--(id)init {
+- (id)init {
 	if (self = [super init])
 	{
        
@@ -30,7 +28,6 @@
     return self;
 }
 
-// ---- This is the last method called, when the notification for the achievement is ready and well oriented
 - (void)showNotification{
 	
 	notificationCurrentlyOnScreen = YES;
@@ -108,7 +105,8 @@
 }
 
 - (void)prepareNotificationOrientation:(CGRect)startingFrame{
-     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged) name:@"OrientationChanged" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged) name:@"OrientationChanged" object:nil];
     
 	self.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
 	CGRect windowFrame	 = [[Beintoo getAppWindow] bounds];
@@ -426,6 +424,7 @@
     
     //----> Check if submit score count overlaps threshold of Marketplace SubmitScore Message
     //----> If YES, let's show Marketplace SubmitScore Message with increased HEIGHT
+    
     if (kind == 1 && [Beintoo isVirtualCurrencyStored] && ![BeintooDevice isiPad]){
         notification_frame = CGRectMake(0, callerFrameSize.height-NOTIFICATION_HEIGHT_SSCORE, callerFrameSize.width, NOTIFICATION_HEIGHT_SSCORE + 18);
     }
@@ -704,12 +703,6 @@
 		return @"NO_MESSAGE";
 }
 
-- (void)dealloc {
-	[current_achievement release];
-    [achievement_to_complete_mission release];
-    [super dealloc];
-}
-
 - (void)orientationChanged{
     
     [UIView beginAnimations:nil context:nil];
@@ -743,6 +736,9 @@
             else 
                 notificationHeight = NOTIFICATION_HEIGHT_SSCORE;
             break;
+        case NOTIFICATION_TYPE_GIVE_BEDOLLARS:
+            notificationHeight = NOTIFICATION_HEIGHT_PLOGIN;
+            break;
         case NOTIFICATION_TYPE_NTDISPATCH:
             notificationHeight = NOTIFICATION_HEIGHT_NTDISP;
             break;
@@ -761,8 +757,8 @@
         offset = 20;
     
 	if (appOrientation == UIInterfaceOrientationLandscapeLeft) {
-		//self.frame = startingFrame;
-		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(-90.0));
+		
+        self.transform = CGAffineTransformMakeRotation(DegreesToRadians(-90.0));
         
         if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
             self.center = CGPointMake(windowFrame.size.width-(notificationHeight/2.f), windowFrame.size.height/2.f) ;
@@ -776,8 +772,8 @@
         }
     }
 	else if (appOrientation == UIInterfaceOrientationLandscapeRight) {
-		//self.frame = startingFrame;
-		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(90.0));
+		
+        self.transform = CGAffineTransformMakeRotation(DegreesToRadians(90.0));
         
         if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
             self.center = CGPointMake((notificationHeight/2), windowFrame.size.height/2) ;
@@ -793,8 +789,7 @@
 	}
 	else if (appOrientation == UIInterfaceOrientationPortrait) {
 		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
-		//self.frame = startingFrame;	
-        
+		
         if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
             self.center = CGPointMake(windowFrame.size.width/2, windowFrame.size.height-(notificationHeight/2.f));
             transitionEnterSubtype = kCATransitionFromTop;
@@ -806,11 +801,9 @@
             transitionExitSubtype  = kCATransitionFromTop;
         }
 	}
-	
 	else if (appOrientation == UIInterfaceOrientationPortraitUpsideDown) {
 		self.transform = CGAffineTransformMakeRotation(DegreesToRadians(180));
-		//self.frame = startingFrame;	
-        
+		
         if ([Beintoo notificationPosition] == BeintooNotificationPositionBottom) {
             self.center = CGPointMake(windowFrame.size.width/2, (notificationHeight/2.f));
             transitionEnterSubtype = kCATransitionFromBottom;
@@ -824,6 +817,12 @@
 	}
     
     [UIView commitAnimations];
+}
+
+- (void)dealloc {
+	[current_achievement release];
+    [achievement_to_complete_mission release];
+    [super dealloc];
 }
 
 @end

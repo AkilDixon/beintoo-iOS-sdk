@@ -25,50 +25,6 @@
 
 @interface BeintooVC : UIViewController <UITableViewDelegate,UITableViewDataSource,BeintooPlayerDelegate,BeintooUserDelegate> {
 	    
-    // --> TryBeintoo Gamefy Portrait
-    IBOutlet BView          *tryBeintooPortrait;
-	IBOutlet UIImageView    *tryBeintooImage;
-    IBOutlet UIImageView    *tryBeintooFeaturesImage;
-    IBOutlet UIView         *tryBeintooBodyView;
-    IBOutlet UILabel        *descLabel1;
-    IBOutlet UILabel		*titleLabel1;
-    IBOutlet BButton		*button1;
-	IBOutlet BButton		*button2;
-    IBOutlet UILabel        *beintooUrl;
-    
-    // --> TryBeintoo Gamefy Landscape
-    IBOutlet BView          *tryBeintooLandscape;
-    IBOutlet UIImageView    *tryBeintooImageLandscape;
-    IBOutlet UIImageView    *tryBeintooFeaturesImageLandscape;
-    IBOutlet UIView         *tryBeintooBodyViewLandscape;
-    IBOutlet UILabel        *descLabel1Landscape;
-    IBOutlet UILabel		*titleLabel1Landscape;
-    IBOutlet BButton		*button1Landscape;
-	IBOutlet BButton		*button2Landscape;
-    
-    // --> TryBeintoo Monetize Portrait
-    IBOutlet BView          *tryBeintooPortraitMonetize;
-	IBOutlet UIImageView    *tryBeintooImageMonetize;
-    IBOutlet UIImageView    *tryBeintooFeaturesImageMonetize;
-    IBOutlet UIView         *tryBeintooBodyViewMonetize;
-    IBOutlet UILabel        *descLabel1Monetize;
-    IBOutlet UILabel		*titleLabel1Monetize;
-    IBOutlet BButton		*button1Monetize;
-	IBOutlet BButton		*button2Monetize;
-    IBOutlet UILabel        *tryBeintooHeaderPortraitMonetize;
-    IBOutlet UILabel        *beintooUrlMonetize;
-    
-    // --> TryBeintoo Monetize Landscape
-    IBOutlet BView          *tryBeintooLandscapeMonetize;
-    IBOutlet UIImageView    *tryBeintooImageLandscapeMonetize;
-    IBOutlet UIImageView    *tryBeintooFeaturesImageLandscapeMonetize;
-    IBOutlet UIView         *tryBeintooBodyViewLandscapeMonetize;
-    IBOutlet UILabel        *titleLabel1LandscapeMonetize;
-    IBOutlet UILabel		*descLabel1LandscapeMonetize;
-    IBOutlet BButton		*button1LandscapeMonetize;
-	IBOutlet BButton		*button2LandscapeMonetize;
-    IBOutlet UILabel        *tryBeintooHeaderLandscapeMonetize;
-
     BView                   *tryBeintooView;
 	IBOutlet BView			*homeView;
 	IBOutlet UILabel		*userNick;
@@ -82,8 +38,15 @@
     IBOutlet UILabel        *notificationMainLabel;
     IBOutlet BGradientView  *notificationNumbersView;
     IBOutlet UILabel        *notificationNumbersLabel;
+    
+    // Notifications views Landscape
+    IBOutlet BGradientView  *notificationViewLandscape;
+    IBOutlet BGradientView  *notificationLogoViewLandscape;
+    IBOutlet UILabel        *notificationLogoLabelLandscape;
+    IBOutlet UILabel        *notificationMainLabelLandscape;
+    IBOutlet BGradientView  *notificationNumbersViewLandscape;
+    IBOutlet UILabel        *notificationNumbersLabelLandscape;
 
-	
 	BOOL isBeintoo;
     BOOL homeTablePlayerAnimationPerformed;
     BOOL isAlreadyLogging;
@@ -98,6 +61,9 @@
 	UINavigationController	*loginNavController;
     UINavigationController	*notificationNavController;
 
+    UIBarButtonItem         *notificationButtonItem;
+    UIBarButtonItem         *fixedSpace;
+    IBOutlet UIToolbar      *toolBar;
     
 #ifdef UI_USER_INTERFACE_IDIOM    
 	UIPopoverController		*popOverController;
@@ -123,18 +89,19 @@
 
 // Beintoo Initializer 
 - (void)setBeintooFeatures:(NSArray *)_featuresArray;
-
-+ (UIButton *)closeButton;
    
 - (IBAction)tryBeintoo;
-- (IBAction)close;
+
 
 @property(nonatomic,retain) BeintooPlayer *beintooPlayer;
+@property(nonatomic,retain) BeintooUser   *_user;
 @property(nonatomic,retain) UINavigationController *loginNavController;
 @property(nonatomic,retain) NSMutableArray *retrievedPlayersArray;
 @property(nonatomic,assign) BOOL isNotificationCenterOpen;
 @property(nonatomic,retain) BeintooLoginVC *loginVC;
 @property(nonatomic,retain) NSMutableArray	*featuresArray;
+@property (nonatomic, assign) BOOL isFromSignup;
+@property (nonatomic, assign) BOOL forceSignup;
 
 #ifdef UI_USER_INTERFACE_IDIOM
 @property(nonatomic,retain) UIPopoverController *popOverController;

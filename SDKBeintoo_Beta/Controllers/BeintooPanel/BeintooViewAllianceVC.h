@@ -16,18 +16,22 @@
 
 #import <UIKit/UIKit.h>
 #import "BeintooPlayer.h"
+#import "BeintooUser.h"
 #import "BeintooAlliance.h"
+#import "Beintoo.h"
+#import "BeintooAlliancesAddFriends.h"
 
 #define ALLIANCE_REQUEST_JOIN   123
 #define ALLIANCE_REQUEST_LEAVE  124
 
 @class BView, BButton, BTableView, BeintooUser, BeintooPlayer, BeintooAlliance, BeintooWebViewVC,BeintooAlliancePendingVC;
 
-@interface BeintooViewAllianceVC : UIViewController <UITableViewDelegate,BeintooAllianceDelegate,UIActionSheetDelegate> {
+@interface BeintooViewAllianceVC : UIViewController <UITableViewDelegate, BeintooAllianceDelegate, UIActionSheetDelegate, BImageDownloadDelegate, BeintooUserDelegate> {
 	
 	IBOutlet BView			*alliancesActionView;
 	IBOutlet BTableView		*elementsTable;
     IBOutlet UIScrollView   *scrollView;
+    IBOutlet UIToolbar      *toolbar;
     IBOutlet UILabel        *allianceNameLabel;
     IBOutlet UILabel        *allianceMembersLabel;
     IBOutlet UILabel        *allianceAdminLabel;
@@ -37,7 +41,7 @@
 	IBOutlet BButton        *pendingRequestsButton;
     IBOutlet BButton        *askToJoinAllianceButton;
 
-		
+    NSMutableArray			*elementsArrayImages;
 	NSMutableArray			*elementsArrayList;
 	NSDictionary			*selectedElement;
 	NSDictionary			*startingOptions;
@@ -47,9 +51,12 @@
     int                     requestType;
 	
 	BeintooPlayer			*_player;
+    BeintooUser             *_user;
     BeintooAlliance         *_alliance;
     
-    BeintooAlliancePendingVC *pendingRequestsVC;
+    BeintooAlliancePendingVC    *pendingRequestsVC;
+    BeintooProfileVC            *profileVC;
+    BeintooAlliancesAddFriends  *allianceAddFriends;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options;
@@ -62,6 +69,16 @@
 @property(nonatomic,retain)	NSDictionary	*selectedElement;
 @property(nonatomic,retain)	NSDictionary	*startingOptions;
 @property(nonatomic,retain) NSDictionary    *globalResult;
+
+@property(nonatomic,assign) BOOL           isMineAlliance;
+@property(nonatomic,assign) BOOL           isFromLeaderboard;
+@property(nonatomic,assign) BOOL            isFromNotification;
+@property(nonatomic,assign) BOOL            isFromDirectLaunch;
+
+@property(nonatomic, assign) BOOL           needPendingRequest;
+@property(nonatomic, assign) BOOL           needLeaveAlliance;
+@property(nonatomic, assign) BOOL           needJoinAlliance;
+@property(nonatomic, assign) BOOL           needAddToAlliance;
 
 
 @end

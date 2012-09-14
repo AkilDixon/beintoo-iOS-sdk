@@ -20,7 +20,6 @@
 @interface BeintooWebViewVC : UIViewController <UIWebViewDelegate,UINavigationBarDelegate>{
 
 	IBOutlet UIWebView		*_webView;
-	UIActivityIndicatorView *loadingIndicator;
 	NSString				*urlToOpen;
     BOOL                    allowCloseWebViewAndDismissBeintoo;
 }

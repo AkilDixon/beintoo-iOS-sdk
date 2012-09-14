@@ -32,14 +32,16 @@
 
 - (void)didBeintooFailToGenerateAVirtualGoodWithError:(NSDictionary *)error;
 
-
 /* ---------------------------------------------------------------------
  * Prize
  * --------------------------------------------------------------------- */
 
 - (void)beintooPrizeAlertWillAppear;
+
 - (void)beintooPrizeAlertDidAppear;
+
 - (void)beintooPrizeAlertWillDisappear;
+
 - (void)beintooPrizeAlertDidDisappear;
 
 - (void)beintooPrizeWillAppear;
@@ -51,11 +53,11 @@
 - (void)beintooPrizeDidDisappear;
 
 /* ---------------------------------------------------------------------
- * Mission
+ * User Login/Singup Delegates
  * --------------------------------------------------------------------- */
 
-- (void)didBeintooGetAMission:(NSDictionary *)theMission;
-- (void)didBeintooFailToGetAMission:(NSDictionary *)error;
+- (void)beintooUserDidLogin;
 
+- (void)beintooUserDidSignup;
 
 @end

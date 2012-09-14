@@ -26,7 +26,7 @@
 		
     if (self) {
 		registrationFBVC = [[BeintooSigninFacebookVC alloc] initWithNibName:@"BeintooSigninFacebookVC" bundle:[NSBundle mainBundle]];
-		registrationVC	 = [[BeintooSigninVC alloc] initWithNibName:@"BeintooSigninVC" bundle:[NSBundle mainBundle]];
+		
     }
     return self;
 }
@@ -55,7 +55,8 @@
     [anotherPlayerButton setLowColor:[UIColor colorWithRed:89.0/255 green:112.0/255 blue:142.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
 	[anotherPlayerButton setTitle:NSLocalizedStringFromTable(@"useAnotherAccount",@"BeintooLocalizable",@"Use another account") forState:UIControlStateNormal];
 	[anotherPlayerButton setButtonTextSize:20];
-		
+    anotherPlayerButton.hidden = YES;
+    
 	self.navigationController.navigationBarHidden = NO;
 		
 	// Retrieved Players Initial Settings
@@ -65,27 +66,41 @@
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];
+    
+    buttonItem.title = NSLocalizedStringFromTable(@"useAnotherAccount",@"BeintooLocalizable",@"Use another account");
+    
+    if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+                                    [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
+        toolBar.frame = CGRectMake(toolBar.frame.origin.x, toolBar.frame.origin.y + 12, toolBar.frame.size.width, 32);
+        retrievedPlayersTable.frame = CGRectMake(retrievedPlayersTable.frame.origin.x, retrievedPlayersTable.frame.origin.y, retrievedPlayersTable.frame.size.width, retrievedPlayersTable.frame.size.height + 12);
+    }
+    else {
+        toolBar.frame = CGRectMake(toolBar.frame.origin.x, toolBar.frame.origin.y, toolBar.frame.size.width, 44);
+    }
+    
+    [toolBar setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated{
-    
-    if ([caller isEqualToString:@"MarketplaceList"]){
-        callerIstance.needsToReloadData = NO;
-    }
+    [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
 	retrievedUsers = [[Beintoo getLastLoggedPlayers] retain];	
 	
-	if ([retrievedUsers count]<1) { // -- no already logged users found. Proceeding to registration.
+	if ([retrievedUsers count] < 1) { // -- no already logged users found. Proceeding to registration.
+        registrationVC	 = [[BeintooSigninVC alloc] initWithNibName:@"BeintooSigninVC" bundle:[NSBundle mainBundle]];
         [self.navigationController pushViewController:registrationVC animated:NO];
-	}else{
+        [registrationVC release];
+	}
+    else{
 		[userImages removeAllObjects];
 		for (int i = 0; i < [self.retrievedUsers count]; i++) {
 			@try {
                 if ([retrievedUsers isKindOfClass:[NSDictionary class]]) {
-                    NSLog(@"Beintoo ERROR: %@",[(NSDictionary *)self.retrievedUsers objectForKey:@"message"]);
+                    BeintooLOG(@"Beintoo ERROR: %@",[(NSDictionary *)self.retrievedUsers objectForKey:@"message"]);
                     return;
                 }
 				NSDictionary *user = [retrievedUsers objectAtIndex:i];	
@@ -95,20 +110,11 @@
 				[userImages addObject:download];
 			}
 			@catch (NSException * e) {
-				NSLog(@"BeintooException: %@ \n for object: %@", e, [retrievedUsers objectAtIndex:i]);
+				BeintooLOG(@"BeintooException: %@ \n for object: %@", e, [retrievedUsers objectAtIndex:i]);
 			}
 		}
 		[retrievedPlayersTable reloadData];		
 	}
-}
-
-- (UIButton *)closeButton{
-	UIImage *closeImg = [UIImage imageNamed:@"bar_close.png"];
-	UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	[closeBtn setImage:closeImg forState:UIControlStateNormal];
-	closeBtn.frame = CGRectMake(0,0, closeImg.size.width+7, closeImg.size.height);
-	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
-	return closeBtn;
 }
 
 #pragma mark -
@@ -117,9 +123,11 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [retrievedUsers count];
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
@@ -177,47 +185,18 @@
 #pragma mark Delegates
 - (void)playerDidLogin:(BeintooPlayer *)player{	
 	[BLoadingView stopActivity];
-	if ([player loginError]==LOGIN_NO_ERROR) {
+	if ([player loginError] == LOGIN_NO_ERROR) {
 		[retrievedPlayersTable deselectRowAtIndexPath:[retrievedPlayersTable indexPathForSelectedRow] animated:YES];
         
-        if ([caller isEqualToString:@"MarketplaceList"] || [caller isEqualToString:@"MarketplaceSelectedCoupon"]){
-            if([BeintooDevice isiPad]){
-                [Beintoo dismissIpadLogin];
-            }
-            else {
-                [self dismissModalViewControllerAnimated:YES];
-            }
-        }
-        else if([BeintooDevice isiPad]){
-            if ([Beintoo dismissBeintooOnRegistrationEnd]) {
-                [Beintoo dismissBeintoo];
-            }
-            else{
-                [Beintoo dismissIpadLogin];
-            }
-        }else {
-            if ([Beintoo dismissBeintooOnRegistrationEnd]) {
-                [Beintoo dismissBeintooNotAnimated];
-                [self dismissModalViewControllerAnimated:YES];
-            
-            }
-            else{
-                [self dismissModalViewControllerAnimated:YES];
-            }
-        }
-        
-        // OLD DISMISS (does not care of dismissBeintooAfterRegistration parameter)
-        /*	if([BeintooDevice isiPad]){
-         [Beintoo dismissIpadLogin];
-         }else {
-         [self dismissModalViewControllerAnimated:YES];
-         }*/
-        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
+        BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+        [Beintoo dismissBeintoo:navController.type];
 	}
 }
 
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
+
 - (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
     NSUInteger index = [userImages indexOfObject:download]; 
     NSUInteger indices[] = {0, index};
@@ -226,31 +205,42 @@
     [path release];
     download.delegate = nil;
 }
+
 - (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
-    NSLog(@"imagedownloadingerror: %@", [error localizedDescription]);
+    BeintooLOG(@"imagedownloadingerror: %@", [error localizedDescription]);
 }
 
 #pragma mark -
 #pragma mark CommonMethods
 
 - (IBAction)otherPlayer{	
+    registrationVC	 = [[BeintooSigninVC alloc] initWithNibName:@"BeintooSigninVC" bundle:[NSBundle mainBundle]];
     [self.navigationController pushViewController:registrationVC animated:YES];
+    [registrationVC release];
 }
 
--(void)closeBeintoo{
-    if ([caller isEqualToString:@"MarketplaceList"] || [caller isEqualToString:@"MarketplaceSelectedCoupon"]){
-        if([BeintooDevice isiPad]){
-            [Beintoo dismissIpadLogin];
-        }
-        else {
-            [self dismissModalViewControllerAnimated:YES];
-        }
-    }
-    else if([BeintooDevice isiPad]){
-		[Beintoo dismissIpadLogin];
-	}else {
-		[self dismissModalViewControllerAnimated:YES];
-	}
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
+}
+
+- (void)closeBeintoo{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
+    
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
 }
 
 - (NSString *)translateLevel:(NSNumber *)levelNumber{	
@@ -263,15 +253,9 @@
 		return @"";
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    
     @try {
 		[BLoadingView stopActivity];
 	}
@@ -285,7 +269,7 @@
 
 - (void)dealloc {
 	[registrationFBVC release];
-	[registrationVC release];
+	//[registrationVC release];
 	[userImages release];
 	[_player release];
 	[retrievedUsers release];

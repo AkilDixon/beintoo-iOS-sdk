@@ -37,8 +37,8 @@
 	titleLabel.text			= NSLocalizedStringFromTable(@"yourMessages",@"BeintooLocalizable",@"Select A Friend");
 	noMessagesLabel.text	= NSLocalizedStringFromTable(@"noMessages",@"BeintooLocalizable",@"Select A Friend");
 	
-	[messagesView setTopHeight:50];
-	[messagesView setBodyHeight:367];
+	[messagesView setTopHeight:0];
+	[messagesView setBodyHeight:417];
 	
 	_message				= [[BeintooMessage alloc] init];
 	_player					= [[BeintooPlayer alloc] init];
@@ -50,23 +50,22 @@
 	self.elementsTable.delegate	= self;
 	self.elementsTable.rowHeight	= 68.0;	
 	
-	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];			
 	
 	self.elementsArrayList = [[NSMutableArray alloc] init];
 	self.elementsImages    = [[NSMutableArray alloc] init];
+    
+    [toolBar setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
 	
-	[newMessageButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[newMessageButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[newMessageButton setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [newMessageButton setLowColor:[UIColor colorWithRed:89.0/255 green:112.0/255 blue:142.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	[newMessageButton setTitle:NSLocalizedStringFromTable(@"newMessage",@"BeintooLocalizable",@"Load more") forState:UIControlStateNormal];
-	[newMessageButton setButtonTextSize:15];
+	[newMessageButton setTitle:NSLocalizedStringFromTable(@"newMessage", @"BeintooLocalizable", nil)];
+	
 }
 
 - (void)viewWillAppear:(BOOL)animated{
-	
+	[super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
     }
@@ -76,7 +75,6 @@
 	_player.delegate	    = self;
 	_user.delegate			= self;
 
-    
 	if (![Beintoo isUserLogged])
 		[self.navigationController popToRootViewControllerAnimated:NO];
 	else {
@@ -162,7 +160,6 @@
 		}
 		@catch (NSException * e) {
 			NSLog(@"exception %@",e);
-			//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
 		}
 	}
 	if ([self.elementsArrayList count] >= [BeintooMessage totalMessagesCount]) 
@@ -210,6 +207,35 @@
 			BOOL isUnread = FALSE;
 			if ([[[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"status"] isEqualToString:@"UNREAD"]) {
 				isUnread = YES;
+                
+                UIView *unreadView = [[BGradientView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 27.5, 27.5, 10, 10)];
+                
+                CAGradientLayer * gradient = [CAGradientLayer layer];
+                [gradient setFrame:[unreadView bounds]];
+                UIColor *lightBlue = [UIColor colorWithRed:134.0/255 green:177.0/255 blue:246.0/255 alpha:1.0];
+                UIColor *blue = [UIColor colorWithRed:25.0/255 green:63.0/255 blue:163.0/255 alpha:1.0];
+                
+                [gradient setColors:[NSArray arrayWithObjects:(id)[lightBlue CGColor], (id)[blue CGColor], nil]];
+                
+                CALayer * roundRect = [CALayer layer];
+                [roundRect setFrame:[unreadView bounds]];
+                [roundRect setCornerRadius:5.0f];
+                [roundRect setMasksToBounds:YES];
+                [roundRect addSublayer:gradient];
+                
+                [[unreadView layer] insertSublayer:roundRect atIndex:0];
+                
+                [[unreadView layer] setShadowColor:[[UIColor blackColor] CGColor]];
+                [[unreadView layer] setShadowOffset:CGSizeMake(0, 6)];
+                [[unreadView layer] setShadowOpacity:1.0];
+                [[unreadView layer] setShadowRadius:10.0];
+                [[unreadView layer] setMasksToBounds:YES];
+                
+                [unreadView setClipsToBounds:YES];
+                [[unreadView layer] setCornerRadius:5.0f];
+                
+                [cell addSubview:unreadView];
+                [unreadView release];
 			}
 			
 			/* --- FROM --- */
@@ -306,22 +332,38 @@
     download.delegate = nil;
 }
 - (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
-    NSLog(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
+    BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return NO;
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    }
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
+}
+
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    
     _message.delegate		= nil;
 	_player.delegate	    = nil;
 	_user.delegate			= nil;
@@ -334,6 +376,11 @@
 }
 
 - (void)dealloc {
+    _user.delegate = nil;
+    _message.delegate = nil;
+    _player.delegate = nil;
+    
+    [_user release];
 	[_message release];
 	[_player release];
 	[self.elementsArrayList release];

@@ -19,7 +19,7 @@
 
 @implementation BeintooViewAllianceVC
 
-@synthesize elementsTable, elementsArrayList, selectedElement, startingOptions, globalResult;
+@synthesize elementsTable, elementsArrayList, selectedElement, startingOptions, globalResult, isMineAlliance, isFromLeaderboard, needJoinAlliance, needLeaveAlliance, needPendingRequest, needAddToAlliance, isFromNotification, isFromDirectLaunch;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -32,53 +32,34 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
-	self.title		= NSLocalizedStringFromTable(@"alliance_your",@"BeintooLocalizable",@"");
+	if (isMineAlliance)
+        self.title		= NSLocalizedStringFromTable(@"alliance_your", @"BeintooLocalizable",@"");
 	
 	[alliancesActionView setTopHeight:82];
 	[alliancesActionView setBodyHeight:440];
 	
-	elementsArrayList   = [[NSMutableArray alloc] init];
-     globalResult        = [[NSDictionary alloc] init];
+	//self.elementsArrayList   = [[NSMutableArray alloc] init];
+    elementsArrayImages = [[NSMutableArray alloc] init];
+    globalResult        = [[NSDictionary alloc] init];
 	_player				= [[BeintooPlayer alloc] init];
+    _user               = [[BeintooUser alloc] init];
     _alliance           = [[BeintooAlliance alloc] init];
+    
     allianceAdminUserID = [[NSString alloc] init];    
-    allianceId = [[NSString alloc] init];    
-
-	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+    allianceId          = [[NSString alloc] init];    
+    
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];
-		
-	self.elementsTable.delegate		= self;
-	self.elementsTable.rowHeight	= 30.0;	
+    
+	elementsTable.delegate		= self;
+	elementsTable.rowHeight	= 30.0;	
     
     [alliancesActionView setIsScrollView:YES];
     scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 320);
 	scrollView.backgroundColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1];
     scrollView.scrollEnabled = NO;
-
     
-    [leaveAllianceButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[leaveAllianceButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[leaveAllianceButton setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [leaveAllianceButton setLowColor:[UIColor colorWithRed:89.0/255 green:112.0/255 blue:142.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	[leaveAllianceButton setTitle:NSLocalizedStringFromTable(@"allianceleave",@"BeintooLocalizable",@"") forState:UIControlStateNormal];
-	[leaveAllianceButton setButtonTextSize:15];
-    
-	[pendingRequestsButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[pendingRequestsButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[pendingRequestsButton setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [pendingRequestsButton setLowColor:[UIColor colorWithRed:89.0/255 green:112.0/255 blue:142.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	[pendingRequestsButton setTitle:NSLocalizedStringFromTable(@"allianceviewpending",@"BeintooLocalizable",@"") forState:UIControlStateNormal];
-	[pendingRequestsButton setButtonTextSize:15];
-    
-    [askToJoinAllianceButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[askToJoinAllianceButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[askToJoinAllianceButton setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [askToJoinAllianceButton setLowColor:[UIColor colorWithRed:89.0/255 green:112.0/255 blue:142.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	[askToJoinAllianceButton setTitle:NSLocalizedStringFromTable(@"alliancesendreq",@"BeintooLocalizable",@"") forState:UIControlStateNormal];
-	[askToJoinAllianceButton setButtonTextSize:15];
-
-
     allianceNameLabel.font          = [UIFont systemFontOfSize:14];
     allianceMembersLabel.font       = [UIFont systemFontOfSize:14];
     allianceMembersLabel.textColor  = [UIColor colorWithWhite:0 alpha:0.7];
@@ -88,21 +69,39 @@
     allianceImageView.image         = [UIImage imageNamed:@"beintoo_alliance_your.png"];
     allianceImageView.contentMode   = UIViewContentModeCenter;
     
-    pendingRequestsVC = [BeintooAlliancePendingVC alloc];
+    [toolbar setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
+    
+    if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+        [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
+        toolbar.frame = CGRectMake(toolbar.frame.origin.x, toolbar.frame.origin.y + 12, toolbar.frame.size.width, 32);
+        elementsTable.frame = CGRectMake(elementsTable.frame.origin.x, elementsTable.frame.origin.y, elementsTable.frame.size.width, elementsTable.frame.size.height + 12);
+    }
+    else {
+        toolbar.frame = CGRectMake(toolbar.frame.origin.x, toolbar.frame.origin.y, toolbar.frame.size.width, 44);
+        elementsTable.frame = CGRectMake(elementsTable.frame.origin.x, elementsTable.frame.origin.y, elementsTable.frame.size.width, elementsTable.frame.size.height);
+    }
     
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
     }
     
-    _alliance.delegate  = self;
+    toolbar.frame = CGRectMake(0, self.view.frame.size.height, toolbar.frame.size.width, toolbar.frame.size.height);
     
-    elementsTable.hidden            = NO;
-    pendingRequestsButton.hidden    = NO;
-    leaveAllianceButton.hidden      = NO;
-    askToJoinAllianceButton.hidden  = NO;
+    _alliance.delegate  = self;
+    _user.delegate      = self;
+    
+    elementsTable.hidden  = NO;
+    
+    needAddToAlliance   = NO;
+    needJoinAlliance    = NO;
+    needLeaveAlliance   = NO;
+    needPendingRequest  = NO;
+    
     
     if (![Beintoo isUserLogged]){
 		[self.navigationController popToRootViewControllerAnimated:NO];
@@ -112,21 +111,50 @@
             NSString *userAllianceID = [BeintooAlliance userAllianceID];
             if (userAllianceID) {
                 [BLoadingView startActivity:self.view];
-                [_alliance getAllianceWithID:userAllianceID];
-                askToJoinAllianceButton.hidden  = YES;
-                pendingRequestsButton.hidden    = YES;
+                
+                if ([BeintooAlliance userHasAlliance]) 
+                    [_alliance getAllianceWithAdminDetailsWithID:userAllianceID];
+                else 
+                    [_alliance getAllianceWithID:userAllianceID];
+                
+                needJoinAlliance = NO;
+                needPendingRequest = NO;
             }
         }
-        else{                       // With options, it means that an user wants to see an alliance from the global list...
-            NSString *userAllianceID = [self.startingOptions objectForKey:@"allianceID"];
-            if (userAllianceID) {
-                [BLoadingView startActivity:self.view];
-                [_alliance getAllianceWithID:userAllianceID];
-                pendingRequestsButton.hidden    = YES;
-                leaveAllianceButton.hidden      = YES;
-                
-                if ([BeintooAlliance userAllianceID] != nil) {
-                    askToJoinAllianceButton.hidden  = YES;
+        else {
+            if (isFromLeaderboard) {                     
+                // With options, FROM LEADERBOARDS
+                NSString *userAllianceID = [[self.startingOptions objectForKey:@"user"] objectForKey:@"id"];
+                if (userAllianceID) {
+                    [BLoadingView startActivity:self.view];
+                    
+                    if ([[[[self.startingOptions objectForKey:@"user"] objectForKey:@"admin"] objectForKey:@"id"] isEqualToString:[Beintoo getUserID]])
+                        [_alliance getAllianceWithAdminDetailsWithID:userAllianceID];
+                    else 
+                        [_alliance getAllianceWithID:userAllianceID];
+                    
+                    needLeaveAlliance = NO;
+                    needPendingRequest = NO;
+                    needJoinAlliance = YES;
+                    
+                    if ([BeintooAlliance userHasAlliance]) {
+                        needJoinAlliance = NO;
+                    }
+                }
+            }
+            else{                       // With options, it means that an user wants to see an alliance from the global list...
+                NSString *userAllianceID = [self.startingOptions objectForKey:@"allianceID"];
+                if (userAllianceID) {
+                    [BLoadingView startActivity:self.view];
+                    [_alliance getAllianceWithID:userAllianceID];
+                    
+                    needLeaveAlliance = NO;
+                    needPendingRequest = NO;
+                    needJoinAlliance = YES;
+                    
+                    if ([BeintooAlliance userHasAlliance]) {
+                        needJoinAlliance = NO;
+                    }
                 }
             }
         }
@@ -139,7 +167,7 @@
 - (void)didGetAlliance:(NSDictionary *)result{
     [BLoadingView stopActivity];
     
-    allianceAdminUserID          = [[[result objectForKey:@"admin"]objectForKey:@"id"] retain];
+   /* allianceAdminUserID          = [[[result objectForKey:@"admin"]objectForKey:@"id"] retain];
     allianceId                   = [[result objectForKey:@"id"] retain];
     
     if ([[Beintoo getUserID] isEqualToString:allianceAdminUserID]) {
@@ -155,22 +183,102 @@
         self.elementsArrayList = [result objectForKey:@"users"];
     }
     
-    [self.elementsTable reloadData];
+    [self.elementsTable reloadData];*/
+    
+    [BLoadingView stopActivity];
+    
+    allianceAdminUserID          = [[[result objectForKey:@"admin"]objectForKey:@"id"] retain];
+    allianceId                   = [[result objectForKey:@"id"] retain];
+    
+    if ([[Beintoo getUserID] isEqualToString:allianceAdminUserID]) {
+        [BeintooAlliance setUserWithAlliance:YES];
+        needPendingRequest = YES;
+        needAddToAlliance = YES;
+    }
+    else {
+        [BeintooAlliance setUserAllianceAdmin:NO];
+    }
+    
+    allianceNameLabel.text       = [result objectForKey:@"name"];
+    allianceMembersLabel.text    = [NSString stringWithFormat:@"%@: %@",NSLocalizedStringFromTable(@"alliancemembers",@"BeintooLocalizable",@""),[result objectForKey:@"members"]];
+    allianceAdminLabel.text      = [NSString stringWithFormat:@"%@: %@",NSLocalizedStringFromTable(@"allianceadmin",@"BeintooLocalizable",@""),[[result objectForKey:@"admin"]objectForKey:@"nickname"]];
+    
+    [self.elementsArrayList removeAllObjects];
+    [elementsArrayImages removeAllObjects];
+    
+    if ([[result objectForKey:@"users"] isKindOfClass:[NSArray class]]) {
+        self.elementsArrayList = [result objectForKey:@"users"];
+        for (int i = 0; i < [self.elementsArrayList count]; i++){
+            BImageDownload *download = [[BImageDownload alloc] init];
+            download.delegate  = self;
+            download.urlString = [[self.elementsArrayList objectAtIndex:i] objectForKey:@"usersmallimg"];
+            [elementsArrayImages addObject:download];
+            
+            [download release];
+            
+            if ([[Beintoo getUserID] isEqualToString:[[self.elementsArrayList objectAtIndex:i] objectForKey:@"id"]]) {
+                needLeaveAlliance = YES;
+            }
+        }
+    }
+    
+    [elementsTable reloadData];
+    [self updateToolbar];
+}
+
+- (void)didGetAlliancesAdminList:(NSDictionary *)result{
+    
+    [BLoadingView stopActivity];
+    
+    allianceAdminUserID          = [[[result objectForKey:@"admin"]objectForKey:@"id"] retain];
+    allianceId                   = [[result objectForKey:@"id"] retain];
+    
+    if ([[Beintoo getUserID] isEqualToString:allianceAdminUserID]) {
+        
+        [BeintooAlliance setUserWithAlliance:YES];
+        needPendingRequest = YES;
+        needAddToAlliance = YES;
+        
+        int pendingReq = [[result objectForKey:@"pendingRequest"] intValue];
+        NSString *localizedString = NSLocalizedStringFromTable(@"allianceviewpending",@"BeintooLocalizable",@"");
+        [pendingRequestsButton setTitle:[NSString stringWithFormat:@"%@ (%i)", localizedString, pendingReq] forState:UIControlStateNormal];
+    }
+    
+    allianceNameLabel.text       = [result objectForKey:@"name"];
+    allianceMembersLabel.text    = [NSString stringWithFormat:@"%@: %@",NSLocalizedStringFromTable(@"alliancemembers",@"BeintooLocalizable",@""),[result objectForKey:@"members"]];
+    allianceAdminLabel.text      = [NSString stringWithFormat:@"%@: %@",NSLocalizedStringFromTable(@"allianceadmin",@"BeintooLocalizable",@""),[[result objectForKey:@"admin"]objectForKey:@"nickname"]];
+    
+    [self.elementsArrayList removeAllObjects];
+    [elementsArrayImages removeAllObjects];
+    
+    if ([[result objectForKey:@"users"] isKindOfClass:[NSArray class]]) {
+        self.elementsArrayList = [result objectForKey:@"users"];
+        for (int i = 0; i < [self.elementsArrayList count]; i++){
+            BImageDownload *download = [[BImageDownload alloc] init];
+            download.delegate  = self;
+            download.urlString = [[self.elementsArrayList objectAtIndex:i] objectForKey:@"usersmallimg"];
+            [elementsArrayImages addObject:download];
+            
+            [download release];
+            
+            if ([[Beintoo getUserID] isEqualToString:[[self.elementsArrayList objectAtIndex:i] objectForKey:@"id"]]) {
+                needLeaveAlliance = YES;
+            }
+        }
+    }
+    [elementsTable reloadData];
+    [self updateToolbar];
+    
 }
 
 - (void)didAllianceAdminPerformedRequest:(NSDictionary *)result{
     
     [BLoadingView stopActivity];
     
-    self.globalResult = result;
+    globalResult = result;
     
 	NSString *successAlertMessage = NSLocalizedStringFromTable(@"requestSent",@"BeintooLocalizable",@"");
-
-	/*if (requestType == ALLIANCE_REQUEST_JOIN) 
-		successAlertMessage = NSLocalizedStringFromTable(@"requestSent",@"BeintooLocalizable",@"");
-	else 
-		successAlertMessage = NSLocalizedStringFromTable(@"requestSent",@"BeintooLocalizable",@"");*/
-	
+    
 	NSString *alertMessage;
 	if ([[result objectForKey:@"message"] isEqualToString:@"OK"]) 
 		alertMessage = successAlertMessage;
@@ -181,9 +289,113 @@
 	[av release];
 }
 
--(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex { 
-    if (requestType == ALLIANCE_REQUEST_LEAVE && [[self.globalResult objectForKey:@"message"] isEqualToString:@"OK"]) {
+- (void)updateToolbar{
+    
+    UIBarButtonItem *joinButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"alliancesendreq", @"BeintooLocalizable", nil) style:UIBarButtonItemStyleBordered target:self action:@selector(joinAlliance)];
+    
+    UIBarButtonItem *addToAllianceButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"add_alliance.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(addFriendsToAlliance)];
+    
+    UIBarButtonItem *pendingButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"pending_request_alliance_admin.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(getPendingRequests)];
+    
+    UIBarButtonItem *leaveButtonItem = [[UIBarButtonItem alloc]  initWithImage:[UIImage imageNamed:@"cancel_alliance.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(leaveAlliance)];
+    
+    UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+    fixedSpace.width = 0;
+    
+    UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    
+    NSMutableArray *buttonsArray = [[NSMutableArray alloc] init];
+    
+    if (needAddToAlliance && needLeaveAlliance && needPendingRequest){
+        if ([BeintooDevice isiPad] || [Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown){
+            pendingButtonItem.width = 92.5;
+            leaveButtonItem.width = 92.5;
+            addToAllianceButtonItem.width = 92.5;
+        }
+        else { 
+            pendingButtonItem.width = 152.5;
+            leaveButtonItem.width = 152.5;
+            addToAllianceButtonItem.width = 152.5;
+        }
+    }
+    else if (needLeaveAlliance){
+        if ([BeintooDevice isiPad] || [Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown){
+            
+            leaveButtonItem.width = 300;
+        }
+        else { 
+            leaveButtonItem.width = 460;
+        }
+    }
+    else if (needJoinAlliance){
+        if (![BeintooDevice isiPad] || [Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown){
+            joinButtonItem.width = 300;
+        }
+        else { 
+            joinButtonItem.width = 460;
+        }
+    }
+    
+    [buttonsArray addObject:fixedSpace];
+    
+    if (needPendingRequest != NO)
+        [buttonsArray addObject:pendingButtonItem];
+    
+    if (needAddToAlliance  != NO){
+        if ([buttonsArray count] > 0)
+            [buttonsArray addObject:flexibleSpace];
+        
+        [buttonsArray addObject:addToAllianceButtonItem];
+    }
+    
+    if (needJoinAlliance  != NO){
+        if ([buttonsArray count] > 0)
+            [buttonsArray addObject:flexibleSpace];
+        
+        [buttonsArray addObject:joinButtonItem];
+    }
+    
+    if (needLeaveAlliance  != NO){
+        if ([buttonsArray count] > 0)
+            [buttonsArray addObject:flexibleSpace];
+        
+        [buttonsArray addObject:leaveButtonItem];
+    }
+    
+    [buttonsArray addObject:fixedSpace];
+    
+    [toolbar setItems:buttonsArray];
+    
+    [pendingButtonItem release];
+    [addToAllianceButtonItem release];
+    [joinButtonItem release];
+    [leaveButtonItem release];
+    [fixedSpace release];
+    [flexibleSpace release];
+    
+    if ([buttonsArray count] >= 3){
+        [UIView beginAnimations:@"" context:nil];
+        [UIView setAnimationDuration:0.5];
+        toolbar.frame = CGRectMake(0, self.view.frame.size.height - toolbar.frame.size.height, toolbar.frame.size.width, toolbar.frame.size.height);
+        [UIView commitAnimations];
+    }
+    else {
+        [UIView beginAnimations:@"" context:nil];
+        [UIView setAnimationDuration:0.5];
+        toolbar.frame = CGRectMake(0, self.view.frame.size.height, toolbar.frame.size.width, toolbar.frame.size.height);
+        [UIView commitAnimations];        
+    }
+    
+    [buttonsArray release];
+}
+
+#pragma mark -
+#pragma mark AlertView
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex { 
+    if (alertView.tag == 1){
         [BeintooAlliance setUserWithAlliance:NO];
+        [BeintooAlliance setUserAllianceAdmin:NO];
         [self.navigationController popViewControllerAnimated:YES];
     }
 }
@@ -212,8 +424,17 @@
     
     NSDictionary *pendingOptions = [NSDictionary dictionaryWithObjectsAndKeys:allianceId,@"allianceID",allianceAdminUserID,@"allianceAdminID", nil];
     
-    [pendingRequestsVC initWithNibName:@"BeintooAlliancePendingVC" bundle:[NSBundle mainBundle] andOptions:pendingOptions];
+    
+    pendingRequestsVC = [[BeintooAlliancePendingVC alloc] initWithNibName:@"BeintooAlliancePendingVC" bundle:[NSBundle mainBundle] andOptions:pendingOptions];
     [self.navigationController pushViewController:pendingRequestsVC animated:YES];
+    [pendingRequestsVC release];
+}
+
+- (IBAction)addFriendsToAlliance{
+    
+    allianceAddFriends = [[BeintooAlliancesAddFriends alloc] initWithNibName:@"BeintooAlliancesAddFriends" bundle:[NSBundle mainBundle] andOptions:self.elementsArrayList];
+    [self.navigationController pushViewController:allianceAddFriends animated:YES];
+    [allianceAddFriends release];    
 }
 
 #pragma mark -
@@ -263,16 +484,83 @@
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
     }
 	
+    /*cell.textLabel.text         = [[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"nickname"];
+    cell.textLabel.font         = [UIFont systemFontOfSize:13];
+    cell.textLabel.textColor    = [UIColor colorWithWhite:0 alpha:0.7];
+    cell.imageView.image        = [UIImage imageNamed:@"beintoo_user_icon.png"];
+    cell.imageView.alpha        = 0.4;*/
+    
+    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+    
     cell.textLabel.text         = [[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"nickname"];
     cell.textLabel.font         = [UIFont systemFontOfSize:13];
     cell.textLabel.textColor    = [UIColor colorWithWhite:0 alpha:0.7];
     cell.imageView.image        = [UIImage imageNamed:@"beintoo_user_icon.png"];
-    cell.imageView.alpha        = 0.4;
+    cell.imageView.alpha        = 0.0;
+    
+    
+    BImageDownload  *download   = [elementsArrayImages objectAtIndex:indexPath.row];
+    
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(7.5, 0, 28, 28)];
+    imageView.image        = download.image;
+    
+    [cell addSubview:imageView];
+    
+    [imageView release];
+    
+    if ([Beintoo isAFriendOfMine:[[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"id"]]){
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 30, 20)];
+        imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"beintoo_yourfriends.png"]];
+        cell.accessoryView = imageView;
+        [imageView release];
+    }
     
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self.elementsTable deselectRowAtIndexPath:indexPath animated:YES];
+    
+    if ([[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"id"]){
+        if (![[[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"id"] isEqualToString:[Beintoo getUserID]]){
+            
+            /*UIActionSheet	*popup;
+             
+             if ([Beintoo isAFriendOfMine:[[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"id"]]){
+             
+             popup = [[UIActionSheet alloc] initWithTitle:nil delegate:self 
+             cancelButtonTitle:@"Cancel" 
+             destructiveButtonTitle:nil
+             otherButtonTitles:
+             NSLocalizedStringFromTable(@"leadViewProfile",@"BeintooLocalizable",@""), 
+             NSLocalizedStringFromTable(@"sendMesage",@"BeintooLocalizable",@""), NSLocalizedStringFromTable(@"sendChallenge",@"BeintooLocalizable",@""), nil ];
+             popup.tag = 3;
+             }
+             else {
+             popup = [[UIActionSheet alloc] initWithTitle:nil delegate:self 
+             cancelButtonTitle:@"Cancel" 
+             destructiveButtonTitle:nil
+             otherButtonTitles:
+             NSLocalizedStringFromTable(@"leadViewProfile",@"BeintooLocalizable",@""), 
+             NSLocalizedStringFromTable(@"sendMesage",@"BeintooLocalizable",@""), NSLocalizedStringFromTable(@"sendChallenge",@"BeintooLocalizable",@""), NSLocalizedStringFromTable(@"addFriends",@"BeintooLocalizable",@""),  nil ];
+             popup.tag = 4;
+             }
+             
+             popup.actionSheetStyle = UIActionSheetStyleDefault;
+             [popup showInView:[self.view superview]];
+             [popup release];*/
+            
+            NSDictionary *profileOptions = [NSDictionary dictionaryWithObjectsAndKeys:@"friendsProfile",@"caller",
+                                            [[self.elementsArrayList objectAtIndex:[elementsTable indexPathForSelectedRow].row] objectForKey:@"id"],@"friendUserID",
+                                            [[self.elementsArrayList objectAtIndex:[elementsTable indexPathForSelectedRow].row] objectForKey:@"nickname"],@"friendNickname",nil];
+            profileVC = [[BeintooProfileVC alloc] initWithNibName:@"BeintooProfileVC" bundle:[NSBundle mainBundle] andOptions:profileOptions];
+            [self.navigationController pushViewController:profileVC animated:YES];
+            [profileVC release];
+            
+            
+            return;
+        }
+    }
+    
+    [elementsTable deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 - (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
@@ -301,9 +589,43 @@
 	return 35.0;
 }
 
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
+}
+
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
+}
 
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
+
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+    NSUInteger index = [elementsArrayImages indexOfObject:download]; 
+    NSUInteger indices[] = {0, index};
+    NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
+    [elementsTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
+    [path release];
+    download.delegate = nil;
+}
+
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+    BeintooLOG(@"BeintooImageError: %@", [error localizedDescription]);
+}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return NO;
@@ -311,6 +633,8 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     _alliance.delegate  = nil;
+    _user.delegate       = nil;
+    
     @try {
 		[BLoadingView stopActivity];
 	}
@@ -335,6 +659,8 @@
     [allianceAdminUserID release];
     [allianceId release];
     [pendingRequestsVC release];
+    [elementsArrayImages release];
+    
     [super dealloc];
 }
 

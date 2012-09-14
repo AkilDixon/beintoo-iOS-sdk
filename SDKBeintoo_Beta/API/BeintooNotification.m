@@ -44,7 +44,7 @@
 
 - (void)getNotificationListWithStart:(int)_start andRows:(int)_rows{
     if ([Beintoo getPlayerID] == nil) {
-        NSLog(@"BeintooNotifications error: player not logged.");
+        BeintooLOG(@"BeintooNotifications error: player not logged.");
         return;
     }
     NSString *res		 = [NSString stringWithFormat:@"%@?start=%d&rows=%d",rest_resource,_start,_rows];
@@ -56,7 +56,7 @@
 
 - (void)setNotificationReadWithNotificationID:(NSString *)_notificationID{
     if ([Beintoo getPlayerID] == nil) {
-        NSLog(@"BeintooNotifications error: player not logged.");
+        BeintooLOG(@"BeintooNotifications error: player not logged.");
         return;
     }
     
@@ -69,7 +69,7 @@
 
 - (void)setAllNotificationReadUpToNotification:(NSString *)_notificationID{
     if ([Beintoo getPlayerID] == nil) {
-        NSLog(@"BeintooNotifications error: player not logged.");
+        BeintooLOG(@"BeintooNotifications error: player not logged.");
         return;
     }
     

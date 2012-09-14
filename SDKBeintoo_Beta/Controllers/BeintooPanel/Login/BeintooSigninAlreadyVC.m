@@ -17,100 +17,261 @@
 #import "BeintooSigninAlreadyVC.h"
 #import "Beintoo.h"
 #import <QuartzCore/QuartzCore.h>
+#import "BeintooTutorialVC.h"
 
 @implementation BeintooSigninAlreadyVC
-
-@synthesize caller;
+@synthesize caller, isFromDirectLaunch;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
 	self.title = NSLocalizedStringFromTable(@"login",@"BeintooLocalizable",@"Login");
 	
-	registrationVC      = [BeintooSignupVC alloc];
-	registrationFBVC    = [BeintooSignupVC alloc];
-	
 	scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 440);
 	scrollView.backgroundColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1];
 	scrollView.exclusiveTouch = NO;
-
+    
 	[beintooView setTopHeight:60];
 	[beintooView setBodyHeight:440];
 	[beintooView setIsScrollView:YES];
-		
-	title1.text = NSLocalizedStringFromTable(@"no_fb_login1",@"BeintooLocalizable",@"");
-	title2.text = NSLocalizedStringFromTable(@"no_fb_login2",@"BeintooLocalizable",@"");
-	    
-	user			 = [[BeintooUser alloc] init];
-	user.delegate	 = self;
-	_player			 = [[BeintooPlayer alloc]init];
+    
+    mainLabel.text = NSLocalizedStringFromTable(@"new_login_title",@"BeintooLocalizable",@"");
+    mainLabelLand.text = NSLocalizedStringFromTable(@"new_login_title",@"BeintooLocalizable",@"");
+	
+	user			= [[BeintooUser alloc] init];
+	user.delegate	= self;
+	_player			= [[BeintooPlayer alloc]init];
 	_player.delegate = self;
 	
-	
-	UIImage *closeImg = [UIImage imageNamed:@"bar_close.png"];
-	UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	[closeBtn setImage:closeImg forState:UIControlStateNormal];
-	closeBtn.frame = CGRectMake(0,0, closeImg.size.width+7, closeImg.size.height);
-	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
-	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:closeBtn];
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];
 	
 	eTF.delegate = self;
 	pTF.delegate = self;
+    
+    eTFLand.delegate = self;
+	pTFLand.delegate = self;
 	
+    eTF.placeholder =  NSLocalizedStringFromTable(@"loginEmailPlaceholder",@"BeintooLocalizable", nil);
+	pTF.placeholder =  NSLocalizedStringFromTable(@"loginPasswordPlaceholder",@"BeintooLocalizable", nil);
+    
+    eTFLand.placeholder =  NSLocalizedStringFromTable(@"loginEmailPlaceholder",@"BeintooLocalizable", nil);
+	pTFLand.placeholder =  NSLocalizedStringFromTable(@"loginPasswordPlaceholder",@"BeintooLocalizable", nil);
+    
+    mainLabel.textColor = [UIColor colorWithRed:46.0/255.0 green:68.0/255.0 blue:103.0/255.0 alpha:1.0];
+    mainLabelLand.textColor = [UIColor colorWithRed:46.0/255.0 green:68.0/255.0 blue:103.0/255.0 alpha:1.0];
+    
 	[loginButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
 	[loginButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
 	[loginButton setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
     [loginButton setLowColor:[UIColor colorWithRed:89.0/255 green:112.0/255 blue:142.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
 	[loginButton setTitle:NSLocalizedStringFromTable(@"loginOn",@"BeintooLocalizable",@"") forState:UIControlStateNormal];
 	[loginButton setButtonTextSize:20];
+    
+    [loginButtonLand setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
+	[loginButtonLand setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
+	[loginButtonLand setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
+    [loginButtonLand setLowColor:[UIColor colorWithRed:89.0/255 green:112.0/255 blue:142.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
+	[loginButtonLand setTitle:NSLocalizedStringFromTable(@"loginOn",@"BeintooLocalizable",@"") forState:UIControlStateNormal];
+	[loginButtonLand setButtonTextSize:20];
+    
+    // Keyboard notifications
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) 
+												 name:UIKeyboardWillShowNotification object:self.view.window];
+	[[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(keyboardWillHide:) 
+												 name:UIKeyboardWillHideNotification  object:self.view.window];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) 
+												 name:UIKeyboardDidShowNotification object:self.view.window];
+	[[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(keyboardDidHide:) 
+												 name:UIKeyboardDidHideNotification  object:self.view.window];
+    
+    // keyboardIsShown = NO;
+    
+    if (keyboardToolbar == nil) {
+		keyboardToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 35)];
+		keyboardToolbar.barStyle = UIBarStyleBlackTranslucent;
+        
+        UIBarButtonItem *previousButton = [[UIBarButtonItem alloc] initWithTitle:@"Prev" style:UIBarButtonItemStyleBordered target:self action:@selector(previousTextField)];
+        
+        UIBarButtonItem *nextButton = [[UIBarButtonItem alloc] initWithTitle:@"Next" style:UIBarButtonItemStyleBordered target:self action:@selector(nextTextField)];
+        
+		UIBarButtonItem *extraSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+		
+		UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissKeyboard)];
+        
+		[keyboardToolbar setItems:[[[NSArray alloc] initWithObjects:previousButton, nextButton,  extraSpace, doneButton, nil] autorelease]];
+		
+        [previousButton release];
+        [nextButton release];
+		[doneButton release];
+		[extraSpace release];
+	}
+    
+    if (keyboardToolbarForgot == nil) {
+		keyboardToolbarForgot = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 35)];
+		keyboardToolbarForgot.barStyle = UIBarStyleBlackTranslucent;
+        
+        UIBarButtonItem *extraSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+		
+		UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissKeyboard)];
+        
+		[keyboardToolbarForgot setItems:[[[NSArray alloc] initWithObjects:extraSpace, doneButton, nil] autorelease]];
+		
+        [doneButton release];
+		[extraSpace release];
+	}
+    
+    if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+                                    [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
+        [scrollView addSubview:landscapeView];
+    }
+    else {
+        [scrollView addSubview:portraitView];
+    }
+    
+    if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+                                    [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
+        
+        @try {
+            if ([eTFLand respondsToSelector:@selector(setInputAccessoryView:)]){
+                [eTFLand setInputAccessoryView:keyboardToolbar];
+                [pTFLand setInputAccessoryView:keyboardToolbar];
+                
+                [forgotPasswordTextField setInputAccessoryView:keyboardToolbarForgot];
+            }
+            else
+                isAccessoryInputViewNotSupported = YES;
+        }
+        @catch (NSException * e) {
+            isAccessoryInputViewNotSupported = YES;
+        }
+    }
+    else{
+        
+        @try {
+            if ([eTF respondsToSelector:@selector(setInputAccessoryView:)]){
+                [eTF setInputAccessoryView:keyboardToolbar];
+                [pTF setInputAccessoryView:keyboardToolbar];
+                
+                [forgotPasswordTextField setInputAccessoryView:keyboardToolbarForgot];
+            }
+            else
+                isAccessoryInputViewNotSupported = YES;
+        }
+        @catch (NSException * e) {
+            isAccessoryInputViewNotSupported = YES;
+        }
+    }
+    
+    eTF.frame = CGRectMake(eTF.frame.origin.x, eTF.frame.origin.y, eTF.frame.size.width, 44);
+    eTFLand.frame = CGRectMake(eTFLand.frame.origin.x, eTFLand.frame.origin.y, eTFLand.frame.size.width, 44);
+    
+    pTF.frame = CGRectMake(pTF.frame.origin.x, pTF.frame.origin.y, pTF.frame.size.width, 44);
+    pTFLand.frame = CGRectMake(pTFLand.frame.origin.x, pTFLand.frame.origin.y, pTFLand.frame.size.width, 44);
+    
+    forgotPasswordTextField.frame = CGRectMake(forgotPasswordTextField.frame.origin.x, forgotPasswordTextField.frame.origin.y, forgotPasswordTextField.frame.size.width, 44);
+    
+    forgotPassword.titleLabel.textColor = [UIColor colorWithRed:46.0/255.0 green:68.0/255.0 blue:103.0/255.0 alpha:1.0];
+    forgotPasswordLand.titleLabel.textColor = [UIColor colorWithRed:46.0/255.0 green:68.0/255.0 blue:103.0/255.0 alpha:1.0];
+
+    [forgotPassword setTitle:NSLocalizedStringFromTable(@"forgotPasswordButton", @"BeintooLocalizable", nil) forState:UIControlStateNormal];
+    [forgotPassword setTitle:NSLocalizedStringFromTable(@"forgotPasswordButton", @"BeintooLocalizable", nil) forState:UIControlStateHighlighted];
+    [forgotPassword setTitle:NSLocalizedStringFromTable(@"forgotPasswordButton", @"BeintooLocalizable", nil) forState:UIControlStateSelected];
+    
+    [forgotPasswordLand setTitle:NSLocalizedStringFromTable(@"forgotPasswordButton", @"BeintooLocalizable", nil) forState:UIControlStateNormal];
+    [forgotPasswordLand setTitle:NSLocalizedStringFromTable(@"forgotPasswordButton", @"BeintooLocalizable", nil) forState:UIControlStateHighlighted];
+    [forgotPasswordLand setTitle:NSLocalizedStringFromTable(@"forgotPasswordButton", @"BeintooLocalizable", nil) forState:UIControlStateSelected];
+    
+    forgotPassword.titleLabel.textAlignment = UITextAlignmentLeft;
+    forgotPasswordLand.titleLabel.textAlignment = UITextAlignmentLeft;
+    
 }
 
-- (void)viewDidAppear:(BOOL)animated{
+- (void)nextTextField{
+    if ([eTF isFirstResponder]){
+        [pTF becomeFirstResponder];
+    }
+    else if ([eTFLand isFirstResponder]){
+        [pTFLand becomeFirstResponder];
+    }
+}
+
+- (void)previousTextField{
+    if ([pTF isFirstResponder]){
+        [eTF becomeFirstResponder];
+    }
+    else if ([pTFLand isFirstResponder]){
+        [eTFLand becomeFirstResponder];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
-	eTF.text = @"";
+    
+    eTF.text = @"";
 	pTF.text = @"";
-    [eTF becomeFirstResponder];
+    
+    eTFLand.text = @"";
+	pTFLand.text = @"";
     
     [UIView beginAnimations:nil context:nil];
 	[UIView setAnimationDuration:0.5];
     
-    if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
-        [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
-        if ([eTF isFirstResponder])
-            self.view.frame = CGRectMake(self.view.frame.origin.x, -eTF.frame.origin.y + 10, self.view.frame.size.width, self.view.frame.size.height);
-        else if ([pTF isFirstResponder])
-            self.view.frame = CGRectMake(self.view.frame.origin.x, -eTF.frame.origin.y + 10, self.view.frame.size.width, self.view.frame.size.height);
-        else 
-            self.view.frame = CGRectMake(self.view.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height);
+    if (([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+         [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) && ![BeintooDevice isiPad]) {
+        
+        self.view.frame = CGRectMake(self.view.frame.origin.x, - 20, self.view.frame.size.width, self.view.frame.size.height);
+        
 	}
 	[UIView commitAnimations];
     
 }
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
-    [UIView beginAnimations:nil context:nil];
-	[UIView setAnimationDuration:0.5];
     
-    if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
-        [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
-        if ([eTF isFirstResponder])
-            self.view.frame = CGRectMake(self.view.frame.origin.x, -eTF.frame.origin.y + 10, self.view.frame.size.width, self.view.frame.size.height);
-        else if ([pTF isFirstResponder])
-            self.view.frame = CGRectMake(self.view.frame.origin.x, -eTF.frame.origin.y + 10, self.view.frame.size.width, self.view.frame.size.height);
-        else 
-            self.view.frame = CGRectMake(self.view.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height);
-	}
+    [UIView beginAnimations:nil context:nil];
+	[UIView setAnimationDuration:0.2];
+    
+    if (textField.tag == 99){
+        if (![BeintooDevice isiPad])
+            forgotPasswordBase.frame = CGRectMake(forgotPasswordBase.frame.origin.x, forgotPasswordBase.frame.origin.y - 80, forgotPasswordBase.frame.size.width, forgotPasswordBase.frame.size.height);
+    }
+    else {
+    
+        if (([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+             [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) && ![BeintooDevice isiPad]) {
+            if (textField.tag == 21)
+                self.view.frame = CGRectMake(self.view.frame.origin.x, - 85, self.view.frame.size.width, self.view.frame.size.height);
+            else if (textField.tag == 31)
+                self.view.frame = CGRectMake(self.view.frame.origin.x, - 105, self.view.frame.size.width, self.view.frame.size.height);
+            else 
+                self.view.frame = CGRectMake(self.view.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height);
+        }
+        else {
+            if ([BeintooDevice isiPad] && !(([Beintoo appOrientation] == UIInterfaceOrientationPortrait || 
+                                             [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown))){
+                
+            }
+            else if (![BeintooDevice isiPad]){
+                if (textField.tag == 21)
+                    self.view.frame = CGRectMake(self.view.frame.origin.x, - 175, self.view.frame.size.width, self.view.frame.size.height);
+                else if (textField.tag == 31)
+                    self.view.frame = CGRectMake(self.view.frame.origin.x, - 215, self.view.frame.size.width, self.view.frame.size.height);
+                else 
+                    self.view.frame = CGRectMake(self.view.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height);
+            }
+        }
+    }
+    
 	[UIView commitAnimations];
     
     return YES;
-    
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
@@ -120,27 +281,27 @@
             [_textfield becomeFirstResponder];
         }
         else{
+            if (textField.tag != 99)
+                [self login];
+            else  {
+                [UIView beginAnimations:nil context:nil];
+                [UIView setAnimationDuration:0.2];
+                
+                if (![BeintooDevice isiPad]){
+                    forgotPasswordBase.frame = CGRectMake(forgotPasswordBase.frame.origin.x, forgotPasswordBase.frame.origin.y + 80, forgotPasswordBase.frame.size.width, forgotPasswordBase.frame.size.height);
+                }
+                [forgotPasswordTextField resignFirstResponder];
+                
+                [UIView commitAnimations];
+                
+                [self forgotPassword:nil];
+            }
             [textField resignFirstResponder];
-            [self login];
         }
     }
-    
-    [UIView beginAnimations:nil context:nil];
-	[UIView setAnimationDuration:0.5];
-    
-    if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
-        [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
-        if ([eTF isFirstResponder])
-            self.view.frame = CGRectMake(self.view.frame.origin.x, -eTF.frame.origin.y + 10, self.view.frame.size.width, self.view.frame.size.height);
-        else if ([pTF isFirstResponder])
-            self.view.frame = CGRectMake(self.view.frame.origin.x, -eTF.frame.origin.y + 10, self.view.frame.size.width, self.view.frame.size.height);
-        else 
-            self.view.frame = CGRectMake(self.view.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height);
-	}
-	[UIView commitAnimations];
-    
-	return YES;
+    return YES;
 }
+
 
 - (IBAction)login{
 	
@@ -148,73 +309,321 @@
 		[BeintooNetwork showNoConnectionAlert];
 		return;
 	}
-	
-	[user getUserByM:eTF.text andP:pTF.text];
-	if ([pTF isFirstResponder]){
-		[pTF resignFirstResponder];
-	}else if ([eTF isFirstResponder]) {
-		[eTF resignFirstResponder];
+    
+    NSString *email;
+    NSString *password;
+    
+    if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+                                    [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
+        email = [eTFLand.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        password = [pTFLand.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    }
+    else {
+        email = [eTF.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        password = [pTF.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];    
+    } 
+    
+    if ([email length] <= 0 || [password length] <= 0){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:NSLocalizedStringFromTable(@"loginErrorMsg", @"BeintooLocalizable", nil) delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+        
+        return;
+    }
+    
+    [UIView beginAnimations:nil context:nil];
+    if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+                                    [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
+        loginButtonLand.userInteractionEnabled = NO;
+        loginButtonLand.alpha = 0.5;
+    }
+    else {
+        loginButton.userInteractionEnabled = NO;
+        loginButton.alpha = 0.5;
+    }
+    [UIView commitAnimations];
+    
+	[user getUserByM:email andP:password];
+    
+    if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+                                    [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
+        if ([pTFLand isFirstResponder]){
+            [pTFLand resignFirstResponder];
+        }
+        else if ([eTFLand isFirstResponder]) {
+            [eTFLand resignFirstResponder];
+        }
+    }
+    else {
+        if ([pTF isFirstResponder]){
+            [pTF resignFirstResponder];
+        }
+        else if ([eTF isFirstResponder]) {
+            [eTF resignFirstResponder];
+        }
+    }
+    
+    [UIView beginAnimations:nil context:nil];
+	[UIView setAnimationDuration:0.2];
+    
+    if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+        [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
+        
+        self.view.frame = CGRectMake(self.view.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height);
 	}
+	[UIView commitAnimations];
+    
     
     [BLoadingView startActivity:self.view];
 }
 
 - (void)loginOK{
     
-    if ([caller isEqualToString:@"MarketplaceList"] || [caller isEqualToString:@"MarketplaceSelectedCoupon"]){
-        if([BeintooDevice isiPad]){
-            [Beintoo dismissIpadLogin];
-        }
-        else {
-            [self dismissModalViewControllerAnimated:YES];
-        }
-    }
-    else if([BeintooDevice isiPad]){
-        if ([Beintoo dismissBeintooOnRegistrationEnd]) {
-            [Beintoo dismissBeintoo];
-        }
-        else{
-            [Beintoo dismissIpadLogin];
-        }
-    }else {
-        if ([Beintoo dismissBeintooOnRegistrationEnd]) {
-            [Beintoo dismissBeintooNotAnimated];
-            [self dismissModalViewControllerAnimated:YES];
-        }
-        else{
-            [self dismissModalViewControllerAnimated:YES];
-        }
-    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
+    
+    [Beintoo postNotificationBeintooUserDidLogin];
+    
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
 }
 
--(void)closeBeintoo{
-   
-    if ([caller isEqualToString:@"MarketplaceList"] || [caller isEqualToString:@"MarketplaceSelectedCoupon"]){
-        if([BeintooDevice isiPad]){
-            [Beintoo dismissIpadLogin];
-        }
-        else {
-            [self dismissModalViewControllerAnimated:YES];
-        }
-    }
-	else if([BeintooDevice isiPad]){
-		[Beintoo dismissIpadLogin];
-	}else {
-		[self dismissModalViewControllerAnimated:YES];
-	}
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
+}
+
+- (void)closeBeintoo{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
+    
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
-#pragma mark -
-#pragma mark UserDelegate
-- (void)didGetUserByMail:(NSDictionary *)result{
+- (void)keyboardWillShow:(NSNotification *)aNotification {
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.1];
+    
+    
+    [UIView commitAnimations];
+}
+
+- (void)keyboardWillHide:(NSNotification *)aNotification {
+	
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.2];
+    
+    if (![forgotPasswordTextField isFirstResponder])
+        self.view.frame = CGRectMake(self.view.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height);
+    [UIView commitAnimations];
+}
+
+- (void)keyboardDidShow:(NSNotification *)aNotification {
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.1];
+   
+    if (![forgotPasswordTextField isFirstResponder])
+        [self moveTextViewForKeyboard:aNotification up:YES];
+    
+    [UIView commitAnimations];
+}
+
+- (void)keyboardDidHide:(NSNotification *)aNotification {
+	
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.2];
+    
+    if (![forgotPasswordTextField isFirstResponder])
+        [self moveTextViewForKeyboard:aNotification up:NO];
+    
+    [UIView commitAnimations];
+}
+
+- (void)moveTextViewForKeyboard:(NSNotification*)aNotification up:(BOOL)up{
+	NSDictionary* userInfo = [aNotification userInfo];
+	
+	NSTimeInterval animationDuration;
+	UIViewAnimationCurve animationCurve;
+	
+	[[userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&animationCurve];
+	[[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
+	 
+    if ([BeintooDevice isiPad] && !(([Beintoo appOrientation] == UIInterfaceOrientationPortrait || 
+                                     [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown))){
+        if (up == YES)
+            scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, scrollView.contentSize.height - self.view.frame.size.height);
+        else 
+            scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, 0);
+    }
+}
+
+- (void)dismissKeyboard{
+    if ([forgotPasswordTextField isFirstResponder]){
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.2];
+        if (![BeintooDevice isiPad]){
+            forgotPasswordBase.frame = CGRectMake(forgotPasswordBase.frame.origin.x, forgotPasswordBase.frame.origin.y + 80, forgotPasswordBase.frame.size.width, forgotPasswordBase.frame.size.height);
+        }
+        [forgotPasswordTextField resignFirstResponder];
+        
+        [UIView commitAnimations];
+    }
+    else {
+        if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+                                        [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
+            if ([eTFLand isFirstResponder])
+                [eTFLand resignFirstResponder];
+            else if ([pTFLand isFirstResponder])
+                [pTFLand resignFirstResponder];
+        }
+        else {
+            if ([eTF isFirstResponder])
+                [eTF resignFirstResponder];
+            else if ([pTF isFirstResponder])
+                [pTF resignFirstResponder];
+        }
+    }
+}
+
+- (IBAction)openForgotView:(id)sender{
+    
+    forgotPasswordBase = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    forgotPasswordBase.alpha = 0.0;
+    forgotPasswordBase.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.65];
+    [self.view addSubview:forgotPasswordBase];
+    
+    forgotPasswordView.frame = CGRectMake((forgotPasswordBase.frame.size.width - forgotPasswordView.frame.size.width)/2, (forgotPasswordBase.frame.size.height - forgotPasswordView.frame.size.height)/2, forgotPasswordView.frame.size.width, forgotPasswordView.frame.size.height);
+    forgotPasswordView.backgroundColor = [UIColor whiteColor];
+    [forgotPasswordView.layer setCornerRadius:6.0];
+    [forgotPasswordBase addSubview:forgotPasswordView];
+    
+    forgotPasswordLabel.text = NSLocalizedStringFromTable(@"forgotPasswordTitle", @"BeintooLocalizable", nil);
+    
+    forgotPasswordTextField.delegate = self;
+    forgotPasswordTextField.placeholder = NSLocalizedStringFromTable(@"loginEmailPlaceholder",@"BeintooLocalizable", nil);
+    forgotPasswordTextField.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin;
+    forgotPasswordTextField.text = @"";
+    [forgotPasswordView addSubview:forgotPasswordTextField];
+    
+    if ([[eTF.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] > 0){
+        forgotPasswordTextField.text = [eTF.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    }
+    
+    [forgotPasswordButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
+	[forgotPasswordButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
+	[forgotPasswordButton setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
+    [forgotPasswordButton setLowColor:[UIColor colorWithRed:89.0/255 green:112.0/255 blue:142.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
+	[forgotPasswordButton setTitle:NSLocalizedStringFromTable(@"forgotPasswordSendEmail",@"BeintooLocalizable",@"") forState:UIControlStateNormal];
+	[forgotPasswordButton setButtonTextSize:18];
+    
+    [UIView animateWithDuration:0.5
+					 animations:^(void) {
+						forgotPasswordBase.alpha = 1.0;
+					 } 
+					 completion:^(BOOL finished) {
+                        
+					 }];
+}
+
+- (IBAction)closeForgotView:(id)sender{
+    if ([forgotPasswordTextField isFirstResponder])
+        [forgotPasswordTextField resignFirstResponder];
+        
+    [UIView animateWithDuration:0.5
+					 animations:^(void) {
+                         forgotPasswordBase.alpha = 0.0;
+					 } 
+					 completion:^(BOOL finished) {
+                          [forgotPasswordBase release];
+					 }];
+}
+
+- (IBAction)forgotPassword:(id)sender{
+    
+    if (![BeintooNetwork connectedToNetwork]){
+        [BeintooNetwork showNoConnectionAlert];
+        return;
+    }
+    
+    if ([[forgotPasswordTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] > 0){
+        [BLoadingView startActivity:forgotPasswordBase];
+        [user forgotPassword:[forgotPasswordTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
+    }
+    else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:NSLocalizedStringFromTable(@"regEmailErrorMessage", @"BeintooLocalizable", nil) delegate:self cancelButtonTitle:NSLocalizedStringFromTable(@"ok", @"BeintooLocalizable", nil) otherButtonTitles: nil];
+        alert.tag = 555;
+        
+        [alert show];
+        [alert release];
+    }
+}
+
+- (void)didCompleteForgotPassword:(NSDictionary *)result{
     [BLoadingView stopActivity];
     
-	if ([result objectForKey:@"id"]==nil) {
-		UIAlertView *errorAV = [[UIAlertView alloc] initWithTitle:NSLocalizedStringFromTable(@"loginError",@"BeintooLocalizable",@"") 
+    NSString *alertMessage;
+    NSString *alertTitle;
+    int alertTag;
+    if ([[result objectForKey:@"message"] isEqualToString:@"OK"]){
+        alertTitle = NSLocalizedStringFromTable(@"forgotPasswordAlertTitle", @"BeintooLocalizable", nil); //@"Email Sent";
+        alertMessage = [NSString stringWithFormat:/*@"An email has been sent to %@, check it and retry logging in!"*/ NSLocalizedStringFromTable(@"forgotPasswordAlertSuccess", @"BeintooLocalizable", nil), [forgotPasswordTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
+        alertTag = 100;
+    }
+    else {
+        alertTitle = @"Error";
+        alertMessage = [NSString stringWithFormat:@"Check your email: maybe it doesn't exist!"];
+        alertTag = 101;
+    }
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:alertTitle message:alertMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    alert.tag = alertTag;
+    [alert show];
+    [alert release];
+}
+
+#pragma mark -
+#pragma mark UserDelegate
+
+- (void)didGetUserByMail:(NSDictionary *)result{
+    
+    [UIView beginAnimations:nil context:nil];
+    if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+                                    [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
+        loginButtonLand.userInteractionEnabled = YES;
+        loginButtonLand.alpha = 1.0;
+    }
+    else {
+        loginButton.userInteractionEnabled = YES;
+        loginButton.alpha = 1.0;
+    }
+    [UIView commitAnimations];
+    
+    [BLoadingView stopActivity];
+    
+    if (![BeintooNetwork connectedToNetwork]) {
+		[BeintooNetwork showNoConnectionAlert];
+        
+        
+		return;
+	}
+    
+	if ([result objectForKey:@"id"] == nil) {
+        UIAlertView *errorAV = [[UIAlertView alloc] initWithTitle:NSLocalizedStringFromTable(@"loginError",@"BeintooLocalizable",@"") 
 														  message:NSLocalizedStringFromTable(@"loginErrorMsg",@"BeintooLocalizable",@"") 
 														 delegate:self 
 												cancelButtonTitle:@"Ok" 
@@ -222,12 +631,12 @@
 		[errorAV show];
 		[errorAV release];
 	}
-	if ([result objectForKey:@"id"]!=nil) {
+	if ([result objectForKey:@"id"] != nil) {
 		UIAlertView *successAV = [[UIAlertView alloc] initWithTitle:NSLocalizedStringFromTable(@"loginSuccess",@"BeintooLocalizable",@"") 
-														  message:NSLocalizedStringFromTable(@"loginSuccessMsg",@"BeintooLocalizable",@"") 
-														 delegate:self 
-												cancelButtonTitle:@"Ok" 
-												otherButtonTitles:nil];
+                                                            message:NSLocalizedStringFromTable(@"loginSuccessMsg",@"BeintooLocalizable",@"") 
+                                                           delegate:self 
+                                                  cancelButtonTitle:@"Ok" 
+                                                  otherButtonTitles:nil];
 		successAV.tag = 321;
 		[successAV show];
 		[successAV release];
@@ -239,7 +648,13 @@
 #pragma mark alertViewDelegate
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{ 
-	if (buttonIndex == 0) { 
+    if (alertView.tag == 100){
+        [self closeForgotView:nil];
+    }
+    else  if (alertView.tag == 101){
+        
+    }
+	else if (buttonIndex == 0) { 
 		if (alertView.tag == 321) {
 			[self loginOK];
 		}
@@ -254,15 +669,13 @@
 	return NO;
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
 - (void)dealloc {
 	[user release];
 	[_player release];
-	[registrationVC release];
-    [super dealloc];
+    [keyboardToolbar release];
+    [keyboardToolbarForgot release];
+    
+	[super dealloc];
 }
 
 @end

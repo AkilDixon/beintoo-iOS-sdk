@@ -44,8 +44,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
-	//NSLog(@"apper :home nav %@ - size: %@",[Beintoo getMainNavigationController],NSStringFromCGRect(self.view.frame));
-	//[self.view addSubview:[Beintoo getMainNavigationController].topViewController.view];
+	[super viewWillAppear:animated];
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
@@ -56,9 +55,6 @@
 #pragma mark Vgood-Show-Hide-FromCaller
 
 - (void)showVgoodNavigationController{
-	//BeintooVgoodNavController *vgoodNavController = [Beintoo getVgoodNavigationController];
-    //self.view = vgoodNavController.view;
-		
 	self.view.alpha = 1;
 	CATransition *applicationLoadViewIn = [CATransition animation];
 	[applicationLoadViewIn setDuration:0.5f];
@@ -72,8 +68,7 @@
 }
 
 - (void)hideVgoodNavigationController{
-
-	self.view.alpha = 0;
+    self.view.alpha = 0;
 	CATransition *applicationUnloadViewIn = [CATransition animation];
 	[applicationUnloadViewIn setDuration:0.5f];
 	[applicationUnloadViewIn setValue:@"unloadVgood" forKey:@"name"];
@@ -112,7 +107,6 @@
 	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
 }
 
-
 #pragma mark -
 #pragma mark animationFinish
 
@@ -133,7 +127,6 @@
 		[self.view removeFromSuperview];
 		[Beintoo beintooDidDisappear];
     }
-
 }
 
 - (void)prepareBeintooVgoodOrientation{
@@ -170,14 +163,6 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return [Beintoo appOrientation];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
 }
 
 - (void)dealloc {

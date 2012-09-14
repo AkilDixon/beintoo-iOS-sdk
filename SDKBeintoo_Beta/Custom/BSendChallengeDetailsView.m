@@ -562,7 +562,7 @@
         }
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception on table view %@", exception);
+        BeintooLOG(@"Exception on table view %@", exception);
     }
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -796,7 +796,7 @@
     download.delegate = nil;
 }
 - (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
-    NSLog(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
+    BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
 

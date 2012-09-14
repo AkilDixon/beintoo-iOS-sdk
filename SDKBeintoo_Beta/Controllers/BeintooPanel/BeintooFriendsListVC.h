@@ -19,7 +19,7 @@
 #import "BeintooVGood.h"
 #import "BImageDownload.h"
 
-@class BView, BTableView, BeintooPlayer, BeintooProfileVC, BeintooMarketplaceVC, BeintooMarketplaceSelectedItemVC;
+@class BView, BTableView, BeintooPlayer, BeintooProfileVC, BeintooMarketplaceVC, BeintooMarketplaceSelectedItemVC, BPickerView;
 
 @interface BeintooFriendsListVC : UIViewController <BeintooUserDelegate,BeintooVgoodDelegate,BImageDownloadDelegate,UITableViewDelegate,UIActionSheetDelegate,UIAlertViewDelegate> {
 	
@@ -36,6 +36,8 @@
 	BeintooVgood			*vGood;
 	
 	BeintooProfileVC		*profileVC;
+    
+    BPickerView             *bPickerView;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options;

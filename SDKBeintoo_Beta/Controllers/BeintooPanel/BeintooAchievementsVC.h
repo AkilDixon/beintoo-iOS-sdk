@@ -33,6 +33,7 @@
 
 	NSMutableArray		 *achievementsArrayList;
 	NSMutableArray		 *achievementsImages;
+    NSMutableArray		 *archiveAchievements;
 
 }
 

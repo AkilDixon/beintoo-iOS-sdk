@@ -86,10 +86,10 @@
 #import "BSendChallengesView.h"
 #import "BSendChallengeDetailsView.h"
 #import "BeintooNotificationListVC.h"
-#import "BeintooMarketplaceVC.h"
 #import "BeintooMarketplace.h"
 #import "BeintooMarketplaceWebViewVC.h"
 #import "BeintooUrlParser.h"
+#import "BeintooOpenUDID.h"
 
 #define BFEATURE_PROFILE			@"Profile"
 #define BFEATURE_MARKETPLACE		@"Marketplace"
@@ -173,6 +173,14 @@ extern NSString *BNSDefIsUserLogged;
 	
     BeintooMainController           *mainController;
 	BeintooNavigationController     *mainNavigationController;
+    BeintooNavigationController     *bestoreNavigationController;
+    BeintooNavigationController     *leaderboardNavigationController;
+    BeintooNavigationController     *achievementsNavigationController;
+    BeintooNavigationController     *myoffersNavigationController;
+    BeintooNavigationController     *notificationsNavigationController;
+    BeintooNavigationController     *signupNavigationController;
+    BeintooNavigationController     *privateNotificationsNavigationController;
+    BeintooNavigationController     *privateSignupNavigationController;
 	BeintooVgoodNavController       *vgoodNavigationController;
 	BeintooiPadController           *ipadController;
 	
@@ -181,22 +189,29 @@ extern NSString *BNSDefIsUserLogged;
     BeintooWalletVC                 *beintooWalletViewController;
     BeintooLeaderboardVC            *beintooLeaderboardVC;
     BeintooLeaderboardContestVC     *beintooLeaderboardWithContestVC;
-    
+    BeintooNotificationListVC       *beintooNotificationsVC;
     BeintooMarketplaceWebViewVC     *beintooMarketplaceWebViewVC;
+    
 }
 
 + (void)initWithApiKey:(NSString *)_apikey andApiSecret:(NSString *)_apisecret andBeintooSettings:(NSDictionary *)_settings andMainDelegate:(id<BeintooMainDelegate>)beintooMainDelegate;
 + (void)launchBeintoo;
 + (void)launchBeintooOnAppWithVirtualCurrencyBalance:(float)_value;
++ (void)launchNotifications;
++ (void)_launchPrivateSignup;
 + (void)launchMarketplace;
 + (void)launchMarketplaceOnAppWithVirtualCurrencyBalance:(float)_value;
 + (void)launchWallet;
 + (void)launchLeaderboard;
++ (void)launchSignup;
 + (void)launchPrize;
 + (void)launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate;
 + (void)launchMission;
 + (void)launchIpadLogin;
 + (void)dismissIpadLogin;
++ (void)launchIpadNotifications;
++ (void)_launchPrivateNotifications;
++ (void)dismissIpadNotifications;
 + (BOOL)isUserLogged;
 + (BOOL)isRegistrationForced;
 + (BOOL)isTryBeintooForced;
@@ -235,13 +250,26 @@ extern NSString *BNSDefIsUserLogged;
 + (UIViewController *)getMainController;
 + (BeintooNavigationController *)getMainNavigationController;
 + (BeintooVgoodNavController *)getVgoodNavigationController;
++ (BeintooNavigationController *)getBestoreNavigationController;
++ (BeintooNavigationController *)getLeaderboardsNavigationController;
++ (BeintooNavigationController *)getMyOffersNavigationController;
++ (BeintooNavigationController *)getAchievementsNavigationController;
++ (BeintooNavigationController *)getNotificationsNavigationController;
++ (BeintooNavigationController *)getSignupNavigationController;
++ (BeintooNavigationController *)getPrivateNotificationsNavigationController;
++ (BeintooNavigationController *)getPrivateSignupNavigationController;
++ (BeintooNotificationListVC *)getPrivateNotificationsViewController;
 + (UIWindow *)getAppWindow;
 + (void)setLastGeneratedVgood:(BVirtualGood *)_theVGood;
 + (int)appOrientation;
 + (void)setBeintooUser:(NSDictionary *)_user;
 + (void)setBeintooPlayer:(NSDictionary *)_player;
++ (void)setBeintooUserFriends:(NSArray *)friends;
++ (NSArray *)getBeintooUserFriends;
++ (BOOL)isAFriendOfMine:(NSString *)_friendID;
 + (void)switchBeintooToSandbox;
 + (void)dismissBeintoo;
++ (void)dismissBeintoo:(int)type;
 + (void)dismissBeintooNotAnimated;
 + (void)dismissPrize;
 + (void)dismissRecommendation;
@@ -257,8 +285,6 @@ extern NSString *BNSDefIsUserLogged;
 + (void)notifyVGoodGenerationOnMainDelegate;
 + (void)changeBeintooOrientation:(int)_orientation;
 + (void)notifyVGoodGenerationErrorOnMainDelegate:(NSDictionary *)_error;
-+ (void)notifyRetrievedMisionOnMainDelegateWithMission:(NSDictionary *)_mission;
-+ (void)notifyRetrievedMisionErrorOnMainDelegateWithMission:(NSDictionary *)_error;
 + (id<BeintooMainDelegate>)getMainDelegate;
 + (dispatch_queue_t)beintooDispatchQueue;
 + (NSString *)getUserLocationForURL;
@@ -280,6 +306,9 @@ extern NSString *BNSDefIsUserLogged;
 + (void)setVirtualCurrencyBalance:(float)_value;
 + (void)removeStoredVirtualCurrency;
 + (BOOL)isVirtualCurrencyStored;
+
++ (void)postNotificationBeintooUserDidLogin;
++ (void)postNotificationBeintooUserDidSignup;
 
 @end
 

@@ -22,13 +22,13 @@
 
 @synthesize delegate,parser;
 
--(id)init {
+- (id)init {
 	if (self = [super init])
 	{
         parser = [[Parser alloc] init];
 		parser.delegate = self;
 		
-		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/alliance/",[Beintoo getRestBaseUrl]]];
+		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/alliance/", [Beintoo getRestBaseUrl]]];
 	}
     return self;
 }
@@ -41,6 +41,13 @@
     NSString *res		 = [NSString stringWithFormat:@"%@%@",rest_resource,_allianceID];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",nil];
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:ALLIANCE_GET_CALLER_ID];
+}
+
+- (void)getAllianceWithAdminDetailsWithID:(NSString *)_allianceID{
+    NSString *res		 = [NSString stringWithFormat:@"%@%@?userExt=%@", rest_resource, _allianceID, [Beintoo getUserID]];
+	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",nil];
+    
+	[parser parsePageAtUrl:res withHeaders:params fromCaller:ALLIANCE_ADMIN_GET_CALLER_ID];
 }
 
 - (void)getAllianceListWithQueryText:(NSString *)_queryText{
@@ -133,6 +140,12 @@
             }
 		}
 			break;
+            
+        case ALLIANCE_ADMIN_GET_CALLER_ID:{
+            if ([[self delegate]respondsToSelector:@selector(didGetAlliancesAdminList:)]) {
+                [[self delegate] didGetAlliancesAdminList:result];
+            }
+		}
 						
 		case ALLIANCE_GETLIST_CALLER_ID:{
             if ([[self delegate]respondsToSelector:@selector(didGetAlliancesList:)]) {
@@ -207,8 +220,12 @@
     return [[[Beintoo getPlayer] objectForKey:@"alliance"] objectForKey:@"id"];
 }
 
++ (NSString *)userAllianceName{
+    return [[[Beintoo getPlayer] objectForKey:@"alliance"] objectForKey:@"name"];
+}
 
 - (void)dealloc {
+    parser.delegate = nil;
 	[parser release];
 	[rest_resource release];
     [super dealloc];

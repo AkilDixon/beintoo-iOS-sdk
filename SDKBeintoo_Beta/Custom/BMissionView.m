@@ -221,7 +221,7 @@
     
     }
     @catch (NSException *exception) {
-        NSLog(@"BeintooMission Exception: %@", exception);
+        BeintooLOG(@"BeintooMission Exception: %@", exception);
     }
 }
 
@@ -860,7 +860,7 @@
         [self drawMission];
     }
     @catch (NSException *exception) {
-        NSLog(@"BeintooMission Exception: %@", exception);
+        BeintooLOG(@"BeintooMission Exception: %@", exception);
     }
     
 }

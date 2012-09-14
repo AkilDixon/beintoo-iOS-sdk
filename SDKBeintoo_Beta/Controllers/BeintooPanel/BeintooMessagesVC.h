@@ -20,6 +20,7 @@
 #import "BTableView.h"
 #import "BeintooUser.h"
 #import "BeintooPlayer.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define MSGFORPAGE 10
 
@@ -29,9 +30,10 @@
 	
 	IBOutlet BView			*messagesView;
 	IBOutlet BTableView		*elementsTable;
-	IBOutlet BButton		*newMessageButton;
 	IBOutlet UILabel		*titleLabel;
 	IBOutlet UILabel		*noMessagesLabel;
+    IBOutlet UIToolbar      *toolBar;
+    IBOutlet UIBarButtonItem *newMessageButton;
 	NSMutableArray			*elementsArrayList;
 	NSMutableArray			*elementsImages;
 	NSDictionary			*selectedMessage;

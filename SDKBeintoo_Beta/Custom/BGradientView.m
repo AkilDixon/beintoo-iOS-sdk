@@ -247,8 +247,7 @@
 			self.layer.cornerRadius  = 5.0;
 			self.layer.masksToBounds = YES;
 			self.layer.borderWidth   = 1.0;
-			//self.layer.borderColor	 = [UIColor colorWithRed:1 green:0 blue:1 alpha:1].CGColor;
-            
+    
 			CGGradientRef gradient = CGGradientCreateWithColorComponents(colorSpace,components,locations,(size_t)3);
 			
 			CGPoint topCenter = CGPointMake(CGRectGetMidX(self.bounds), 0.0f);
@@ -490,6 +489,37 @@
 			
 			[upperBorder release];
 			[lowerBorder release];
+			CGGradientRelease(gradient);
+		}
+			break;
+            
+        case GRADIENT_UNDREAD_MESSAGE_ICON:{
+			CGFloat components[8] = {
+				134.0/255, 177.0/255, 246.0/255, 1.0f,
+				25.0/255, 63.0/255, 163.0/255, 1.0f,
+			};
+			
+			CGFloat locations[2] = {0.0 , 1};
+			
+			CGGradientRef gradient = CGGradientCreateWithColorComponents(colorSpace, components,locations,(size_t)2);
+			
+			CGPoint topCenter = CGPointMake(CGRectGetMidX(self.bounds), 0.0f);
+			CGPoint midCenter = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMaxY(self.bounds));
+			
+			CGContextDrawLinearGradient(ctx, gradient, topCenter, midCenter, (CGGradientDrawingOptions)NULL);
+			
+            /*UIView *upperBorder = [[UIView alloc]initWithFrame:CGRectMake(0, 0, [self bounds].size.width, 1)];
+			UIView *lowerBorder = [[UIView alloc]initWithFrame:CGRectMake(0, [self bounds].size.height-1, self.frame.size.width, 1)];
+			
+			upperBorder.backgroundColor = [UIColor colorWithRed:107.0/255 green:109.0/255 blue:112.0/255 alpha:0.3];
+			lowerBorder.backgroundColor = [UIColor colorWithRed:107.0/255 green:109.0/255 blue:112.0/255 alpha:0.6];
+			
+			[self addSubview:upperBorder];
+			[self addSubview:lowerBorder];
+			
+			[upperBorder release];
+			[lowerBorder release];*/
+            
 			CGGradientRelease(gradient);
 		}
 			break;

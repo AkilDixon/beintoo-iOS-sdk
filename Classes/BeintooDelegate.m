@@ -24,19 +24,19 @@
  * ----------------------------------------- */
 
 - (void)beintooWillAppear{
-	NSLog(@"Beintoo will appear!");
+	BeintooLOG(@"Beintoo will appear!");
 }
 
 - (void)beintooDidAppear{
-	NSLog(@"Beintoo did appear!");
+	BeintooLOG(@"Beintoo did appear!");
 }
 
 - (void)beintooWillDisappear{
-	NSLog(@"Beintoo will disappear!");
+	BeintooLOG(@"Beintoo will disappear!");
 }
 
 - (void)beintooDidDisappear{
-	NSLog(@"Beintoo did disappear!");
+	BeintooLOG(@"Beintoo did disappear!");
 }
 
 /* -----------------------------
@@ -45,15 +45,15 @@
 
 - (void)didBeintooGenerateAVirtualGood:(BVirtualGood *)theVgood{
 	if ([theVgood isMultiple]) {
-		NSLog(@"Multiple Vgood generated: %@",[theVgood theGoodsList]);
+		BeintooLOG(@"Multiple Vgood generated: %@",[theVgood theGoodsList]);
 	}
 	else {
-		NSLog(@"Single Vgood generated: %@",[theVgood theGood]);
+		BeintooLOG(@"Single Vgood generated: %@",[theVgood theGood]);
 	}
 }
 
 - (void)didBeintooFailToGenerateAVirtualGoodWithError:(NSDictionary *)error{
-    NSLog(@"Vgood generation error: %@",error);
+    BeintooLOG(@"Vgood generation error: %@",error);
 }
 
 /*
@@ -61,33 +61,33 @@
  */
 
 - (void)beintooPrizeWillAppear{
-	NSLog(@"Prize will appear!");
+	BeintooLOG(@"Prize will appear!");
 }
 
 - (void)beintooPrizeDidAppear{
-	NSLog(@"Prize did appear!");
+	BeintooLOG(@"Prize did appear!");
 }
 
 - (void)beintooPrizeWillDisappear{
-	NSLog(@"Prize will disappear!");
+	BeintooLOG(@"Prize will disappear!");
 }
 
 - (void)beintooPrizeDidDisappear{
-	NSLog(@"Prize did disappear!");
+	BeintooLOG(@"Prize did disappear!");
 }
 
 - (void)beintooPrizeAlertWillAppear{
-	NSLog(@"alert will appear");
+	BeintooLOG(@"alert will appear");
 }
 - (void)beintooPrizeAlertDidAppear{
-	NSLog(@"alert did appear");
+	BeintooLOG(@"alert did appear");
 }
 - (void)beintooPrizeAlertWillDisappear{
-	NSLog(@"alert will disappear");
+	BeintooLOG(@"alert will disappear");
 
 }
 - (void)beintooPrizeAlertDidDisappear{
-	NSLog(@"alert did disappear");
+	BeintooLOG(@"alert did disappear");
 
 }
 
@@ -96,11 +96,11 @@
  * --------------------------- */
 
 - (void)didBeintooGetAMission:(NSDictionary *)theMission{
-    NSLog(@"Beintoo mission %@",theMission);
+    BeintooLOG(@"Beintoo mission %@",theMission);
     
 }
 - (void)didBeintooFailToGetAMission:(NSDictionary *)error{
-    NSLog(@"Beintoo mission generation error %@",error);    
+    BeintooLOG(@"Beintoo mission generation error %@",error);    
 }
 
 @end

@@ -22,7 +22,7 @@
 @implementation BeintooProfileVC
 
 
-@synthesize sectionScores,allScores,allContests,allScoresForContest,arrayWithScoresForAllContests,startingOptions;
+@synthesize sectionScores,allScores,allContests,allScoresForContest,arrayWithScoresForAllContests,startingOptions, isFromNotification, isFromDirectLaunch;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
 	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -56,7 +56,12 @@
 	messagesToolbarLabel.text	= NSLocalizedStringFromTable(@"messages",@"BeintooLocalizable",@"");
 	balanceToolbarLabel.text	= NSLocalizedStringFromTable(@"balance",@"BeintooLocalizable",@"");
     alliancesLabel.text         = NSLocalizedStringFromTable(@"alliances",@"BeintooLocalizable",@"");
+    alliancekey.text            = [NSString stringWithFormat:@"%@:", NSLocalizedStringFromTable(@"alliance",@"BeintooLocalizable",@"")];
+    allianceValue.text          = NSLocalizedStringFromTable(@"noAlliances", @"BeintooLocalizable", nil);
 
+    if ([BeintooAlliance userHasAlliance])
+        if ([BeintooAlliance userAllianceName] != nil)
+            allianceValue.text = [BeintooAlliance userAllianceName];
     
 	[profileView setTopHeight:108.0];
 	[profileView setBodyHeight:450.0];
@@ -68,71 +73,64 @@
 	scoresTable.delegate		= self;
 	scoresTable.rowHeight		= 25.0;
 	
+    [toolBar setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
+    
 	messagesVC          = [BeintooMessagesVC alloc];
 	newMessageVC        = [BeintooNewMessageVC alloc];
 	balanceVC           = [BeintooBalanceVC alloc];
 	friendActionsVC     = [[BeintooFriendActionsVC alloc] initWithNibName:@"BeintooFriendActionsVC" bundle:[NSBundle mainBundle] andOptions:nil];
     alliancesActionVC   = [[BeintooAllianceActionsVC alloc] initWithNibName:@"BeintooAllianceActionsVC" bundle:[NSBundle mainBundle] andOptions:nil];
 	
-	listOfContests				= [[NSMutableArray alloc]init];
-	self.allScores				= [[NSDictionary alloc]init];
-	self.allContests			= [[NSMutableArray alloc]init];
-	self.allScoresForContest	= [[NSMutableArray alloc]init];
-	feedNameLists				= [[NSMutableArray alloc]init];
+	listOfContests				= [[NSMutableArray alloc] init];
+	self.allScores				= [[NSDictionary alloc] init];
+	self.allContests			= [[NSMutableArray alloc] init];
+	self.allScoresForContest	= [[NSMutableArray alloc] init];
+	feedNameLists				= [[NSMutableArray alloc] init];
 
-	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];
 
 	self.sectionScores	 = [[NSMutableArray alloc] init];
 	
 	_player				= [[BeintooPlayer alloc] init];
-	_user				= [[BeintooUser alloc]init];
-	
-	[logoutButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[logoutButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[logoutButton setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [logoutButton setLowColor:[UIColor colorWithRed:89.0/255 green:112.0/255 blue:142.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	[logoutButton setTitle:NSLocalizedStringFromTable(@"logoutBtn",@"BeintooLocalizable",@"") forState:UIControlStateNormal];
-	[logoutButton setButtonTextSize:15];
-
-	[detachButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[detachButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[detachButton setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [detachButton setLowColor:[UIColor colorWithRed:89.0/255 green:112.0/255 blue:142.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	[detachButton setTitle:NSLocalizedStringFromTable(@"detach",@"BeintooLocalizable",@"Detach from device") forState:UIControlStateNormal];
-	[detachButton setButtonTextSize:15];
-	
-	[newMessageButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[newMessageButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[newMessageButton setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [newMessageButton setLowColor:[UIColor colorWithRed:89.0/255 green:112.0/255 blue:142.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	[newMessageButton setTitle:NSLocalizedStringFromTable(@"sendMessage",@"BeintooLocalizable",@"Send message") forState:UIControlStateNormal];
-	[newMessageButton setButtonTextSize:15];
+	_user				= [[BeintooUser alloc] init];
+    _alliance           = [[BeintooAlliance alloc] init];
 	
 	// Toolbar
 	[toolbarView setGradientType:GRADIENT_TOOLBAR];
+    
+    settingsLabel.text = NSLocalizedStringFromTable(@"settingsLabel", @"BeintooLocalizable", nil);
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(removeBPickerViewFromSuperView:) 
+                                                 name:@"ChallengesBPickerView"
+                                               object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
     _player.delegate	= self;
 	_user.delegate		= self;
 
+    unreadMessagesLabel.frame = CGRectMake(messagesToolbarLabel.frame.origin.x + messagesToolbarLabel.frame.size.width - 15, unreadMessagesLabel.frame.origin.y, unreadMessagesLabel.frame.size.width, unreadMessagesLabel.frame.size.height);
+    
     profileView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
-    if (![BeintooDevice isiPad]) {
-        if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
-            [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
-            profileView.frame = CGRectMake(0, 0, 480,450);
-        }
-        else{
-            profileView.frame = CGRectMake(0, 0, 320,440);
-        }
-        profileView.clipsToBounds = YES;
-    }   
+    if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+                                    [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
+        profileView.frame = CGRectMake(0, 0, 480, 450);
+        self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, 480, 320 - 32);
+    }
+    else{
+        profileView.frame = CGRectMake(0, 0, 320, 440);
+        self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, 320, self.view.frame.size.height);
+    }
+    profileView.clipsToBounds = YES;  
     
     userImg.contentMode = UIViewContentModeScaleAspectFit;
     userImg.image       = nil;
@@ -143,18 +141,20 @@
     
     [noScoreLabel setHidden:YES];
     
-    
     if(![Beintoo isUserLogged]){
-        [detachButton setHidden:YES];
-        [logoutButton setHidden:YES];
-        [newMessageButton setHidden:YES];
+        
+        noScoreLabel.text	= NSLocalizedStringFromTable(@"noscoreLabel",@"BeintooLocalizable",@"You don't have any points on this app.");
+        
         [toolbarView setHidden:NO];
+        toolBar.hidden = YES;
         
         [nickname setHidden:YES];
         [level setHidden:YES];
         [beDollars setHidden:YES];
         [levelTitle setHidden:YES];
         [bedollarsTitle setHidden:YES];
+        [alliancekey setHidden:YES];
+        [allianceValue setHidden:YES];
                         
         if (signupViewForPlayers != nil) {
             signupViewForPlayers = nil;
@@ -170,39 +170,156 @@
 
     }
     else if (isAFriendProfile) {
-        [detachButton setHidden:YES];
-        [logoutButton setHidden:YES];
-        [newMessageButton setHidden:NO];
+        
+        noScoreLabel.text	= NSLocalizedStringFromTable(@"noscoreLabelOtherUser",@"BeintooLocalizable",@"You don't have any points on this app.");
+        
+        toolBar.hidden = NO;
         [toolbarView setHidden:YES];
-
+        
+        UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+        fixedSpace.width = 0;
+        
+        UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+        
+        /* 
+         ** can be unfriend or addAsAFrined
+         */
+        
+        UIBarButtonItem *friendTypeRequest;
+        
+        if ([Beintoo isAFriendOfMine:[self.startingOptions objectForKey:@"friendUserID"]]){
+            friendTypeRequest = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"cancel_friend.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(sendUnfriendRequest)];
+            
+        }
+        else {
+            
+            friendTypeRequest = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"add_friend.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(sendFriendRequest)];
+            
+        }
+        
+        UIBarButtonItem *addToAllianceButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"add_alliance.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(addToAlliance)];
+        
+        UIBarButtonItem *sendMessageButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"message.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(sendMessage)];
+        
+        UIBarButtonItem *sendChallenge = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"challenge.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(sendNewChallenge)];
+        
+        if ([BeintooAlliance userIsAllianceAdmin]){
+            if ([BeintooDevice isiPad] || [Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown){
+                friendTypeRequest.width = 70;
+                addToAllianceButtonItem.width = 70;
+                sendMessageButtonItem.width = 70;
+                sendChallenge.width = 70;
+            }
+            else { 
+                friendTypeRequest.width = 110;
+                addToAllianceButtonItem.width = 110;
+                sendMessageButtonItem.width = 110;
+                sendChallenge.width = 110;
+            }
+            
+            [toolBar setItems:[NSArray arrayWithObjects: fixedSpace, sendMessageButtonItem, flexibleSpace, sendChallenge, flexibleSpace, addToAllianceButtonItem, flexibleSpace, friendTypeRequest,  fixedSpace, nil]];
+        }
+        else {
+            if ([BeintooDevice isiPad] || [Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown){
+                friendTypeRequest.width = 95;
+                addToAllianceButtonItem.width = 95;
+                sendMessageButtonItem.width = 95;
+                sendChallenge.width = 95;
+            }
+            else { 
+                friendTypeRequest.width = 150;
+                addToAllianceButtonItem.width = 150;
+                sendMessageButtonItem.width = 150;
+                sendChallenge.width = 150;
+            }
+            
+            [toolBar setItems:[NSArray arrayWithObjects: fixedSpace, sendMessageButtonItem, flexibleSpace, sendChallenge, flexibleSpace, friendTypeRequest, fixedSpace, nil]];
+        }
+        
+        [addToAllianceButtonItem release];
+        [friendTypeRequest release];
+        [sendMessageButtonItem release];
+        [sendChallenge release];
+        [flexibleSpace release];
+        [fixedSpace release];
+        
+        [alliancekey setHidden:YES];
+        [allianceValue setHidden:YES];
         [nickname setHidden:NO];
         [level setHidden:NO];
         [beDollars setHidden:NO];
         [levelTitle setHidden:NO];
         [bedollarsTitle setHidden:NO];
         
-        scoresTable.center = CGPointMake(scoresTable.center.x, scoresTable.center.y-56);
-        [BLoadingView startActivity:self.view];
+        scoresTable.center = CGPointMake(scoresTable.center.x, scoresTable.center.y - 56);
+        [BLoadingView startActivity:profileView];
         [_player getPlayerByUserID:[self.startingOptions objectForKey:@"friendUserID"]];
     }
     else { // user profile
-        [detachButton setHidden:NO];
-        [logoutButton setHidden:NO];
-        [newMessageButton setHidden:YES];
+        
+        noScoreLabel.text	= NSLocalizedStringFromTable(@"noscoreLabel",@"BeintooLocalizable",@"You don't have any points on this app.");
+        
+        toolBar.hidden = NO;
         [toolbarView setHidden:NO];
-
+        
+        UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+        fixedSpace.width = 0;
+        
+        UIBarButtonItem *logoutButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"logoutBtn", @"BeintooLocalizable",@"") style:UIBarButtonItemStyleBordered target:self action:@selector(logout)];
+        
+        if ([BeintooDevice isiPad] || [Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown)
+            logoutButtonItem.width = 145;
+        else 
+            logoutButtonItem.width = 222.5;
+        
+        UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+        
+        UIBarButtonItem *removeButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"detach",@"BeintooLocalizable",@"Detach from device") style:UIBarButtonItemStyleBordered target:self action:@selector(detachUserFromDevice)];
+        
+        if ([BeintooDevice isiPad] || [Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown)
+            removeButtonItem.width = 145;
+        else 
+            removeButtonItem.width = 222.5;
+        
+        [toolBar setItems:[NSArray arrayWithObjects:fixedSpace, logoutButtonItem, flexibleSpace, removeButtonItem, fixedSpace, nil]];
+        
+        [logoutButtonItem release];
+        [removeButtonItem release];
+        [fixedSpace release];
+        [flexibleSpace release];
+        
+        [alliancekey setHidden:NO];
+        [allianceValue setHidden:NO];
         [nickname setHidden:NO];
         [level setHidden:NO];
         [beDollars setHidden:NO];
         [levelTitle setHidden:NO];
         [bedollarsTitle setHidden:NO];
         
-        [BLoadingView startActivity:self.view];
+        [BLoadingView startActivity:profileView];
         [_player getAllScores];
         if ([BeintooMessage unreadMessagesCount]>0) {
             [unreadMessagesLabel setHidden:NO];
         }
     }
+}
+
+- (IBAction)sendNewChallenge
+{
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                             [self.startingOptions objectForKey:@"friendUserID"], @"friendUserID",
+                             [self.startingOptions objectForKey:@"friendNickname"], @"friendNickname",
+                             nil];
+    
+    bPickerView = [[BPickerView alloc] initWithFrame:self.view.frame andOptions:options];
+    [self.view addSubview:bPickerView];
+    
+    [bPickerView startPickerFilling];
+}
+
+- (void)removeBPickerViewFromSuperView:(NSNotification *)note
+{
+    [bPickerView removeFromSuperview];
 }
 										
 #pragma mark -
@@ -252,13 +369,11 @@
 			[scores addObject:bestScore];
 			[scores addObject:lastScore];
 			
-            NSLog(@"scores %@", scores);
-            
-			[self.allScoresForContest addObject:scores];
+            [self.allScoresForContest addObject:scores];
 			[scores release];
 		}
 		@catch (NSException * e) {
-			NSLog(@"BeintooException: %@ \n for object: %@",e,[self.allContests objectAtIndex:i]);
+			BeintooLOG(@"BeintooException: %@ \n for object: %@",e,[self.allContests objectAtIndex:i]);
 		}
 	}
 	[scoresTable reloadData];
@@ -394,6 +509,27 @@
     } 
 }
 
+- (IBAction)openSettings{	
+    if([Beintoo isUserLogged]){
+        NSString *url;
+        if (![Beintoo isOnPrivateSandbox])
+            url = [NSString stringWithFormat:@"https://www.beintoo.com/nativeapp/settings.html?apikey=%@&guid=%@&extId=%@", [Beintoo getApiKey], [Beintoo getPlayerID], [Beintoo getUserID]];
+        else
+            url = [NSString stringWithFormat:@"http://sandbox.beintoo.com/nativeapp/settings.html?apikey=%@&guid=%@&extId=%@", [Beintoo getApiKey], [Beintoo getPlayerID], [Beintoo getUserID]];
+        
+        webview = [[BeintooWebViewVC alloc] initWithNibName:@"BeintooWebViewVC" bundle:[NSBundle mainBundle] urlToOpen:url];
+        
+        [self.navigationController pushViewController:webview animated:YES];
+        [webview release];
+    }else{
+        UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
+        featureView.tag = 3333;
+        [self.view addSubview:featureView];
+        [self.view bringSubviewToFront:featureView];
+        [featureView release];
+    } 
+}
+
 - (void)dismissFeatureSignupView{
     UIView *featureView = [self.view viewWithTag:3333];
     [featureView removeFromSuperview];
@@ -407,6 +543,87 @@
 	[newMessageVC initWithNibName:@"BeintooNewMessageVC" bundle:[NSBundle mainBundle] andOptions:newMsgOptions];
 	[self.navigationController pushViewController:newMessageVC animated:YES];
 }
+
+- (void)didGetUnfriendRequestResponse:(NSDictionary *)result
+{
+    UIAlertView *alert = [UIAlertView alloc];
+    NSString *message;
+    
+    if ([[result objectForKey:@"message"] isEqualToString:@"OK"]){
+        message = [NSString stringWithFormat:NSLocalizedStringFromTable(@"successfullyUnfrined", @"BeintooLocalizable", nil), [self.startingOptions objectForKey:@"friendNickname"]];
+        alert.tag = 1;
+    }
+    else 
+        message = NSLocalizedStringFromTable(@"errorMessage", @"BeintooLocalizable", nil); 
+    
+    [BLoadingView stopActivity];
+    [alert initWithTitle:nil message:message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    [alert show];
+    [alert release];
+}
+
+- (void)didInviteFriendsToAllianceWithResult:(NSDictionary *)result
+{
+    [BLoadingView stopActivity];
+    
+    NSString *alertMessage;
+    UIAlertView *av = [UIAlertView alloc];
+	if ([[result objectForKey:@"message"] isEqualToString:@"OK"]) {
+		alertMessage = NSLocalizedStringFromTable(@"requestSent", @"BeintooLocalizable",@"");
+        av.tag = 321;
+    }
+	else
+		alertMessage = NSLocalizedStringFromTable(@"requestNotSent", @"BeintooLocalizable",@"");
+	[av initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+	[av show];
+	[av release];
+    
+}
+
+- (void)didGetFriendRequestResponse:(NSDictionary *)result
+{
+    UIAlertView *alert = [UIAlertView alloc];
+    NSString *message;
+    
+    if ([[result objectForKey:@"message"] isEqualToString:@"OK"]){
+        message = [NSString stringWithFormat:NSLocalizedStringFromTable(@"friendshipRequestSent", @"BeintooLocalizable", nil), [self.startingOptions objectForKey:@"friendNickname"]];
+        alert.tag = 2;
+    }
+    else 
+        message = NSLocalizedStringFromTable(@"errorMessage", @"BeintooLocalizable", nil); 
+    
+    [BLoadingView stopActivity];
+    [alert initWithTitle:nil message:message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    [alert show];
+    [alert release];                                                                                                                                                                                
+}                                                                                                                                                                              
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (alertView.tag == 1){
+        [self.navigationController popViewControllerAnimated:YES];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadFriendsList" object:nil];
+    }
+}
+
+- (void)addToAlliance{
+    NSArray *friends = [NSArray arrayWithObject:[self.startingOptions objectForKey:@"friendUserID"]];
+    
+    [_alliance allianceAdminInviteFriends:friends onAlliance:[BeintooAlliance userAllianceID]];
+    [BLoadingView startActivity:profileView];
+}
+
+- (void)sendUnfriendRequest
+{
+    [BLoadingView startActivity:profileView];
+    [_user sendUnfriendshipRequestTo:[self.startingOptions objectForKey:@"friendUserID"]];
+}
+
+- (void)sendFriendRequest
+{
+    [BLoadingView startActivity:profileView];
+    [_user sendFriendshipRequestTo:[self.startingOptions objectForKey:@"friendUserID"]];
+} 
+
 
 #pragma mark -
 #pragma mark UIActionSheetDelegate
@@ -499,12 +716,12 @@
 	UILabel *contestNameLbl			= [[UILabel alloc]initWithFrame:CGRectMake(10,2,300,20)];
 	contestNameLbl.backgroundColor	= [UIColor clearColor];
 	contestNameLbl.textColor		= [UIColor blackColor];
-	contestNameLbl.font				= [UIFont systemFontOfSize:13];
+	contestNameLbl.font				= [UIFont boldSystemFontOfSize:14];
 	
 	UILabel *feedNameLbl		= [[UILabel alloc]initWithFrame:CGRectMake(10,2,300,50)];
 	feedNameLbl.backgroundColor = [UIColor clearColor];
 	feedNameLbl.textColor	    = [UIColor blackColor];
-	feedNameLbl.font		    = [UIFont systemFontOfSize:13];
+	feedNameLbl.font		    = [UIFont systemFontOfSize:12];
 	
 	
 	NSDictionary *contest = [[self.allScores objectForKey:[self.allContests objectAtIndex:section]] objectForKey:@"contest"];
@@ -592,6 +809,8 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    
     _player.delegate  = nil;
     _user.delegate    = nil;
 
@@ -603,6 +822,8 @@
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    
 	if (isAFriendProfile) {
 		scoresTable.center = CGPointMake(scoresTable.center.x, scoresTable.center.y+56);
 	}
@@ -617,6 +838,27 @@
     }
 }
 
+- (UIView *)closeButton{
+    UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
+    
+    UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
+    _imageView.image = [UIImage imageNamed:@"bar_close_button.png"];
+    _imageView.contentMode = UIViewContentModeScaleAspectFit;
+	
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	closeBtn.frame = CGRectMake(6, 6.5, 35, 35);
+    [closeBtn addSubview:_imageView];
+	[closeBtn addTarget:self action:@selector(closeBeintoo) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_vi addSubview:closeBtn];
+	
+    return _vi;
+}
+
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
+}
 
 - (void)dealloc {
 	[listOfContests release];
@@ -632,6 +874,7 @@
 	[friendActionsVC release];
     [signupViewForPlayers release];
     [loginVC release];
+    [_alliance release];
     [super dealloc];
 }
 

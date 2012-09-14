@@ -24,24 +24,47 @@
 @class BScrollView;
 @class BeintooPlayer;
 
-@interface BeintooSigninAlreadyVC : UIViewController <UITextFieldDelegate,BeintooPlayerDelegate,BeintooUserDelegate,UIAlertViewDelegate> {
+@interface BeintooSigninAlreadyVC : UIViewController <UITextFieldDelegate, BeintooPlayerDelegate, BeintooUserDelegate, UIAlertViewDelegate> {
 
-	IBOutlet BScrollView *scrollView;
-	IBOutlet BView		 *beintooView;
-	IBOutlet UITextField *pTF;
-	IBOutlet UITextField *eTF;
-	IBOutlet UILabel	 *title1;
-	IBOutlet UILabel	 *title2;
-	IBOutlet BButton *loginButton;
+	IBOutlet BScrollView    *scrollView;
+	IBOutlet BView          *beintooView;
+	IBOutlet UITextField    *pTF;
+	IBOutlet UITextField    *eTF;
+	IBOutlet UILabel        *title1;
+	IBOutlet UILabel        *title2;
+	IBOutlet BButton        *loginButton;
+    IBOutlet UIView         *mainView;
+    IBOutlet UIView         *portraitView;
+    IBOutlet UIView         *landscapeView;
+    IBOutlet UITextField    *pTFLand;
+	IBOutlet UITextField    *eTFLand;
+    IBOutlet UILabel        *title1Land;
+    IBOutlet BButton        *loginButtonLand;
+    IBOutlet UILabel        *mainLabel;
+    IBOutlet UILabel        *mainLabelLand;
+    IBOutlet UIButton       *forgotPassword;
+    IBOutlet UIButton       *forgotPasswordLand;
+    
+    IBOutlet BButton        *forgotPasswordButton;
+    IBOutlet UILabel        *forgotPasswordLabel;
+    IBOutlet UITextField    *forgotPasswordTextField;
+    IBOutlet UIView         *forgotPasswordView;
 	
-	BeintooUser		*user;
-	BeintooPlayer	*_player;
-	BeintooSignupVC *registrationVC;
-	BeintooSignupVC *registrationFBVC;
-	NSString		*newUSerURL;
+    UIView                  *forgotPasswordBase;
+    
+	BeintooUser             *user;
+	BeintooPlayer           *_player;
+	BeintooSignupVC         *registrationVC;
+	BeintooSignupVC         *registrationFBVC;
+	
+    NSString                *newUSerURL;
+    BOOL                    isAccessoryInputViewNotSupported;
+    UIToolbar               *keyboardToolbar;
+    UIToolbar               *keyboardToolbarForgot;
 }
 
 @property (nonatomic, retain) NSString  *caller;
+@property (nonatomic, assign) BOOL      isFromDirectLaunch;
 
 - (IBAction)login;
 

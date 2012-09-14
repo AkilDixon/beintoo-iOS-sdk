@@ -60,12 +60,14 @@
     viewAllianceVC          = [[BeintooViewAllianceVC alloc] initWithNibName:@"BeintooViewAllianceVC" bundle:[NSBundle mainBundle] andOptions:nil];
     tipsAndForumVC          = [BeintooBrowserVC alloc];
 	
-    noNotificationLabel                 = [[UILabel alloc] initWithFrame:CGRectMake(20, 60, 280, 30)];
+    noNotificationLabel                 = [[UILabel alloc] initWithFrame:CGRectMake(20, 60, self.view.frame.size.width - 40, 60)];
     noNotificationLabel.backgroundColor = [UIColor clearColor];
-	noNotificationLabel.text            = [NSString stringWithFormat:NSLocalizedStringFromTable(@"messagenotificationp",@"BeintooLocalizable",@""),0];
+	noNotificationLabel.text            = [NSString stringWithFormat:NSLocalizedStringFromTable(@"noNotifications", @"BeintooLocalizable", @"")];
     noNotificationLabel.textAlignment   = UITextAlignmentCenter;
     noNotificationLabel.autoresizingMask= UIViewAutoresizingFlexibleWidth;
-    noNotificationLabel.font            = [UIFont boldSystemFontOfSize:15];
+    noNotificationLabel.font            = [UIFont boldSystemFontOfSize:14];
+    noNotificationLabel.minimumFontSize = 8.0;
+    noNotificationLabel.numberOfLines   = 0;
     noNotificationLabel.textColor       = [UIColor colorWithWhite:0 alpha:0.8];
         
     [self.view addSubview:notificationTable];
@@ -77,10 +79,11 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad])
         [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
     
-
     [BLoadingView startActivity:self.view];
     [_notification getNotificationListWithStart:0 andRows:50];	
     [noNotificationLabel setHidden:YES];
@@ -98,33 +101,48 @@
 	}
     
     if ([result isKindOfClass:[NSArray class]]) {
-		for (int i=0; i<[result count]; i++) {
+		for (int i = 0; i < [result count]; i++) {
+            
+            NSMutableDictionary *notificationEntry = [[NSMutableDictionary alloc] init];
+            BImageDownload *download = [[BImageDownload alloc] init];
+            
 			@try {
-				NSMutableDictionary *notificationEntry = [[NSMutableDictionary alloc]init];
-				NSString *creationDate	 = [[result objectAtIndex:i] objectForKey:@"creationdate"];
-				NSString *image_url	 = [[result objectAtIndex:i] objectForKey:@"image_url"];
-				NSString *message = [[result objectAtIndex:i] objectForKey:@"localizedMessage"];
-                NSString *status = [[result objectAtIndex:i] objectForKey:@"status"];
-                NSString *type = [[result objectAtIndex:i] objectForKey:@"type"];
-                NSString *messageId = [[result objectAtIndex:i] objectForKey:@"id"];
-				
-				BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
+                
 				download.delegate = self;
-				download.urlString = [[result objectAtIndex:i] objectForKey:@"image_url"];
+                if ([[result objectAtIndex:i] objectForKey:@"image_url"])
+                    download.urlString = [[result objectAtIndex:i] objectForKey:@"image_url"];
 				
-				[notificationEntry setObject:creationDate forKey:@"creationDate"];
-				[notificationEntry setObject:image_url forKey:@"image_url"];
-				[notificationEntry setObject:message forKey:@"localizedMessage"];
-                [notificationEntry setObject:status forKey:@"status"];
-                [notificationEntry setObject:type forKey:@"type"];
-                [notificationEntry setObject:messageId forKey:@"messageId"];
-				[notificationArrayList addObject:notificationEntry];
+                if ([[result objectAtIndex:i] objectForKey:@"creationdate"])
+                    [notificationEntry setObject:[[result objectAtIndex:i] objectForKey:@"creationdate"] forKey:@"creationDate"];
+                
+                if ([[result objectAtIndex:i] objectForKey:@"image_url"])
+                    [notificationEntry setObject:[[result objectAtIndex:i] objectForKey:@"image_url"] forKey:@"image_url"];
+				
+                if ([[result objectAtIndex:i] objectForKey:@"localizedMessage"])
+                    [notificationEntry setObject:[[result objectAtIndex:i] objectForKey:@"localizedMessage"] forKey:@"localizedMessage"];
+                
+                if ([[result objectAtIndex:i] objectForKey:@"status"])
+                    [notificationEntry setObject:[[result objectAtIndex:i] objectForKey:@"status"] forKey:@"status"];
+                
+                if ([[result objectAtIndex:i] objectForKey:@"type"])
+                    [notificationEntry setObject:[[result objectAtIndex:i] objectForKey:@"type"] forKey:@"type"];
+                
+                if ([[result objectAtIndex:i] objectForKey:@"id"])
+                    [notificationEntry setObject:[[result objectAtIndex:i] objectForKey:@"id"] forKey:@"id"];
+                
+                if ([[result objectAtIndex:i] objectForKey:@"url"])
+                    [notificationEntry setObject:[[result objectAtIndex:i] objectForKey:@"url"] forKey:@"url"];
+				
+                [notificationArrayList addObject:notificationEntry];
 				[notificationImages addObject:download];
-				[notificationEntry release];
-			}
+                
+            }
 			@catch (NSException *e) {
-				NSLog(@"BeintooException - FriendList: %@ \n for object: %@",e,[result objectAtIndex:i]);
+				BeintooLOG(@"Beintoo Exception in Notifications: %@ \n for object: %@", e, [result objectAtIndex:i]);
 			}
+            
+            [download release];
+            [notificationEntry release];
 		}
 	}
     
@@ -134,7 +152,7 @@
     if ([self.notificationArrayList count] > 0) {
         NSDictionary *lastNotification = [self.notificationArrayList objectAtIndex:0];
         if ([[lastNotification objectForKey:@"status"] isEqualToString:@"UNREAD"]) {
-            NSString *notificationID = [lastNotification objectForKey:@"messageId"];
+            NSString *notificationID = [lastNotification objectForKey:@"id"];
             [_notification setAllNotificationReadUpToNotification:notificationID];
         }
     }
@@ -150,15 +168,15 @@
     return 1;
 }
 
--(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
 
     NSString *textToMeasure = [[self.notificationArrayList objectAtIndex:indexPath.row] objectForKey:@"localizedMessage"];
     
     CGSize maximumLabelSize;
-    if ([Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown)
-        maximumLabelSize = CGSizeMake(200, 9999);
+    if ([BeintooDevice isiPad] || [Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown)
+        maximumLabelSize = CGSizeMake(220, 9999);
     else 
-        maximumLabelSize = CGSizeMake(400, 9999);
+        maximumLabelSize = CGSizeMake(220, 9999);
     
         
     CGSize expectedLabelSize = [textToMeasure sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
@@ -173,6 +191,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	return [notificationArrayList count];
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     static NSString *CellIdentifier = @"Cell";
@@ -188,9 +207,9 @@
     
     CGSize maximumLabelSize;
     if ([Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown)
-        maximumLabelSize = CGSizeMake(200,9999);
+        maximumLabelSize = CGSizeMake(220, 9999);
     else 
-        maximumLabelSize = CGSizeMake(400,9999);
+        maximumLabelSize = CGSizeMake(220, 9999);
     
     CGSize expectedLabelSize    = [textToMeasure sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
     
@@ -203,14 +222,45 @@
     [cell addSubview:imageView];
     [imageView release];
     
-    UILabel *messageLabel           = [[UILabel alloc] initWithFrame:CGRectMake(70, 10, 200, expectedLabelSize.height)];
+    UILabel *messageLabel           = [[UILabel alloc] initWithFrame:CGRectMake(70, 10, expectedLabelSize.width, expectedLabelSize.height)];
 	messageLabel.text               = [[self.notificationArrayList objectAtIndex:indexPath.row] objectForKey:@"localizedMessage"];
 	messageLabel.font               = [UIFont systemFontOfSize:13];
     messageLabel.textColor          = [UIColor colorWithWhite:0 alpha:1.0];
+    
     if ([[[self.notificationArrayList objectAtIndex:indexPath.row] objectForKey:@"status"] isEqualToString:@"UNREAD"]) {
         messageLabel.font           = [UIFont boldSystemFontOfSize:12];
         messageLabel.textColor      = [UIColor colorWithWhite:0 alpha:0.9];
+        
+        UIView *unreadView = [[BGradientView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 27.5, (expectedLabelSize.height + 42 - 10)/2, 10, 10)];
+        
+        CAGradientLayer * gradient = [CAGradientLayer layer];
+        [gradient setFrame:[unreadView bounds]];
+        UIColor *lightBlue = [UIColor colorWithRed:134.0/255 green:177.0/255 blue:246.0/255 alpha:1.0];
+        UIColor *blue = [UIColor colorWithRed:25.0/255 green:63.0/255 blue:163.0/255 alpha:1.0];
+        
+        [gradient setColors:[NSArray arrayWithObjects:(id)[lightBlue CGColor], (id)[blue CGColor], nil]];
+        
+        CALayer * roundRect = [CALayer layer];
+        [roundRect setFrame:[unreadView bounds]];
+        [roundRect setCornerRadius:5.0f];
+        [roundRect setMasksToBounds:YES];
+        [roundRect addSublayer:gradient];
+        
+        [[unreadView layer] insertSublayer:roundRect atIndex:0];
+        
+        [[unreadView layer] setShadowColor:[[UIColor blackColor] CGColor]];
+        [[unreadView layer] setShadowOffset:CGSizeMake(0, 6)];
+        [[unreadView layer] setShadowOpacity:1.0];
+        [[unreadView layer] setShadowRadius:10.0];
+        [[unreadView layer] setMasksToBounds:YES];
+        
+        [unreadView setClipsToBounds:YES];
+        [[unreadView layer] setCornerRadius:5.0f];
+        
+        [cell addSubview:unreadView];
+        [unreadView release];
     }
+    
     messageLabel.numberOfLines      = 0;
     messageLabel.autoresizingMask   = UIViewAutoresizingFlexibleWidth;
     messageLabel.backgroundColor    = [UIColor clearColor];
@@ -313,17 +363,16 @@
     [path release];
     download.delegate = nil;
 }
+
 - (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
-    NSLog(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
+    BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
 #pragma mark - Close Notification
--(void)closeBeintoo{
-	if([BeintooDevice isiPad]){
-		//[Beintoo dismissIpadLogin];
-	}else {
-		[self dismissModalViewControllerAnimated:YES];
-	}
+
+- (void)closeBeintoo{
+	BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
 }
 
 - (UIView *)closeButton{
@@ -347,23 +396,13 @@
 	return (interfaceOrientation == [Beintoo appOrientation]);
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
     @try {
 		[BLoadingView stopActivity];
 	}
 	@catch (NSException * e) {
 	}
-}
-
-- (void)viewDidDisappear:(BOOL)animated{
 }
 
 - (void)dealloc {
@@ -381,6 +420,5 @@
     [noNotificationLabel release];
 	[super dealloc];
 }
-
 
 @end

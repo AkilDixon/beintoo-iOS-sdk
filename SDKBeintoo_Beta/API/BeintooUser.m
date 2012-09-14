@@ -42,7 +42,7 @@
 
 + (void)setUserDelegate:(id)_caller{
 	BeintooUser *userService = [Beintoo beintooUserService];
-	userService.callingDelegate = _caller;
+	userService.delegate = _caller;
 }
 
 - (void)showGiveBedollarsAlert{
@@ -89,6 +89,12 @@
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:USER_SHOWCHALLENGES_CALLER_ID];
 }
 
+- (void)challengeRequestfrom:(NSString *)userIDFrom	to:(NSString *)userIDTo withAction:(NSString *)action forContest:(NSString *)contest{
+	NSString *res		 = [NSString stringWithFormat:@"%@challenge/%@/%@/%@",rest_resource,userIDFrom,action,userIDTo];
+	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",contest,@"codeID", nil];
+	[parser parsePageAtUrl:res withHeaders:params fromCaller:USER_CHALLENGEREQ_CALLER_ID];
+}
+
 - (void)challengeRequestfrom:(NSString *)userIDFrom	to:(NSString *)userIDTo withAction:(NSString *)action forContest:(NSString *)contest withBedollarsToBet:(NSString *)_bedollars andScoreToReach:(NSString *)_scoreToReach forKindOfChallenge:(NSString *)_challengeKind andActor:(NSString *)actor{
 	
     NSString *res		 = [NSString stringWithFormat:@"%@challenge/%@/%@/%@",rest_resource,userIDFrom,action,userIDTo];
@@ -123,8 +129,11 @@
 }
 
 - (void)removeUDIDConnectionFromUserID:(NSString *)userID{
-	NSString *res		 = [NSString stringWithFormat:@"%@removeUDID/%@/%@/",rest_resource,[BeintooDevice getUDID],userID];
-	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
+	NSString *res		 = [NSString stringWithFormat:@"%@removeUDID/%@/%@/", rest_resource, [BeintooDevice getUDID], userID];
+	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            [Beintoo getApiKey], @"apikey", 
+                            [BeintooOpenUDID value], @"openudid",
+                            nil];
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:USER_REMOVEUDID_CALLER_ID];		
 }
 
@@ -159,6 +168,16 @@
 	NSString *res = [NSString stringWithFormat:@"%@friendshiprequest/%@",rest_resource,myUserExt];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",nil];
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:USER_GETFRIENDSHIP_CALLER_ID];				
+}
+
+- (void)sendUnfriendshipRequestTo:(NSString *)toUserExt
+{
+	NSString *res = [NSString stringWithFormat:@"%@unfriend/%@", rest_resource, toUserExt];
+	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            [Beintoo getApiKey], @"apikey",
+                            [Beintoo getUserID], @"userExt",
+                            nil];
+	[parser parsePageAtUrl:res withHeaders:params fromCaller:USER_SEND_UNFRIENDSHIP_CALLER_ID];	
 }
 
 - (void)replyToFriendshipRequestWithAnswer:(NSInteger)answer toUser:(NSString *)toUserExt{
@@ -215,8 +234,13 @@
 	else
 		httpBody = [httpBody stringByAppendingString:@"&sendGreetingsEmail=false"];
 	
-	NSString *res			 = [NSString stringWithFormat:@"%@set",rest_resource];
-	NSDictionary *params	 = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",_guid,@"guid", nil];	
+	NSString *res			 = [NSString stringWithFormat:@"%@set", rest_resource];
+	NSDictionary *params	 = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [Beintoo getApiKey], @"apikey",
+                                _guid, @"guid",
+                                [BeintooOpenUDID value], @"openudid",
+                                nil];	
+    
 	[parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_REGISTER_CALLER_ID];
 }
 
@@ -292,7 +316,12 @@
 		httpBody = [httpBody stringByAppendingString:@"&sendGreetingsEmail=false"];
 	
 	NSString *res			 = [NSString stringWithFormat:@"%@set", userService.restResource];
-	NSDictionary *params	 = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",_guid,@"guid", nil];	
+	NSDictionary *params	 = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [Beintoo getApiKey], @"apikey",
+                                _guid, @"guid", 
+                                [BeintooOpenUDID value], @"openudid",
+                                nil];
+	
 	[parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_BACKGROUND_REGISTER_CALLER_ID];
     
 }
@@ -307,7 +336,12 @@
 	}
 	
 	NSString *res			 = [NSString stringWithFormat:@"%@update",rest_resource];
-	NSDictionary *params	 = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",_userExt,@"userExt", nil];	
+	NSDictionary *params	 = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [Beintoo getApiKey], @"apikey",
+                                _userExt, @"userExt", 
+                                [BeintooOpenUDID value], @"openudid",
+                                nil];	
+    
 	[parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_NICKUPDATE_CALLER_ID];
 }
 
@@ -411,6 +445,18 @@
     [parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_GIVE_BEDOLLARS_CALLER_ID];
 }
 
+- (void)forgotPassword:(NSString *)email{
+    
+    NSString *res		 = [NSString stringWithFormat:@"%@forgotpassword", rest_resource];
+	NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                   [Beintoo getApiKey], @"apikey",
+                                   nil];
+    
+    NSString *httpBody = [NSString stringWithFormat:@"email=%@", email];
+    
+    [parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:USER_FORGOT_PASSWORD_CALLER_ID];
+}
+
 #pragma mark -
 #pragma mark parser delegate response
 
@@ -496,6 +542,14 @@
 			}
 		}
 			break;
+            
+        case USER_SEND_UNFRIENDSHIP_CALLER_ID:{
+			BeintooLOG(@"Send Unfriend Request: %@",result);
+			if ([[self delegate]respondsToSelector:@selector(didGetUnfriendRequestResponse:)]) {
+				[[self delegate] didGetUnfriendRequestResponse:result];
+			}
+		}
+			break;
 			
 		case USER_GETFRIENDSHIP_CALLER_ID:{
 			//NSLog(@"get friend request result: %@",result);
@@ -561,6 +615,17 @@
                     [self showGiveBedollarsAlert];
                 }
             }
+		}
+			break;
+            
+        case USER_FORGOT_PASSWORD_CALLER_ID:{
+            
+            if ([result objectForKey:@"message"]) {
+				NSLog(@"Beintoo: error in forgot password call: %@", [result objectForKey:@"message"]);
+            }
+            
+            if ([[self delegate]respondsToSelector:@selector(didCompleteForgotPassword:)]) 
+                [[self delegate] didCompleteForgotPassword:result];
 		}
 			break;
 			
@@ -639,8 +704,11 @@
 }
 
 - (void)dealloc {
+    parser.delegate = nil;
+    
 	[parser release];
 	[rest_resource release];
+    [app_rest_resource release];
     [super dealloc];
 }
 

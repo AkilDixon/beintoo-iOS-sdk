@@ -19,14 +19,16 @@
 
 @implementation BeintooVC
 
-@synthesize beintooPlayer,loginNavController,retrievedPlayersArray,loginVC,featuresArray,isNotificationCenterOpen;
+@synthesize beintooPlayer, loginNavController, retrievedPlayersArray, loginVC, featuresArray, isNotificationCenterOpen, isFromSignup, forceSignup, _user;
 
 #ifdef UI_USER_INTERFACE_IDIOM
 @synthesize popOverController,loginPopoverController;
 #endif
 
--(id)init {
-	if (self != nil) {		
+- (id)init {
+	if (self != nil) {	
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(signupClosed) name:@"SignupClosed" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadBeintoo) name:@"ReloadDashboard" object:nil];
 	}
 	return self;
 }
@@ -88,14 +90,14 @@
 			
 		}
 		@catch (NSException * e){ 
-            NSLog(@"Beintoo Error: Check your Beintoo feature settings, %@",e);
+            BeintooLOG(@"Beintoo Error: Check your Beintoo feature settings, %@",e);
         }
 		[self.featuresArray addObject:panelElement];
 		[panelElement release];
 	}
 }
 
-+ (UIView *)closeButton{
+- (UIView *)closeButton{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -112,17 +114,9 @@
     return _vi;
 }
 
-+ (void)closeBeintoo{
-    if ([Beintoo getBeintooPanelRootViewController].isNotificationCenterOpen) {
-        if ([BeintooDevice isiPad]) {
-            // do something
-        }else{
-            [[Beintoo getBeintooPanelRootViewController] dismissModalViewControllerAnimated:YES];
-        }
-    }
-    else{
-        [Beintoo dismissBeintoo];
-    }
+- (void)closeBeintoo{
+    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+    [Beintoo dismissBeintoo:navController.type];
 }
 
 #pragma mark -
@@ -130,6 +124,7 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
+    
     
     // ----------- User service initialization ---------------
 	_user           = [[BeintooUser alloc]init];
@@ -142,10 +137,15 @@
     [notificationView addGestureRecognizer:singleTapGestureRecognizer];
     [singleTapGestureRecognizer release];
     
+    UITapGestureRecognizer *singleTapGestureRecognizerLand = [[UITapGestureRecognizer alloc]
+                                                              initWithTarget:self action:@selector(handleNotificationSingleTap:)];
+    singleTapGestureRecognizerLand.numberOfTapsRequired = 1;
+    [notificationViewLandscape addGestureRecognizer:singleTapGestureRecognizerLand];
+    [singleTapGestureRecognizerLand release];
+    
 	// ----------- ViewControllers initialization ------------
 	self.loginVC            = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
 	beintooProfileVC        = [[BeintooProfileVC alloc]initWithNibName:@"BeintooProfileVC" bundle:[NSBundle mainBundle]];
-    marketplaceVC           = [[BeintooMarketplaceVC alloc] initWithNibName:@"BeintooMarketplaceVC" bundle:[NSBundle mainBundle]];
     beintooMarketplaceWebViewVC = [[BeintooMarketplaceWebViewVC alloc] initWithNibName:@"BeintooMarketplaceWebViewVC" bundle:[NSBundle mainBundle]]; 
     
 	beintooLeaderboardVC    = [[BeintooLeaderboardVC alloc]initWithNibName:@"BeintooLeaderboardVC" bundle:[NSBundle mainBundle]];
@@ -165,7 +165,17 @@
 	self.loginNavController = [[UINavigationController alloc] initWithRootViewController:self.loginVC];
 	[[self.loginNavController navigationBar] setTintColor:barColor];
     
-	//self.title = @"Beintoo";
+	UIImageView *logo;
+	if( !([BeintooDevice isiPad]) && 
+       ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight) ){
+		logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bar_logo_34.png"]];
+    }
+	else { 
+		logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bar_logo.png"]];
+	}
+    
+	self.navigationItem.titleView = logo;
+	[logo release];
 		
 	[homeView setTopHeight:33.0f];
 	[homeView setBodyHeight:444.0f];	
@@ -184,189 +194,72 @@
     notificationNumbersView.layer.masksToBounds = YES;
     notificationNumbersView.layer.borderColor = [[UIColor colorWithWhite:0 alpha:0.3] CGColor];
     notificationNumbersView.layer.borderWidth = 0.5f;
+    
+    [notificationViewLandscape setGradientType:GRADIENT_FOOTER_LIGHT];
+    
+    [notificationLogoViewLandscape setGradientType:GRADIENT_NOTIF_CELL];
+    notificationLogoViewLandscape.layer.cornerRadius = 12.5f;
+    notificationLogoViewLandscape.layer.masksToBounds = YES;
+    notificationLogoViewLandscape.layer.borderColor = [[UIColor colorWithWhite:0 alpha:0.3] CGColor];
+    notificationLogoViewLandscape.layer.borderWidth = 0.5f;
+    
+    [notificationNumbersViewLandscape setGradientType:GRADIENT_NOTIF_CELL];
+    notificationNumbersViewLandscape.layer.cornerRadius = 8.5f;
+    notificationNumbersViewLandscape.layer.masksToBounds = YES;
+    notificationNumbersViewLandscape.layer.borderColor = [[UIColor colorWithWhite:0 alpha:0.3] CGColor];
+    notificationNumbersViewLandscape.layer.borderWidth = 0.5f;
 
+    fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
+    fixedSpace.width = -11;
+    
+    notificationButtonItem = [UIBarButtonItem alloc];
+    if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIDeviceOrientationLandscapeLeft || [Beintoo appOrientation] == UIDeviceOrientationLandscapeRight))
+        notificationButtonItem = [notificationButtonItem initWithCustomView:notificationViewLandscape];
+    else 
+        notificationButtonItem = [notificationButtonItem initWithCustomView:notificationView];
+    
+    [toolBar setItems:[NSArray arrayWithObjects: fixedSpace, notificationButtonItem, fixedSpace, nil]];
+    
 	homeTable.rowHeight = 70;
 	homeTable.delegate = self;
 	homeTable.dataSource = self;
         
-    // TRY BEINTOO
-    // ---------------------------------------------- Gamefy Portrait
-    [tryBeintooPortrait setTopHeight:94.0f];
-    [tryBeintooPortrait setBodyHeight:360.0f];
-    tryBeintooPortrait.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    titleLabel1.text = NSLocalizedStringFromTable(@"tryBeintooTitleGamefy",@"BeintooLocalizable",@"Beintoo transforms");
-    descLabel1.text = NSLocalizedStringFromTable(@"tryBeintooDescGamefy",@"BeintooLocalizable",@"");
-    
-    [button1 setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[button1 setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[button1 setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [button1 setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	[button1 setTitle:NSLocalizedStringFromTable(@"tryBeintooAcceptButton",@"BeintooLocalizable",@"Try beintoo") forState:UIControlStateNormal];
-	[button1 setButtonTextSize:20];
-	
-	[button2 setHighColor:[UIColor colorWithRed:176.0/255 green:188.0/255 blue:204.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[button2 setMediumHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:190.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[button2 setMediumLowColor:[UIColor colorWithRed:152.0/255 green:164.0/255 blue:186.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [button2 setLowColor:[UIColor colorWithRed:119.0/255 green:142.0/255 blue:172.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	[button2 setTitle:NSLocalizedStringFromTable(@"tryBeintooRefuseButton",@"BeintooLocalizable",@"no Thanks") forState:UIControlStateNormal];
-	[button2 setButtonTextSize:15];
-
-    // --------------------------------------------------------------- Gamefy Landscape
-    
-    [tryBeintooLandscape setTopHeight:84.0f];
-    [tryBeintooLandscape setBodyHeight:342.0f];
-    tryBeintooLandscape.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
-    tryBeintooLandscape.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    titleLabel1Landscape.text = NSLocalizedStringFromTable(@"tryBeintooTitleGamefy",@"BeintooLocalizable", nil);
-    descLabel1Landscape.text = NSLocalizedStringFromTable(@"tryBeintooDescGamefy",@"BeintooLocalizable", nil);
-
-    [button1Landscape setHighColor:[UIColor colorWithRed:126.0/255 green:138.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[button1Landscape setMediumHighColor:[UIColor colorWithRed:96.0/255 green:115.0/255 blue:139.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[button1Landscape setMediumLowColor:[UIColor colorWithRed:88.0/255 green:108.0/255 blue:134.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [button1Landscape setLowColor:[UIColor colorWithRed:89.0/255 green:92.0/255 blue:122.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	[button1Landscape setTitle:NSLocalizedStringFromTable(@"tryBeintooAcceptButton",@"BeintooLocalizable",@"Try beintoo") forState:UIControlStateNormal];
-	[button1Landscape setButtonTextSize:20];
-	
-	[button2Landscape setHighColor:[UIColor colorWithRed:176.0/255 green:188.0/255 blue:204.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[button2Landscape setMediumHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:190.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[button2Landscape setMediumLowColor:[UIColor colorWithRed:152.0/255 green:164.0/255 blue:186.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [button2Landscape setLowColor:[UIColor colorWithRed:119.0/255 green:142.0/255 blue:172.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	/*[button2Landscape setTitle:NSLocalizedStringFromTable(@"tryBeintooRefuseButton",@"BeintooLocalizable",@"no Thanks") forState:UIControlStateNormal];
-    [button2Landscape setNumberOfLines:0];
-	[button2Landscape setButtonTextSize:13];*/
-    
-    UILabel *textLabel = [[UILabel alloc] initWithFrame:CGRectMake(2.5, 0, button2Landscape.frame.size.width - 5, 38)];
-    textLabel.numberOfLines = 2;
-    textLabel.backgroundColor = [UIColor clearColor];
-    textLabel.textAlignment = UITextAlignmentCenter;
-    textLabel.textColor = [UIColor colorWithWhite:1.0 alpha:1.0];
-    textLabel.text = NSLocalizedStringFromTable(@"tryBeintooRefuseButton",@"BeintooLocalizable",@"no Thanks");
-    textLabel.font = [UIFont systemFontOfSize:13];
-    [textLabel setOpaque:YES];
-    textLabel.shadowColor = [UIColor blackColor];
-    textLabel.shadowOffset = CGSizeMake(0, -1);
-    [button2Landscape addSubview:textLabel];
-    [textLabel release];
-    
-    // ---------------------------------------------- Monetize Portrait
-    [tryBeintooPortraitMonetize setTopHeight:94.0f];
-    [tryBeintooPortraitMonetize setBodyHeight:360.0f];
-    tryBeintooPortraitMonetize.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    tryBeintooHeaderPortraitMonetize.text = NSLocalizedStringFromTable(@"tryBeintooHeader", @"BeintooLocalizable", nil);
-    tryBeintooHeaderPortraitMonetize.adjustsFontSizeToFitWidth = YES;
-    titleLabel1Monetize.text = NSLocalizedStringFromTable(@"tryBeintooTitle",@"BeintooLocalizable",@"Beintoo transforms");
-    titleLabel1Monetize.adjustsFontSizeToFitWidth = YES;
-    descLabel1Monetize.text = NSLocalizedStringFromTable(@"tryBeintooDescCurrency",@"BeintooLocalizable",@"Beintoo transforms");
-    descLabel1Monetize.adjustsFontSizeToFitWidth = YES;
-    
-    [button1Monetize setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[button1Monetize setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[button1Monetize setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [button1Monetize setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	[button1Monetize setTitle:NSLocalizedStringFromTable(@"tryBeintooAcceptButton",@"BeintooLocalizable",@"Try beintoo") forState:UIControlStateNormal];
-	[button1Monetize setButtonTextSize:20];
-	
-	[button2Monetize setHighColor:[UIColor colorWithRed:176.0/255 green:188.0/255 blue:204.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[button2Monetize setMediumHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:190.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[button2Monetize setMediumLowColor:[UIColor colorWithRed:152.0/255 green:164.0/255 blue:186.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [button2Monetize setLowColor:[UIColor colorWithRed:119.0/255 green:142.0/255 blue:172.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	[button2Monetize setTitle:NSLocalizedStringFromTable(@"tryBeintooRefuseButton",@"BeintooLocalizable",@"no Thanks") forState:UIControlStateNormal];
-	[button2Monetize setButtonTextSize:15];
-    
-    
-    // --------------------------------------------------------------- Monetize Landscape
-    
-    [tryBeintooLandscapeMonetize setTopHeight:84.0f];
-    [tryBeintooLandscapeMonetize setBodyHeight:342.0f];
-    tryBeintooLandscapeMonetize.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    tryBeintooLandscapeMonetize.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
-    tryBeintooHeaderLandscapeMonetize.text = NSLocalizedStringFromTable(@"tryBeintooHeader", @"BeintooLocalizable", nil);
-    tryBeintooHeaderLandscapeMonetize.adjustsFontSizeToFitWidth = YES;
-    titleLabel1LandscapeMonetize.text = NSLocalizedStringFromTable(@"tryBeintooTitle",@"BeintooLocalizable",@"Beintoo transforms");
-    titleLabel1LandscapeMonetize.adjustsFontSizeToFitWidth = YES;
-    descLabel1LandscapeMonetize.text = NSLocalizedStringFromTable(@"tryBeintooDescCurrency",@"BeintooLocalizable",@"Beintoo transforms");
-    descLabel1LandscapeMonetize.adjustsFontSizeToFitWidth = YES;
-    
-    [button1LandscapeMonetize setHighColor:[UIColor colorWithRed:126.0/255 green:138.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[button1LandscapeMonetize setMediumHighColor:[UIColor colorWithRed:96.0/255 green:115.0/255 blue:139.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[button1LandscapeMonetize setMediumLowColor:[UIColor colorWithRed:88.0/255 green:108.0/255 blue:134.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [button1LandscapeMonetize setLowColor:[UIColor colorWithRed:89.0/255 green:92.0/255 blue:122.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	[button1LandscapeMonetize setTitle:NSLocalizedStringFromTable(@"tryBeintooAcceptButton",@"BeintooLocalizable",@"Try beintoo") forState:UIControlStateNormal];
-	[button1LandscapeMonetize setButtonTextSize:20];
-	
-	[button2LandscapeMonetize setHighColor:[UIColor colorWithRed:176.0/255 green:188.0/255 blue:204.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[button2LandscapeMonetize setMediumHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:190.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[button2LandscapeMonetize setMediumLowColor:[UIColor colorWithRed:152.0/255 green:164.0/255 blue:186.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [button2LandscapeMonetize setLowColor:[UIColor colorWithRed:119.0/255 green:142.0/255 blue:172.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-	/*[button2LandscapeMonetize setTitle:NSLocalizedStringFromTable(@"tryBeintooRefuseButton",@"BeintooLocalizable",@"no Thanks") forState:UIControlStateNormal];
-	[button2LandscapeMonetize setButtonTextSize:13]; */
-    [button2LandscapeMonetize setNumberOfLines:0];
-    textLabel = [[UILabel alloc] initWithFrame:CGRectMake(2.5, 1.5, button2LandscapeMonetize.frame.size.width - 5, 35)];
-    textLabel.numberOfLines = 2;
-    textLabel.backgroundColor = [UIColor clearColor];
-    textLabel.textAlignment = UITextAlignmentCenter;
-    textLabel.textColor = [UIColor colorWithWhite:1.0 alpha:1.0];
-    textLabel.text = NSLocalizedStringFromTable(@"tryBeintooRefuseButton",@"BeintooLocalizable",@"no Thanks");
-    textLabel.font = [UIFont systemFontOfSize:13];
-    textLabel.shadowColor = [UIColor blackColor];
-    textLabel.shadowOffset = CGSizeMake(0, -1);
-    [button2LandscapeMonetize addSubview:textLabel];
-    [textLabel release];
-    
-    // end of trybeintoo settings --------------------------------------------------------------------------------
-    
-	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[BeintooVC closeButton]];
+	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];
     
     // Notifications
-    notificationMainLabel.text = NSLocalizedStringFromTable(@"notifications",@"BeintooLocalizable",@"no Thanks");
+    notificationMainLabel.text = NSLocalizedStringFromTable(@"notifications", @"BeintooLocalizable", nil);
+    notificationMainLabelLandscape.text = NSLocalizedStringFromTable(@"notifications", @"BeintooLocalizable",nil);
+    
+    [toolBar setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
+    
+    if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+                                    [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
+        toolBar.frame = CGRectMake(toolBar.frame.origin.x, toolBar.frame.origin.y + 12, toolBar.frame.size.width, 32);
+        homeTable.frame = CGRectMake(homeTable.frame.origin.x, homeTable.frame.origin.y, homeTable.frame.size.width, homeTable.frame.size.height + 12);
+        
+        notificationButtonItem.width = 480;
+        self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, 480, 320 - 32);
+        
+    }
+    else {
+        toolBar.frame = CGRectMake(toolBar.frame.origin.x, toolBar.frame.origin.y, toolBar.frame.size.width, 44);
+        homeTable.frame = CGRectMake(homeTable.frame.origin.x, homeTable.frame.origin.y, homeTable.frame.size.width, homeTable.frame.size.height);
+        
+        notificationButtonItem.width = 320;
+        
+        self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, 320, self.view.frame.size.height);
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:YES];
+    [super viewWillAppear:animated];
 
-	if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
-    }
-    
     if ([BeintooDevice isiPad]) {
-        beintooUrl.frame = CGRectMake(beintooUrl.frame.origin.x, 387, beintooUrl.frame.size.width, beintooUrl.frame.size.height);
-        beintooUrlMonetize.frame = CGRectMake(beintooUrlMonetize.frame.origin.x, 387, beintooUrlMonetize.frame.size.width, beintooUrlMonetize.frame.size.height);
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
-    else {
-        beintooUrl.frame = CGRectMake(beintooUrl.frame.origin.x, 395, beintooUrl.frame.size.width, beintooUrl.frame.size.height);
-        beintooUrlMonetize.frame = CGRectMake(beintooUrlMonetize.frame.origin.x, 395, beintooUrlMonetize.frame.size.width, beintooUrlMonetize.frame.size.height);
-    }
-                                
-    //Add new try Beintoo if needed
-    [[self.view viewWithTag:7777] removeFromSuperview];
-    [tryBeintooView removeFromSuperview];
-    if ([Beintoo isTryBeintooImageTypeReward]){  // IsImageTypeReward?
-        if ([Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown || [Beintoo appOrientation] == UIInterfaceOrientationPortrait || [BeintooDevice isiPad]){
-            tryBeintooView = tryBeintooPortraitMonetize;
-            //[self.view addSubview:tryBeintooLandscapeMonetize];
-        }
-        else {
-            tryBeintooView = tryBeintooLandscapeMonetize;
-            //[self.view addSubview:tryBeintooLandscapeMonetize];
-        }
-    }
-    else { 
-        if ([Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown || [Beintoo appOrientation] == UIInterfaceOrientationPortrait || [BeintooDevice isiPad]){
-            tryBeintooView = tryBeintooPortrait;
-            //[self.view addSubview:tryBeintooPortrait];
-        }
-        else {
-            tryBeintooView = tryBeintooLandscape;
-        }
-    }
-    [self.view addSubview:tryBeintooView];
     
-    tryBeintooView.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
-    //tryBeintooView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    
-
     _user.delegate          = self;	
 	beintooPlayer.delegate  = self;	
 
@@ -390,44 +283,47 @@
     signupViewForPlayers.tag = 1111;
     [self.view addSubview:signupViewForPlayers];
     
-    /*
-	 * BeintooLogo + TRY BEINTOO settings
-	 */
-	int appOrientation = [Beintoo appOrientation];
-	
-	UIImageView *logo;
-	if( !([BeintooDevice isiPad]) && 
-        (appOrientation == UIInterfaceOrientationLandscapeLeft || appOrientation == UIInterfaceOrientationLandscapeRight) ){
-		logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bar_logo_34.png"]];
-        
-	}
-	else { 
-		logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bar_logo.png"]];
-	}
-    	
-	self.navigationItem.titleView = logo;
-	[logo release];
-	
-    [tryBeintooView setNeedsDisplay];
-    tryBeintooView.userInteractionEnabled = YES;
-    
     if ([[Beintoo getPlayer] objectForKey:@"unreadNotification"] != nil) {
         notificationNumbersLabel.text = [NSString stringWithFormat:@"%@", [[Beintoo getPlayer] objectForKey:@"unreadNotification"]];
-    }else{
+        notificationNumbersLabelLandscape.text = [NSString stringWithFormat:@"%@", [[Beintoo getPlayer] objectForKey:@"unreadNotification"]];
+    }
+    else {
         notificationNumbersLabel.text = @"0";
+        notificationNumbersLabelLandscape.text = @"0";
     }
 
-	if ((![Beintoo isUserLogged] && [Beintoo isRegistrationForced]) || ![Beintoo getPlayerID] || (![Beintoo isUserLogged] && [Beintoo isTryBeintooForced])) {
-        /*
-         *  ------------------  Try Beintoo ---------------------
-         */
-        [tryBeintooView setHidden:NO];
-        tryBeintooView.userInteractionEnabled = YES;
-        homeTable.userInteractionEnabled = NO;
+	if ((![Beintoo isUserLogged] && [Beintoo isRegistrationForced]) || ![Beintoo getPlayerID]) {
+        
+        [toolBar setHidden:YES];
+        [bedollars setHidden:YES];
+        [userNick setHidden:YES];
+        [homeTable setHidden:YES];
         [signupViewForPlayers setHidden:YES];
-	}
+        
+        if (!isAlreadyLogging) {
+            isAlreadyLogging = YES;
+            @try {
+                if ([BeintooNetwork connectedToNetwork]) {
+                    [BLoadingView startActivity:self.view];
+                    [_user performSelector:@selector(getUserByUDID) withObject:nil afterDelay:0.4];
+                }
+                else {
+                    [BeintooNetwork showNoConnectionAlert];
+                }
+                
+                //[_user getUserByUDID];
+            }
+            @catch (NSException * e) {
+            }
+        }
+    }
 	else {        
-        [tryBeintooView setHidden:YES];
+        
+        [toolBar setHidden:NO];
+        [bedollars setHidden:NO];
+        [userNick setHidden:NO];
+        [homeTable setHidden:NO];
+        
         [signupViewForPlayers setHidden:YES];
         homeTable.userInteractionEnabled = YES;
 		[homeTable deselectRowAtIndexPath:[homeTable indexPathForSelectedRow] animated:NO];
@@ -476,24 +372,155 @@
 #pragma mark - Taps Gesture 
 
 - (void)handleNotificationSingleTap:(UITapGestureRecognizer *)sender{
-
-    beintooNotificationListVC   = [[BeintooNotificationListVC alloc] init];    
-    notificationNavController = [[UINavigationController alloc] initWithRootViewController:beintooNotificationListVC];
     
-    UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
-    [[notificationNavController navigationBar] setTintColor:barColor];
-	
-    isNotificationCenterOpen    = YES;
+    /*if ([BeintooDevice isiPad]) {
+        [Beintoo launchIpadNotifications];
+    }
+    else {
+        beintooNotificationListVC   = [[BeintooNotificationListVC alloc] init];    
+        notificationNavController = [[UINavigationController alloc] initWithRootViewController:beintooNotificationListVC];
+        
+        UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
+        [[notificationNavController navigationBar] setTintColor:barColor];
+        
+        isNotificationCenterOpen    = YES;
+        
+        [self presentModalViewController:notificationNavController animated:YES];
+        
+        [beintooNotificationListVC release];
+        [notificationNavController release];
+    }*/
+    
+    [Beintoo _launchPrivateNotifications];
+    
+}
+
+- (void)reloadBeintoo{
     
     if ([BeintooDevice isiPad]) {
-        [self.navigationController pushViewController:beintooNotificationListVC animated:YES];
-    }
-    else{
-        [self presentModalViewController:notificationNavController animated:YES];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
     
-    [beintooNotificationListVC release];
-    [notificationNavController release];
+    [homeTable scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+    
+    isAlreadyLogging = NO;
+    
+    if (signupViewForPlayers != nil) {
+        signupViewForPlayers = nil;
+        [signupViewForPlayers release];
+    }
+    
+    _user.delegate = self;	
+    beintooPlayer.delegate = self;	
+    
+    [[self.view viewWithTag:1111] removeFromSuperview];
+    signupViewForPlayers = [[BSignupLayouts getBeintooDashboardSignupViewWithFrame:CGRectMake(0, 0 , homeTable.frame.size.width, 110) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
+    signupViewForPlayers.tag = 1111;
+    [self.view addSubview:signupViewForPlayers];
+    
+    
+    // Top logo
+    int appOrientation = [Beintoo appOrientation];
+    
+    UIImageView *logo;
+    
+    if( !([BeintooDevice isiPad]) && 
+       (appOrientation == UIInterfaceOrientationLandscapeLeft || appOrientation == UIInterfaceOrientationLandscapeRight) ){
+        logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bar_logo_34.png"]];
+    }
+    else { 
+        logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bar_logo.png"]];
+    }
+    
+    self.navigationItem.titleView = logo;
+    [logo release];
+    
+    if ([[Beintoo getPlayer] objectForKey:@"unreadNotification"] != nil) {
+        notificationNumbersLabel.text = [NSString stringWithFormat:@"%@", [[Beintoo getPlayer] objectForKey:@"unreadNotification"]];
+        notificationNumbersLabelLandscape.text = [NSString stringWithFormat:@"%@", [[Beintoo getPlayer] objectForKey:@"unreadNotification"]];
+    }
+    else{
+        notificationNumbersLabel.text = @"0";
+        notificationNumbersLabelLandscape.text = @"0";
+    }
+    
+    if ((![Beintoo isUserLogged] && [Beintoo isRegistrationForced]) || ![Beintoo getPlayerID] /*|| (![Beintoo isUserLogged] && [Beintoo isTryBeintooForced])*/) {
+        
+        [toolBar setHidden:YES];
+        [bedollars setHidden:YES];
+        [userNick setHidden:YES];
+        [homeTable setHidden:YES];
+        [signupViewForPlayers setHidden:YES];
+        
+        if (!isAlreadyLogging) {
+            isAlreadyLogging = YES;
+            
+            [BLoadingView startActivity:self.view];
+            [_user performSelector:@selector(getUserByUDID) withObject:nil afterDelay:0.4];
+            //[_user getUserByUDID];
+        }
+    }
+    else {        
+        
+        [toolBar setHidden:NO];
+        [bedollars setHidden:NO];
+        [userNick setHidden:NO];
+        [homeTable setHidden:NO];
+        
+        [signupViewForPlayers setHidden:YES];
+        homeTable.userInteractionEnabled = YES;
+        [homeTable deselectRowAtIndexPath:[homeTable indexPathForSelectedRow] animated:NO];
+        
+        if (![Beintoo isUserLogged]) { 
+            /*
+             * ------------------- Dashboard for player! -----------------------
+             */
+            [signupViewForPlayers setHidden:NO];
+            
+            if(!homeTablePlayerAnimationPerformed){
+                CGRect currentFrame = homeTable.frame;
+                homeTable.frame = CGRectMake(currentFrame.origin.x, currentFrame.origin.y+77, currentFrame.size.width, currentFrame.size.height-77);
+                homeTablePlayerAnimationPerformed = YES;
+            }
+        }
+        else{
+            /*
+             * ------------------- Dashboard for users! -----------------------
+             */
+            @try {
+                [signupViewForPlayers setHidden:YES];
+                
+                NSDictionary *currentUser = [Beintoo getUserIfLogged];
+                
+                userNick.text		= [currentUser objectForKey:@"nickname"];
+                bedollars.text      = [NSString stringWithFormat:@"%.2f Bedollars",[[currentUser objectForKey:@"bedollars"] floatValue]];
+                
+                if(homeTablePlayerAnimationPerformed){
+                    CGRect currentFrame = homeTable.frame;
+                    homeTable.frame = CGRectMake(currentFrame.origin.x, currentFrame.origin.y-77, currentFrame.size.width, currentFrame.size.height+77);
+                    homeTablePlayerAnimationPerformed = NO;
+                }
+            }
+            @catch (NSException * e) {
+                
+            }
+            
+            if ([Beintoo getPlayerID] != nil && [Beintoo isUserLogged]) {
+                [beintooPlayer getPlayerByGUID:[Beintoo getPlayerID]];
+            }
+        }
+        [homeTable reloadData];
+    }
+}
+
+- (void)signupClosed{
+     if ([Beintoo getPlayerID] == nil || forceSignup){
+        if (![BeintooDevice isiPad])
+            [self closeBeintoo];
+        else {
+            [self performSelector:@selector(closeBeintoo) withObject:nil afterDelay:0.001];
+        }
+    }
 }
 
 #pragma mark -
@@ -505,14 +532,6 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [self.featuresArray count];
-}
-
-- (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
-    return 38;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
-    return notificationView;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -543,7 +562,8 @@
         
 		cell.imageView.image			= [UIImage imageNamed:[[self.featuresArray objectAtIndex:indexPath.row] objectForKey:@"featureImg"]];
         cell.imageView.alpha            = alphaValueForCell;
-	}
+        
+    }
 	@catch (NSException * e){
 		//[beintooPlayer logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
 	}
@@ -594,15 +614,7 @@
         isAlreadyLogging = YES;
         @try {
             if ([BeintooNetwork connectedToNetwork]) {
-                if ([Beintoo isRegistrationForced]) {
-                    [BLoadingView startActivity:tryBeintooView];
-                }
-                else{
-                    [BLoadingView startActivity:homeView];
-                }
-                
-                [self.loginNavController popToRootViewControllerAnimated:NO];
-                
+                [BLoadingView startActivity:homeView];
             }
             [_user getUserByUDID];
         }
@@ -611,40 +623,36 @@
     }
 }
 
--(IBAction)close{
-    if (isNotificationCenterOpen) {
-        if ([BeintooDevice isiPad]) {
-            // Do something
-        }else{
-            [self dismissModalViewControllerAnimated:YES];
-        }
-    }
-    else{
-        [Beintoo dismissBeintoo];
-    }
-}
 
 #pragma mark -
 #pragma mark player delegate
 
 - (void)didGetUserByUDID:(NSMutableArray *)result{
 	@synchronized(self){
-        //  if (self.isViewLoaded && self.view.window) { // This is to prevent to try to present the Login controller if the user closes      
-        // Beintoo and the getUsesByUdid is still running for some reason. Presenting a 
-        // modal from a ViewController which is not visible will lead to a crash
         
         [Beintoo setLastLoggedPlayers:[(NSArray *)result retain]];
-        tryBeintooView.userInteractionEnabled = NO;
         
         [BLoadingView stopActivity]; 
-        if([BeintooDevice isiPad]){ // --- iPad, we need to show the "Login Popover"
-            [Beintoo launchIpadLogin];
-        }
-        else if ([BeintooNetwork connectedToNetwork]){
-            [self presentModalViewController:self.loginNavController animated:YES];
-        }
         isAlreadyLogging = NO;
-        //}
+        
+        /*BeintooLoginVC *signinVC            = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
+        UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
+        UINavigationController *signinNavController = [[UINavigationController alloc] initWithRootViewController:signinVC];
+        [[signinNavController navigationBar] setTintColor:barColor];
+        
+        
+        
+        [signinVC release];
+        [signinNavController release];*/
+        
+        /*BeintooNavigationController *signupNavController = [BeintooNavigationController alloc];
+        BeintooLoginVC *login = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
+        signupNavController = [signupNavController initWithRootViewController:login];
+        signupNavController.type = NAV_TYPE_SIGNUP;
+        
+        [self presentModalViewController:signupNavController animated:YES];*/
+        
+        [Beintoo _launchPrivateSignup];
     }	
 }
 
@@ -668,11 +676,19 @@
             // Notification Checking 
             if ([result objectForKey:@"unreadNotification"] != nil) {
                 notificationNumbersLabel.text = [NSString stringWithFormat:@"%@", [result objectForKey:@"unreadNotification"]];
+                notificationNumbersLabelLandscape.text = [NSString stringWithFormat:@"%@", [result objectForKey:@"unreadNotification"]];
             }
+            
+            [_user getFriendsByExtid];
 		}
 	}
 	@catch (NSException * e) {
 	}
+}
+
+- (void)didGetFriendsByExtid:(NSMutableArray *)result
+{
+    [Beintoo setBeintooUserFriends:(NSArray *)result];
 }
 
 - (void)dismissFeatureSignupView{
@@ -686,29 +702,29 @@
 }
 #endif
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
     @try {
-		[BLoadingView stopActivity];
+        [BLoadingView stopActivity];
+        for (UIView *view in [self.view subviews]) {
+            if([view isKindOfClass:[BLoadingView class]]){
+                [view removeFromSuperview];
+            }
+        }
 	}
 	@catch (NSException * e) {
 	}
 }
 
 - (void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    
     _user.delegate         = nil;  
     beintooPlayer.delegate = nil;  
     
     @try {
-        
-        UIView *featureView = [self.view viewWithTag:3333];
+       UIView *featureView = [self.view viewWithTag:3333];
         UIView *signupView  = [self.view viewWithTag:1111];
         [featureView removeFromSuperview];
         [signupView removeFromSuperview];
@@ -722,8 +738,17 @@
 }
 
 - (void)dealloc {
-	[beintooPlayer release];
-	[_user release];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"SignupClosed" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"ReloadDashboard" object:nil];
+    _user.delegate = nil;
+    beintooPlayer.delegate = nil;
+
+    if ([beintooPlayer retainCount] > 0)
+        [beintooPlayer release];
+    
+    if ([_user retainCount] > 0)
+        [_user release];
+    
 	[featuresArray release];
 	[messagesVC release];
 	[beintooProfileVC release];
@@ -734,10 +759,9 @@
     [tipsAndForumVC release];
 	[loginVC release];
     [signupViewForPlayers release];
-    [marketplaceVC release];
     [beintooMarketplaceWebViewVC release];
-    [beintooMarketplaceWebViewVC release];
-	[super dealloc];
+    
+    [super dealloc];
 }
 
 @end

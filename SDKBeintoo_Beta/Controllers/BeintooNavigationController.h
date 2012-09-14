@@ -18,6 +18,17 @@
 
 @class BeintooVC;
 
+#define NAV_TYPE_MAIN                   1
+#define NAV_TYPE_BESTORE                2
+#define NAV_TYPE_LEADERBOARD            3
+#define NAV_TYPE_ACHIEVEMENTS           4
+#define NAV_TYPE_MYOFFERS               5
+#define NAV_TYPE_NOTIFICATIONS          6
+#define NAV_TYPE_SIGNUP                 7
+
+#define NAV_TYPE_SIGNUP_PRIVATE         8
+#define NAV_TYPE_NOTIFICATIONS_PRIVATE  9
+
 @interface BeintooNavigationController : UINavigationController{
 	
 	UIView *ipadView;
@@ -30,5 +41,8 @@
 - (void)hide;
 - (void)hideNotAnimated;
 - (void)prepareBeintooPanelOrientation;
+
+@property (nonatomic, assign) int type;
+
 
 @end

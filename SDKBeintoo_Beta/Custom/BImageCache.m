@@ -74,7 +74,7 @@ static BImageCache *sharedInstance = nil;
         [dateFormatter release];
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception on image cache file check: %@", exception);
+        BeintooLOG(@"Exception on image cache file check: %@", exception);
     }
     
     return NO;
@@ -96,7 +96,7 @@ static BImageCache *sharedInstance = nil;
         }
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception on image cache file check: %@", exception);
+        BeintooLOG(@"Exception on image cache file check: %@", exception);
     }
 
     return nil;
@@ -141,7 +141,7 @@ static BImageCache *sharedInstance = nil;
         [attributes release];
     }
     @catch (NSException *exception) {
-        NSLog(@"Exception on image cache file save: %@", exception);
+        BeintooLOG(@"Exception on image cache file save: %@", exception);
     }
     return NO;
 }
