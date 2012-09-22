@@ -1071,6 +1071,21 @@ NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 	[[NSUserDefaults standardUserDefaults] setObject:nil forKey:BNSDefLoggedPlayer];
 	[[NSUserDefaults standardUserDefaults] setObject:nil forKey:BNSDefLoggedUser];
 	[[NSUserDefaults standardUserDefaults] synchronize];
+    
+    NSHTTPCookie *cookie;
+	NSHTTPCookieStorage *storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+	
+    // Here we delete all facebook cookies, to prevent the auto-login of another user
+	for (cookie in [storage cookies]) {
+        if ([[cookie domain] isEqualToString:@".facebook.com"] || [[cookie name] isEqualToString:@"fbs_152837841401121"]) {
+            [storage deleteCookie:cookie];
+        }
+	}
+    
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    for (NSHTTPCookie *each in cookieStorage.cookies) {
+        [cookieStorage deleteCookie:each];
+    }
 }
 
 + (void)_setBeintooUser:(NSDictionary *)_user{
