@@ -25,7 +25,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
-	self.title = NSLocalizedStringFromTable(@"login",@"BeintooLocalizable",@"Login");
+	self.title = NSLocalizedStringFromTable(@"login", @"BeintooLocalizable", @"Login");
 	
 	scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 440);
 	scrollView.backgroundColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1];

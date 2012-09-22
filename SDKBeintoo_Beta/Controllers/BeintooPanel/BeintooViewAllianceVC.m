@@ -36,7 +36,7 @@
         self.title		= NSLocalizedStringFromTable(@"alliance_your", @"BeintooLocalizable",@"");
 	
 	[alliancesActionView setTopHeight:82];
-	[alliancesActionView setBodyHeight:440];
+	[alliancesActionView setBodyHeight:[UIScreen mainScreen].bounds.size.height];
 	
 	//self.elementsArrayList   = [[NSMutableArray alloc] init];
     elementsArrayImages = [[NSMutableArray alloc] init];
@@ -197,6 +197,8 @@
     }
     else {
         [BeintooAlliance setUserAllianceAdmin:NO];
+        needPendingRequest = NO;
+        needAddToAlliance = NO;
     }
     
     allianceNameLabel.text       = [result objectForKey:@"name"];
@@ -218,6 +220,9 @@
             
             if ([[Beintoo getUserID] isEqualToString:[[self.elementsArrayList objectAtIndex:i] objectForKey:@"id"]]) {
                 needLeaveAlliance = YES;
+            }
+            else {
+                needLeaveAlliance = NO;
             }
         }
     }
@@ -336,12 +341,13 @@
         }
     }
     
-    [buttonsArray addObject:fixedSpace];
-    
-    if (needPendingRequest != NO)
+    if (needPendingRequest != NO){
+        
         [buttonsArray addObject:pendingButtonItem];
+    }
     
     if (needAddToAlliance  != NO){
+        
         if ([buttonsArray count] > 0)
             [buttonsArray addObject:flexibleSpace];
         
@@ -349,10 +355,12 @@
     }
     
     if (needJoinAlliance  != NO){
+        
         if ([buttonsArray count] > 0)
             [buttonsArray addObject:flexibleSpace];
         
         [buttonsArray addObject:joinButtonItem];
+        
     }
     
     if (needLeaveAlliance  != NO){
@@ -362,7 +370,9 @@
         [buttonsArray addObject:leaveButtonItem];
     }
     
-    [buttonsArray addObject:fixedSpace];
+    [buttonsArray insertObject:flexibleSpace atIndex:0];
+    
+    [buttonsArray addObject:flexibleSpace];
     
     [toolbar setItems:buttonsArray];
     

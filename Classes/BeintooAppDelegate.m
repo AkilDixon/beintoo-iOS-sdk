@@ -67,7 +67,8 @@
 
 	sampleDelegate = [[BeintooDelegate alloc] init];
 	
-	[Beintoo initWithApiKey:your_apikey_here andApiSecret:nil andBeintooSettings:beintooSettings andMainDelegate:sampleDelegate];
+	[Beintoo initWithApiKey:@"DuQEh4lGtMGe" andApiSecret:nil andBeintooSettings:beintooSettings andMainDelegate:sampleDelegate];
+    [Beintoo privateSandbox];
   
     /*
      *
@@ -105,7 +106,8 @@
     
 	[beintooSettings release];
 	
-    [self.window addSubview:viewController.view];
+    //[self.window addSubview:viewController.view];
+    [self.window setRootViewController:viewController];
     [self.window makeKeyAndVisible];
     
     return YES;

@@ -62,7 +62,6 @@
         webview1.alpha = 0.0;
         webview1.backgroundColor = [UIColor clearColor];
         [webview1 setOpaque:NO];
-        webview1.backgroundColor = [UIColor clearColor];
         webview1.userInteractionEnabled = NO;
         if ([[[UIDevice currentDevice] systemVersion] floatValue] < 5.0){
             for (UIView *subview in webview1.subviews){
@@ -84,7 +83,7 @@
         
         label1.hidden = YES;
         
-        NSString *htmlString1 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:160%; height:100%\"><span style=\"font-size:16px; font-weight:bold; color:#2E4467; width:160%; height:100%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:14px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialFirstSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialFirstSentence", @"BeintooLocalizable", nil)];
+        NSString *htmlString1 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:160%%; height:100%% \"><span style=\"font-size:16px; font-weight:bold; color:#2E4467; width:160%%; height:100%%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:14px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialFirstSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialFirstSentence", @"BeintooLocalizable", nil)];
         [webview1 loadHTMLString:htmlString1 baseURL:nil];
         [mainView addSubview:webview1];
         
@@ -116,7 +115,7 @@
         
         label2.hidden = YES;
         
-        NSString *htmlString2 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:160%; height:100%\"><span style=\"font-size:16px; font-weight:bold; color:#2E4467; width:160%; height:100%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:14px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialSecondSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialSecondSentence", @"BeintooLocalizable", nil)];
+        NSString *htmlString2 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:160%%; height:100%% \"><span style=\"font-size:16px; font-weight:bold; color:#2E4467; width:160%%; height:100%%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:14px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialSecondSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialSecondSentence", @"BeintooLocalizable", nil)];
         [webview2 loadHTMLString:htmlString2 baseURL:nil];
         [mainView addSubview:webview2];
         
@@ -125,7 +124,6 @@
         webview3.alpha = 0.0;
         webview3.backgroundColor = [UIColor clearColor];
         [webview3 setOpaque:NO];
-        webview3.backgroundColor = [UIColor clearColor];
         webview3.userInteractionEnabled = NO;
         if ([[[UIDevice currentDevice] systemVersion] floatValue] < 5.0){
             for (UIView *subview in webview3.subviews){
@@ -147,18 +145,18 @@
         
         label3.hidden = YES;
         
-        NSString *htmlString3 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:160%; height:100%\"><span style=\"font-size:16px; font-weight:bold; color:#2E4467; width:160%; height:100%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:14px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialThirdSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialThirdSentence", @"BeintooLocalizable", nil)];
+        NSString *htmlString3 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:160%%; height:100%% \"><span style=\"font-size:16px; font-weight:bold; color:#2E4467; width:160%%; height:100%%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:14px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialThirdSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialThirdSentence", @"BeintooLocalizable", nil)];
         [webview3 loadHTMLString:htmlString3 baseURL:nil];
         [mainView addSubview:webview3];
     }
     else {
        
         webview1Land = [[UIWebView alloc] initWithFrame:labelLand1.frame];
+        webview1Land.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
         webview1Land.delegate = self;
         webview1Land.alpha = 0.0;
         webview1Land.backgroundColor = [UIColor clearColor];
         [webview1Land setOpaque:NO];
-        webview1Land.backgroundColor = [UIColor clearColor];
         webview1Land.userInteractionEnabled = NO;
         if ([[[UIDevice currentDevice] systemVersion] floatValue] < 5.0){
             for (UIView *subview in webview1Land.subviews){
@@ -180,13 +178,13 @@
         
         labelLand1.hidden = YES;
         
-        NSString *htmlString4 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:120%; height:100%\"><span style=\"font-size:15px; font-weight:bold; color:#2E4467; width:120%; height:100%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:13px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialFirstSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialFirstSentence", @"BeintooLocalizable", nil)];
+        NSString *htmlString4 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:120%%; height:100%% \"><span style=\"font-size:15px; font-weight:bold; color:#2E4467; width:120%%; height:100%%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:13px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialFirstSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialFirstSentence", @"BeintooLocalizable", nil)];
         [webview1Land loadHTMLString:htmlString4 baseURL:nil];
         [landView addSubview:webview1Land];
         
         
         webview2Land = [[UIWebView alloc] initWithFrame:labelLand2.frame];
-        webview2Land.backgroundColor = [UIColor clearColor];
+        webview2Land.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
         webview2Land.delegate = self;
         webview2Land.alpha = 0.0;
         [webview2Land setOpaque:NO];
@@ -212,16 +210,16 @@
         
         labelLand2.hidden = YES;
         
-        NSString *htmlString5 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:120%; height:100%\"><span style=\"font-size:15px; font-weight:bold; color:#2E4467; width:120%; height:100%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:13px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialSecondSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialSecondSentence", @"BeintooLocalizable", nil)];
+        NSString *htmlString5 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:120%%; height:100%% \"><span style=\"font-size:15px; font-weight:bold; color:#2E4467; width:120%%; height:100%%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:13px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialSecondSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialSecondSentence", @"BeintooLocalizable", nil)];
         [webview2Land loadHTMLString:htmlString5 baseURL:nil];
         [landView addSubview:webview2Land];
         
         webview3Land = [[UIWebView alloc] initWithFrame:labelLand3.frame];
+        webview3Land.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
         webview3Land.delegate = self;
         webview3Land.alpha = 0.0;
         webview3Land.backgroundColor = [UIColor clearColor];
         [webview3Land setOpaque:NO];
-        webview3Land.backgroundColor = [UIColor clearColor];
         webview3Land.userInteractionEnabled = NO;
         if ([[[UIDevice currentDevice] systemVersion] floatValue] < 5.0){
             for (UIView *subview in webview3Land.subviews){
@@ -243,7 +241,7 @@
         
         labelLand3.hidden = YES;
         
-        NSString *htmlString6 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:120%; height:100%\"><span style=\"font-size:15px; font-weight:bold; color:#2E4467; width:120%; height:100%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:13px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialThirdSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialThirdSentence", @"BeintooLocalizable", nil)];
+        NSString *htmlString6 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:120%%; height:100%% \"><span style=\"font-size:15px; font-weight:bold; color:#2E4467; width:120%%; height:100%%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:13px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialThirdSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialThirdSentence", @"BeintooLocalizable", nil)];
         [webview3Land loadHTMLString:htmlString6 baseURL:nil];
         [landView addSubview:webview3Land];
     
@@ -274,15 +272,15 @@
     
     if(![BeintooDevice isiPad] && (appOrientation == UIInterfaceOrientationLandscapeLeft || appOrientation == UIInterfaceOrientationLandscapeRight) ){
         self.view = landView;
-        footerView.frame = CGRectMake(0, goToDashboardLand.frame.size.height + goToDashboardLand.frame.origin.y + 14, self.view.frame.size.width, 4);
+        footerView.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.width - 4 , [UIScreen mainScreen].bounds.size.height, 4);
     }
     else {
         self.view = mainView;
-        footerView.frame = CGRectMake(0, self.view.frame.size.height - 4, self.view.frame.size.width, 4);
+        footerView.frame = CGRectMake(0, self.view.frame.size.height - 4, [UIScreen mainScreen].bounds.size.width, 4);
     }
     
     if ([BeintooDevice isiPad])
-        footerView.frame = CGRectMake(0, self.view.frame.size.height + 4, self.view.frame.size.width, 4);
+        footerView.frame = CGRectMake(0, self.view.frame.size.height + 4, [UIScreen mainScreen].bounds.size.width, 4);
     
     [self.view addSubview:footerView];
     [footerView release];
@@ -295,6 +293,8 @@
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
+    
+    goToDashboardLand.frame = CGRectMake((self.view.frame.size.width - goToDashboardLand.frame.size.width)/2 , goToDashboardLand.frame.origin.y, goToDashboardLand.frame.size.width, goToDashboardLand.frame.size.height);
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView{

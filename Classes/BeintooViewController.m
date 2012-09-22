@@ -342,9 +342,27 @@
     NSLog(@"Main View Controller --- Tapped on Prize");
 }
 
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration{
+    
+    NSLog(@"beintoo will changed orient %i", toInterfaceOrientation);
+    [Beintoo changeBeintooOrientation:toInterfaceOrientation];
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    
+    NSLog(@"changed orient %i", interfaceOrientation);
     [Beintoo changeBeintooOrientation:interfaceOrientation];
     return YES;
+}
+
+- (BOOL)shouldAutorotate {
+    
+    return YES;
+}
+
+- (NSUInteger)supportedInterfaceOrientations {
+    
+    return UIInterfaceOrientationMaskAll;
 }
 
 - (void)buttonsCustomization{

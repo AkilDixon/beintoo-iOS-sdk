@@ -93,6 +93,7 @@
 		5CD9D44415F89A6600CA1269 /* BeintooTutorialVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5CD9D44315F89A6600CA1269 /* BeintooTutorialVC.xib */; };
 		5CE2602F15CC0910002FE283 /* beintoo_marketplace.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CE2602D15CC090F002FE283 /* beintoo_marketplace.png */; };
 		5CE2603015CC0910002FE283 /* beintoo_marketplace@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CE2602E15CC0910002FE283 /* beintoo_marketplace@2x.png */; };
+		5CF41C09160DC98A0036DD68 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CF41C08160DC98A0036DD68 /* Default-568h@2x.png */; };
 		7005C46E143CB2AF002F4D6C /* beintoo_forum.png in Resources */ = {isa = PBXBuildFile; fileRef = 7005C46C143CB2AF002F4D6C /* beintoo_forum.png */; };
 		7005C46F143CB2AF002F4D6C /* beintoo_forum@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7005C46D143CB2AF002F4D6C /* beintoo_forum@2x.png */; };
 		700734E313A78B39009288D5 /* BeintooVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 700734CC13A78B39009288D5 /* BeintooVC.xib */; };
@@ -366,6 +367,7 @@
 		5CD9D44315F89A6600CA1269 /* BeintooTutorialVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BeintooTutorialVC.xib; sourceTree = "<group>"; };
 		5CE2602D15CC090F002FE283 /* beintoo_marketplace.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = beintoo_marketplace.png; sourceTree = "<group>"; };
 		5CE2602E15CC0910002FE283 /* beintoo_marketplace@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "beintoo_marketplace@2x.png"; sourceTree = "<group>"; };
+		5CF41C08160DC98A0036DD68 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		7005C46C143CB2AF002F4D6C /* beintoo_forum.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = beintoo_forum.png; sourceTree = "<group>"; };
 		7005C46D143CB2AF002F4D6C /* beintoo_forum@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "beintoo_forum@2x.png"; sourceTree = "<group>"; };
 		700734CC13A78B39009288D5 /* BeintooVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BeintooVC.xib; sourceTree = "<group>"; };
@@ -669,6 +671,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				5CF41C08160DC98A0036DD68 /* Default-568h@2x.png */,
 				70679F5A139E1C2A00457107 /* SDKBeintoo_Beta */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
@@ -1395,6 +1398,7 @@
 				5C26A1A716032A5600A0F607 /* profile_friends@2x.png in Resources */,
 				5C26A1AA16032C0B00A0F607 /* profile_settings.png in Resources */,
 				5C26A1AB16032C0B00A0F607 /* profile_settings@2x.png in Resources */,
+				5CF41C09160DC98A0036DD68 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

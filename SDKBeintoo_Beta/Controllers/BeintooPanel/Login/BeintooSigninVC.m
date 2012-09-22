@@ -40,9 +40,7 @@
 	
 	registrationFBVC = [BeintooSignupVC alloc];
 	
-    //alreadyRegisteredSigninVC = [[BeintooSigninAlreadyVC alloc] initWithNibName:@"BeintooSigninAlreadyVC" bundle:[NSBundle mainBundle]];
-	
-	nickname = [[NSString alloc] init];
+    nickname = [[NSString alloc] init];
 	
     [beintooView setTopHeight:0];
 	[beintooView setBodyHeight:545];
@@ -119,6 +117,17 @@
     
     newUserButton.clipsToBounds = YES;
     
+    if ([BeintooDevice isiPad]) {
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+    }
+    
+    if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
+        beintooViewLand.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.height, 320);
+    }
+    else{
+        beintooView.frame = CGRectMake(0, 0, 320, [UIScreen mainScreen].bounds.size.height);
+    }
+
     int appOrientation = [Beintoo appOrientation];
     if(!([BeintooDevice isiPad]) && 
        (appOrientation == UIInterfaceOrientationLandscapeLeft || appOrientation == UIInterfaceOrientationLandscapeRight) )
@@ -129,8 +138,7 @@
 
     scrollView.backgroundColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1];
     
-  
-	emailTF.hidden = NO;
+    emailTF.hidden = NO;
     emailTF.placeholder = NSLocalizedStringFromTable(@"signupTextFieldPlaceholder",@"BeintooLocalizable", nil);
 	emailTFLand.hidden = NO;
 	title1Land.text = NSLocalizedStringFromTable(@"signupMainSentence",@"BeintooLocalizable",@"");
@@ -139,20 +147,6 @@
     newUserButton.alpha = 1.0;
     newUserButton.userInteractionEnabled = YES;
     
-    if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
-    }
-    
-    if (![BeintooDevice isiPad]) {
-        if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
-            [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
-            beintooView.frame = CGRectMake(0, 0, 480, 450);
-        }
-        else{
-            beintooView.frame = CGRectMake(0, 0, 320, 440);
-        }
-    }
-
     orLabel.text = NSLocalizedStringFromTable(@"signupOrLabel", @"BeintooLocalizable", nil);
     orLabelLand.text = NSLocalizedStringFromTable(@"signupOrLabel", @"BeintooLocalizable", nil);
     
@@ -197,6 +191,7 @@
     facebookButton.hidden = YES;
     
     fbButtonLand = [[BButton alloc] initWithFrame:facebookButtonLand.frame];
+    fbButtonLand.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
     [fbButtonLand setHighColor:[UIColor colorWithRed:96.0/255 green:130.0/255 blue:178.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(56, 2)/pow(255,2) green:pow(79, 2)/pow(255,2) blue:pow(112, 2)/pow(255,2) alpha:1]];
 	[fbButtonLand setMediumHighColor:[UIColor colorWithRed:80.0/255 green:106.0/255 blue:148.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(56, 2)/pow(255,2) green:pow(79, 2)/pow(255,2) blue:pow(112, 2)/pow(255,2) alpha:1]];
 	[fbButtonLand setMediumLowColor:[UIColor colorWithRed:74.0/255 green:100.0/255 blue:140.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(56, 2)/pow(255,2) green:pow(79, 2)/pow(255,2) blue:pow(112, 2)/pow(255,2) alpha:1]];
@@ -274,10 +269,6 @@
 
     [keyboardToolbar release];
     
-    if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
-    }
-    
     if ( ![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
         [beintooViewLand removeFromSuperview];
         [beintooView removeFromSuperview];
@@ -322,11 +313,11 @@
     [beintooView addSubview:webview];
     
     webviewLand = [[UIWebView alloc] initWithFrame:title1Land.frame];
+    webviewLand.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
     webviewLand.alpha = 0.0;
     webviewLand.delegate = self;
     webviewLand.backgroundColor = [UIColor clearColor];
     [webviewLand setOpaque:NO];
-    webviewLand.backgroundColor = [UIColor clearColor];
     webviewLand.userInteractionEnabled = NO;
     if ([[[UIDevice currentDevice] systemVersion] floatValue] < 5.0){
         for (UIView *subview in webviewLand.subviews){
@@ -473,7 +464,7 @@
             confirmNickname.alpha = 0.0;
         }
 	}
-        
+    
     [scrollView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
     [scrollView setContentOffset:CGPointMake(0, 0) animated:NO];
 }
@@ -481,13 +472,7 @@
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     
-    if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
-            [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
-            beintooView.frame = CGRectMake(0, 0, 480,450);
-    }
-    else{
-        beintooView.frame = CGRectMake(0, 0, 320,440);
-    }
+    
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView{

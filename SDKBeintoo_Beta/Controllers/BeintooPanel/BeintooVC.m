@@ -125,7 +125,6 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
     
-    
     // ----------- User service initialization ---------------
 	_user           = [[BeintooUser alloc]init];
 	beintooPlayer   = [[BeintooPlayer alloc]init];
@@ -213,8 +212,10 @@
     fixedSpace.width = -11;
     
     notificationButtonItem = [UIBarButtonItem alloc];
+    
     if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIDeviceOrientationLandscapeLeft || [Beintoo appOrientation] == UIDeviceOrientationLandscapeRight))
         notificationButtonItem = [notificationButtonItem initWithCustomView:notificationViewLandscape];
+        
     else 
         notificationButtonItem = [notificationButtonItem initWithCustomView:notificationView];
     
@@ -236,21 +237,28 @@
     
     if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
                                     [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
+        
+        
+        notificationButtonItem.width = [UIScreen mainScreen].bounds.size.height;
+        
+        self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, [UIScreen mainScreen].bounds.size.height, 320 - 32);
+        
         toolBar.frame = CGRectMake(toolBar.frame.origin.x, toolBar.frame.origin.y + 12, toolBar.frame.size.width, 32);
         homeTable.frame = CGRectMake(homeTable.frame.origin.x, homeTable.frame.origin.y, homeTable.frame.size.width, homeTable.frame.size.height + 12);
         
-        notificationButtonItem.width = 480;
-        self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, 480, 320 - 32);
-        
     }
     else {
+        
+        
+        self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, 320, [UIScreen mainScreen].bounds.size.height);
+        
         toolBar.frame = CGRectMake(toolBar.frame.origin.x, toolBar.frame.origin.y, toolBar.frame.size.width, 44);
         homeTable.frame = CGRectMake(homeTable.frame.origin.x, homeTable.frame.origin.y, homeTable.frame.size.width, homeTable.frame.size.height);
         
         notificationButtonItem.width = 320;
-        
-        self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, 320, self.view.frame.size.height);
     }
+    
+    NSLog(@"notif %@", NSStringFromCGRect(notificationViewLandscape.frame));
 }
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -259,6 +267,11 @@
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
+    
+    //notificationViewLandscape.frame = CGRectMake(notificationViewLandscape.frame.origin.x, notificationViewLandscape.frame.origin.y, [UIScreen mainScreen].bounds.size.height, notificationViewLandscape.frame.size.height);
+    
+    NSLog(@"notif %@", NSStringFromCGRect(notificationViewLandscape.frame));
+    NSLog(@"self %@", NSStringFromCGRect(self.view.frame));
     
     _user.delegate          = self;	
 	beintooPlayer.delegate  = self;	

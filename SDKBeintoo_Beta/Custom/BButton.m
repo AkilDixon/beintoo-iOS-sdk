@@ -34,7 +34,7 @@
 		// Set its bounds to be the same of its parent
 		//[gradientLayer setBounds:[self bounds]];
 		gradientLayer.frame = self.bounds;   // make the subview frame match its view
-
+        
 		// Center the layer inside the parent layer
 		[gradientLayer setPosition:
 		 CGPointMake([self bounds].size.width/2,

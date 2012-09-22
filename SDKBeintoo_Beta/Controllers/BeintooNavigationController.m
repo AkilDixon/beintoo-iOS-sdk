@@ -75,28 +75,28 @@
 - (void)prepareBeintooPanelOrientation{
     if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
 
-        self.view.frame  = CGRectMake(0, 0, 320, 480);
-        self.view.bounds = CGRectMake(0, 0, 480, 320); 
+        self.view.frame  = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+        self.view.bounds = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.height, [UIScreen mainScreen].bounds.size.width); 
         self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(-90));
         transitionEnterSubtype = kCATransitionFromRight;
 		transitionExitSubtype  = kCATransitionFromLeft;
 	}
 	if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight) {
-        self.view.frame  = CGRectMake(0, 0, 320, 480);
-        self.view.bounds = CGRectMake(0, 0, 480, 320); 
+        self.view.frame  = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+        self.view.bounds = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.height, [UIScreen mainScreen].bounds.size.width); 
 		self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(90));
 		transitionEnterSubtype = kCATransitionFromLeft;
 		transitionExitSubtype  = kCATransitionFromRight;
 	}
 	if ([Beintoo appOrientation] == UIInterfaceOrientationPortrait) {
 		self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
-		self.view.frame = CGRectMake(0, 0, 320, 480);
+		self.view.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
 		transitionEnterSubtype = kCATransitionFromTop;
 		transitionExitSubtype  = kCATransitionFromBottom;
 	}
     if ([Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown) {
 		self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(180));
-		self.view.frame = CGRectMake(0, 0, 320, 480);
+		self.view.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
 		transitionEnterSubtype = kCATransitionFromBottom;
 		transitionExitSubtype  = kCATransitionFromTop;
 	}

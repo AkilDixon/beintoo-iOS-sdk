@@ -222,7 +222,7 @@
         @try {
             if ([BeintooNetwork connectedToNetwork]) {
                 [BLoadingView startActivity:self.view];
-                [loginNavController popToRootViewControllerAnimated:NO];                
+                
             }
             [user getUserByUDID];
         }
@@ -474,11 +474,9 @@
     @synchronized(self){
         [Beintoo setLastLoggedPlayers:[(NSArray *)result retain]];        
         [BLoadingView stopActivity]; 
-        if([BeintooDevice isiPad]){ // --- iPad, we need to show the "Login Popover"
-            [Beintoo launchIpadLogin];
-        }else {
-            [self presentModalViewController:loginNavController animated:YES];
-        }
+        
+        [Beintoo _launchPrivateSignup];
+        
         isAlreadyLogging = NO;
     }	
 }

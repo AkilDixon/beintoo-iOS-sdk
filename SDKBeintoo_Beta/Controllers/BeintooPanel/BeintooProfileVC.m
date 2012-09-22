@@ -64,7 +64,7 @@
             allianceValue.text = [BeintooAlliance userAllianceName];
     
 	[profileView setTopHeight:108.0];
-	[profileView setBodyHeight:450.0];
+	[profileView setBodyHeight:[UIScreen mainScreen].bounds.size.height];
 	[profileView setIsScrollView:YES];
 
 	scrollView.contentSize          = CGSizeMake(self.view.bounds.size.width, 450);
@@ -123,12 +123,12 @@
     
     if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
                                     [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
-        profileView.frame = CGRectMake(0, 0, 480, 450);
-        self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, 480, 320 - 32);
+        profileView.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.height, 450);
+        self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, [UIScreen mainScreen].bounds.size.height, 320 - 32);
     }
     else{
-        profileView.frame = CGRectMake(0, 0, 320, 440);
-        self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, 320, self.view.frame.size.height);
+        profileView.frame = CGRectMake(0, 0, 320, [UIScreen mainScreen].bounds.size.height);
+        self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, 320, [UIScreen mainScreen].bounds.size.height);
     }
     profileView.clipsToBounds = YES;  
     
@@ -790,11 +790,9 @@
     @synchronized(self){
         [Beintoo setLastLoggedPlayers:[(NSArray *)result retain]];        
         [BLoadingView stopActivity]; 
-        if([BeintooDevice isiPad]){ // --- iPad, we need to show the "Login Popover"
-            [Beintoo launchIpadLogin];
-        }else {
-            [self presentModalViewController:loginNavController animated:YES];
-        }
+        
+        [Beintoo _launchPrivateSignup];
+        
         isAlreadyLogging = NO;
     }	
 }

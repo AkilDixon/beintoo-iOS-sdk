@@ -57,7 +57,7 @@
 	allianceTextField.textColor	= [UIColor colorWithWhite:0 alpha:0.7]; 
 	allianceTextField.font		= [UIFont systemFontOfSize:12];
     allianceTextField.layer.cornerRadius = 3;
-	
+	allianceTextField.text = @"";
 	allianceTextField.placeholder	= NSLocalizedStringFromTable(@"alliancecreateeditext",@"BeintooLocalizable",@"");
     titleLabel.text                 = NSLocalizedStringFromTable(@"allianceaddfriends",@"BeintooLocalizable",@"");
     titleLabel.textColor            = [UIColor colorWithWhite:0 alpha:0.6];
@@ -73,8 +73,10 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
 
     _alliance.delegate      = self;
@@ -97,7 +99,7 @@
 - (IBAction)createAlliance{
     NSString *allianceName = allianceTextField.text;
     
-    if ([[allianceName stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" "]] length] >=3) {
+    if ([[allianceName stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] >= 3) {
         [BLoadingView startActivity:self.view];
         [_alliance createAllianceWithName:[allianceName stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" "]] andCreatorId:[Beintoo getUserID]];
     }
@@ -114,10 +116,22 @@
 - (void)didCreateAlliance:(NSDictionary *)result{    
     
     NSString *justCreatedAllianceID = [result objectForKey:@"id"];
-    if ( ([selectedFriendsArray count]>0) && (justCreatedAllianceID != nil) ) {
+    if ( ([selectedFriendsArray count] > 0) && (justCreatedAllianceID != nil) ) {
         [_alliance allianceAdminInviteFriends:selectedFriendsArray onAlliance:justCreatedAllianceID];
     }
-    else{
+    else if (justCreatedAllianceID != nil){
+        [BLoadingView stopActivity];
+        
+        NSString *alertMessage;
+        UIAlertView *av = [UIAlertView alloc];
+        
+        alertMessage = NSLocalizedStringFromTable(@"requestSent",@"BeintooLocalizable",@"");
+        av.tag = 321;
+        [av initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        [av show];
+        [av release];
+    }
+    else {
         [BLoadingView stopActivity];
         NSString *alertMessage = NSLocalizedStringFromTable(@"requestNotSent",@"BeintooLocalizable",@"");
         UIAlertView *av = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
@@ -174,7 +188,7 @@
 #pragma mark UITextField
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
-	textField.font = [UIFont systemFontOfSize:16];
+	textField.font = [UIFont systemFontOfSize:14];
     textField.text = @"";
 	
 	return YES;
