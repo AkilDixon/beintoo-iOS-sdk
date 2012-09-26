@@ -23,7 +23,10 @@
 #define ALERT_HEIGHT_RECOMMENDATION_HTML	70
 #define ALERT_HEIGHT_RECOMMENDATION         50
 #define ALERT_HEIGHT_VGOOD                  69
-#define RECOMMENDATION_TEXTHEIGHT           25      
+#define RECOMMENDATION_TEXTHEIGHT           25   
+
+#define REWARD  100
+#define AD      101
 
 @class BButton,BVirtualGood;
 
@@ -60,6 +63,7 @@
 @property(nonatomic, assign) id <BeintooPrizeDelegate> globalDelegate;
 @property(nonatomic) int prizeType;
 @property(nonatomic, assign) BOOL isVisible;
+@property(nonatomic) int type;
 
 - (void)setThumbnail:(NSData *)imgData;
 - (void)removeViews;
@@ -83,6 +87,9 @@
 - (void)userDidTapOnThePrize;
 - (void)userDidTapOnClosePrize;
 
+- (void)userDidTapOnTheAd;
+- (void)userDidTapOnCloseAd;
+
 - (void)beintooPrizeWillAppear;
 - (void)beintooPrizeDidAppear;    
 - (void)beintooPrizeDidDisappear;
@@ -92,6 +99,16 @@
 - (void)beintooPrizeAlertDidAppear;    
 - (void)beintooPrizeAlertDidDisappear;
 - (void)beintooPrizeAlertWillDisappear;
+
+- (void)beintooAdWillAppear;
+- (void)beintooAdDidAppear;
+- (void)beintooAdDidDisappear;
+- (void)beintooAdWillDisappear;
+
+- (void)beintooAdControllerWillAppear;
+- (void)beintooAdControllerDidAppear;
+- (void)beintooAdControllerDidDisappear;
+- (void)beintooAdControllerWillDisappear;
 
 @end
 

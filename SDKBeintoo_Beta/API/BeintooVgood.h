@@ -37,10 +37,12 @@
 	BOOL                    isRecommendation;
 	
 	NSString                *rest_resource;
+    NSString                *display_rest_resource;
 	
 	id callingDelegate;
     
     BVirtualGood            *vgood;
+    BVirtualGood            *adContent;
 }
 
 + (void)getSingleVirtualGood;
@@ -49,6 +51,8 @@
 + (void)getMultipleVirtualGoodWithContest:(NSString *)contestID;
 + (void)getSingleVirtualGoodWithDelegate:(id)_delegate;
 + (void)getMultipleVirtualGoodWithDelegate:(id)_delegate;
+
++ (void)getAd;
 
 // Private vgoods
 + (void)getPlayerPrivateVgoods;
@@ -60,6 +64,7 @@
 + (void)showNotificationForNothingToDispatch;
 
 - (NSString *)restResource;
+- (NSString *)getDisplayRestResource;
 + (void)setVgoodDelegate:(id)_caller;
 
 /* --- VGOODS ---- */
@@ -73,7 +78,6 @@
 - (void)getCommentListForVgoodId:(NSString *)_vgoodId;
 - (void)setCommentForVgoodId:(NSString *)_vgoodId andUser:(NSString *)_userExt withComment:(NSString *)_comment;
 
-
 /* --- MARKETPLACE --- */
 - (void)sellVGood:(NSString *)vGood_Id;
 - (void)showGoodsToBuy;
@@ -86,6 +90,7 @@
 @property(nonatomic,retain) NSDictionary    *generatedVGood;
 @property(nonatomic,retain) Parser          *parser;
 @property(nonatomic,retain) BVirtualGood    *vgood;
+@property(nonatomic,retain) BVirtualGood    *adContent;
 
 @end
 
@@ -97,6 +102,14 @@
 - (void)didGetAllvGoods:(NSArray *)vGoodList;
 - (void)didSendVGoodAsGift:(BOOL)result;
 - (void)didAcceptVgood;
+
+- (void)beintooHasRewardsCoverage;
+- (void)beintooHasNotRewardsCoverage;
+
+- (void)beintooPlayerIsEligibleForReward;
+- (void)beintooPlayerIsNotEligibleForReward;
+- (void)beintooPlayerIsOverQuotaForReward;
+- (void)beintooPlayerGotNothingToDispatchForReward;
 
 - (void)didGetAllPrivateVgoods:(NSArray *)privateVgoodList;
 - (void)didAssignPrivateVgoodToPlayerWithResult:(NSDictionary *)result;

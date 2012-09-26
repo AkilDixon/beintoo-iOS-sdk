@@ -64,7 +64,6 @@
 	_player			= [[BeintooPlayer alloc]init];
 	_player.delegate = self;
 	
-	
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];

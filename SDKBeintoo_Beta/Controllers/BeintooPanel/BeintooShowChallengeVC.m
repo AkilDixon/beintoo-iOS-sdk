@@ -65,7 +65,9 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
-    [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+    [super viewWillAppear:animated];
+    
+    [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     
     user.delegate = self;
     

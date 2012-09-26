@@ -80,6 +80,32 @@
 	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
 }
 
+- (void)showAdNavigationController{
+	self.view.alpha = 1;
+	CATransition *applicationLoadViewIn = [CATransition animation];
+	[applicationLoadViewIn setDuration:0.5f];
+	[applicationLoadViewIn setValue:@"loadAd" forKey:@"name"];
+	applicationLoadViewIn.removedOnCompletion = YES;
+	[applicationLoadViewIn setType:kCATransitionMoveIn];
+	applicationLoadViewIn.subtype = transitionEnterSubtype;
+	applicationLoadViewIn.delegate = self;
+	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+}
+
+- (void)hideAdNavigationController{
+    self.view.alpha = 0;
+	CATransition *applicationUnloadViewIn = [CATransition animation];
+	[applicationUnloadViewIn setDuration:0.5f];
+	[applicationUnloadViewIn setValue:@"unloadAd" forKey:@"name"];
+	applicationUnloadViewIn.removedOnCompletion = YES;
+	[applicationUnloadViewIn setType:kCATransitionReveal];
+	applicationUnloadViewIn.subtype = transitionExitSubtype;
+	applicationUnloadViewIn.delegate = self;
+	[applicationUnloadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
+}
+
 
 - (void)showMissionVgoodNavigationController{
 	self.view.alpha = 1;
@@ -118,6 +144,10 @@
     if ([[animation valueForKey:@"name"] isEqualToString:@"loadMissionVgood"]) {
 	}
     
+    if ([[animation valueForKey:@"name"] isEqualToString:@"loadAd"]) {
+		[Beintoo adControllerDidAppear];
+	}
+    
     if ([[animation valueForKey:@"name"] isEqualToString:@"unloadVgood"]) {
 		[self.view removeFromSuperview];
 		[Beintoo prizeDidDisappear];
@@ -126,6 +156,11 @@
     if ([[animation valueForKey:@"name"] isEqualToString:@"unloadMissionVgood"]) {
 		[self.view removeFromSuperview];
 		[Beintoo beintooDidDisappear];
+    }
+    
+    if ([[animation valueForKey:@"name"] isEqualToString:@"unloadAd"]) {
+		[self.view removeFromSuperview];
+		[Beintoo adControllerDidDisappear];
     }
 }
 

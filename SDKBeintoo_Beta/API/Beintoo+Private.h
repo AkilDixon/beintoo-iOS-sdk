@@ -40,15 +40,16 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (void)setTryBeintooImageTypeReward:(BOOL)_value;
 + (void)setNotificationPosition:(NSInteger)_value;
 + (void)initAPI;
++ (void)initMainAdController;
 + (void)initPlayerService;
 + (void)initUserService;
 + (void)initVgoodService;
 + (void)initAchievementsService;
-+ (void)initMissionService;
-+ (void)initMarketplaceService;
++ (void)initBestoreService;
 + (void)initMainController;
 + (void)initVgoodNavigationController;
 + (void)initMainNavigationController;
++ (void)initAdNavigationController;
 + (void)initiPadController;
 + (void)initPopoversForiPad;
 + (void)switchToSandbox;
@@ -60,8 +61,11 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (void)_launchMarketplaceOnAppWithDeveloperCurrencyValue:(float)_value;
 + (void)_launchWalletOnApp;
 + (void)_launchLeaderboardOnApp;
++ (void)_launchAchievementsOnApp;
 + (void)_launchPrizeOnApp;
 + (void)_launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate;
++ (void)_launchAd;
++ (void)_launchAdWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate;
 + (void)_launchMissionOnApp;
 + (void)_launchSignupOnApp;
 + (void)_launchPrivateSignupOnApp;
@@ -74,6 +78,7 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (void)_dismissBeintoo:(int)type;
 + (void)_dismissBeintooNotAnimated;
 + (void)_dismissPrize;
++ (void)_dismissAd;
 + (void)_dismissMission;
 + (void)_dismissRecommendation;
 + (void)_updateUserLocation;
@@ -84,6 +89,7 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (void)_setBeintooPlayer:(NSDictionary *)_player;
 + (void)_setBeintooUser:(NSDictionary *)_user;
 + (void)_setLastVgood:(BVirtualGood *)_vgood;
++ (void)_setLastAd:(BVirtualGood *)_ad;
 + (void)_setLastLoggedPlayers:(NSArray *)_players;
 + (void)_playerLogout;
 + (void)_beintooDidAppear;
@@ -119,5 +125,8 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 
 + (void)_beintooUserDidLogin;
 + (void)_beintooUserDidSignup;
+
++ (void)_adControllerDidAppear;
++ (void)_adControllerDidDisappear;
 
 @end

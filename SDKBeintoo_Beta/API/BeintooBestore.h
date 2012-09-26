@@ -28,11 +28,11 @@
 #import <Foundation/Foundation.h>
 #import "Parser.h"
 
-@protocol BeintooMarketplaceDelegate;
+@protocol BeintooBestoreDelegate;
 
-@interface BeintooMarketplace : NSObject <BeintooParserDelegate> {
+@interface BeintooBestore : NSObject <BeintooParserDelegate> {
 
-    id <BeintooMarketplaceDelegate> delegate;
+    id <BeintooBestoreDelegate> delegate;
 	Parser *parser;
 	
 	NSString *rest_resource;
@@ -41,26 +41,26 @@
 
 - (NSString *)restResource;
 
-- (void)getMarketplaceContentForKind:(NSString *)_kind andStart:(int)_start andNumberOfRows:(int)_rows andSorting:(NSString *)_sorting;
-- (void)getMarketplaceContentForKind:(NSString *)_kind andCategory:(NSString *)_category andStart:(int)_start andNumberOfRows:(int)_rows andSorting:(NSString *)_sorting;
-- (void)getMarketplaceCategories;
+- (void)getContentForKind:(NSString *)_kind andStart:(int)_start andNumberOfRows:(int)_rows andSorting:(NSString *)_sorting;
+- (void)getContentForKind:(NSString *)_kind andCategory:(NSString *)_category andStart:(int)_start andNumberOfRows:(int)_rows andSorting:(NSString *)_sorting;
+- (void)getCategories;
 
-@property(nonatomic, assign) id <BeintooMarketplaceDelegate> delegate;
+@property(nonatomic, assign) id <BeintooBestoreDelegate> delegate;
 @property(nonatomic,retain) Parser *parser;
 
     
 @end
 
-@protocol BeintooMarketplaceDelegate <NSObject>
+@protocol BeintooBestoreDelegate <NSObject>
 
 @optional
-- (void)didMarketplaceGotContent:(NSMutableArray *)result;
-- (void)didMarketplaceGotCategories:(NSMutableArray *)result;
-- (void)didMarketplaceGotCategoryContent:(NSMutableArray *)result;
+- (void)didBestoreGotContent:(NSMutableArray *)result;
+- (void)didBestoreGotCategories:(NSMutableArray *)result;
+- (void)didBestoreGotCategoryContent:(NSMutableArray *)result;
 
-- (void)didNotMarketplaceGotCategoryContent;
-- (void)didNotMarketplaceGotCategories;
-- (void)didNotMarketplaceGotContent;
+- (void)didNotBestoreGotCategoryContent;
+- (void)didNotBestoreGotCategories;
+- (void)didNotBestoreGotContent;
 
 
 @end

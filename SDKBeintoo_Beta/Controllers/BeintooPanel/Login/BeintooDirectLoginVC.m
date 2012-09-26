@@ -71,9 +71,7 @@
     
     anotherPlayerButton.hidden = YES;
     
-    
-    
-	self.navigationController.navigationBarHidden = NO;
+    self.navigationController.navigationBarHidden = NO;
     
 	// Retrieved Players Initial Settings
 	retrievedPlayersTable.delegate  = self;

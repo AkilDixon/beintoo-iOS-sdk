@@ -40,8 +40,8 @@
 	_player					= [[BeintooPlayer alloc] init];
     _alliance               = [[BeintooAlliance alloc] init];
 	
-	elementsArrayList = [[NSMutableArray alloc] init];
-	elementsImages    = [[NSMutableArray alloc] init];
+	elementsArrayList       = [[NSMutableArray alloc] init];
+	elementsImages          = [[NSMutableArray alloc] init];
 	
 	self.elementsTable.delegate		= self;
 	self.elementsTable.dataSource	= self;
@@ -64,8 +64,10 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
 
     _alliance.delegate      = self;
@@ -97,7 +99,6 @@
         noResultLabel.hidden = NO;
     }
 }
-
 
 #pragma mark -
 #pragma mark UITextField
@@ -137,9 +138,11 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	return [self.elementsArrayList count];
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     static NSString *CellIdentifier = @"Cell";
@@ -156,6 +159,7 @@
     
     return cell;
 }
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
@@ -197,6 +201,9 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    _player.delegate        = nil;
     _alliance.delegate      = nil;
     
     @try {
@@ -211,6 +218,7 @@
 	[elementsImages release];
     [_player release];
     [_alliance release];
+    
     [super dealloc];
 }
 

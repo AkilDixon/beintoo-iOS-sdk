@@ -22,7 +22,7 @@
 
 @implementation BSendChallengesView
 
-@synthesize challengeSender, challengeReceiver;
+@synthesize challengeSender, challengeReceiver, selectedContest;
 
 -(id)init {
 	if (self = [super init]){        
@@ -143,8 +143,6 @@
             sendChallengeDetailsView.alpha = 1;
             [UIView commitAnimations];
             
-            
-
         }
             break;
 
@@ -262,10 +260,16 @@
 
 #pragma mark - ViewActions
 - (void)closeMainView{
-    self.alpha = 0;
-	//[self removeViews];
-    [[self viewWithTag:BSENDCHALLENGEDETAILS_VIEW_TAG] removeFromSuperview];
-	[self removeFromSuperview];
+    
+    [UIView animateWithDuration:0.5
+                    animations:^(void) {
+                            self.alpha = 0;
+                        }
+                     completion:^(BOOL finished){
+                         [[self viewWithTag:BSENDCHALLENGEDETAILS_VIEW_TAG] removeFromSuperview];
+                         [self removeFromSuperview];
+                     }
+     ];
 }
 
 - (void)removeViews {

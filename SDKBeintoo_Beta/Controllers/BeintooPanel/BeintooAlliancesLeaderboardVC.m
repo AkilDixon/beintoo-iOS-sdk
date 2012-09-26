@@ -56,7 +56,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
 
     user.delegate			 = self;
@@ -148,7 +148,7 @@
 			[leaderboardEntry release];
 		}
 		@catch (NSException * e) {
-			NSLog(@"BeintooException: %@ \n for object: %@",e,[players objectAtIndex:i]);
+			BeintooLOG(@"BeintooException: %@ \n for object: %@",e,[players objectAtIndex:i]);
 		}
 	}
     [BLoadingView stopActivity];

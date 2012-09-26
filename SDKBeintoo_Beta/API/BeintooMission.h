@@ -14,7 +14,6 @@
  * limitations under the License.
  ******************************************************************************/
 
-
 #import <Foundation/Foundation.h>
 #import "Parser.h"
 
@@ -22,6 +21,7 @@
 
 @protocol BeintooMissionDelegate;
 
+__attribute__((deprecated))
 @interface BeintooMission : NSObject <BeintooParserDelegate>{
 	
 	id <BeintooMissionDelegate> delegate;

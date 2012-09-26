@@ -407,7 +407,7 @@
 		}
 	}
 	@catch (NSException * e) {
-		NSLog(@"BeintooException - Profile: %@",e);
+		BeintooLOG(@"BeintooException - Profile: %@",e);
 	}
 	
 	for (int i=0; i<[self.allContests count]; i++) {
@@ -425,7 +425,7 @@
 			[scores release];
 		}
 		@catch (NSException * e) {
-			NSLog(@"BeintooException - Profile: %@ \n for object: %@",e,[self.allContests objectAtIndex:i]);
+			BeintooLOG(@"BeintooException - Profile: %@ \n for object: %@",e,[self.allContests objectAtIndex:i]);
 		}
 	}
 	[scoresTable reloadData];

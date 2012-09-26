@@ -57,9 +57,10 @@
 - (void)initTableArrayElements;
 - (void)checkTextFieldInputs;
 
+@property(nonatomic, retain) NSString       *selectedContest;
 @property(nonatomic, retain) NSDictionary   *challengeSender;
-@property(nonatomic, retain) NSDictionary   *challengeReceiver;
-@property(nonatomic,assign) int challengeType;
+@property(nonatomic, retain) NSString       *challengeReceiver;
+@property(nonatomic, assign) int            challengeType;
 
 @end
 

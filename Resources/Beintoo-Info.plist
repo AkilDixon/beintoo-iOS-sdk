@@ -12,6 +12,7 @@
 	<string>icon.png</string>
 	<key>CFBundleIconFiles</key>
 	<array>
+		<string>57x57.png</string>
 		<string>icon.png</string>
 		<string>icon@2x.png</string>
 	</array>
@@ -21,11 +22,10 @@
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
+				<string>57x57.png</string>
 				<string>icon.png</string>
 				<string>icon@2x.png</string>
 			</array>
-			<key>UIPrerenderedIcon</key>
-			<false/>
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
@@ -37,7 +37,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.8.17</string>
+	<string>2.9.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -50,13 +50,15 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2.8.17</string>
+	<string>2.9.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSMainNibFile</key>
 	<string>MainWindow</string>
 	<key>UIStatusBarHidden</key>
 	<true/>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleDefault</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

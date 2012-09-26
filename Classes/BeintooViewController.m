@@ -85,7 +85,7 @@
      *  to directly launch Marketplace, overlapping the dashboars
      */
     
-    [Beintoo launchMarketplace];
+    [Beintoo launchBestore];
     
     /*
      *
@@ -212,6 +212,10 @@
     [Beintoo _setUserLocation:loc];
     
     [self manageLocation];
+}
+
+- (IBAction)getAd:(id)sender{
+    [BeintooVgood getAd];
 }
 
 #pragma mark -
@@ -489,6 +493,26 @@
         [redLondon              setHidden:NO];
         [redSanFrancisco        setHidden:NO];
     }
+}
+
+- (IBAction)signup:(id)sender{
+    [Beintoo launchSignup];
+}
+
+- (IBAction)leaderboard:(id)sender{
+    [Beintoo launchLeaderboard];
+}
+
+- (IBAction)wallet:(id)sender{
+    [Beintoo launchMyOffers];
+}
+
+- (IBAction)achievements:(id)sender{
+    [Beintoo launchAchievements];
+}
+
+- (IBAction)notifications:(id)sender{
+    [Beintoo launchNotifications];
 }
 
 @end

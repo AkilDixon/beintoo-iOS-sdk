@@ -28,7 +28,7 @@
 	[leaderboardView setTopHeight:40];
 	[leaderboardView setBodyHeight:387];
     
-    [segControl setTitle:NSLocalizedStringFromTable(@"people",@"BeintooLocalizable",@"All") forSegmentAtIndex:0];
+    [segControl setTitle:NSLocalizedStringFromTable(@"people",@"BeintooLocalizable", nil) forSegmentAtIndex:0];
 	[segControl setTitle:NSLocalizedStringFromTable(@"alliances",@"BeintooLocalizable",@"Friends") forSegmentAtIndex:1];
 
     segControl.tintColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1];
@@ -52,7 +52,7 @@
 
 - (void) viewWillAppear:(BOOL)animated {
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
     player.delegate		= self;
 	
@@ -117,15 +117,16 @@
 	if ([contestName isEqualToString:@"default"]) {
 		contestName = @"General"; 
 	}
-	cell.textLabel.text  = [NSString stringWithFormat:@"%@",contestName];
+	cell.textLabel.text  = [NSString stringWithFormat:@"%@", contestName];
 	cell.textLabel.font  = [UIFont systemFontOfSize:17];
 	cell.imageView.image = [UIImage imageNamed:@"beintoo_cup.png"];
     NSString *typeOf;
+    
     if (segControl.selectedSegmentIndex == 0) {
-        typeOf = @"People";
+        typeOf = NSLocalizedStringFromTable(@"people",@"BeintooLocalizable", nil);
     }
     else{
-        typeOf = @"Alliances";
+        typeOf = NSLocalizedStringFromTable(@"alliances",@"BeintooLocalizable",@"Friends");
     }
     cell.detailTextLabel.text = typeOf;
     return cell;

@@ -26,13 +26,12 @@
 - (void)beintooDidAppear;
 - (void)beintooWillDisappear;
 - (void)beintooDidDisappear;
-- (void)didBeintooGenerateAVirtualGood:(BVirtualGood *)theVgood;
-- (void)didBeintooFailToGenerateAVirtualGoodWithError:(NSDictionary *)error;
 
 
 /* -------------------
  * PRIZE
  * -------------------*/
+
 - (void)beintooPrizeWillAppear;
 - (void)beintooPrizeDidAppear;
 - (void)beintooPrizeWillDisappear;
@@ -42,6 +41,26 @@
 - (void)beintooPrizeAlertDidAppear;
 - (void)beintooPrizeAlertWillDisappear;
 - (void)beintooPrizeAlertDidDisappear;
+
+- (void)didBeintooGenerateAVirtualGood:(BVirtualGood *)theVgood;
+- (void)didBeintooFailToGenerateAVirtualGoodWithError:(NSDictionary *)error;
+
+/* -------------------
+ * AD
+ * -------------------*/
+
+- (void)beintooAdControllerWillAppear;
+- (void)beintooAdControllerDidAppear;
+- (void)beintooAdControllerWillDisappear;
+- (void)beintooAdControllerDidDisappear;
+
+- (void)beintooAdWillAppear;
+- (void)beintooAdDidAppear;
+- (void)beintooAdWillDisappear;
+- (void)beintooAdDidDisappear;
+
+- (void)didBeintooGenerateAnAd:(BVirtualGood *)theAd;
+- (void)didBeintooFailToGenerateAnAdWithError:(NSDictionary *)error;
 
 
 @end

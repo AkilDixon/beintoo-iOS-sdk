@@ -28,58 +28,58 @@
 "lederboardNoResult"    = "Make some new friends and beat them on the leaderboard!";
 
 // Give Bedollars
-"giveBedollarMsg"      = "You just earned %i Bedollar! Use your Bedollars to redeem great offers on Beintoo";
-"giveBedollarsMsg"      = "You just earned %i Bedollars! Use your Bedollars to redeem great offers on Beintoo";
-"giveBedollarFloatMsg"      = "You just earned %.1f Bedollar! Use your Bedollars to redeem great offers on Beintoo";
-"giveBedollarsFloatMsg"      = "You just earned %.1f Bedollars! Use your Bedollars to redeem great offers on Beintoo";
+"giveBedollarMsg"               = "You just earned %i Bedollar! Use your Bedollars to redeem great offers on Beintoo";
+"giveBedollarsMsg"              = "You just earned %i Bedollars! Use your Bedollars to redeem great offers on Beintoo";
+"giveBedollarFloatMsg"          = "You just earned %.1f Bedollar! Use your Bedollars to redeem great offers on Beintoo";
+"giveBedollarsFloatMsg"         = "You just earned %.1f Bedollars! Use your Bedollars to redeem great offers on Beintoo";
 
 // Post Signup Tutorial
-"tutorialFirstSentenceBold" = "PLAY";
-"tutorialFirstSentence" = "/ Engage with favourite Apps in the Beintoo network";
-"tutorialSecondSentenceBold" = "EARN";
-"tutorialSecondSentence" = "/ Collect Bedollars from your activities";
-"tutorialThirdSentenceBold" = "REDEEM";
-"tutorialThirdSentence" = "/ Get real world offers in the Beintoo store";
+"tutorialFirstSentenceBold"     = "PLAY";
+"tutorialFirstSentence"         = "/ Engage with favourite Apps in the Beintoo network";
+"tutorialSecondSentenceBold"    = "EARN";
+"tutorialSecondSentence"        = "/ Collect Bedollars from your activities";
+"tutorialThirdSentenceBold"     = "REDEEM";
+"tutorialThirdSentence"         = "/ Get real world offers in the Beintoo store";
 
-"tutorialProceedButton" = "Start now!";
+"tutorialProceedButton"         = "Start now!";
 
-"signupMainSentence1" = "Join";
-"signupMainSentence2" = " the community to "; 
-"signupMainSentence3" = "earn"; 
-"signupMainSentence4" = "bedollars and ";
-"signupMainSentence5" = "redeem"; 
-"signupMainSentence6" = "high value real world offers";
+"signupMainSentence1"           = "Join";
+"signupMainSentence2"           = " the community to "; 
+"signupMainSentence3"           = "earn"; 
+"signupMainSentence4"           = "bedollars and ";
+"signupMainSentence5"           = "redeem"; 
+"signupMainSentence6"           = "high value real world offers";
 
-"signupOrLabel"       = "or";
+"signupOrLabel"                 = "or";
 
-"new_login_title" = "Continue earning Bedollars and redeem offers from here!";
+"new_login_title"               = "Continue earning Bedollars and redeem offers from here!";
 
-"signupTextFieldPlaceholder" = "Signup with your email";
+"signupTextFieldPlaceholder"    = "Signup with your email";
 
-"loginEmailPlaceholder" = "Email";
-"loginPasswordPlaceholder" = "Password";
+"loginEmailPlaceholder"         = "Email";
+"loginPasswordPlaceholder"      = "Password";
 
-"successfullyUnfrined"  = "%@ successfully removed from friends";
-"friendshipRequestSent" = "Friend request successfully sent to %@";
-"noFriendsAlliance"     = "Make some new friends to invite them into your new alliance!";
-"noAlliancesInContest"  = "No active alliances in this contest yet!";
-"noNotifications"       = "You don't have any notifications at the moment!";
+"successfullyUnfrined"          = "%@ successfully removed from friends";
+"friendshipRequestSent"         = "Friend request successfully sent to %@";
+"noFriendsAlliance"             = "Make some new friends to invite them into your new alliance!";
+"noAlliancesInContest"          = "No active alliances in this contest yet!";
+"noNotifications"               = "You don't have any notifications at the moment!";
 
-"connectWithFacebook" = "Connect with Facebook";
+"connectWithFacebook"           = "Connect with Facebook";
 
-"noAlliances"           = "None";
+"noAlliances"                   = "None";
 
-"no" = "No";
+"no"                            = "No";
 
-"settingsLabel"         = "Settings";
+"settingsLabel"                 = "Settings";
 
-"forgotPasswordButton" = "Forgot your password?";
-"forgotPasswordTitle" = "To reset your password, please insert your email";
-"forgotPasswordSendEmail" = "Send a new password";
-"forgotPasswordAlertTitle" = "Successfully sent!";
-"forgotPasswordAlertSuccess" = "A new password has been sent to your account";
+"forgotPasswordButton"          = "Forgot your password?";
+"forgotPasswordTitle"           = "To reset your password, please insert your email";
+"forgotPasswordSendEmail"       = "Send a new password";
+"forgotPasswordAlertTitle"      = "Successfully sent!";
+"forgotPasswordAlertSuccess"    = "A new password has been sent to your account";
 "forgotPasswordAlertTitleError" = "Error";
-"forgotPasswordAlertError" = "The email entered doesn't belong to any account";
+"forgotPasswordAlertError"      = "The email entered doesn't belong to any account";
 
 // Dashboard
 "profileDesc"			= "View your stats";
@@ -102,9 +102,9 @@
 
 // Notifications
 "submitScoreMsgSinglePoint"		= "You've earned %@ point.";
-"submitScoreMsg"		= "You've earned %@ points.";
-"playerLoginMsg"        = "Welcome back %@";
-"unlockAchievMsg"		= "Achievement unlocked!"; 
+"submitScoreMsg"                = "You've earned %@ points.";
+"playerLoginMsg"                = "Welcome back %@";
+"unlockAchievMsg"               = "Achievement unlocked!"; 
 
 // Notifications
 "notifications"                 = "Notifications";

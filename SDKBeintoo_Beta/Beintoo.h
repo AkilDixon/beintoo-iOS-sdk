@@ -18,6 +18,7 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import <QuartzCore/QuartzCore.h>
+#import <AdSupport/AdSupport.h>
 #import "BeintooPlayer.h"
 #import "BeintooVC.h"
 #import "BeintooVgood.h"
@@ -86,8 +87,8 @@
 #import "BSendChallengesView.h"
 #import "BSendChallengeDetailsView.h"
 #import "BeintooNotificationListVC.h"
-#import "BeintooMarketplace.h"
-#import "BeintooMarketplaceWebViewVC.h"
+#import "BeintooBestore.h"
+#import "BeintooBestoreVC.h"
 #import "BeintooUrlParser.h"
 #import "BeintooOpenUDID.h"
 
@@ -162,16 +163,18 @@ extern NSString *BNSDefIsUserLogged;
 	BeintooPlayer                   *beintooPlayerService;
     BeintooUser                     *beintooUserService;
 	BeintooAchievements             *beintooAchievementsService;
-    BeintooMission                  *beintooMissionService;
-    BeintooMarketplace              *beintooMarketplaceService;
+    BeintooBestore                  *beintooBestoreService;
 	
     NSDictionary                    *lastRetrievedMission;
 	BVirtualGood                    *lastGeneratedGood;
+    BVirtualGood                    *lastGeneratedAd;
 	BPrize                          *prizeView;
+    BPrize                          *adView;
     BMissionView                    *missionView;
 	BMessageAnimated                *notificationView;
 	
     BeintooMainController           *mainController;
+    BeintooMainController           *mainAdController;
 	BeintooNavigationController     *mainNavigationController;
     BeintooNavigationController     *bestoreNavigationController;
     BeintooNavigationController     *leaderboardNavigationController;
@@ -182,15 +185,15 @@ extern NSString *BNSDefIsUserLogged;
     BeintooNavigationController     *privateNotificationsNavigationController;
     BeintooNavigationController     *privateSignupNavigationController;
 	BeintooVgoodNavController       *vgoodNavigationController;
+    BeintooVgoodNavController       *adNavigationController;
 	BeintooiPadController           *ipadController;
 	
     BeintooVC                       *beintooPanelRootViewController;
-    BeintooMarketplaceVC            *beintooMarketplaceViewController;
     BeintooWalletVC                 *beintooWalletViewController;
     BeintooLeaderboardVC            *beintooLeaderboardVC;
     BeintooLeaderboardContestVC     *beintooLeaderboardWithContestVC;
     BeintooNotificationListVC       *beintooNotificationsVC;
-    BeintooMarketplaceWebViewVC     *beintooMarketplaceWebViewVC;
+    BeintooBestoreVC                *beintooBestoreVC;
     
 }
 
@@ -199,14 +202,20 @@ extern NSString *BNSDefIsUserLogged;
 + (void)launchBeintooOnAppWithVirtualCurrencyBalance:(float)_value;
 + (void)launchNotifications;
 + (void)_launchPrivateSignup;
-+ (void)launchMarketplace;
-+ (void)launchMarketplaceOnAppWithVirtualCurrencyBalance:(float)_value;
-+ (void)launchWallet;
++ (void)launchBestore;
++ (void)launchBestoreWithVirtualCurrencyBalance:(float)_value;
++ (void)launchMarketplace __attribute__((deprecated("use 'launchBestore' instead")));
++ (void)launchMarketplaceOnAppWithVirtualCurrencyBalance:(float)_value __attribute__((deprecated("use 'launchBestoreWithVirtualCurrencyBalance:' instead")));
++ (void)launchMyOffers;
++ (void)launchWallet __attribute__((deprecated("use 'launchMyOffers' instead")));
 + (void)launchLeaderboard;
 + (void)launchSignup;
++ (void)launchAchievements;
 + (void)launchPrize;
 + (void)launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate;
-+ (void)launchMission;
++ (void)launchAd;
++ (void)launchAdWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate;
++ (void)launchMission __attribute__((deprecated));
 + (void)launchIpadLogin;
 + (void)dismissIpadLogin;
 + (void)launchIpadNotifications;
@@ -239,14 +248,14 @@ extern NSString *BNSDefIsUserLogged;
 + (NSString *)getMissionTimestamp;
 + (void)setMissionTimestamp:(NSString *)_timestamp;
 + (BVirtualGood *)getLastGeneratedVGood;
++ (BVirtualGood *)getLastGeneratedAd;
 + (NSDictionary *)getLastRetrievedMission;
 + (void)setLastRetrievedMission:(NSDictionary *)_mission;
 + (BeintooVgood *)beintooVgoodService;
 + (BeintooPlayer *)beintooPlayerService;
 + (BeintooUser *)beintooUserService;
 + (BeintooAchievements *)beintooAchievementService;
-+ (BeintooMission *)beintooMissionService;
-+ (BeintooMarketplace *)beintooMarketplaceService;
++ (BeintooBestore *)beintooBestoreService;
 + (UIViewController *)getMainController;
 + (BeintooNavigationController *)getMainNavigationController;
 + (BeintooVgoodNavController *)getVgoodNavigationController;
@@ -261,6 +270,7 @@ extern NSString *BNSDefIsUserLogged;
 + (BeintooNotificationListVC *)getPrivateNotificationsViewController;
 + (UIWindow *)getAppWindow;
 + (void)setLastGeneratedVgood:(BVirtualGood *)_theVGood;
++ (void)setLastGeneratedAd:(BVirtualGood *)_theAd;
 + (int)appOrientation;
 + (void)setBeintooUser:(NSDictionary *)_user;
 + (void)setBeintooPlayer:(NSDictionary *)_player;
@@ -272,6 +282,7 @@ extern NSString *BNSDefIsUserLogged;
 + (void)dismissBeintoo:(int)type;
 + (void)dismissBeintooNotAnimated;
 + (void)dismissPrize;
++ (void)dismissAd;
 + (void)dismissRecommendation;
 + (void)dismissMission;
 + (void)beintooDidAppear;
@@ -309,6 +320,11 @@ extern NSString *BNSDefIsUserLogged;
 
 + (void)postNotificationBeintooUserDidLogin;
 + (void)postNotificationBeintooUserDidSignup;
+
++ (void)adControllerDidAppear;
++ (void)adControllerDidDisappear;
++ (void)notifyAdGenerationOnMainDelegate;
++ (void)notifyAdGenerationErrorOnMainDelegate:(NSDictionary *)_error;
 
 @end
 

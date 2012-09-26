@@ -19,7 +19,7 @@
 
 @implementation BeintooVGoodShowVC
 
-@synthesize urlToOpen, caller, callerIstance;
+@synthesize urlToOpen, caller, callerIstance, type;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil urlToOpen:(NSString *)URL {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -128,7 +128,7 @@
 	
     if (![url.scheme isEqual:@"http"] && ![url.scheme isEqual:@"https"]) {
 		// ******** Remember that this will NOT work on the simulator ******* //
-		if ([[UIApplication sharedApplication]canOpenURL:url]) {
+		if ([[UIApplication sharedApplication] canOpenURL:url]) {
 			[[UIApplication sharedApplication]openURL:url];
 			[BLoadingView stopActivity];
 			didOpenTheRecommendation = YES;
@@ -139,7 +139,10 @@
                     [Beintoo dismissBeintoo:navController.type];
                 }
                 else {
-                    [Beintoo dismissPrize];
+                    if (type == REWARD)
+                        [Beintoo dismissPrize];
+                    else if (type == AD)
+                        [Beintoo dismissAd];
                 }
 			}
 			
@@ -210,12 +213,16 @@
 }
 
 - (void)closeBeintoo{
-	if (isFromWallet) { 
+    
+    if (isFromWallet) {
 		BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
         [Beintoo dismissBeintoo:navController.type];
 	}
     else {
-		[Beintoo dismissPrize];
+        if (type == REWARD)
+            [Beintoo dismissPrize];
+        else if (type == AD)
+            [Beintoo dismissAd];
 	}
 }
 
@@ -224,6 +231,8 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
 	[vGoodWebView loadHTMLString:@"<html><head></head><body></body></html>" baseURL:nil];
 }
 

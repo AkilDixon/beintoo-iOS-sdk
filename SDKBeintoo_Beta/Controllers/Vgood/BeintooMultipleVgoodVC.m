@@ -62,9 +62,10 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
 		
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
 	[self.multipleVgoodTable deselectRowAtIndexPath:[self.multipleVgoodTable indexPathForSelectedRow] animated:YES];
 
@@ -90,7 +91,7 @@
 		}
 	}
 	@catch (NSException * e) {
-		NSLog(@"EXCEPTION :%@",e);
+		BeintooLOG(@"EXCEPTION :%@",e);
 	}
 	[BLoadingView stopActivity];	
 	[self.multipleVgoodTable reloadData];

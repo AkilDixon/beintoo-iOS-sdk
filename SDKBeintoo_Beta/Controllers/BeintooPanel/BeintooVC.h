@@ -21,9 +21,9 @@
 #import "BeintooPlayer.h"
 
 @class BView,BeintooNavigationController,BButton,BTableView,BeintooVgood,BeintooLoginVC,
-	BeintooProfileVC,BeintooLeaderboardVC,BeintooWalletVC,BeintooChallengesVC,BeintooAchievementsVC,BeintooMessagesVC,BeintooBrowserVC,BGradientView, BeintooNotificationListVC, BeintooMarketplaceVC, BeintooMarketplaceWebViewVC;
+	BeintooProfileVC,BeintooLeaderboardVC,BeintooWalletVC,BeintooChallengesVC,BeintooAchievementsVC,BeintooMessagesVC,BeintooBrowserVC,BGradientView, BeintooNotificationListVC, BeintooMarketplaceVC, BeintooBestoreVC;
 
-@interface BeintooVC : UIViewController <UITableViewDelegate,UITableViewDataSource,BeintooPlayerDelegate,BeintooUserDelegate> {
+@interface BeintooVC : UIViewController <UITableViewDelegate, UITableViewDataSource,BeintooPlayerDelegate, BeintooUserDelegate> {
 	    
     BView                   *tryBeintooView;
 	IBOutlet BView			*homeView;
@@ -82,9 +82,8 @@
 	BeintooMessagesVC           *messagesVC;
     BeintooBrowserVC            *tipsAndForumVC;
     BeintooNotificationListVC   *beintooNotificationListVC;
-    BeintooMarketplaceVC        *marketplaceVC;
     
-    BeintooMarketplaceWebViewVC *beintooMarketplaceWebViewVC;
+    BeintooBestoreVC *beintooBestoreVC;
 }
 
 // Beintoo Initializer 

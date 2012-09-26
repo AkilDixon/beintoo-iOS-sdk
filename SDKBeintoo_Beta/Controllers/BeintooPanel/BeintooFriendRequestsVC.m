@@ -58,8 +58,10 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
     
     _user.delegate			= self;
@@ -108,7 +110,7 @@
 				[friendsEntry release];
 			}
 			@catch (NSException * e) {
-				NSLog(@"BeintooException - FriendList: %@ \n for object: %@",e,[result objectAtIndex:i]);
+				BeintooLOG(@"BeintooException - FriendList: %@ \n for object: %@",e,[result objectAtIndex:i]);
             }
 		}
 	} 
@@ -189,14 +191,14 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
 	
 	if(buttonIndex == 0){ // Accept friend
-		NSLog(@"accept");
-		friendResponseKind = USER_ACCEPT_FRIENDSHIP;
+		
+        friendResponseKind = USER_ACCEPT_FRIENDSHIP;
 		[BLoadingView startActivity:self.view];
 		[_user replyToFriendshipRequestWithAnswer:USER_ACCEPT_FRIENDSHIP toUser:[self.selectedElement objectForKey:@"userExt"]];
 	}
 	if(buttonIndex == 1){ // Refuse friend
-		NSLog(@"refuse");
-		friendResponseKind = USER_REFUSE_FRIENDSHIP;
+		
+        friendResponseKind = USER_REFUSE_FRIENDSHIP;
 		[BLoadingView startActivity:self.view];
 		[_user replyToFriendshipRequestWithAnswer:USER_REFUSE_FRIENDSHIP toUser:[self.selectedElement objectForKey:@"userExt"]];
 	}

@@ -20,7 +20,7 @@
 @implementation BeintooiPadController
 
 #ifdef UI_USER_INTERFACE_IDIOM
-    @synthesize popoverController,loginPopoverController,vgoodPopoverController, privateSignupPopoverController, privateNotificationsPopoverController, notificationsPopoverController;
+    @synthesize popoverController,loginPopoverController,vgoodPopoverController, privateSignupPopoverController, privateNotificationsPopoverController, notificationsPopoverController, leaderboardPopoverController, achievementsPopoverController, myOffersPopoverController, adPopoverController;
 #endif
 @synthesize isLoginOngoing;
 
@@ -78,6 +78,236 @@
 
 - (void)hideBeintooPopover{
 
+	self.view.alpha = 0;
+	CATransition *applicationUnloadViewIn = [CATransition animation];
+	[applicationUnloadViewIn setDuration:0.01f];
+	[applicationUnloadViewIn setValue:@"unloadMainPopover" forKey:@"name"];
+	applicationUnloadViewIn.removedOnCompletion = YES;
+	[applicationUnloadViewIn setType:kCATransitionReveal];
+	applicationUnloadViewIn.subtype = transitionEnterSubtype;
+	applicationUnloadViewIn.delegate = self;
+	[applicationUnloadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
+	
+	isMainPopoverVisible = NO;
+}
+
+- (void)showLeaderboardPopover{
+	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
+    self.view.frame = [Beintoo getAppWindow].bounds;
+	
+	BeintooNavigationController *beintooMainNavController = [Beintoo getLeaderboardsNavigationController];
+	if (leaderboardPopoverController != nil) {
+		[leaderboardPopoverController release];
+		leaderboardPopoverController = nil;
+	}
+	leaderboardPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
+	[leaderboardPopoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	leaderboardPopoverController.delegate = self;
+    
+	self.view.alpha = 1;
+    
+	CATransition *applicationLoadViewIn = [CATransition animation];
+	[applicationLoadViewIn setDuration:0.1f];
+	[applicationLoadViewIn setValue:@"loadMainPopover" forKey:@"name"];
+	applicationLoadViewIn.removedOnCompletion = YES;
+	[applicationLoadViewIn setType:kCATransitionReveal];
+	applicationLoadViewIn.subtype = transitionEnterSubtype;
+	applicationLoadViewIn.delegate = self;
+	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+	
+	[leaderboardPopoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
+	isMainPopoverVisible = YES;
+}
+
+- (void)hideLeaderboardPopover{
+    
+    NSLog(@"type lead");
+    
+    
+    
+	self.view.alpha = 0;
+	CATransition *applicationUnloadViewIn = [CATransition animation];
+	[applicationUnloadViewIn setDuration:0.01f];
+	[applicationUnloadViewIn setValue:@"unloadMainPopover" forKey:@"name"];
+	applicationUnloadViewIn.removedOnCompletion = YES;
+	[applicationUnloadViewIn setType:kCATransitionReveal];
+	applicationUnloadViewIn.subtype = transitionEnterSubtype;
+	applicationUnloadViewIn.delegate = self;
+	[applicationUnloadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
+	
+	isMainPopoverVisible = NO;
+}
+
+- (void)showAchievementsPopover{
+	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
+    self.view.frame = [Beintoo getAppWindow].bounds;
+	
+	BeintooNavigationController *beintooMainNavController = [Beintoo getAchievementsNavigationController];
+	if (achievementsPopoverController != nil) {
+		[achievementsPopoverController release];
+		achievementsPopoverController = nil;
+	}
+	achievementsPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
+	[achievementsPopoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	achievementsPopoverController.delegate = self;
+    
+	self.view.alpha = 1;
+    
+	CATransition *applicationLoadViewIn = [CATransition animation];
+	[applicationLoadViewIn setDuration:0.1f];
+	[applicationLoadViewIn setValue:@"loadMainPopover" forKey:@"name"];
+	applicationLoadViewIn.removedOnCompletion = YES;
+	[applicationLoadViewIn setType:kCATransitionReveal];
+	applicationLoadViewIn.subtype = transitionEnterSubtype;
+	applicationLoadViewIn.delegate = self;
+	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+	
+	[achievementsPopoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
+	isMainPopoverVisible = YES;
+}
+
+- (void)hideAchievementsPopover{
+    
+	self.view.alpha = 0;
+	CATransition *applicationUnloadViewIn = [CATransition animation];
+	[applicationUnloadViewIn setDuration:0.01f];
+	[applicationUnloadViewIn setValue:@"unloadMainPopover" forKey:@"name"];
+	applicationUnloadViewIn.removedOnCompletion = YES;
+	[applicationUnloadViewIn setType:kCATransitionReveal];
+	applicationUnloadViewIn.subtype = transitionEnterSubtype;
+	applicationUnloadViewIn.delegate = self;
+	[applicationUnloadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
+	
+	isMainPopoverVisible = NO;
+}
+
+- (void)showMyOffersPopover{
+	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
+    self.view.frame = [Beintoo getAppWindow].bounds;
+	
+	BeintooNavigationController *beintooMainNavController = [Beintoo getMyOffersNavigationController];
+	if (myOffersPopoverController != nil) {
+		[myOffersPopoverController release];
+		myOffersPopoverController = nil;
+	}
+	myOffersPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
+	[myOffersPopoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	myOffersPopoverController.delegate = self;
+    
+	self.view.alpha = 1;
+    
+	CATransition *applicationLoadViewIn = [CATransition animation];
+	[applicationLoadViewIn setDuration:0.1f];
+	[applicationLoadViewIn setValue:@"loadMainPopover" forKey:@"name"];
+	applicationLoadViewIn.removedOnCompletion = YES;
+	[applicationLoadViewIn setType:kCATransitionReveal];
+	applicationLoadViewIn.subtype = transitionEnterSubtype;
+	applicationLoadViewIn.delegate = self;
+	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+	
+	[myOffersPopoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
+	isMainPopoverVisible = YES;
+}
+
+- (void)hideMyOffersPopover{
+    
+	self.view.alpha = 0;
+	CATransition *applicationUnloadViewIn = [CATransition animation];
+	[applicationUnloadViewIn setDuration:0.01f];
+	[applicationUnloadViewIn setValue:@"unloadMainPopover" forKey:@"name"];
+	applicationUnloadViewIn.removedOnCompletion = YES;
+	[applicationUnloadViewIn setType:kCATransitionReveal];
+	applicationUnloadViewIn.subtype = transitionEnterSubtype;
+	applicationUnloadViewIn.delegate = self;
+	[applicationUnloadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
+	
+	isMainPopoverVisible = NO;
+}
+
+- (void)showNotificationsPopover{
+	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
+    self.view.frame = [Beintoo getAppWindow].bounds;
+	
+	BeintooNavigationController *beintooMainNavController = [Beintoo getNotificationsNavigationController];
+	if (notificationsPopoverController != nil) {
+		[notificationsPopoverController release];
+		notificationsPopoverController = nil;
+	}
+	notificationsPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
+	[notificationsPopoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	notificationsPopoverController.delegate = self;
+    
+	self.view.alpha = 1;
+    
+	CATransition *applicationLoadViewIn = [CATransition animation];
+	[applicationLoadViewIn setDuration:0.1f];
+	[applicationLoadViewIn setValue:@"loadMainPopover" forKey:@"name"];
+	applicationLoadViewIn.removedOnCompletion = YES;
+	[applicationLoadViewIn setType:kCATransitionReveal];
+	applicationLoadViewIn.subtype = transitionEnterSubtype;
+	applicationLoadViewIn.delegate = self;
+	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+	
+	[notificationsPopoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
+	isMainPopoverVisible = YES;
+}
+
+- (void)hideNotificationsPopover{
+    
+	self.view.alpha = 0;
+	CATransition *applicationUnloadViewIn = [CATransition animation];
+	[applicationUnloadViewIn setDuration:0.01f];
+	[applicationUnloadViewIn setValue:@"unloadMainPopover" forKey:@"name"];
+	applicationUnloadViewIn.removedOnCompletion = YES;
+	[applicationUnloadViewIn setType:kCATransitionReveal];
+	applicationUnloadViewIn.subtype = transitionEnterSubtype;
+	applicationUnloadViewIn.delegate = self;
+	[applicationUnloadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
+	
+	isMainPopoverVisible = NO;
+}
+
+
+- (void)showSignupPopover{
+	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
+    self.view.frame = [Beintoo getAppWindow].bounds;
+	
+	BeintooNavigationController *beintooMainNavController = [Beintoo getSignupNavigationController];
+	if (popoverController != nil) {
+		[popoverController release];
+		popoverController = nil;
+	}
+	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
+	[popoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	popoverController.delegate = self;
+    
+	self.view.alpha = 1;
+    
+	CATransition *applicationLoadViewIn = [CATransition animation];
+	[applicationLoadViewIn setDuration:0.1f];
+	[applicationLoadViewIn setValue:@"loadMainPopover" forKey:@"name"];
+	applicationLoadViewIn.removedOnCompletion = YES;
+	[applicationLoadViewIn setType:kCATransitionReveal];
+	applicationLoadViewIn.subtype = transitionEnterSubtype;
+	applicationLoadViewIn.delegate = self;
+	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+	
+	[popoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
+	isMainPopoverVisible = YES;
+}
+
+- (void)hideSignupPopover{
+    
 	self.view.alpha = 0;
 	CATransition *applicationUnloadViewIn = [CATransition animation];
 	[applicationUnloadViewIn setDuration:0.01f];
@@ -213,6 +443,48 @@
 	isVgoodPopoverVisible= NO;
 }
 
+- (void)showAdPopoverWithVGoodController:(UINavigationController *)_vgoodNavController{
+	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
+    
+	if (adPopoverController != nil) {
+		[adPopoverController release];
+		adPopoverController = nil;
+	}
+	adPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:_vgoodNavController];
+	[adPopoverController setPopoverContentSize:CGSizeMake(320, 455)];
+	adPopoverController.delegate = self;
+	
+	self.view.alpha = 1;
+	
+	CATransition *applicationLoadViewIn = [CATransition animation];
+	[applicationLoadViewIn setDuration:0.1f];
+	[applicationLoadViewIn setValue:@"loadAdPopover" forKey:@"name"];
+	applicationLoadViewIn.removedOnCompletion = YES;
+	[applicationLoadViewIn setType:kCATransitionReveal];
+	applicationLoadViewIn.subtype = transitionEnterSubtype;
+	applicationLoadViewIn.delegate = self;
+	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+	
+	[adPopoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
+	
+	isVgoodPopoverVisible = YES;
+}
+
+- (void)hideAdPopover{
+	self.view.alpha = 0;
+	CATransition *applicationUnloadViewIn = [CATransition animation];
+	[applicationUnloadViewIn setDuration:0.01f];
+	[applicationUnloadViewIn setValue:@"unloadAdPopover" forKey:@"name"];
+	applicationUnloadViewIn.removedOnCompletion = YES;
+	[applicationUnloadViewIn setType:kCATransitionReveal];
+	applicationUnloadViewIn.subtype = transitionEnterSubtype;
+	applicationUnloadViewIn.delegate = self;
+	[applicationUnloadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
+	
+	isVgoodPopoverVisible= NO;
+}
 
 - (void)showMissionVgoodPopoverWithVGoodController:(UINavigationController *)_vgoodNavController{
     self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
@@ -347,7 +619,7 @@
 	// --------------- Main Controller -----------------------
 	if ([[animation valueForKey:@"name"] isEqualToString:@"unloadMainPopover"]) {
 		[self.view removeFromSuperview];
-		[Beintoo beintooDidDisappear];
+        [Beintoo beintooDidDisappear];
 	}
 	if ([[animation valueForKey:@"name"] isEqualToString:@"loadMainPopover"]) {
 		[Beintoo beintooDidAppear];
@@ -359,6 +631,14 @@
 	}
 	if ([[animation valueForKey:@"name"] isEqualToString:@"loadVgoodPopover"]) {
 		[Beintoo prizeDidAppear];
+	}
+    // --------------- Ad Controller -----------------------
+	if ([[animation valueForKey:@"name"] isEqualToString:@"unloadAdPopover"]) {
+		[self.view removeFromSuperview];
+		[Beintoo adControllerDidDisappear];
+	}
+	if ([[animation valueForKey:@"name"] isEqualToString:@"loadAdPopover"]) {
+		[Beintoo adControllerDidAppear];
 	}
     // --------------- Mission Controller -----------------------
 	if ([[animation valueForKey:@"name"] isEqualToString:@"unloadMissionVgoodPopover"]) {
@@ -422,7 +702,7 @@
 #pragma mark -
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return [Beintoo appOrientation];
+	return ([Beintoo appOrientation] == interfaceOrientation);
 }
 
 - (void)didReceiveMemoryWarning {

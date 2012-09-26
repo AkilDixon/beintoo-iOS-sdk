@@ -29,9 +29,13 @@
 	UIPopoverController *popoverController;
 	UIPopoverController *loginPopoverController;
 	UIPopoverController *vgoodPopoverController;
+    UIPopoverController *adPopoverController;
     UIPopoverController *notificationsPopoverController;
     UIPopoverController *privateNotificationsPopoverController;
     UIPopoverController *privateSignupPopoverController;
+    UIPopoverController *leaderboardPopoverController;
+    UIPopoverController *myOffersPopoverController;
+    UIPopoverController *achievementsPopoverController;
 #endif
     
 	UINavigationController	*loginNavController;
@@ -54,23 +58,47 @@
     @property(nonatomic,retain) UIPopoverController *notificationsPopoverController;
     @property(nonatomic,retain) UIPopoverController *privateNotificationsPopoverController;
     @property(nonatomic,retain) UIPopoverController *privateSignupPopoverController;
+    @property(nonatomic,retain) UIPopoverController *leaderboardPopoverController;
+    @property(nonatomic,retain) UIPopoverController *myOffersPopoverController;
+    @property(nonatomic,retain) UIPopoverController *achievementsPopoverController;
+    @property(nonatomic,retain) UIPopoverController *adPopoverController;
 #endif
 @property(nonatomic,assign) BOOL isLoginOngoing;
 
 - (void)showBeintooPopover;
 - (void)hideBeintooPopover;
+
 - (void)showLoginPopover;
 - (void)hideLoginPopover;
+
 - (void)showVgoodPopoverWithVGoodController:(UINavigationController *)_vgoodNavController;
 - (void)hideVgoodPopover;
+
 - (void)showMissionVgoodPopoverWithVGoodController:(UINavigationController *)_vgoodNavController;
 - (void)hideMissionVgoodPopover;
 
-/*- (void)showNotificationsPopover;
-- (void)hideNotificationsPopover;*/
+- (void)showAdPopoverWithVGoodController:(UINavigationController *)_vgoodNavController;
+- (void)hideAdPopover;
 
 - (void)showBestorePopover;
 - (void)hideBestorePopover;
+
+- (void)showLeaderboardPopover;
+- (void)hideLeaderboardPopover;
+
+- (void)showAchievementsPopover;
+- (void)hideAchievementsPopover;
+
+- (void)showMyOffersPopover;
+- (void)hideMyOffersPopover;
+
+- (void)showNotificationsPopover;
+- (void)hideNotificationsPopover;
+
+- (void)showSignupPopover;
+- (void)hideSignupPopover;
+
+// Internal calls, from the Dashboard
 
 - (void)showPrivateNotificationsPopover;
 - (void)hidePrivateNotificationsPopover;

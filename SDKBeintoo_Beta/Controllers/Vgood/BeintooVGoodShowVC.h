@@ -17,6 +17,9 @@
 #import <UIKit/UIKit.h>
 #import "BeintooPlayer.h"
 
+#define REWARD  100
+#define AD      101
+
 @class BeintooFriendsListVC, BeintooMarketplaceVC;
 
 @interface BeintooVGoodShowVC : UIViewController <UIWebViewDelegate, UINavigationBarDelegate, BeintooPlayerDelegate>{
@@ -49,5 +52,6 @@
 @property (nonatomic, retain) NSString *urlToOpen;
 @property (nonatomic, retain) NSString *caller;
 @property (nonatomic, retain) BeintooFriendsListVC *callerIstance;
+@property (nonatomic) int type;
 
 @end

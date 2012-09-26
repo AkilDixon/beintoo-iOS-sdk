@@ -31,7 +31,7 @@
 }
 
 + (NSString *)getHtmlCodeForString:(NSString *)_text withHexColor:(NSString *)_hexColor size:(int)_fontSize andFontName:(NSString *)_fontName{
-    NSString *htmlCodedString = [NSString stringWithFormat:@"<font face=\"%@\" size=\"%d\" color=#%@>%@</font>",_fontSize,_hexColor,_text];
+    NSString *htmlCodedString = [NSString stringWithFormat:@"<font face=\"%@\" size=\"%d\" color=#%@>%@</font>", _fontName, _fontSize,_hexColor,_text];
     return htmlCodedString;
 }
 

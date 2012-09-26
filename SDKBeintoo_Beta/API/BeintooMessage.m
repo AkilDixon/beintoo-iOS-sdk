@@ -136,6 +136,7 @@
 }
 
 - (void)dealloc {
+    parser.delegate = nil;
 	[parser release];
 	[rest_resource release];
     [super dealloc];

@@ -383,7 +383,7 @@
                     
                 }
                 else if (isMissionOver && [Beintoo showAchievementNotification]) {
-                    [Beintoo launchMission];
+                    //[Beintoo launchMission];
                 }
                 else if (isAchievemUnlocked && !mission){
                     // Normal achievement complete notification
@@ -598,7 +598,7 @@
 
                 }
                 else if (isMissionOver && [Beintoo showAchievementNotification]) {
-                    [Beintoo launchMission];
+                    //[Beintoo launchMission];
                 }
                 else if (isAchievemUnlocked && !mission){
                     // Normal achievement complete notification
@@ -639,6 +639,7 @@
 }
 
 - (void)dealloc {
+    parser.delegate = nil;
 	[parser release];
 	[rest_resource release];
 	[currentAchievementID release];

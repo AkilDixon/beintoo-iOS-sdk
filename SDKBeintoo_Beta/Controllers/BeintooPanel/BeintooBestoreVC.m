@@ -14,9 +14,9 @@
  * limitations under the License.
  ******************************************************************************/
 
-#import "BeintooMarketplaceWebViewVC.h"
+#import "BeintooBestoreVC.h"
 
-@implementation BeintooMarketplaceWebViewVC
+@implementation BeintooBestoreVC
 
 - (void)viewDidLoad{
     [super viewDidLoad];
@@ -164,6 +164,23 @@
         [urlParser release];
         
 		return YES;
+	}
+
+    // Check if we are going to open a content on the App Store or Itunes
+    
+    if (![url.scheme isEqual:@"http"] && ![url.scheme isEqual:@"https"]) {
+		
+        // ******** Remember that this will NOT work on the simulator ******* //
+		
+        if ([[UIApplication sharedApplication] canOpenURL:url]) {
+			[[UIApplication sharedApplication] openURL:url];
+			
+            BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
+            [Beintoo dismissBeintoo:navController.type];
+            
+        }
+			
+        return NO;
 	}
 	
     return YES;

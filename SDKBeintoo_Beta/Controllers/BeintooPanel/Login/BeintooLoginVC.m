@@ -188,10 +188,11 @@
 	if ([player loginError] == LOGIN_NO_ERROR) {
 		[retrievedPlayersTable deselectRowAtIndexPath:[retrievedPlayersTable indexPathForSelectedRow] animated:YES];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
         BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
         [Beintoo dismissBeintoo:navController.type];
-	}
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
+    }
 }
 
 #pragma mark -
@@ -237,10 +238,10 @@
 }
 
 - (void)closeBeintoo{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
-    
     BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
     [Beintoo dismissBeintoo:navController.type];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
 }
 
 - (NSString *)translateLevel:(NSNumber *)levelNumber{	

@@ -54,8 +54,10 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
 	[noBalanceLabel setHidden:YES];
     
@@ -101,7 +103,7 @@
 			[balanceEntry release];
 		}
 		@catch (NSException * e) {
-			NSLog(@"BeintooException: %@ \n for object: %@",e,[result objectAtIndex:i]);
+			BeintooLOG(@"BeintooException: %@ \n for object: %@",e,[result objectAtIndex:i]);
 		}
 	}
 	[BLoadingView stopActivity];

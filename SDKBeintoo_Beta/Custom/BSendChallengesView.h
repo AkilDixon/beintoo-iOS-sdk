@@ -30,8 +30,9 @@
 - (void)initTableArrayElements;
 - (void)closeMainView;
 
-@property(nonatomic,retain) NSDictionary   *challengeSender;
-@property(nonatomic,retain) NSDictionary   *challengeReceiver;
+@property(nonatomic,retain) NSString        *selectedContest;
+@property(nonatomic,retain) NSDictionary    *challengeSender;
+@property(nonatomic,retain) NSString        *challengeReceiver;
 
 @end
 

@@ -53,8 +53,10 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
     
     vGood.delegate	 = self;
@@ -83,6 +85,8 @@
 #pragma mark SegmentedControl
 
 - (IBAction) segmentedControlIndexChanged{
+    [vWalletTable scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+    
 	switch (self.segControl.selectedSegmentIndex) {
 		case 0:{
 			[BLoadingView stopActivity];
@@ -102,15 +106,16 @@
 	}
 }
 
-
 #pragma mark -
 #pragma mark Delegates
 - (void)didGetAllvGoods:(NSArray *)vGoodList{
+    
 	[vWalletTable reloadData];
 	[self.vGoodArrayList removeAllObjects];
 	[self.walletImages removeAllObjects];
 	[noGoodsLabel setHidden:YES];
-	if ([vGoodList count] <= 0) {
+	
+    if ([vGoodList count] <= 0) {
 		[noGoodsLabel setHidden:NO];
 	}
 	if ([vGoodList isKindOfClass:[NSDictionary class]]) {
@@ -143,8 +148,7 @@
 			[self.walletImages count];
 		}
 		@catch (NSException * e) {
-			//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
-			NSLog(@"BeintooException: %@ \n for object: %@",e,[vGoodList objectAtIndex:i]);
+			BeintooLOG(@"BeintooException: %@ \n for object: %@",e,[vGoodList objectAtIndex:i]);
 		}
 	}
 	[vWalletTable reloadData];

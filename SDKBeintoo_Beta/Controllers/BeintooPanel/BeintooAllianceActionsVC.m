@@ -70,7 +70,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
 
     _player.delegate    = self;
@@ -161,6 +161,7 @@
 	
 	if (indexPath.row == 0) {
         if ([selectedElem isEqualToString:@"alliance_your"]) {
+            viewAllianceVC.isMineAlliance = YES;
             [self.navigationController pushViewController:viewAllianceVC animated:YES];
         }
         if ([selectedElem isEqualToString:@"alliance_create"]) {

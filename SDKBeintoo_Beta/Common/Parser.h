@@ -68,6 +68,9 @@
 #define VGOOD_SET_RATING_CALLER_ID              71
 #define VGOOD_GET_COMMENTS_LIST_CALLER_ID       72
 #define VGOOD_SET_COMMENT_CALLER_ID             73
+#define VGOOD_CHECK_COVERAGE_CALLER_ID          74
+#define VGOOD_IS_ELIGIBLE_FOR_REWARD_CALLER_ID  75
+#define REWARD_GET_AD_CALLER_ID                 76
 
 // MARKET:from 80 to 89
 #define MARKET_SELLVGOOD_CALLER_ID              80

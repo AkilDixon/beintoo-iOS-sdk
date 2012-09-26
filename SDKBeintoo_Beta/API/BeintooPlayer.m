@@ -96,7 +96,23 @@
 // Player Login. 
 // -------------------------------------------------------------------------------------
 + (void)login{
-	
+    
+   /* UIAlertView *alert = [UIAlertView alloc];
+    
+    if ([ASIdentifierManager sharedManager]){
+        BeintooLOG(@"%@ %i", [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString], [[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]);
+        [alert initWithTitle:@"ASIdentifier" message:[[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString] delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+       // asIdentifier = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    }
+    else {
+        BeintooLOG(@"Your iOS version doesn't allow to use ASid!");
+        
+        [alert initWithTitle:@"ASIdentifier" message:@"Your iOS version doesn't allow to use ASid!" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        //asIdentifier = @"not_allowed";
+    }
+    
+    [alert show];*/
+    
 	NSString *currentGuid	= [Beintoo getPlayerID];
 	NSString *userId		= [Beintoo getUserID];
 	[Beintoo updateUserLocation];
@@ -111,7 +127,7 @@
 		res = [res stringByAppendingString:[NSString stringWithFormat:@"?language=%@",isoLanguage]];
 	}
 	
-	if (currentGuid==nil) {
+	if (currentGuid == nil) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:
 				  [Beintoo getApiKey], @"apikey", 
 				  [BeintooDevice getUDID], @"deviceUUID",
@@ -750,7 +766,7 @@
 				}
 			}
 			else {
-				NSLog(@"Beintoo: Login over quota for this user. Retry in 10 sencods.");
+				BeintooLOG(@"Beintoo: Login over quota for this user. Retry in 10 sencods.");
 				if ([[self delegate] respondsToSelector:@selector(playerDidLogin:)]) 
 					[[self delegate] playerDidLogin:self];			
 			}
@@ -777,7 +793,7 @@
 				}
 			}
 			else {
-				NSLog(@"Beintoo: Login over quota for this user. Retry in 10 sencods.");
+				BeintooLOG(@"Beintoo: Login over quota for this user. Retry in 10 sencods.");
 				if ([[self delegate] respondsToSelector:@selector(playerDidNotCompleteBackgroundLogin)]) {
                     [[self delegate] playerDidNotCompleteBackgroundLogin];			
                 }		
@@ -793,7 +809,7 @@
 			break;
 			
 		case PLAYER_FORCE_SSCORE_CALLER_ID:{
-			//NSLog(@"forceSubmitScore result: %@",result);
+			//BeintooLOG(@"forceSubmitScore result: %@",result);
 		}
 			break;
 			
@@ -801,7 +817,7 @@
 			if ([[self delegate] respondsToSelector:@selector(player:didGetAllScores:)]) {
 				[[self delegate] player:self didGetAllScores:[result objectForKey:@"playerScore"]];
 			}
-			//NSLog(@"getAllScores result: %@",[result objectForKey:@"playerScore"]);
+			//BeintooLOG(@"getAllScores result: %@",[result objectForKey:@"playerScore"]);
 		}
 			break;
 			
@@ -809,7 +825,7 @@
 			if ([[self delegate] respondsToSelector:@selector(player:getPlayerByGUID:)]) {
 				[[self delegate]player:self getPlayerByGUID:result];
 			}
-			//NSLog(@"getPlayerByGuid result: %@",result);
+			//BeintooLOG(@"getPlayerByGuid result: %@",result);
 		}
 			break;
 			
@@ -817,7 +833,7 @@
 			if ([[self delegate] respondsToSelector:@selector(didgetPlayerByUser:)]) {
 				[[self delegate] didgetPlayerByUser:result];
 			}
-			//NSLog(@"getPlayerByGuid result: %@",result);
+			//BeintooLOG(@"getPlayerByGuid result: %@",result);
 		}
 			break;
 			
@@ -825,18 +841,18 @@
 			if ([[self delegate] respondsToSelector:@selector(appDidGetTopScoreswithResult:)]) {
 				[[self delegate]appDidGetTopScoreswithResult:result];
 			}
-			//NSLog(@"getTopScores result: %@",result);
+			//BeintooLOG(@"getTopScores result: %@",result);
 		}
 			break;
 		case APP_GCONTESTFORAPP_CALLER_ID:{
 			if ([[self delegate] respondsToSelector:@selector(appDidGetContestsForApp:)]) {
 				[[self delegate] appDidGetContestsForApp:(NSArray *)result];
 			}
-			//NSLog(@"getContestForApp result: %@",result);
+			//BeintooLOG(@"getContestForApp result: %@",result);
 		}
 			break;
 		case APP_LOG_EXCEPTION:{
-			//NSLog(@"app_log_exception result: %@",result);
+			//BeintooLOG(@"app_log_exception result: %@",result);
 		}
 			break;
 			
@@ -864,11 +880,11 @@
 			[currentArrayOfScores addObject:currentElem];
 			[currentElem release];
 			[[NSUserDefaults standardUserDefaults] setObject:currentArrayOfScores forKey:@"locallySavedScores"];
-			//NSLog(@"currentArray %@ - size: %d",currentArrayOfScores,[currentArrayOfScores count]);
+			//BeintooLOG(@"currentArray %@ - size: %d",currentArrayOfScores,[currentArrayOfScores count]);
 		}
 	}
 	@catch (NSException * e) {
-		NSLog(@"Beintoo - SUBMIT SCORE LOCALLY exception: %@",e);
+		BeintooLOG(@"Beintoo - SUBMIT SCORE LOCALLY exception: %@",e);
 	}
 }
 
@@ -883,10 +899,10 @@
 				return;
 			NSString *jsonScore = [playerService.parser createJSONFromObject:currentArrayOfScores];
 			[BeintooPlayer submitScoreForOfflineScores:jsonScore];
-			//NSLog(@"jsonToSend :%@",jsonScore);
+			//BeintooLOG(@"jsonToSend :%@",jsonScore);
 		}
 		@catch (NSException * e) {
-			NSLog(@"FLUSH EXCEPTION : %@",e);
+			BeintooLOG(@"FLUSH EXCEPTION : %@",e);
 		}
 	}
 }

@@ -46,13 +46,14 @@
                     caller == ACHIEVEMENTS_GETINCREMENTSCORE_CALLER_ID ||
                     caller == MISSION_GET_CALLER_ID || caller == MISSION_REFUSE_CALLER_ID ||
                     caller == VGOOD_SINGLE_CALLER_ID || caller == VGOOD_SINGLEwDELEG_CALLER_ID ||
-                    caller == VGOOD_MULTIPLE_CALLER_ID || caller == VGOOD_MULTIPLEwDELEG_CALLER_ID) {
+                    caller == VGOOD_MULTIPLE_CALLER_ID || caller == VGOOD_MULTIPLEwDELEG_CALLER_ID || caller == VGOOD_CHECK_COVERAGE_CALLER_ID || caller == VGOOD_IS_ELIGIBLE_FOR_REWARD_CALLER_ID || caller == USER_GIVE_BEDOLLARS_CALLER_ID || caller ==  REWARD_GET_AD_CALLER_ID) {
                     BeintooLOG(@"Beintoo - no connection available, check the last action performed!");
-                    //[self performSelectorOnMainThread:@selector(parsingEnd:) withObject:nil waitUntilDone:YES];
+                    
                     [self parsingEnd:nil];
+                    
                     return;
                 }
-                //[self performSelectorOnMainThread:@selector(parsingEnd:) withObject:nil waitUntilDone:YES];
+                
                 [self parsingEnd:nil];
                 
                 [BeintooNetwork showNoConnectionAlert];
@@ -72,15 +73,11 @@
                 [request setValue:@"true" forHTTPHeaderField:@"sandbox"];
             }
             
-            if (self.callerID == VGOOD_MULTIPLE_CALLER_ID || self.callerID == VGOOD_SINGLE_CALLER_ID ||
-                self.callerID == VGOOD_MULTIPLEwDELEG_CALLER_ID || self.callerID == VGOOD_SINGLEwDELEG_CALLER_ID) {			
+            if (self.callerID == VGOOD_MULTIPLE_CALLER_ID || self.callerID == VGOOD_SINGLE_CALLER_ID || self.callerID == VGOOD_MULTIPLEwDELEG_CALLER_ID || self.callerID == VGOOD_SINGLEwDELEG_CALLER_ID || self.callerID == REWARD_GET_AD_CALLER_ID) {
                 [request setValue:[BeintooNetwork getUserAgent] forHTTPHeaderField:@"User-Agent"];
                 
-                //NSLog(@"user agent: %@",[request valueForHTTPHeaderField:@"User-Agent"]);
             }
 
-            //[NSThread detachNewThreadSelector:@selector(retrievedWebPage:) toTarget:self withObject:request];
-            
             [self retrievedWebPage:request];
         }	
     });
@@ -111,7 +108,6 @@
             [request setValue:@"true" forHTTPHeaderField:@"sandbox"];
         }
         
-        //[NSThread detachNewThreadSelector:@selector(retrievedWebPage:) toTarget:self withObject:request];
         [self retrievedWebPage:request];
     });
 }
@@ -126,12 +122,12 @@
         if (![BeintooNetwork connectedToNetwork]) {
             if (caller == MESSAGE_SET_READ_CALLER_ID     || caller == PLAYER_SSCORE_OFFLINE_CALLER_ID ||
                 caller == ACHIEVEMENTS_SUBMIT_PERCENT_ID || caller == ACHIEVEMENTS_SUBMIT_SCORE_ID ) {
-                //[self performSelectorOnMainThread:@selector(parsingEnd:) withObject:nil waitUntilDone:YES];
+                
                 [self parsingEnd:nil];
                 return;
             }
             [BeintooNetwork showNoConnectionAlert];
-            //[self performSelectorOnMainThread:@selector(parsingEnd:) withObject:nil waitUntilDone:YES];
+            
             [self parsingEnd:nil];
             return;
         }
@@ -148,7 +144,7 @@
             [request setValue:@"true" forHTTPHeaderField:@"sandbox"];
         }
         
-        //[NSThread detachNewThreadSelector:@selector(retrievedWebPage:) toTarget:self withObject:request];
+        
         [self retrievedWebPage:request];
 
     });
@@ -156,15 +152,42 @@
 
 - (void)retrievedWebPage:(NSMutableURLRequest *)_request{
 	NSError         *requestError	= nil;
-	NSURLResponse   *response		= nil;
+	//NSURLResponse   *response		= nil;
 	NSData		    *urlData;
 	
+    NSHTTPURLResponse *responseHTTP;
+   
+    
     @try{ 
-		urlData = [NSURLConnection sendSynchronousRequest:_request returningResponse:&response error:&requestError];
-		if (response == nil) {
+		urlData = [NSURLConnection sendSynchronousRequest:_request returningResponse:&responseHTTP error:&requestError];
+        
+        if ([responseHTTP respondsToSelector:@selector(allHeaderFields)]) {
+            NSLog(@"status code: %d", [responseHTTP statusCode]);
+            
+            if ([responseHTTP statusCode] != 200 && callerID == REWARD_GET_AD_CALLER_ID){
+                NSDictionary *dictionary = [NSDictionary dictionaryWithObject:@"-10" forKey:@"messageID"];
+                @try {
+                    if (self.callerID){
+                        if ([[self delegate] respondsToSelector:@selector(didFinishToParsewithResult:forCaller:)]){
+                            [[self delegate] didFinishToParsewithResult:dictionary forCaller:self.callerID];
+                            
+                            return;
+                        }
+                        else {
+                            BeintooLOG(@"Beintoo Parser caller not available: the caller isn't set anymore");
+                        }
+                    }
+                }
+                @catch (NSException *exception) {
+                    BeintooLOG(@"Exception on Beintoo Parser: %@", exception);
+                }
+            }
+        }
+        
+		if (responseHTTP == nil) {
 			// Errors check
 			if (requestError != nil) {
-				NSLog(@"[Parser parsePageAtUrl] connection error: %@",requestError);
+				BeintooLOG(@"[Parser parsePageAtUrl] connection error: %@", requestError);
 				webpage = @"{\"messageID\":-1,\"message\":\"Connection Timed-out\",\"kind\":\"error\"};";
 			}
 		}
@@ -173,10 +196,9 @@
 			webpage = [[NSString alloc] initWithData:urlData encoding:NSUTF8StringEncoding];
 		}
 	}@catch (NSException *e) {
-		NSLog(@"[Connection getPageAtUrl] getPage exception: %@",e);
+		BeintooLOG(@"[Connection getPageAtUrl] getPage exception: %@",e);
 	}
 	
-	//SBJsonParser *parser	= [[SBJsonParser alloc] init];
 	SBJSON *parser	= [[SBJSON alloc] init];
 	NSError *parseError		= nil;
 	
@@ -184,7 +206,7 @@
 		result = [parser objectWithString:webpage error:&parseError];
 	}
 	@catch (NSException * e) {
-		NSLog(@"[Connection getPageAtUrl] getPage exception: %@",e);
+		BeintooLOG(@"[Connection getPageAtUrl] getPage exception: %@",e);
 	}
 
 	if (webpage != nil) {
@@ -243,8 +265,8 @@
 	}@catch (NSException *e) {
 		BeintooLOG(@"[Connection getPageAtUrl] getPage exception: %@",e);
 	}
-	//SBJsonParser *parser	= [[SBJsonParser alloc] init];
-	SBJSON *parser	= [[SBJSON alloc] init];
+	
+    SBJSON *parser	= [[SBJSON alloc] init];
 	NSError *parseError		= nil;
 	result = [parser objectWithString:webpage error:&parseError];
 	[parser release];

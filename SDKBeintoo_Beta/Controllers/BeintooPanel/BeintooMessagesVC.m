@@ -67,7 +67,7 @@
 	[super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
 	[self.elementsTable deselectRowAtIndexPath:[self.elementsTable indexPathForSelectedRow] animated:YES];
 	
@@ -122,7 +122,7 @@
 			[noMessagesLabel setHidden:NO];
 		}
 		if ([result isKindOfClass:[NSDictionary class]]) {
-			NSLog(@"error in messages:");
+			BeintooLOG(@"error in messages:");
 			[noMessagesLabel setHidden:NO];
 			[BLoadingView stopActivity];
 			[elementsTable reloadData];
@@ -159,7 +159,7 @@
 			[messageEntry release];
 		}
 		@catch (NSException * e) {
-			NSLog(@"exception %@",e);
+			BeintooLOG(@"exception %@",e);
 		}
 	}
 	if ([self.elementsArrayList count] >= [BeintooMessage totalMessagesCount]) 

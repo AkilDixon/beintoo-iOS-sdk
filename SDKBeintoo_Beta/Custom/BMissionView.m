@@ -759,7 +759,7 @@
         [[self delegate] userDidTapOnCloseMission];
     }
     
-    [BeintooMission refuseMission];
+    //[BeintooMission refuseMission];
 }
 
 - (void)getItRealAction{

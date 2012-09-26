@@ -71,7 +71,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
     user.delegate	= self;
 
@@ -126,7 +126,7 @@
 				[friendsEntry release];
 			}
 			@catch (NSException * e) {
-				NSLog(@"BeintooException - FriendList: %@ \n for object: %@",e,[result objectAtIndex:i]);
+				BeintooLOG(@"BeintooException - FriendList: %@ \n for object: %@",e,[result objectAtIndex:i]);
 			}
 		}
 	}
@@ -296,14 +296,16 @@
 #pragma mark UIAlertViewDelegate
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{ 
-	if (buttonIndex == 0)
-		if ([[self.startingOptions objectForKey:@"callerVC"] isKindOfClass:[BeintooWalletVC class]])
+	if (buttonIndex == 0){
+		if ([[self.startingOptions objectForKey:@"callerVC"] isKindOfClass:[BeintooWalletVC class]]){
 			[self.navigationController popViewControllerAnimated:YES];
+        }
 		else {
 			if (alertView.tag == 1) { // the vgood was correctly sent as a gift 
 				[Beintoo dismissPrize];
 			}
 		}
+    }
 }
 
 #pragma mark -

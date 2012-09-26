@@ -52,6 +52,30 @@
 
 - (void)beintooPrizeDidDisappear;
 
+- (void)didBeintooGenerateAnAd:(BVirtualGood *)theAd;
+
+- (void)didBeintooFailToGenerateAnAdWithError:(NSDictionary *)error;
+
+/* ---------------------------------------------------------------------
+ * Ad
+ * --------------------------------------------------------------------- */
+
+- (void)beintooAdWillAppear;
+
+- (void)beintooAdDidAppear;
+
+- (void)beintooAdWillDisappear;
+
+- (void)beintooAdDidDisappear;
+
+- (void)beintooAdControllerWillAppear;
+
+- (void)beintooAdControllerDidAppear;
+
+- (void)beintooAdControllerWillDisappear;
+
+- (void)beintooAdControllerDidDisappear;
+
 /* ---------------------------------------------------------------------
  * User Login/Singup Delegates
  * --------------------------------------------------------------------- */

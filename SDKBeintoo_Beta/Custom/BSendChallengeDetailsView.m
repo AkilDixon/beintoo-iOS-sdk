@@ -21,7 +21,7 @@
 
 @implementation BSendChallengeDetailsView
 
-@synthesize challengeSender, challengeReceiver, challengeType;
+@synthesize challengeSender, challengeReceiver, challengeType, selectedContest;
 
 -(id)init {
 	if (self = [super init]){        
@@ -91,7 +91,7 @@
 
     imageToDownload2                    = [[BImageDownload alloc] init];
     imageToDownload1.tag                = 12;
-    imageToDownload2.urlString          = [challengeReceiver objectForKey:@"usersmallimg"];
+    //imageToDownload2.urlString          = [challengeReceiver objectForKey:@"usersmallimg"];
     imageToDownload2.delegate           = self;
     
     [imagesArray addObject:imageToDownload1];
@@ -112,7 +112,7 @@
     
     [BLoadingView startActivity:self];
     
-    [_user getChallangePrereequisitesFromUser:[challengeSender objectForKey:@"id"] toUser:[challengeReceiver objectForKey:@"id"] forContest:[[NSUserDefaults standardUserDefaults] objectForKey:@"selectedContest"]];
+    [_user getChallangePrereequisitesFromUser:[challengeSender objectForKey:@"id"] toUser:challengeReceiver forContest:selectedContest];
     
 }
 
@@ -121,6 +121,9 @@
     challengeSenderDef      = [[[result objectForKey:@"playerFrom"] objectForKey:@"user"] copy];
     challengeReceiverDef    = [[[result objectForKey:@"playerTo"] objectForKey:@"user"] copy];
     challengeContest        = [[result objectForKey:@"contest"] copy];
+    
+    imageToDownload2.urlString          = [challengeReceiverDef objectForKey:@"usersmallimg"];
+   
     
     [elementsTable reloadData];
     
@@ -599,9 +602,15 @@
 
 #pragma mark - ViewActions
 - (void)closeMainView{
-    self.alpha = 0;
-	//[self removeViews];
-    [self removeFromSuperview];
+    
+    [UIView animateWithDuration:0.5
+                     animations:^(void) {
+                         self.alpha = 0;
+                     }
+                     completion:^(BOOL finished){
+                         [self removeFromSuperview];
+                     }
+     ];
 }
 
 // Called when the user touch the send-challenge button
@@ -673,7 +682,6 @@
     }    
 }
 
-
 - (void)sendChallengeAction{
     // Nothing to do here
 }
@@ -683,6 +691,8 @@
     if (alertView.tag != 10) {
         BSendChallengesView *parentView = (BSendChallengesView *)self.superview ;
         [parentView closeMainView];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"ChallengeSent" object:nil];
     }
 }
 
@@ -812,6 +822,9 @@
 }   
 
 - (void)dealloc {
+    imageToDownload1.delegate = nil;
+    imageToDownload2.delegate = nil;
+    
     if (_user != nil) {
         [_user release];
     }

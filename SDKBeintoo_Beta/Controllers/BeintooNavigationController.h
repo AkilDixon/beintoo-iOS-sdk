@@ -43,6 +43,7 @@
 - (void)prepareBeintooPanelOrientation;
 
 @property (nonatomic, assign) int type;
+@property (nonatomic, assign) BOOL isSignupDirectLaunch;
 
 
 @end

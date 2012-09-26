@@ -62,7 +62,7 @@
 		}
 		
 		@catch (NSException * e) {
-			NSLog(@"BEINTOO ERROR: Unable to set the vgood: %@",e);
+			BeintooLOG(@"BEINTOO ERROR: Unable to set the vgood: %@",e);
 		}	
 	}
 }

@@ -21,7 +21,7 @@
 
 @implementation BPrize
 
-@synthesize beintooLogo, prizeImg, prizeThumb, textLabel, detailedTextLabel, delegate, prizeType, isVisible, globalDelegate;
+@synthesize beintooLogo, prizeImg, prizeThumb, textLabel, detailedTextLabel, delegate, prizeType, isVisible, globalDelegate, type;
 
 /*-(id)init {
 	if (self = [super init]){
@@ -67,7 +67,7 @@
 	[self preparePrizeAlertOrientation:vgoodFrame];
 }*/
 
--(id)init {
+- (id)init {
 	if (self = [super init]){
         recommWebView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
 	}
@@ -265,10 +265,16 @@
 */
 
 - (void)drawPrize{
-	
-    BVirtualGood *lastVgood = [Beintoo getLastGeneratedVGood];
     
-	[self removeViews];
+	BVirtualGood *lastVgood;
+    
+    if (type == REWARD)
+        lastVgood = [Beintoo getLastGeneratedVGood];
+    else if (type == AD)
+        lastVgood = [Beintoo getLastGeneratedAd];
+    
+    
+    [self removeViews];
 	
     recommWebView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
     
@@ -276,8 +282,6 @@
         recommWebView.frame = CGRectMake(0, 0, windowSizeRect.height, windowSizeRect.width);
     
     NSString *vgoodUrl = [[lastVgood theGood] objectForKey:@"content"];
-    vgoodUrl = [vgoodUrl stringByReplacingOccurrencesOfString:@"<body>" withString:@"<body style=\"font-family:'Lucida Sans Unicode', 'Lucida Grande', sans-serif\">"];
-    
     NSString *content = [NSString stringWithFormat:@"%@", vgoodUrl];
     
     recommWebView.delegate = self;
@@ -320,7 +324,12 @@
 
 - (void)setThumbnail:(NSData *)imgData{
     
-    BVirtualGood *lastVgood = [Beintoo getLastGeneratedVGood];
+    BVirtualGood *lastVgood;
+    
+    if (type == REWARD)
+        lastVgood = [Beintoo getLastGeneratedVGood];
+    else if (type == AD)
+         lastVgood = [Beintoo getLastGeneratedAd];
     
 	if (prizeType == PRIZE_GOOD) {
 		self.prizeThumb = [[UIImageView alloc] initWithFrame:CGRectMake(8, ([self bounds].size.height/2 - 54/2), 54, 54)];
@@ -516,7 +525,7 @@
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
     
-    if ([[self delegate] respondsToSelector:@selector(userDidTapOnThePrize)])
+   /* if ([[self delegate] respondsToSelector:@selector(userDidTapOnThePrize)])
         [[self delegate] userDidTapOnThePrize];
     
     self.alpha  = 0;
@@ -524,7 +533,7 @@
     firstTouch = YES;
     
     [self removeViews];
-    [self removeFromSuperview];
+    [self removeFromSuperview];*/
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
@@ -534,6 +543,18 @@
     
     if (navigationType == UIWebViewNavigationTypeLinkClicked  && ([urlString rangeOfString:@"#ios-close"].location != NSNotFound)){
         self.isVisible = NO;
+        self.alpha = 0;
+        [self removeViews];
+        [self removeFromSuperview];
+        
+        if (type == REWARD){
+            if ([[self delegate] respondsToSelector:@selector(userDidTapOnClosePrize)])
+                [[self delegate] userDidTapOnClosePrize];
+        }
+        else if (type == AD){
+            if ([[self delegate] respondsToSelector:@selector(userDidTapOnCloseAd)])
+                [[self delegate] userDidTapOnCloseAd];
+        }
     }
     
     if(navigationType == UIWebViewNavigationTypeOther && ([urlString rangeOfString:@"about:blank"].location != NSNotFound)){
@@ -546,7 +567,11 @@
         if ([urlString rangeOfString:nexageURLToOpen].location != NSNotFound) {
             
             // We have to open a nexage URL on the webView
-            [Beintoo getLastGeneratedVGood].getItRealURL = urlString;
+             if (type == REWARD)
+                 [Beintoo getLastGeneratedVGood].getItRealURL = urlString;
+            else if (type == AD)
+                [Beintoo getLastGeneratedAd].getItRealURL = urlString;
+                     
             [self userClickedOnWebView];
             
         }
@@ -562,8 +587,15 @@
 
 - (void)userClickedOnWebView{
     [self setBackgroundColor:[UIColor colorWithRed:0.0/255 green:0.0/255 blue:0.0/255 alpha:0.7]];
-    if ([[self delegate] respondsToSelector:@selector(userDidTapOnThePrize)])
-        [[self delegate] userDidTapOnThePrize];
+    
+    if (type == REWARD){
+        if ([[self delegate] respondsToSelector:@selector(userDidTapOnThePrize)])
+            [[self delegate] userDidTapOnThePrize];
+    }
+    else if (type == AD){
+        if ([[self delegate] respondsToSelector:@selector(userDidTapOnTheAd)])
+            [[self delegate] userDidTapOnTheAd];
+    }
     
 	self.alpha  = 0;
     

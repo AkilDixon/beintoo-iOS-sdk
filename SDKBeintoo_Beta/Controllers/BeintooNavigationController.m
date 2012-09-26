@@ -18,7 +18,7 @@
 #import "Beintoo.h"
 
 @implementation BeintooNavigationController
-@synthesize type;
+@synthesize type, isSignupDirectLaunch;
 
 - (void)show{
 	self.view.alpha = 1;
@@ -45,7 +45,10 @@
 
 - (void)hide{
 	CATransition *applicationUnloadViewIn = [CATransition animation];
-	[applicationUnloadViewIn setDuration:0.5f];
+	/*if ([Beintoo getPlayerID] != nil || isSignupDirectLaunch == YES)
+        [applicationUnloadViewIn setDuration:0.5f];
+    else*/
+        [applicationUnloadViewIn setDuration:0.5f];
     
     if (type != NAV_TYPE_SIGNUP_PRIVATE && type != NAV_TYPE_NOTIFICATIONS_PRIVATE)
         [applicationUnloadViewIn setValue:@"unload" forKey:@"name"];

@@ -44,4 +44,7 @@
 - (void)hideMissionVgoodNavigationController;
 - (void)prepareBeintooVgoodOrientation;
 
+- (void)showAdNavigationController;
+- (void)hideAdNavigationController;
+
 @end

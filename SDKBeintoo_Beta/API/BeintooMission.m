@@ -52,7 +52,7 @@
     }
     
     [Beintoo setMissionTimestamp:[BeintooDevice getFormattedTimestampNow]];
-    CLLocation *loc	 = [Beintoo getUserLocation];
+    /*CLLocation *loc	 = [Beintoo getUserLocation];
     BeintooMission *missionService = [Beintoo beintooMissionService];
     
     NSString *res;
@@ -68,18 +68,18 @@
 		res	= [NSString stringWithFormat:@"%@?latitude=%f&longitude=%f&radius=%f",
                [missionService restResource],loc.coordinate.latitude,loc.coordinate.longitude,loc.horizontalAccuracy];
     
-    [missionService.parser parsePageAtUrl:res withHeaders:params fromCaller:MISSION_GET_CALLER_ID];
+    [missionService.parser parsePageAtUrl:res withHeaders:params fromCaller:MISSION_GET_CALLER_ID];*/
 }
 
 + (void)refuseMission{
-    BeintooMission *missionService = [Beintoo beintooMissionService];
+    /*BeintooMission *missionService = [Beintoo beintooMissionService];
     NSString *res = [NSString stringWithFormat:@"%@/refuse/",[missionService restResource]];
 
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
                             [Beintoo getApiKey],@"apikey",
                             [BeintooDevice getUDID],@"deviceUUID", nil];
         
-    [missionService.parser parsePageAtUrl:res withHeaders:params fromCaller:MISSION_REFUSE_CALLER_ID];
+    [missionService.parser parsePageAtUrl:res withHeaders:params fromCaller:MISSION_REFUSE_CALLER_ID]*/;
 }
 
 
@@ -103,7 +103,7 @@
              * SHOW "status of your mission"
              */
             [Beintoo setLastRetrievedMission:result];
-            [Beintoo launchMission];
+            //[Beintoo launchMission];
             
            // [Beintoo notifyRetrievedMisionOnMainDelegateWithMission:result];
 		}
@@ -124,8 +124,8 @@
 #pragma mark Class Methods
 
 + (void)setMissionDelegate:(id)_caller{
-	BeintooMission *missionService = [Beintoo beintooMissionService];
-	missionService.callingDelegate = _caller;
+	/*BeintooMission *missionService = [Beintoo beintooMissionService];
+	missionService.callingDelegate = _caller;*/
 }
 
 - (void)dealloc {

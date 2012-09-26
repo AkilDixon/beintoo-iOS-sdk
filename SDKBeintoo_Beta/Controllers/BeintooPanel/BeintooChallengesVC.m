@@ -65,11 +65,13 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
 	[self.titleLabel setHidden:YES];	
     
     user.delegate = self;
+    
+    [challengesTable reloadData];
 	
 	if (![Beintoo isUserLogged])
 		[self.navigationController popToRootViewControllerAnimated:NO];
@@ -200,7 +202,7 @@
 		}
 		@catch (NSException * e) {
 			//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
-			NSLog(@"BeintooException: %@ \n for object: %@",e,[result objectAtIndex:i]);
+			BeintooLOG(@"BeintooException: %@ \n for object: %@",e,[result objectAtIndex:i]);
 		}
 	}
 	[BLoadingView stopActivity];
@@ -494,6 +496,8 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
     user.delegate = nil;
     @try {
 		[BLoadingView stopActivity];

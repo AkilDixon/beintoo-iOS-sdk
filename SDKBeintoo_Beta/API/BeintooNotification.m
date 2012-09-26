@@ -117,6 +117,8 @@
 #pragma mark Class Methods
 
 - (void)dealloc {
+    parser.delegate = nil;
+    
 	[parser release];
 	[rest_resource release];
     [super dealloc];

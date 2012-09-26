@@ -55,7 +55,7 @@
 				[panelElement setObject:NSLocalizedStringFromTable(@"MPdescription",@"BeintooLocalizable", nil) forKey:@"featureDesc"];
 				[panelElement setObject:@"beintoo_marketplace.png" forKey:@"featureImg"];
 				//[panelElement setObject:marketplaceVC forKey:@"featureVC"];
-                [panelElement setObject:beintooMarketplaceWebViewVC forKey:@"featureVC"];
+                [panelElement setObject:beintooBestoreVC forKey:@"featureVC"];
 			}
 			if ([elem isEqualToString:@"Leaderboard"]){
 				[panelElement setObject:NSLocalizedStringFromTable(@"leaderboard",@"BeintooLocalizable",@"") forKey:@"featureName"];
@@ -145,9 +145,8 @@
 	// ----------- ViewControllers initialization ------------
 	self.loginVC            = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
 	beintooProfileVC        = [[BeintooProfileVC alloc]initWithNibName:@"BeintooProfileVC" bundle:[NSBundle mainBundle]];
-    beintooMarketplaceWebViewVC = [[BeintooMarketplaceWebViewVC alloc] initWithNibName:@"BeintooMarketplaceWebViewVC" bundle:[NSBundle mainBundle]]; 
-    
-	beintooLeaderboardVC    = [[BeintooLeaderboardVC alloc]initWithNibName:@"BeintooLeaderboardVC" bundle:[NSBundle mainBundle]];
+    beintooBestoreVC = [[BeintooBestoreVC alloc] initWithNibName:@"BeintooBestoreVC" bundle:[NSBundle mainBundle]];
+    beintooLeaderboardVC    = [[BeintooLeaderboardVC alloc]initWithNibName:@"BeintooLeaderboardVC" bundle:[NSBundle mainBundle]];
 	beintooWalletVC         = [[BeintooWalletVC alloc]initWithNibName:@"BeintooWalletVC" bundle:[NSBundle mainBundle]];
 	beintooChallengesVC     = [[BeintooChallengesVC alloc]initWithNibName:@"BeintooChallengesVC" bundle:[NSBundle mainBundle]];
 	beintooAchievementsVC   = [[BeintooAchievementsVC alloc]initWithNibName:@"BeintooAchievementsVC" bundle:[NSBundle mainBundle]];
@@ -258,24 +257,6 @@
         notificationButtonItem.width = 320;
     }
     
-    NSLog(@"notif %@", NSStringFromCGRect(notificationViewLandscape.frame));
-}
-
-- (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
-
-    if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
-    }
-    
-    //notificationViewLandscape.frame = CGRectMake(notificationViewLandscape.frame.origin.x, notificationViewLandscape.frame.origin.y, [UIScreen mainScreen].bounds.size.height, notificationViewLandscape.frame.size.height);
-    
-    NSLog(@"notif %@", NSStringFromCGRect(notificationViewLandscape.frame));
-    NSLog(@"self %@", NSStringFromCGRect(self.view.frame));
-    
-    _user.delegate          = self;	
-	beintooPlayer.delegate  = self;	
-
     isNotificationCenterOpen = NO;
     isAlreadyLogging         = NO;
     
@@ -285,7 +266,7 @@
                              [Beintoo getApiKey],[Beintoo getUserID]];
         [tipsAndForumVC setUrlToOpen:tipsUrl];
     }
-
+    
     if (signupViewForPlayers != nil) {
         signupViewForPlayers = nil;
         [signupViewForPlayers release];
@@ -304,8 +285,8 @@
         notificationNumbersLabel.text = @"0";
         notificationNumbersLabelLandscape.text = @"0";
     }
-
-	if ((![Beintoo isUserLogged] && [Beintoo isRegistrationForced]) || ![Beintoo getPlayerID]) {
+    
+	if ((![Beintoo isUserLogged] && [Beintoo isRegistrationForced]) || ![Beintoo getPlayerID] || forceSignup == YES) {
         
         [toolBar setHidden:YES];
         [bedollars setHidden:YES];
@@ -330,7 +311,7 @@
             }
         }
     }
-	else {        
+	else {
         
         [toolBar setHidden:NO];
         [bedollars setHidden:NO];
@@ -340,8 +321,8 @@
         [signupViewForPlayers setHidden:YES];
         homeTable.userInteractionEnabled = YES;
 		[homeTable deselectRowAtIndexPath:[homeTable indexPathForSelectedRow] animated:NO];
-
-        if (![Beintoo isUserLogged]) { 
+        
+        if (![Beintoo isUserLogged]) {
             /*
              * ------------------- Dashboard for player! -----------------------
              */
@@ -380,6 +361,26 @@
         }
         [homeTable reloadData];
 	}
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+
+    if ([BeintooDevice isiPad]) {
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+    }
+    
+    _user.delegate          = self;	
+	beintooPlayer.delegate  = self;
+    
+    if ([[Beintoo getPlayer] objectForKey:@"unreadNotification"] != nil) {
+        notificationNumbersLabel.text = [NSString stringWithFormat:@"%@", [[Beintoo getPlayer] objectForKey:@"unreadNotification"]];
+        notificationNumbersLabelLandscape.text = [NSString stringWithFormat:@"%@", [[Beintoo getPlayer] objectForKey:@"unreadNotification"]];
+    }
+    else{
+        notificationNumbersLabel.text = @"0";
+        notificationNumbersLabelLandscape.text = @"0";
+    }
 }
 
 #pragma mark - Taps Gesture 
@@ -531,7 +532,7 @@
         if (![BeintooDevice isiPad])
             [self closeBeintoo];
         else {
-            [self performSelector:@selector(closeBeintoo) withObject:nil afterDelay:0.001];
+            [self performSelector:@selector(closeBeintoo) withObject:nil afterDelay:0.5];
         }
     }
 }
@@ -611,12 +612,14 @@
 
         }
         else{
-            [[Beintoo getMainNavigationController] pushViewController:[[self.featuresArray objectAtIndex:indexPath.row] objectForKey:@"featureVC"] animated:YES];   
+            [self.navigationController pushViewController:[[self.featuresArray objectAtIndex:indexPath.row] objectForKey:@"featureVC"] animated:YES];
         }
     }
     else{
-        [[Beintoo getMainNavigationController] pushViewController:[[self.featuresArray objectAtIndex:indexPath.row] objectForKey:@"featureVC"] animated:YES];   
+        [self.navigationController pushViewController:[[self.featuresArray objectAtIndex:indexPath.row] objectForKey:@"featureVC"] animated:YES];   
     }
+    
+    [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
 }  
 
 #pragma mark -
@@ -753,6 +756,7 @@
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"SignupClosed" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"ReloadDashboard" object:nil];
+    
     _user.delegate = nil;
     beintooPlayer.delegate = nil;
 
@@ -772,7 +776,7 @@
     [tipsAndForumVC release];
 	[loginVC release];
     [signupViewForPlayers release];
-    [beintooMarketplaceWebViewVC release];
+    [beintooBestoreVC release];
     
     [super dealloc];
 }

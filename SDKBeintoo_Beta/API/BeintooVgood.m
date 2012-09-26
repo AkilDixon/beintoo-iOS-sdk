@@ -19,23 +19,30 @@
 
 @implementation BeintooVgood
 
-@synthesize delegate, generatedVGood, parser, callingDelegate, vgood;
+@synthesize delegate, generatedVGood, parser, callingDelegate, vgood, adContent;
 
 -(id)init {
 	if (self = [super init])
 	{	
         parser = [[Parser alloc] init];
 		parser.delegate = self;
+        
 		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/vgood/",[Beintoo getRestBaseUrl]]];
+        display_rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/display/",[Beintoo getRestBaseUrl]]];
 
-		_player = [[BeintooPlayer alloc] init];
-        vgood = [[BVirtualGood alloc] init];
+		_player     = [[BeintooPlayer alloc] init];
+        vgood       = [[BVirtualGood alloc] init];
+        adContent   = [[BVirtualGood alloc] init];
 	}
     return self;
 }
 
 - (NSString *)restResource{
 	return rest_resource;
+}
+
+- (NSString *)getDisplayRestResource{
+	return display_rest_resource;
 }
 
 + (void)setVgoodDelegate:(id)_caller{
@@ -59,6 +66,91 @@
 	[_notification showNotification];
 }
 
++ (void)checkRewardsCoverage{
+    
+	CLLocation *loc	 = [Beintoo getUserLocation];
+	
+	NSString *res;
+	BeintooVgood *vgoodService = [Beintoo beintooVgoodService];
+    
+	if (loc == nil || (loc.coordinate.latitude <= 0.01f && loc.coordinate.latitude >= -0.01f)
+		|| (loc.coordinate.longitude <= 0.01f && loc.coordinate.longitude >= -0.01f)) {
+		res = [NSString stringWithFormat:@"%@coverage", [vgoodService restResource]];
+	}
+	else
+		res	= [NSString stringWithFormat:@"%@coverage?latitude=%f&longitude=%f&radius=%f",
+               [vgoodService restResource], loc.coordinate.latitude, loc.coordinate.longitude, loc.horizontalAccuracy];
+	
+	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            [Beintoo getApiKey], @"apikey",
+                            [BeintooDevice getUDID], @"deviceUUID",
+                            [BeintooDevice getMacAddress], @"macaddress",
+                            [BeintooOpenUDID value], @"openudid",
+                            nil];
+	[vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_CHECK_COVERAGE_CALLER_ID];
+}
+
++ (void)isEligibleForReward{
+    
+    if ([Beintoo getPlayerID] == nil){
+        BeintooLOG(@"Is Eligible For Reward needs a Player ID, retry.");
+        return;
+    }
+    
+    BeintooVgood *vgoodService = [Beintoo beintooVgoodService];
+    
+    NSString *res;
+    res = [NSString stringWithFormat:@"%@iseligible/byguid/%@", [vgoodService restResource], [Beintoo getPlayerID]];
+    
+    CLLocation *loc	 = [Beintoo getUserLocation];
+	if (loc == nil || (loc.coordinate.latitude <= 0.01f && loc.coordinate.latitude >= -0.01f)
+		|| (loc.coordinate.longitude <= 0.01f && loc.coordinate.longitude >= -0.01f)) {
+		res	= [NSString stringWithFormat:@"%@?allowBanner=true&rows=1",  res];
+	}
+	else
+		res	= [NSString stringWithFormat:@"%@?latitude=%f&longitude=%f&radius=%f&allowBanner=true&rows=1",
+               res, loc.coordinate.latitude, loc.coordinate.longitude, loc.horizontalAccuracy];
+    
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            [Beintoo getApiKey], @"apikey",
+                            [BeintooDevice getUDID], @"deviceUUID",
+                            [BeintooDevice getMacAddress], @"macaddress",
+                            [BeintooOpenUDID value], @"openudid",
+                            nil];
+    
+    [vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_IS_ELIGIBLE_FOR_REWARD_CALLER_ID];
+}
+
++ (void)getAd{
+    
+    if ([Beintoo getPlayerID] == nil){
+        BeintooLOG(@"getAd needs a Player ID, retry.");
+        return;
+    }
+    
+    BeintooVgood *vgoodService = [Beintoo beintooVgoodService];
+    
+    NSString *res;
+    res = [NSString stringWithFormat:@"%@serve", [vgoodService getDisplayRestResource]];
+    
+    CLLocation *loc	 = [Beintoo getUserLocation];
+	if (loc == nil || (loc.coordinate.latitude <= 0.01f && loc.coordinate.latitude >= -0.01f)
+		|| (loc.coordinate.longitude <= 0.01f && loc.coordinate.longitude >= -0.01f)) {
+		res	= [NSString stringWithFormat:@"%@?wrapInJson=true", res];
+	}
+	else
+		res	= [NSString stringWithFormat:@"%@?wrapInJson=true&latitude=%f&longitude=%f&radius=%f",
+               res, loc.coordinate.latitude, loc.coordinate.longitude, loc.horizontalAccuracy];
+    
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            [Beintoo getApiKey], @"apikey",
+                            [BeintooDevice getUDID], @"deviceUUID",
+                            [BeintooDevice getMacAddress], @"macaddress",
+                            [BeintooOpenUDID value], @"openudid",
+                            nil];
+    
+    [vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:REWARD_GET_AD_CALLER_ID];
+}
 
 // -------------------------------------------------------------------------------------
 // Get SINGLE vgood, no delegate. The response will be sent to the main delegate
@@ -69,7 +161,7 @@
 	CLLocation *loc	 = [Beintoo getUserLocation];
 	
 	if (guid == nil) {
-		NSLog(@"Beintoo: unable to generate a vgood. No user logged.");
+		BeintooLOG(@"Beintoo: unable to generate a vgood. No user logged.");
 		return;
 	}
 	
@@ -99,7 +191,7 @@
 	CLLocation *loc	 = [Beintoo getUserLocation];
 	
 	if (guid == nil) {
-		NSLog(@"Beintoo: unable to generate a vgood. No user logged.");
+		BeintooLOG(@"Beintoo: unable to generate a vgood. No user logged.");
 		return;
 	}
 	
@@ -129,7 +221,7 @@
 	CLLocation *loc	 = [Beintoo getUserLocation];
 		
 	if (guid == nil) {
-		NSLog(@"Beintoo: unable to generate a vgood. No user logged.");
+		BeintooLOG(@"Beintoo: unable to generate a vgood. No user logged.");
 		return;
 	}
 	NSString *res;
@@ -161,7 +253,7 @@
 	CLLocation *loc	 = [Beintoo getUserLocation];
 	
 	if (guid == nil) {
-		NSLog(@"Beintoo: unable to generate a vgood. No user logged.");
+		BeintooLOG(@"Beintoo: unable to generate a vgood. No user logged.");
 		return;
 	}
 	NSString *res;
@@ -193,7 +285,7 @@
 	CLLocation *loc	 = [Beintoo getUserLocation];
 	
 	if (guid == nil) {
-		NSLog(@"Beintoo: unable to generate a vgood. No user logged.");
+		BeintooLOG(@"Beintoo: unable to generate a vgood. No user logged.");
 		return;
 	}
 	
@@ -226,7 +318,7 @@
 	CLLocation *loc	 = [Beintoo getUserLocation];
     
 	if (guid == nil) {
-		NSLog(@"Beintoo: unable to generate a vgood. No user logged.");
+		BeintooLOG(@"Beintoo: unable to generate a vgood. No user logged.");
 		return;
 	}
 	NSString *res;
@@ -373,7 +465,7 @@
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", _userExt, @"userExt", nil];
     
     NSString *body = [NSString stringWithFormat:@"rating=%i&vgood=%@", _rating, _vgoodId];
-    //NSLog(@"res %@ andParams %@", res, params);
+    //BeintooLOG(@"res %@ andParams %@", res, params);
     
 	[parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:body fromCaller:VGOOD_SET_RATING_CALLER_ID];
 }
@@ -385,7 +477,7 @@
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
     
     //NSString *body = [NSString stringWithFormat:@"rating=%i&vgood=%@", _rating, _vgoodId];
-   // NSLog(@"res %@ andParams %@", res, params);
+   // BeintooLOG(@"res %@ andParams %@", res, params);
     
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_GET_COMMENTS_LIST_CALLER_ID];
 }
@@ -398,7 +490,7 @@
     
     NSString *body = [NSString stringWithFormat:@"text=%@&vgood=%@", _comment, _vgoodId];
     
-   // NSLog(@"res %@ andParams %@", res, params);
+   // BeintooLOG(@"res %@ andParams %@", res, params);
     
 	[parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:body fromCaller:VGOOD_SET_COMMENT_CALLER_ID];
 }
@@ -410,35 +502,35 @@
 	NSString *res  = [NSString stringWithFormat:@"%@/marketplace/sell/%@/%@",rest_resource,vGood_Id,[Beintoo getUserID]];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
 	[parser parsePageAtUrlWithPOST:res withHeaders:params fromCaller:MARKET_SELLVGOOD_CALLER_ID];
-	NSLog(@"CALL %@ with params %@",res,params);
+	BeintooLOG(@"CALL %@ with params %@",res,params);
 }	
 
 - (void)showGoodsToBuy{
 	NSString *res  = [NSString stringWithFormat:@"%@/marketplace/show/",rest_resource];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
 	[parser parsePageAtUrlWithPOST:res withHeaders:params fromCaller:MARKET_GOODSTOBUY_CALLER_ID];
-	NSLog(@"CALL %@ with params %@",res,params);
+	BeintooLOG(@"CALL %@ with params %@",res,params);
 }
 
 - (void)showGoodsToBuyFeatured{
 	NSString *res  = [NSString stringWithFormat:@"%@/marketplace/show/?featured=true",rest_resource];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
 	[parser parsePageAtUrlWithPOST:res withHeaders:params fromCaller:MARKET_GOODSTOBUY_CALLER_ID];
-	NSLog(@"CALL %@ with params %@",res,params);
+	BeintooLOG(@"CALL %@ with params %@",res,params);
 }
 
 - (void)buyGoodFromUser:(NSString *)vGood_Id{
 	NSString *res  = [NSString stringWithFormat:@"%@/marketplace/buy/%@/%@",rest_resource,vGood_Id,[Beintoo getUserID]];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
 	[parser parsePageAtUrlWithPOST:res withHeaders:params fromCaller:MARKET_BUYVGOOD_CALLER_ID];
-	NSLog(@"CALL %@ with params %@",res,params);
+	BeintooLOG(@"CALL %@ with params %@",res,params);
 }
 
 - (void)buyGoodFeatured:(NSString *)vGood_Id{
 	NSString *res  = [NSString stringWithFormat:@"%@/marketplace/featured/buy/%@/%@",rest_resource,vGood_Id,[Beintoo getUserID]];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
 	[parser parsePageAtUrlWithPOST:res withHeaders:params fromCaller:MARKET_BUYVGOOD_CALLER_ID];
-	NSLog(@"CALL %@ with params %@",res,params);
+	BeintooLOG(@"CALL %@ with params %@",res,params);
 }
 
 
@@ -448,11 +540,73 @@
 - (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID{	
 	switch (callerID){
             
-        BeintooLOG(@"result %@", result);
-		case VGOOD_SINGLE_CALLER_ID:{  // -------------------- SINGLE NO DELEGATE
+        case VGOOD_CHECK_COVERAGE_CALLER_ID:
+        {
+            BeintooVgood *beintooVgood = [Beintoo beintooVgoodService];
+            if ([result objectForKey:@"isCovered"]){
+                
+                if ([[result objectForKey:@"isCovered"] boolValue] == TRUE){
+                    
+                    if ([beintooVgood.callingDelegate respondsToSelector:@selector(beintooHasRewardsCoverage)]){
+                        [beintooVgood.callingDelegate beintooHasRewardsCoverage];
+                    }
+                    return;
+                }
+            }
+            
+            if ([beintooVgood.callingDelegate respondsToSelector:@selector(beintooHasNotRewardsCoverage)])
+                [beintooVgood.callingDelegate beintooHasNotRewardsCoverage];
+            
+        }
+            break;
+            
+        case VGOOD_IS_ELIGIBLE_FOR_REWARD_CALLER_ID:
+        {
+            BeintooVgood *beintooVgood = [Beintoo beintooVgoodService];
+            
+            if ([result objectForKey:@"messageID"]){
+                if ([[result objectForKey:@"messageID"] intValue] == 0){
+                    
+                    if ([beintooVgood.callingDelegate respondsToSelector:@selector(beintooPlayerIsEligibleForReward)]){
+                        [beintooVgood.callingDelegate beintooPlayerIsEligibleForReward];
+                    }
+                    return;
+                }
+                else if ([[result objectForKey:@"messageID"] intValue] == B_USER_OVER_QUOTA_ERRORCODE){
+                    
+                    if ([beintooVgood.callingDelegate respondsToSelector:@selector(beintooPlayerIsNotEligibleForReward)]){
+                        [beintooVgood.callingDelegate beintooPlayerIsNotEligibleForReward];
+                    }
+                    
+                    if ([beintooVgood.callingDelegate respondsToSelector:@selector(beintooPlayerIsOverQuotaForReward)]){
+                        [beintooVgood.callingDelegate beintooPlayerIsOverQuotaForReward];
+                    }
+                    return;
+                }
+                else if ([[result objectForKey:@"messageID"] intValue] == B_NOTHING_TO_DISPATCH_ERRORCODE || [[result objectForKey:@"messageID"] intValue] == -21){
+                    
+                    if ([beintooVgood.callingDelegate respondsToSelector:@selector(beintooPlayerIsNotEligibleForReward)]){
+                        [beintooVgood.callingDelegate beintooPlayerIsNotEligibleForReward];
+                    }
+                    
+                    if ([beintooVgood.callingDelegate respondsToSelector:@selector(beintooPlayerGotNothingToDispatchForReward)]){
+                        [beintooVgood.callingDelegate beintooPlayerGotNothingToDispatchForReward];
+                    }
+                    return;
+                }
+            }
+            
+            if ([beintooVgood.callingDelegate respondsToSelector:@selector(beintooPlayerIsNotEligibleForReward)]){
+                [beintooVgood.callingDelegate beintooPlayerIsNotEligibleForReward];
+            }
+            
+        }
+            break;
+        
+        case VGOOD_SINGLE_CALLER_ID:{  // -------------------- SINGLE NO DELEGATE
 			@try {
-				NSLog(@"single vgood result %@",result);
-				if ([result objectForKey:@"messageID"]) {
+				
+                if ([result objectForKey:@"messageID"]) {
 					// No vgood is generated. a notification is sent to the main delegate
 					[Beintoo notifyVGoodGenerationErrorOnMainDelegate:result];
                     
@@ -548,7 +702,7 @@
 		
 		case VGOOD_MULTIPLE_CALLER_ID:{  // -------------------- MULTIPLE NO DELEGATE
 			@try {
-				//NSLog(@"multiple vgood result %@",result);
+				//BeintooLOG(@"multiple vgood result %@",result);
 				if ([result objectForKey:@"messageID"]) {
 					// No vgood is generated. a notification is sent to the main delegate
 					[Beintoo notifyVGoodGenerationErrorOnMainDelegate:result];
@@ -610,7 +764,7 @@
 		
 		case VGOOD_MULTIPLEwDELEG_CALLER_ID:{  // -------------------- MULTIPLE WITH DELEGATE
 			@try {
-				//NSLog(@"multiple vgood result %@",result);
+				//BeintooLOG(@"multiple vgood result %@",result);
 				if ([result objectForKey:@"messageID"]) {
 					// No vgood is generated. a notification is sent to the main delegate
 					[BeintooVgood notifyVGoodGenerationErrorOnUserDelegate:[result objectForKey:@"message"]];
@@ -675,6 +829,31 @@
 		}
 			break;
             
+        case REWARD_GET_AD_CALLER_ID: {
+            BeintooLOG(@"result get ad %@", result);
+            if ([result objectForKey:@"messageID"]) {
+                if ([[result objectForKey:@"messageID"] intValue] == B_NOTHING_TO_DISPATCH_ERRORCODE) {
+                
+                    [Beintoo notifyAdGenerationErrorOnMainDelegate:result];
+                
+                    return;
+                }
+            }
+            
+            [adContent setVgoodContent:result];
+            [adContent setTheGood:result];
+            [Beintoo setLastGeneratedAd:adContent];
+            
+            [Beintoo notifyAdGenerationOnMainDelegate];
+            
+            if (callingDelegate != nil)
+                [Beintoo launchAdWithDelegate:callingDelegate];
+            else 
+                [Beintoo launchAd];
+            
+        }
+            break;
+            
         case VGOOD_GETPRIVATEVGOODS_CALLER_ID:{
             BeintooLOG(@"get private result %@",result);
             if ([[self delegate] respondsToSelector:@selector(didGetAllPrivateVgoods:)]){
@@ -709,7 +888,7 @@
 			break;
 			
 		case VGOOD_ACCEPT_CALLER_ID:{
-			//NSLog(@"ACCEPT RES: %@",result);
+			//BeintooLOG(@"ACCEPT RES: %@",result);
 			if ([[self delegate] respondsToSelector:@selector(didAcceptVgood)]) {
 				[[self delegate] didAcceptVgood];
 			}
@@ -728,7 +907,7 @@
             
         case VGOOD_SET_RATING_CALLER_ID:{
             
-            //NSLog(@"resul rating marketplace %@", result);
+            //BeintooLOG(@"resul rating marketplace %@", result);
 			if ([result objectForKey:@"rating"]){
                 if ([[self delegate] respondsToSelector:@selector(didSetRating:)]) {
                     [[self delegate] didSetRating:(NSDictionary *)result];
@@ -742,7 +921,7 @@
             
         case VGOOD_GET_COMMENTS_LIST_CALLER_ID:{
             
-            //NSLog(@"resul comments get  marketplace %@", result);
+            //BeintooLOG(@"resul comments get  marketplace %@", result);
 			
             if ([[self delegate] respondsToSelector:@selector(didGetCommentsList:)]) {
                 [[self delegate] didGetCommentsList:(NSMutableArray *)result];
@@ -753,7 +932,7 @@
             
         case VGOOD_SET_COMMENT_CALLER_ID:{
             
-            //NSLog(@"resul comments get  marketplace %@", result);
+            //BeintooLOG(@"resul comments get  marketplace %@", result);
 			
             if ([[self delegate] respondsToSelector:@selector(didSetCommentForVgood:)]) {
                 [[self delegate] didSetCommentForVgood:(NSDictionary *)result];
@@ -765,7 +944,7 @@
             /* ------ MARKETPLACE ------- */
 			
 		case MARKET_SELLVGOOD_CALLER_ID:{
-			//NSLog(@"sellVGOOD result: %@",result);
+			//BeintooLOG(@"sellVGOOD result: %@",result);
 			if ([[result objectForKey:@"message"] isEqualToString:@"OK"]) {
 				[[self delegate]didSellVGood:YES];
 			}
@@ -773,12 +952,12 @@
 		}
 			break;
 		case MARKET_GOODSTOBUY_CALLER_ID:{
-			//NSLog(@"vgood to buy result: %@",result);
+			//BeintooLOG(@"vgood to buy result: %@",result);
 			[[self delegate]didGetVGoodsToBuy:(NSArray *)result];
 		}
 			break;
 		case MARKET_BUYVGOOD_CALLER_ID:{
-			//NSLog(@"vgood bought result: %@",result);
+			//BeintooLOG(@"vgood bought result: %@",result);
 			[[self delegate]didBuyVgoodWithResult:result];
 		}
 			break;
@@ -791,10 +970,15 @@
 }
 
 - (void)dealloc {
+    parser.delegate = nil;
+    _player.delegate = nil;
+    
 	[parser release];
 	[_player release];
 	[rest_resource release];
+    [display_rest_resource release];
     [vgood release];
+    [adContent release];
     
 	[super dealloc];
 }

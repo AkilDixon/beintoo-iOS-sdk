@@ -45,8 +45,7 @@ NSString *BNSDefIsUserLogged;
     [Beintoo initUserService];
 	[Beintoo initVgoodService];
 	[Beintoo initAchievementsService];
-    [Beintoo initMissionService];
-    [Beintoo initMarketplaceService];
+    [Beintoo initBestoreService];
 	
 	// Settings initialization
 	[Beintoo initBeintooSettings:_settings];
@@ -83,8 +82,24 @@ NSString *BNSDefIsUserLogged;
 	[Beintoo _launchMarketplaceOnAppWithDeveloperCurrencyValue:_value];
 }
 
++ (void)launchBestore{
+    [Beintoo _launchMarketplaceOnApp];
+}
+
++ (void)launchBestoreWithVirtualCurrencyBalance:(float)_value{
+	[Beintoo _launchMarketplaceOnAppWithDeveloperCurrencyValue:_value];
+}
+
 + (void)launchWallet{
 	[Beintoo _launchWalletOnApp];
+}
+
++ (void)launchMyOffers{
+	[Beintoo _launchWalletOnApp];
+}
+
++ (void)launchAchievements{
+	[Beintoo _launchAchievementsOnApp];
 }
 
 + (void)launchLeaderboard{
@@ -97,6 +112,14 @@ NSString *BNSDefIsUserLogged;
 
 + (void)launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate{
     [Beintoo _launchPrizeOnAppWithDelegate:_beintooPrizeDelegate];
+}
+
++ (void)launchAd{
+	[Beintoo _launchAd];
+}
+
++ (void)launchAdWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate{
+    [Beintoo _launchAdWithDelegate:_beintooPrizeDelegate];
 }
 
 + (void)launchMission{
@@ -154,7 +177,7 @@ NSString *BNSDefIsUserLogged;
 }
 								
 + (NSString *)currentVersion{
-	return @"2.8.17beta-ios";
+	return @"2.9.0beta-ios";
 }
 
 + (NSInteger)notificationPosition{
@@ -341,6 +364,12 @@ NSString *BNSDefIsUserLogged;
 	}
 }
 
++ (BVirtualGood *)getLastGeneratedAd{
+	@synchronized(self){
+		return [[Beintoo sharedInstance]->lastGeneratedAd retain];
+	}
+}
+
 #pragma mark - Thresholds
 
 + (NSDictionary *)getAppVgoodThresholds{
@@ -363,12 +392,8 @@ NSString *BNSDefIsUserLogged;
 	return [Beintoo sharedInstance]->beintooAchievementsService;
 }
 
-+ (BeintooMission *)beintooMissionService{
-    return [Beintoo sharedInstance]->beintooMissionService;
-}
-
-+ (BeintooMarketplace *)beintooMarketplaceService{
-    return [Beintoo sharedInstance]->beintooMarketplaceService;
++ (BeintooBestore *)beintooBestoreService{
+    return [Beintoo sharedInstance]->beintooBestoreService;
 }
 
 // -----------------------------------
@@ -424,6 +449,12 @@ NSString *BNSDefIsUserLogged;
 	}
 }
 
++ (void)setLastGeneratedAd:(BVirtualGood *)_theAd{
+	@synchronized(self){
+		[self _setLastAd:_theAd];
+	}
+}
+
 + (int)appOrientation{
 	return [Beintoo sharedInstance]->appOrientation;
 }
@@ -435,6 +466,11 @@ NSString *BNSDefIsUserLogged;
         BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
         if (_prizeView.alpha == 1){
             [_prizeView preparePrizeAlertOrientation:_prizeView.frame];
+        }
+        
+        BPrize	*_adView = [Beintoo sharedInstance]->adView;
+        if (_adView.alpha == 1){
+            [_adView preparePrizeAlertOrientation:_adView.frame];
         }
 	}
 }
@@ -469,7 +505,7 @@ NSString *BNSDefIsUserLogged;
 
 + (void)switchBeintooToSandbox{
 	[Beintoo switchToSandbox];
-	NSLog(@"------------------------------------- Beintoo Sandbox ON -------------------------------------");
+	BeintooLOG(@"------------------------------------- Beintoo Sandbox ON -------------------------------------");
 }
 
 #pragma mark - Dispatch Queue
@@ -495,6 +531,22 @@ NSString *BNSDefIsUserLogged;
 	if ([_mainDelegate respondsToSelector:@selector(didBeintooFailToGenerateAVirtualGoodWithError:)]) {
 		[_mainDelegate didBeintooFailToGenerateAVirtualGoodWithError:_error];
 	}	
+}
+
++ (void)notifyAdGenerationOnMainDelegate{
+	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+	
+	if ([_mainDelegate respondsToSelector:@selector(didBeintooGenerateAnAd:)]) {
+		[_mainDelegate didBeintooGenerateAnAd:[Beintoo sharedInstance]->lastGeneratedAd];
+	}
+}
+
++ (void)notifyAdGenerationErrorOnMainDelegate:(NSDictionary *)_error{
+	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+	
+	if ([_mainDelegate respondsToSelector:@selector(didBeintooFailToGenerateAnAdWithError:)]) {
+		[_mainDelegate didBeintooFailToGenerateAnAdWithError:_error];
+	}
 }
 
 + (NSString *)getUserLocationForURL{
@@ -558,6 +610,10 @@ NSString *BNSDefIsUserLogged;
 	[Beintoo _dismissPrize];
 }
 
++ (void)dismissAd{
+	[Beintoo _dismissAd];
+}
+
 + (void)dismissRecommendation{
 	[Beintoo _dismissRecommendation];
 }
@@ -573,11 +629,21 @@ NSString *BNSDefIsUserLogged;
 + (void)beintooDidDisappear{
 	[Beintoo _beintooDidDisappear];
 }
+
 + (void)prizeDidAppear{
 	[Beintoo _prizeDidAppear];
 }
+
 + (void)prizeDidDisappear{
 	[Beintoo _prizeDidDisappear];
+}
+
++ (void)adControllerDidAppear{
+	[Beintoo _adControllerDidAppear];
+}
+
++ (void)adControllerDidDisappear{
+	[Beintoo _adControllerDidDisappear];
 }
 
 + (void)shutdownBeintoo{
@@ -632,10 +698,7 @@ NSString *BNSDefIsUserLogged;
 	/* --------------------------------------------- */  
 	[beintooInstance->beintooPanelRootViewController release];  // Released
 	beintooInstance->beintooPanelRootViewController = nil;
-    /* --------------------------------------------- */  
-	[beintooInstance->beintooMarketplaceViewController release];  // Released
-	beintooInstance->beintooMarketplaceViewController = nil;
-	/* --------------------------------------------- */  
+    /* --------------------------------------------- */
 	[beintooInstance->beintooWalletViewController release];  // Released
 	beintooInstance->beintooWalletViewController = nil;
     /* --------------------------------------------- */  
@@ -666,12 +729,8 @@ NSString *BNSDefIsUserLogged;
 	[beintooInstance->beintooAchievementsService release];
 	beintooInstance->beintooAchievementsService = nil;
     /* --------------------------------------------- */
-    [beintooInstance->beintooMissionService release];
-    beintooInstance->beintooMissionService = nil;
-    /* --------------------------------------------- */
-    /* --------------------------------------------- */
-    [beintooInstance->beintooMarketplaceService release];
-    beintooInstance->beintooMarketplaceService = nil;
+    [beintooInstance->beintooBestoreService release];
+    beintooInstance->beintooBestoreService = nil;
     /* --------------------------------------------- */
 	
 	[beintooInstance release];

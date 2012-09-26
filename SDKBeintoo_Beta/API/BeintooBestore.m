@@ -14,10 +14,10 @@
  * limitations under the License.
  ******************************************************************************/
 
-#import "BeintooMarketplace.h"
+#import "BeintooBestore.h"
 #import "Beintoo.h"
 
-@implementation BeintooMarketplace
+@implementation BeintooBestore
 
 @synthesize parser, delegate;
 
@@ -39,7 +39,7 @@
 #pragma mark -
 #pragma mark API
 
-- (void)getMarketplaceContentForKind:(NSString *)_kind andStart:(int)_start andNumberOfRows:(int)_rows andSorting:(NSString *)_sorting{
+- (void)getContentForKind:(NSString *)_kind andStart:(int)_start andNumberOfRows:(int)_rows andSorting:(NSString *)_sorting{
 	
     CLLocation *loc	 = [Beintoo getUserLocation];
 	
@@ -58,12 +58,10 @@
     
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", [Beintoo getPlayerID], @"guid", nil];
     
-    //NSLog(@"res %@ andparams %@", res, params);
-    
-	[parser parsePageAtUrl:res withHeaders:params fromCaller:MARKETPLACE_GET_CONTENT_CALLER_ID];
+    [parser parsePageAtUrl:res withHeaders:params fromCaller:MARKETPLACE_GET_CONTENT_CALLER_ID];
 }
 
-- (void)getMarketplaceContentForKind:(NSString *)_kind andCategory:(NSString *)_category andStart:(int)_start andNumberOfRows:(int)_rows andSorting:(NSString *)_sorting{
+- (void)getContentForKind:(NSString *)_kind andCategory:(NSString *)_category andStart:(int)_start andNumberOfRows:(int)_rows andSorting:(NSString *)_sorting{
 	
     CLLocation *loc	 = [Beintoo getUserLocation];
 	NSString *location_res;
@@ -81,23 +79,18 @@
     
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", [Beintoo getPlayerID], @"guid", nil];
     
-   // NSLog(@"res %@ andparams %@", res, params);
-    
-	[parser parsePageAtUrl:res withHeaders:params fromCaller:MARKETPLACE_GET_CATEGORY_CONTENT_CALLER_ID];
+   [parser parsePageAtUrl:res withHeaders:params fromCaller:MARKETPLACE_GET_CATEGORY_CONTENT_CALLER_ID];
 }
 
-- (void)getMarketplaceCategories{
+- (void)getCategories{
 	
     NSString *res		 = [NSString stringWithFormat:@"%@show/categories", rest_resource_vgood];
     
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", [Beintoo getPlayerID], @"guid", nil];
     
-    //NSLog(@"res %@ andparams %@", res, params);
-    
-	[parser parsePageAtUrl:res withHeaders:params fromCaller:MARKETPLACE_GET_CATEGORIES_CALLER_ID];
+    [parser parsePageAtUrl:res withHeaders:params fromCaller:MARKETPLACE_GET_CATEGORIES_CALLER_ID];
     
 }
-
 
 #pragma mark -
 #pragma mark parser delegate response
@@ -106,15 +99,14 @@
 	switch (callerID){
 		case MARKETPLACE_GET_CONTENT_CALLER_ID:{
             
-            //NSLog(@"resul marketplace %@", result);
             if ([result isKindOfClass:[NSMutableArray class]]) {
-                if ([[self delegate] respondsToSelector:@selector(didMarketplaceGotContent:)]) {
-                    [[self delegate] didMarketplaceGotContent:(NSMutableArray *)result];
+                if ([[self delegate] respondsToSelector:@selector(didBestoreGotContent:)]) {
+                    [[self delegate] didBestoreGotContent:(NSMutableArray *)result];
                 }
             }
             else {
-                if ([[self delegate] respondsToSelector:@selector(didNotMarketplaceGotContent)]) {
-                    [[self delegate] didNotMarketplaceGotContent];
+                if ([[self delegate] respondsToSelector:@selector(didNotBestoreGotContent)]) {
+                    [[self delegate] didNotBestoreGotContent];
                 }
             }
 		}
@@ -122,15 +114,14 @@
         
         case MARKETPLACE_GET_CATEGORY_CONTENT_CALLER_ID:{
             
-           // NSLog(@"resul marketplace %@", result);
            if ([result isKindOfClass:[NSMutableArray class]]) {
-                if ([[self delegate] respondsToSelector:@selector(didMarketplaceGotContent:)]) {
-                    [[self delegate] didMarketplaceGotContent:(NSMutableArray *)result];
+                if ([[self delegate] respondsToSelector:@selector(didBestoreGotContent:)]) {
+                    [[self delegate] didBestoreGotContent:(NSMutableArray *)result];
                 }
             }
             else {
-                if ([[self delegate] respondsToSelector:@selector(didNotMarketplaceGotCategoryContent)]) {
-                    [[self delegate] didNotMarketplaceGotCategoryContent];
+                if ([[self delegate] respondsToSelector:@selector(didNotBestoreGotCategoryContent)]) {
+                    [[self delegate] didNotBestoreGotCategoryContent];
                 }
             }
 		}
@@ -138,15 +129,14 @@
             
         case MARKETPLACE_GET_CATEGORIES_CALLER_ID:{
             
-            // NSLog(@"resul categories marketplace %@", result);
             if ([result isKindOfClass:[NSMutableArray class]]){
-                if ([[self delegate] respondsToSelector:@selector(didMarketplaceGotCategories:)]) {
-                    [[self delegate] didMarketplaceGotCategories:(NSMutableArray *)result];
+                if ([[self delegate] respondsToSelector:@selector(didBestoreGotCategories:)]) {
+                    [[self delegate] didBestoreGotCategories:(NSMutableArray *)result];
                 }
             }
             else {
-                if ([[self delegate] respondsToSelector:@selector(didNotMarketplaceGotCategories)]) {
-                    [[self delegate] didNotMarketplaceGotCategories];
+                if ([[self delegate] respondsToSelector:@selector(didNotBestoreGotCategories)]) {
+                    [[self delegate] didNotBestoreGotCategories];
                 }
             }
 		}
@@ -155,11 +145,11 @@
 }
 
 - (void)dealloc {
+    parser.delegate = nil;
 	[parser release];
 	[rest_resource release];
     [rest_resource_vgood release];
     [super dealloc];
 }
-
 
 @end

@@ -197,11 +197,11 @@
 					  country:(NSString *)_country address:(NSString *)_address gender:(NSString *)_gender sendGreetingsEmail:(BOOL)_sendGreet{
 		
 	if (_guid == nil) {
-		NSLog(@"* Beintoo * RegisterUser error: no guid provided.");
+		BeintooLOG(@"* Beintoo * RegisterUser error: no guid provided.");
 		return;
 	}
 	if (_email == nil) {
-		NSLog(@"* Beintoo * RegisterUser error: email not provided.");
+		BeintooLOG(@"* Beintoo * RegisterUser error: email not provided.");
 		return;
 	}
 	int userGender;
@@ -278,7 +278,7 @@
 	}
     
 	if (_email == nil) {
-		NSLog(@"* Beintoo * RegisterUser error: email not provided.");
+		BeintooLOG(@"* Beintoo * RegisterUser error: email not provided.");
         
         if ([[self delegate] respondsToSelector:@selector(didNotCompleteBackgroundRegistration)]) 
             [[self delegate] didNotCompleteBackgroundRegistration];
@@ -473,7 +473,7 @@
 			if ([[self delegate] respondsToSelector:@selector(didGetUserByMail:)]) {
 				[[self delegate] didGetUserByMail:result];
 			}
-			//NSLog(@"getUserByUDID result: %@",result);
+			//BeintooLOG(@"getUserByUDID result: %@",result);
 		}
 			break;
 		
@@ -481,7 +481,7 @@
 			if ([[self delegate] respondsToSelector:@selector(didGetUserByUDID:)]) {
 				[[self delegate] didGetUserByUDID:(NSMutableArray *)result];
 			}
-			//NSLog(@"getUserByUDID result: %@",result);
+			//BeintooLOG(@"getUserByUDID result: %@",result);
 		}
 			break;
 			
@@ -489,7 +489,7 @@
 			if ([[self delegate] respondsToSelector:@selector(didShowChallengesByStatus:)]) {
 				[[self delegate] didShowChallengesByStatus:(NSMutableArray *)result];
 			}
-			//NSLog(@"showChallenges result: %@",result);
+			//BeintooLOG(@"showChallenges result: %@",result);
 		}
 			break;
 		
@@ -515,12 +515,12 @@
 			break;
 			
 		case USER_REMOVEUDID_CALLER_ID:{
-			//NSLog(@"remove UDID result: %@",result);
+			//BeintooLOG(@"remove UDID result: %@",result);
 		}
 			break;
 
 		case USER_GETBALANCE_CALLER_ID:{
-			//NSLog(@"getBalance result: %@",result);
+			//BeintooLOG(@"getBalance result: %@",result);
 			if ([[self delegate]respondsToSelector:@selector(didGetBalance:)]) {
 				[[self delegate]didGetBalance:(NSMutableArray *)result];
 			}
@@ -528,7 +528,7 @@
 			break;
 
 		case USER_GETBYQUERY_CALLER_ID:{
-			//NSLog(@"getBalance result: %@",result);
+			//BeintooLOG(@"getBalance result: %@",result);
 			if ([[self delegate]respondsToSelector:@selector(didGetUserByQuery:)]) {
 				[[self delegate]didGetUserByQuery:(NSMutableArray *)result];
 			}
@@ -536,7 +536,7 @@
 			break;
 			
 		case USER_SENDFRIENDSHIP_CALLER_ID:{
-			//NSLog(@"send friend request result: %@",result);
+			//BeintooLOG(@"send friend request result: %@",result);
 			if ([[self delegate]respondsToSelector:@selector(didGetFriendRequestResponse:)]) {
 				[[self delegate]didGetFriendRequestResponse:result];
 			}
@@ -552,7 +552,7 @@
 			break;
 			
 		case USER_GETFRIENDSHIP_CALLER_ID:{
-			//NSLog(@"get friend request result: %@",result);
+			//BeintooLOG(@"get friend request result: %@",result);
 			if ([[self delegate]respondsToSelector:@selector(didGetFriendRequests:)]) {
 				[[self delegate]didGetFriendRequests:(NSMutableArray *)result];
 			}
@@ -561,7 +561,7 @@
 			
 		case USER_REGISTER_CALLER_ID:{
 			if ([result objectForKey:@"message"] != nil) {
-				NSLog(@"Beintoo: error in user registration: %@", [result objectForKey:@"message"]);
+				BeintooLOG(@"Beintoo: error in user registration: %@", [result objectForKey:@"message"]);
             }
             if ([[self delegate]respondsToSelector:@selector(didCompleteRegistration:)]) 
                 [[self delegate]didCompleteRegistration:result];
@@ -582,7 +582,7 @@
                 }
             }
             else {
-                NSLog(@"Beintoo: error in user registration: %@",[result objectForKey:@"message"]);
+                BeintooLOG(@"Beintoo: error in user registration: %@",[result objectForKey:@"message"]);
                 if ([[self delegate] respondsToSelector:@selector(didNotCompleteBackgroundRegistration)]) 
                     [[self delegate] didNotCompleteBackgroundRegistration];
             }
@@ -591,7 +591,7 @@
 			
 		case USER_NICKUPDATE_CALLER_ID:{
 			if ([result objectForKey:@"message"] != nil) {
-				NSLog(@"Beintoo: error in user registration: %@",[result objectForKey:@"message"]);
+				BeintooLOG(@"Beintoo: error in user registration: %@",[result objectForKey:@"message"]);
             }
             if ([[self delegate]respondsToSelector:@selector(didCompleteUserNickUpdate:)]) 
                 [[self delegate]didCompleteUserNickUpdate:result];
@@ -600,7 +600,7 @@
             
         case USER_GIVE_BEDOLLARS_CALLER_ID:{
             if ([result objectForKey:@"message"]) {
-				NSLog(@"Beintoo: error in Give Bedollars call: %@",[result objectForKey:@"message"]);
+				BeintooLOG(@"Beintoo: error in Give Bedollars call: %@",[result objectForKey:@"message"]);
             }
             
             if ([[self delegate]respondsToSelector:@selector(didReceiveGiveBedollarsResponse:)]) 
@@ -621,7 +621,7 @@
         case USER_FORGOT_PASSWORD_CALLER_ID:{
             
             if ([result objectForKey:@"message"]) {
-				NSLog(@"Beintoo: error in forgot password call: %@", [result objectForKey:@"message"]);
+				BeintooLOG(@"Beintoo: error in forgot password call: %@", [result objectForKey:@"message"]);
             }
             
             if ([[self delegate]respondsToSelector:@selector(didCompleteForgotPassword:)]) 
@@ -688,7 +688,7 @@
 }
 
 - (void)playerDidFailLoginWithResult:(NSString *)error{
-	NSLog(@"playerLogin error: %@", error);
+	BeintooLOG(@"playerLogin error: %@", error);
 }
 
 - (NSString *)getStatusCode:(int)code{

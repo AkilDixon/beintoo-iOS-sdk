@@ -51,7 +51,7 @@
 	[super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
     
     _achievements.delegate	 = self;
@@ -88,13 +88,14 @@
 	for (int i = 0; i < [result count]; i++) {
         NSMutableDictionary *achievementEntry = [[NSMutableDictionary alloc] init];
         BImageDownload *download = [[BImageDownload alloc] init];
-		@try {
+		
+        @try {
 			
 			NSDictionary *currentAchievement = [[result objectAtIndex:i] objectForKey:@"achievement"];
             
 			NSString *name          = [currentAchievement objectForKey:@"name"]; 
 			NSString *description   = [currentAchievement objectForKey:@"description"]; 
-			NSString *bedollarsVal	= [currentAchievement objectForKey:@"bedollars"];
+			NSString *bedollarsVal	= [NSString stringWithFormat:@"%.0f", [[currentAchievement objectForKey:@"bedollars"] floatValue]];
 			NSString *imageURL		= [currentAchievement objectForKey:@"imageURL"];
             
 			NSString *blockedBy		= [currentAchievement objectForKey:@"blockedBy"];
@@ -104,22 +105,26 @@
 			}
             
 			download.delegate = self;
-			download.urlString = [currentAchievement objectForKey:@"imageURL"];
+            
+            if ([imageURL length] > 0) 
+                download.urlString = [imageURL copy];
 			
-            [achievementEntry setObject:name forKey:@"name"];
+            if ([name length] > 0) 
+                [achievementEntry setObject:name forKey:@"name"];
             
             if ([description length] > 0) 
                 [achievementEntry setObject:description	forKey:@"description"];
             
-            [achievementEntry setObject:bedollarsVal forKey:@"bedollarsValue"];
+            if ([bedollarsVal length] > 0) 
+                [achievementEntry setObject:bedollarsVal forKey:@"bedollarsValue"];
             
             if ([imageURL length] > 0) 
                 [achievementEntry setObject:imageURL forKey:@"imageURL"];
             
-            
 			if (isBlockedByOthers) {
 				[achievementEntry setObject:blockedBy forKey:@"blockedBy"];
 			}
+            
 			[achievementsArrayList addObject:achievementEntry];
 			[achievementsImages addObject:download];
             
@@ -169,7 +174,6 @@
             [path release];
         }
     }
-    
 }
 
 #pragma mark -
@@ -237,7 +241,7 @@
         progressBar.progress = 0.0;
         
         if ([[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"percentage"])
-            [progressBar setProgress:([[[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"percentage"] floatValue] / 100) animated:YES];
+            [progressBar setProgress:([[[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"percentage"] floatValue] / 100) animated:NO];
         else if ([[[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"status"] isEqualToString:@"UNLOCKED"])
             [progressBar setProgress:100 animated:NO];
         
@@ -275,6 +279,7 @@
 
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
+
 - (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
     NSUInteger index = [self.achievementsImages indexOfObject:download]; 
     NSUInteger indices[] = {0, index};
@@ -323,6 +328,8 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
     _achievements.delegate   = nil;
     
     @try {

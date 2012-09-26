@@ -8,6 +8,7 @@
 
 #import "BPickerView.h"
 #import "Beintoo.h"
+#import "BSendChallengesView.h"
 
 @implementation BPickerView
 
@@ -52,6 +53,8 @@
         contestsDictionary          = [[NSMutableArray alloc] init];
         contestsCodeIDDictionary    = [[NSMutableArray alloc] init];
         selectedContest             = [[NSString alloc] init];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hide) name:@"ChallengeSent" object:nil];
     }
     return self;
 }
@@ -64,8 +67,24 @@
 
 - (void)sendChallenge
 {
-    [user challengeRequestfrom:[Beintoo getUserID] to:[options objectForKey:@"friendUserID"] withAction:@"INVITE" forContest:selectedContest];
-    [BLoadingView startActivity:self];
+    BSendChallengesView *sendChallengeView  = [[BSendChallengesView alloc] initWithFrame:self.frame];
+    sendChallengeView.challengeReceiver     = [options objectForKey:@"friendUserID"];
+    sendChallengeView.challengeSender       = [Beintoo getUserIfLogged];
+    sendChallengeView.selectedContest       = selectedContest;
+    
+    [sendChallengeView drawSendChallengeView];
+    sendChallengeView.tag = BSENDCHALLENGE_VIEW_TAG;
+    sendChallengeView.alpha = 0;
+    [self addSubview:sendChallengeView];
+    [sendChallengeView release];
+    
+    [UIView beginAnimations:@"sendChallengeOpen" context:nil];
+    [UIView setAnimationDelay:0];
+    [UIView setAnimationDuration:0.45];
+    sendChallengeView.alpha = 1;
+    [UIView commitAnimations];
+    /*[user challengeRequestfrom:[Beintoo getUserID] to:[options objectForKey:@"friendUserID"] withAction:@"INVITE" forContest:selectedContest];
+    [BLoadingView startActivity:self];*/
 }
 
 - (void)show
@@ -83,6 +102,8 @@
 
 - (void)hide
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"ChallengeSent" object:nil];
+    
     [UIView beginAnimations:@"disappear_animation" context:nil];
     [UIView setAnimationDuration:0.5];
     [UIView setAnimationDelegate:self];

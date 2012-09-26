@@ -65,8 +65,10 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 415)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
     }
     
     user.delegate			 = self;
@@ -201,7 +203,7 @@
         }
     }
 	@catch (NSException * e) {
-		NSLog(@"BeintooException: %@",e);
+		BeintooLOG(@"BeintooException: %@",e);
         noScoresLabel.hidden = NO;
         noScoresLabel.text = NSLocalizedStringFromTable(@"errorMessage",@"BeintooLocalizable",@"All");
 	}
@@ -390,7 +392,7 @@
     download.delegate = nil;
 }
 - (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
-    NSLog(@"BeintooImageError: %@", [error localizedDescription]);
+    BeintooLOG(@"BeintooImageError: %@", [error localizedDescription]);
 }
 
 #pragma mark -
@@ -562,7 +564,7 @@
         [sendChallenge removeFromSuperview];
     }
 	@catch (NSException * e) {
-        NSLog(@"Exception on view removing");
+        BeintooLOG(@"Exception on view removing");
     }
     
     @try {

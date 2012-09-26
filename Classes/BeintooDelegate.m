@@ -79,16 +79,61 @@
 - (void)beintooPrizeAlertWillAppear{
 	BeintooLOG(@"alert will appear");
 }
+
 - (void)beintooPrizeAlertDidAppear{
 	BeintooLOG(@"alert did appear");
 }
+
 - (void)beintooPrizeAlertWillDisappear{
 	BeintooLOG(@"alert will disappear");
 
 }
 - (void)beintooPrizeAlertDidDisappear{
 	BeintooLOG(@"alert did disappear");
+}
 
+/*
+ * Ad Notifications
+ */
+
+- (void)beintooAdWillAppear{
+	BeintooLOG(@"Ad will appear!");
+}
+
+- (void)beintooAdDidAppear{
+	BeintooLOG(@"Ad did appear!");
+}
+
+- (void)beintooAdDidDisappear{
+	BeintooLOG(@"Ad did disappear!");
+}
+
+- (void)beintooAdWillDisappear{
+	BeintooLOG(@"Ad will disappear!");
+}
+
+- (void)beintooAdControllerWillAppear{
+	BeintooLOG(@"Ad Controller will appear!");
+}
+
+- (void)beintooAdControllerDidAppear;{
+	BeintooLOG(@"Ad Controller did appear!");
+}
+
+- (void)beintooAdControllerDidDisappear{
+	BeintooLOG(@"Ad Controller did disappear!");
+}
+
+- (void)beintooAdControllerWillDisappear{
+	BeintooLOG(@"Ad Controller will disappear!");
+}
+
+- (void)didBeintooGenerateAnAd:(BVirtualGood *)theAd{
+    BeintooLOG(@"New Ad has been generated!");
+}
+
+- (void)didBeintooFailToGenerateAnAdWithError:(NSDictionary *)error{
+    BeintooLOG(@"Failed while generating a new Ad!");
 }
 
 /* ---------------------------
