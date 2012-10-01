@@ -100,10 +100,11 @@
 + (NSString *)getCarrierBuiltString{
     CTTelephonyNetworkInfo *netinfo = [[CTTelephonyNetworkInfo alloc] init];
     CTCarrier *carrier = [netinfo subscriberCellularProvider];
-    NSString *carrierInfos = [NSString stringWithFormat:@"%@%@", [carrier mobileCountryCode], [carrier mobileNetworkCode]];
-    
-    if ([carrierInfos length] > 0)
+    if ([carrier mobileCountryCode] && [carrier mobileNetworkCode]){
+        NSString *carrierInfos = [NSString stringWithFormat:@"%@%@", [carrier mobileCountryCode], [carrier mobileNetworkCode]];
+        
         return carrierInfos;
+    }
     else
         return nil;
 }

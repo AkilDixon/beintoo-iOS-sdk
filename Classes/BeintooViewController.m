@@ -212,11 +212,6 @@
     [self manageLocation];
 }
 
-- (IBAction)getAd:(id)sender{
-    [BeintooVgood setVgoodDelegate:self];
-    [BeintooVgood requestAndDisplayAd];
-}
-
 #pragma mark -
 #pragma mark Delegates
 

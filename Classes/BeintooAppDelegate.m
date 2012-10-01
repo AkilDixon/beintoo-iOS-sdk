@@ -68,7 +68,7 @@
 	sampleDelegate = [[BeintooDelegate alloc] init];
 	
 	[Beintoo initWithApiKey:your_apikey_here andApiSecret:nil andBeintooSettings:beintooSettings andMainDelegate:sampleDelegate];
-  
+    
     /*
      *
      *  If your app uses Virtual Currency, and you'd like to show your users the products of 
