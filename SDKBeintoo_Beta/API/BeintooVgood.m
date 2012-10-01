@@ -68,6 +68,7 @@
 
 + (void)checkRewardsCoverage{
     
+    [Beintoo updateUserLocation];
 	CLLocation *loc	 = [Beintoo getUserLocation];
 	
 	NSString *res;
@@ -97,6 +98,8 @@
         return;
     }
     
+    [Beintoo updateUserLocation];
+    
     BeintooVgood *vgoodService = [Beintoo beintooVgoodService];
     
     NSString *res;
@@ -122,6 +125,8 @@
 }
 
 + (void)requestAndDisplayAdWithDeveloperUserGuid:(NSString *)_developerUserGuid{
+    
+    [Beintoo updateUserLocation];
     
     BeintooVgood *vgoodService = [Beintoo beintooVgoodService];
     
@@ -244,6 +249,8 @@
 // -------------------------------------------------------------------------------------
 + (void)getSingleVirtualGood{
 	
+    [Beintoo updateUserLocation];
+    
 	NSString *guid = [Beintoo getPlayerID];
 	CLLocation *loc	 = [Beintoo getUserLocation];
 	
