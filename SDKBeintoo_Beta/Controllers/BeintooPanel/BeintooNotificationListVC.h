@@ -50,5 +50,6 @@
 @property(nonatomic,retain) NSMutableArray *notificationImages;
 @property(nonatomic,retain)	NSMutableDictionary *selectedNotification;
 @property(nonatomic,retain)	NSDictionary *startingOptions;
+@property(nonatomic,assign) BOOL            isFromNotification;
 
 @end

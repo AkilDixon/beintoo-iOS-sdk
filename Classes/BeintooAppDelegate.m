@@ -42,7 +42,7 @@
      * - BeintooForceRegistration: 1 if you want that the user will need to register to use all the features of Beintoo. 0 if you want to show a subset of features even for unregistered users (logged in through the [BeintooPlayer login]
      * - BeintooNotificationPosition: you can choose between BeintooNotificationPositionTop or BeintooNotificationPositionBottom
      */
-        
+    
     NSArray	*beintooFeatures = [NSArray arrayWithObjects:   BFEATURE_PROFILE, 
                                                             BFEATURE_MARKETPLACE, 
                                                             BFEATURE_LEADERBOARD, 
@@ -67,8 +67,7 @@
 
 	sampleDelegate = [[BeintooDelegate alloc] init];
 	
-	[Beintoo initWithApiKey:@"DuQEh4lGtMGe" andApiSecret:nil andBeintooSettings:beintooSettings andMainDelegate:sampleDelegate];
-    [Beintoo privateSandbox];
+	[Beintoo initWithApiKey:your_apikey_here andApiSecret:nil andBeintooSettings:beintooSettings andMainDelegate:sampleDelegate];
   
     /*
      *
@@ -84,7 +83,7 @@
      *
      *  Or in alternative, store your Virtual Currency name and the user ID
      *
-     *  [Beintoo setVirtualCurrencyName::your_virtual_currency_name forUserId:your_user_ID];
+     *  [Beintoo setVirtualCurrencyName:your_virtual_currency_name forUserId:your_user_ID];
      *
      *  and wherever or whenever user's virtual currency changes, stored the new balance in Beintoo
      *  by using the method

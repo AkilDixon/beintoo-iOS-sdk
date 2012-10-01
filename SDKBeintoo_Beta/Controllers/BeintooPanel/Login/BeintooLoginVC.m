@@ -86,7 +86,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
 	retrievedUsers = [[Beintoo getLastLoggedPlayers] retain];	
 	
@@ -169,9 +169,10 @@
 #pragma mark GeneratePlayer
 
 - (void)generatePlayerIfNotExists{
-	if ([Beintoo getPlayerID]==nil) {
+	if ([Beintoo getPlayerID] == nil) {
 		NSDictionary *anonymPlayer = [_player blockingLogin:@""];
-		if ([anonymPlayer objectForKey:@"guid"]==nil) {			
+        
+		if ([anonymPlayer objectForKey:@"guid"] == nil) {			
 			[BeintooNetwork showNoConnectionAlert];
 			return;
 		}
@@ -183,15 +184,23 @@
 
 #pragma mark -
 #pragma mark Delegates
+
 - (void)playerDidLogin:(BeintooPlayer *)player{	
 	[BLoadingView stopActivity];
-	if ([player loginError] == LOGIN_NO_ERROR) {
+    
+    if ([player loginError] == LOGIN_NO_ERROR) {
 		[retrievedPlayersTable deselectRowAtIndexPath:[retrievedPlayersTable indexPathForSelectedRow] animated:YES];
         
-        BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-        [Beintoo dismissBeintoo:navController.type];
+        [Beintoo postNotificationBeintooUserDidLogin];
         
         [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
+
+        if ([BeintooDevice isiPad]){
+            [Beintoo dismissIpadLogin];
+        }
+        else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
     }
 }
 
@@ -238,10 +247,15 @@
 }
 
 - (void)closeBeintoo{
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
+    
+    if ([BeintooDevice isiPad]){
+        [Beintoo dismissIpadLogin];
+    }
+    else {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 - (NSString *)translateLevel:(NSNumber *)levelNumber{	
@@ -269,6 +283,8 @@
 }
 
 - (void)dealloc {
+    _player.delegate = self;
+    
 	[registrationFBVC release];
 	//[registrationVC release];
 	[userImages release];
@@ -276,6 +292,5 @@
 	[retrievedUsers release];
     [super dealloc];
 }
-
 
 @end

@@ -19,7 +19,7 @@
 
 @implementation BeintooVGoodShowVC
 
-@synthesize urlToOpen, caller, callerIstance, type;
+@synthesize urlToOpen, caller, callerIstance, type, isFromNotification;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil urlToOpen:(NSString *)URL {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -62,7 +62,7 @@
     [BLoadingView startActivity:self.view];
     	
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
 	
 	/*
@@ -129,14 +129,21 @@
     if (![url.scheme isEqual:@"http"] && ![url.scheme isEqual:@"https"]) {
 		// ******** Remember that this will NOT work on the simulator ******* //
 		if ([[UIApplication sharedApplication] canOpenURL:url]) {
-			[[UIApplication sharedApplication]openURL:url];
+			[[UIApplication sharedApplication] openURL:url];
 			[BLoadingView stopActivity];
 			didOpenTheRecommendation = YES;
 			if (didOpenTheRecommendation) {
                 //[Beintoo dismissRecommendation];
                 if (isFromWallet) { 
-                    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-                    [Beintoo dismissBeintoo:navController.type];
+                    [Beintoo dismissBeintoo];
+                }
+                else if (isFromNotification){
+                    if ([BeintooDevice isiPad]){
+                        [Beintoo dismissIpadNotifications];
+                    }
+                    else {
+                        [self dismissModalViewControllerAnimated:YES];
+                    }
                 }
                 else {
                     if (type == REWARD)
@@ -215,9 +222,11 @@
 - (void)closeBeintoo{
     
     if (isFromWallet) {
-		BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-        [Beintoo dismissBeintoo:navController.type];
+		[Beintoo dismissBeintoo];
 	}
+    else if (isFromNotification){
+        
+    }
     else {
         if (type == REWARD)
             [Beintoo dismissPrize];

@@ -162,7 +162,6 @@
 		urlData = [NSURLConnection sendSynchronousRequest:_request returningResponse:&responseHTTP error:&requestError];
         
         if ([responseHTTP respondsToSelector:@selector(allHeaderFields)]) {
-            NSLog(@"status code: %d", [responseHTTP statusCode]);
             
             if ([responseHTTP statusCode] != 200 && callerID == REWARD_GET_AD_CALLER_ID){
                 NSDictionary *dictionary = [NSDictionary dictionaryWithObject:@"-10" forKey:@"messageID"];

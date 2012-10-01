@@ -29,5 +29,6 @@
 - (UIButton *)closeButton;
 
 @property(nonatomic,retain) NSString *urlToOpen;
+@property(nonatomic,assign) BOOL            isFromNotification;
 
 @end

@@ -53,5 +53,6 @@
 @property (nonatomic, retain) NSString *caller;
 @property (nonatomic, retain) BeintooFriendsListVC *callerIstance;
 @property (nonatomic) int type;
+@property(nonatomic,assign) BOOL            isFromNotification;
 
 @end

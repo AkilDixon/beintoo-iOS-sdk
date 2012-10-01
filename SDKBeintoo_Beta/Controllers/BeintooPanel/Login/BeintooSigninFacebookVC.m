@@ -60,7 +60,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
 }
 
@@ -137,8 +137,12 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
     
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if ([BeintooDevice isiPad]){
+        [Beintoo dismissIpadLogin];
+    }
+    else {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 

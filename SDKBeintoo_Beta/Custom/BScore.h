@@ -17,7 +17,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-
 @interface BScore : NSObject {
 	
 	NSString *balance;

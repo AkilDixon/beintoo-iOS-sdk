@@ -106,48 +106,6 @@
 	title1Land.text = NSLocalizedStringFromTable(@"signupMainSentence",@"BeintooLocalizable",@"");
 	title1Land.numberOfLines = 2;
 	title1Land.textAlignment = UITextAlignmentCenter;
-}
-
-- (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
-    
-    emailTF.text = @"";
-    emailTFLand.text = @"";
-    
-    newUserButton.clipsToBounds = YES;
-    
-    if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
-    }
-    
-    if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
-        beintooViewLand.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.height, 320);
-    }
-    else{
-        beintooView.frame = CGRectMake(0, 0, 320, [UIScreen mainScreen].bounds.size.height);
-    }
-
-    int appOrientation = [Beintoo appOrientation];
-    if(!([BeintooDevice isiPad]) && 
-       (appOrientation == UIInterfaceOrientationLandscapeLeft || appOrientation == UIInterfaceOrientationLandscapeRight) )
-        scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 365);
-    
-    else 
-        scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 545);
-
-    scrollView.backgroundColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1];
-    
-    emailTF.hidden = NO;
-    emailTF.placeholder = NSLocalizedStringFromTable(@"signupTextFieldPlaceholder",@"BeintooLocalizable", nil);
-	emailTFLand.hidden = NO;
-	title1Land.text = NSLocalizedStringFromTable(@"signupMainSentence",@"BeintooLocalizable",@"");
-	
-    self.navigationItem.hidesBackButton = NO;
-    newUserButton.alpha = 1.0;
-    newUserButton.userInteractionEnabled = YES;
-    
-    orLabel.text = NSLocalizedStringFromTable(@"signupOrLabel", @"BeintooLocalizable", nil);
-    orLabelLand.text = NSLocalizedStringFromTable(@"signupOrLabel", @"BeintooLocalizable", nil);
     
     [newUserButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
 	[newUserButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
@@ -220,14 +178,14 @@
     
     
     // Keyboard notifications
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) 
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:)
 												 name:UIKeyboardWillShowNotification object:self.view.window];
-	[[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(keyboardWillHide:) 
+	[[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(keyboardWillHide:)
 												 name:UIKeyboardWillHideNotification  object:self.view.window];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:)
 												 name:UIKeyboardDidShowNotification object:self.view.window];
-	[[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(keyboardDidHide:) 
+	[[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(keyboardDidHide:)
 												 name:UIKeyboardDidHideNotification  object:self.view.window];
     
     // keyboardIsShown = NO;
@@ -265,7 +223,7 @@
 	@catch (NSException * e) {
 		isAccessoryInputViewNotSupported = YES;
 	}
-
+    
     [keyboardToolbar release];
     
     if ( ![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
@@ -414,6 +372,46 @@
 	[loginWithDifferentLand setTitle:NSLocalizedStringFromTable(@"loginExistingBtn",@"BeintooLocalizable",@"") forState:UIControlStateNormal];
 	[loginWithDifferentLand setTitle:NSLocalizedStringFromTable(@"loginExistingBtn",@"BeintooLocalizable",@"") forState:UIControlStateHighlighted];
 	[loginWithDifferentLand setTitle:NSLocalizedStringFromTable(@"loginExistingBtn",@"BeintooLocalizable",@"") forState:UIControlStateSelected];
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    emailTF.text = @"";
+    emailTFLand.text = @"";
+    
+   if ([BeintooDevice isiPad]) {
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
+    }
+    
+    if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
+        beintooViewLand.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.height, 320);
+    }
+    else{
+        beintooView.frame = CGRectMake(0, 0, 320, [UIScreen mainScreen].bounds.size.height);
+    }
+
+    int appOrientation = [Beintoo appOrientation];
+    if(!([BeintooDevice isiPad]) && 
+       (appOrientation == UIInterfaceOrientationLandscapeLeft || appOrientation == UIInterfaceOrientationLandscapeRight) )
+        scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 365);
+    
+    else 
+        scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 545);
+
+    scrollView.backgroundColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1];
+    
+    emailTF.hidden = NO;
+    emailTF.placeholder = NSLocalizedStringFromTable(@"signupTextFieldPlaceholder",@"BeintooLocalizable", nil);
+	emailTFLand.hidden = NO;
+	title1Land.text = NSLocalizedStringFromTable(@"signupMainSentence",@"BeintooLocalizable",@"");
+	
+    self.navigationItem.hidesBackButton = NO;
+    newUserButton.alpha = 1.0;
+    newUserButton.userInteractionEnabled = YES;
+    
+    orLabel.text = NSLocalizedStringFromTable(@"signupOrLabel", @"BeintooLocalizable", nil);
+    orLabelLand.text = NSLocalizedStringFromTable(@"signupOrLabel", @"BeintooLocalizable", nil);
     
     emailTF.tag = 10;
     emailTFLand.tag = 10;
@@ -447,18 +445,18 @@
         
         if( !([BeintooDevice isiPad]) && 
            ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight) ){
-            emailTFLand.alpha = 0;
-            title1Land.alpha = 0;
-            orLabelLand.alpha = 0;
+            emailTFLand.alpha = 1.0;
+            title1Land.alpha = 1.0;
+            orLabelLand.alpha = 1.0;
             registrazioneCompleteLand.alpha = 0.0;
             confirmNicknameLand.alpha = 0.0;
-            fbButtonLand.alpha = 0.0;
+            fbButtonLand.alpha = 1.0;
         }
         else {
-            emailTF.alpha = 0;
-            title1.alpha = 0;
-            orLabel.alpha = 0;
-            fbButton.alpha = 0.0;
+            emailTF.alpha = 1.0;
+            title1.alpha = 1.0;
+            orLabel.alpha = 1.0;
+            fbButton.alpha = 1.0;
             registrazioneComplete.alpha = 0.0;
             confirmNickname.alpha = 0.0;
         }
@@ -787,7 +785,7 @@
         registrazioneCompleteLand.alpha = 0.0;
         confirmNicknameLand.alpha = 0.0;
         fbButtonLand.alpha = 0.0;
-        facebookButton.alpha = 0.0;
+        facebookButtonLand.alpha = 0.0;
         [[emailTF layer] addAnimation:signFormAnimation forKey:nil];
         [[title1 layer] addAnimation:signFormAnimation forKey:nil];
         [[orLabel layer] addAnimation:signFormAnimation forKey:nil];
@@ -799,7 +797,7 @@
         fbButton.alpha = 0.0;
         registrazioneComplete.alpha = 0.0;
         confirmNickname.alpha = 0.0;
-        facebookButtonLand.alpha = 0.0;
+        facebookButton.alpha = 0.0;
         [[emailTF layer] addAnimation:signFormAnimation forKey:nil];
         [[title1 layer] addAnimation:signFormAnimation forKey:nil];
         [[orLabel layer] addAnimation:signFormAnimation forKey:nil];
@@ -934,8 +932,12 @@
 - (void)closeBeintoo{
     [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
     
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if ([BeintooDevice isiPad]){
+        [Beintoo dismissIpadLogin];
+    }
+    else {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

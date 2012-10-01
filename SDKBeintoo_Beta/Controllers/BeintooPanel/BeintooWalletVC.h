@@ -42,5 +42,6 @@
 @property(nonatomic,retain) NSMutableArray *vGoodArrayList;
 @property(nonatomic,retain) NSMutableArray *walletImages;
 @property(nonatomic,retain) IBOutlet UISegmentedControl *segControl;
+@property(nonatomic,assign) BOOL            isFromNotification;
 
 @end

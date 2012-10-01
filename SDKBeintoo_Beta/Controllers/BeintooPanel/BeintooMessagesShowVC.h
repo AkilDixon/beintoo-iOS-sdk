@@ -46,5 +46,6 @@
 - (IBAction)replyToMessage;
 
 @property(nonatomic,retain)	NSDictionary *currentMessage;
+@property(nonatomic,assign) BOOL            isFromNotification;
 
 @end

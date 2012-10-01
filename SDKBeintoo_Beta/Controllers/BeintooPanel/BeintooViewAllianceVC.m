@@ -87,7 +87,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
     
     toolbar.frame = CGRectMake(0, self.view.frame.size.height, toolbar.frame.size.width, toolbar.frame.size.height);
@@ -436,6 +436,8 @@
     
     
     pendingRequestsVC = [[BeintooAlliancePendingVC alloc] initWithNibName:@"BeintooAlliancePendingVC" bundle:[NSBundle mainBundle] andOptions:pendingOptions];
+    if (isFromNotification)
+        pendingRequestsVC.isFromNotification = YES;
     [self.navigationController pushViewController:pendingRequestsVC animated:YES];
     [pendingRequestsVC release];
 }
@@ -443,6 +445,8 @@
 - (IBAction)addFriendsToAlliance{
     
     allianceAddFriends = [[BeintooAlliancesAddFriends alloc] initWithNibName:@"BeintooAlliancesAddFriends" bundle:[NSBundle mainBundle] andOptions:self.elementsArrayList];
+    if (isFromNotification)
+        allianceAddFriends.isFromNotification = YES;
     [self.navigationController pushViewController:allianceAddFriends animated:YES];
     [allianceAddFriends release];    
 }
@@ -562,9 +566,10 @@
                                             [[self.elementsArrayList objectAtIndex:[elementsTable indexPathForSelectedRow].row] objectForKey:@"id"],@"friendUserID",
                                             [[self.elementsArrayList objectAtIndex:[elementsTable indexPathForSelectedRow].row] objectForKey:@"nickname"],@"friendNickname",nil];
             profileVC = [[BeintooProfileVC alloc] initWithNibName:@"BeintooProfileVC" bundle:[NSBundle mainBundle] andOptions:profileOptions];
+            if (isFromNotification)
+                profileVC.isFromNotification = YES;
             [self.navigationController pushViewController:profileVC animated:YES];
             [profileVC release];
-            
             
             return;
         }
@@ -617,8 +622,16 @@
 }
 
 - (void)closeBeintoo{
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if (isFromNotification){
+        if ([BeintooDevice isiPad]){
+            [Beintoo dismissIpadNotifications];
+        }
+        else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
+    }
+    else
+        [Beintoo dismissBeintoo];
 }
 
 #pragma mark -

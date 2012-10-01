@@ -20,14 +20,14 @@
 
 @implementation BeintooWalletVC
 
-@synthesize vGoodArrayList,walletImages,segControl;
+@synthesize vGoodArrayList,walletImages,segControl, isFromNotification;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 	
 	self.title = NSLocalizedStringFromTable(@"wallet",@"BeintooLocalizable",@"Wallet");
 	
-	[walletView setTopHeight:85];
+	[walletView setTopHeight:70];
 	[walletView setBodyHeight:342];
 
 	vWalletTable.delegate	= self;
@@ -56,7 +56,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
     
     vGood.delegate	 = self;
@@ -300,8 +300,16 @@
 }
 
 - (void)closeBeintoo{
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if (isFromNotification){
+        if ([BeintooDevice isiPad]){
+            [Beintoo dismissIpadNotifications];
+        }
+        else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
+    }
+    else
+        [Beintoo dismissBeintoo];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

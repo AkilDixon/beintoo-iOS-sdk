@@ -81,7 +81,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
     
 	vgoodNameText.text		= self.theVirtualGood.vGoodName;

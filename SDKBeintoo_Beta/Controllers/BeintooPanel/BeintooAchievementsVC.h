@@ -40,5 +40,6 @@
 
 @property(nonatomic,retain) NSMutableArray *achievementsArrayList;
 @property(nonatomic,retain) NSMutableArray *achievementsImages;
+@property(nonatomic,assign) BOOL            isFromNotification;
 
 @end

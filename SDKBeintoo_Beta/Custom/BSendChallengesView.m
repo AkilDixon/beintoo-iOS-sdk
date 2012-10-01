@@ -39,13 +39,17 @@
     
     UIView  *shadowView                 = [[UIView alloc] initWithFrame:self.bounds];
     shadowView.backgroundColor          = [UIColor colorWithWhite:0 alpha:0.6];
+    
+    sendChallengeView1 = [BSendChallengeDetailsView alloc];
+    sendChallengeView2 = [BSendChallengeDetailsView alloc];
+    sendChallengeView3 = [BSendChallengeDetailsView alloc];
         
     UITableView *elementsTable          = [[BTableView alloc] initWithFrame:CGRectMake(5, 5, self.frame.size.width - 10, self.frame.size.height - 15) style:UITableViewStylePlain];
     
-    if ([BeintooDevice isiPad])
-         elementsTable.frame          = CGRectMake(5, 5, self.frame.size.width - 10, self.frame.size.height - 15);
+    if ([BeintooDevice isiPad] || [Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown)
+         elementsTable.frame          = CGRectMake(5, (self.frame.size.height - (35 + 122 * 3))/2, self.frame.size.width - 10, 35 + 122 * 3);
     else 
-        elementsTable.frame          = CGRectMake(5, 5, self.frame.size.width - 10, self.frame.size.height - 35);
+        elementsTable.frame          = CGRectMake(5, 10, self.frame.size.width - 10, self.frame.size.height - 20);
             
     elementsTable.separatorColor        = [UIColor clearColor];
     elementsTable.backgroundColor       = [UIColor clearColor];
@@ -58,7 +62,7 @@
     elementsTable.layer.borderColor     = [UIColor lightGrayColor].CGColor;
     elementsTable.layer.cornerRadius    = 3.0;
     elementsTable.layer.borderWidth     = 1.0;
-    
+    elementsTable.userInteractionEnabled = YES;
     
     [shadowView addSubview:elementsTable];
     [elementsTable release];
@@ -86,7 +90,6 @@
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
     }
 	
-    
     UILabel *titleLabel         = [[UILabel alloc] initWithFrame:CGRectMake(12, 30, 190, 20)];
     titleLabel.backgroundColor  = [UIColor clearColor];
     titleLabel.font             = [UIFont boldSystemFontOfSize:15];
@@ -126,66 +129,72 @@
     switch (indexPath.row) {
         case 0:{ // BET -> actor = utente selezionato dalla leaderboard
 
-            BSendChallengeDetailsView       *sendChallengeDetailsView = [[BSendChallengeDetailsView alloc] initWithFrame:self.frame];
-            sendChallengeDetailsView.challengeReceiver     = challengeReceiver;
-            sendChallengeDetailsView.challengeSender       = challengeSender;
-            sendChallengeDetailsView.challengeType         = SENDCHALLENGE_TYPE_BET_OTHER;
+            sendChallengeView1 = [sendChallengeView1 initWithFrame:self.frame];
+            sendChallengeView1.challengeReceiver     = challengeReceiver;
+            sendChallengeView1.challengeSender       = challengeSender;
+            sendChallengeView1.challengeType         = SENDCHALLENGE_TYPE_BET_OTHER;
             
-            [sendChallengeDetailsView drawSendChallengeView];
-            sendChallengeDetailsView.tag = BSENDCHALLENGEDETAILS_VIEW_TAG;
-            sendChallengeDetailsView.alpha = 0;
-            [self addSubview:sendChallengeDetailsView];
-            [sendChallengeDetailsView release];
+            [sendChallengeView1 drawSendChallengeView];
+            sendChallengeView1.tag = BSENDCHALLENGEDETAILS_VIEW_TAG;
+            sendChallengeView1.alpha = 0;
+            [self addSubview:sendChallengeView1];
             
-            [UIView beginAnimations:@"sendChallengeDetailsOpen" context:nil];
-            [UIView setAnimationDelay:0];
-            [UIView setAnimationDuration:0.3];
-            sendChallengeDetailsView.alpha = 1;
-            [UIView commitAnimations];
+            [UIView animateWithDuration:0.3
+                             animations:^(void){
+                                 sendChallengeView1.alpha = 1;
+                             }
+                             completion:^(BOOL finished){
+                                // [sendChallengeDetailsView release];
+                             }
+             ];
             
         }
             break;
 
         case 1:{ // BET -> actor = utente corrente
-            BSendChallengeDetailsView       *sendChallengeDetailsView = [[BSendChallengeDetailsView alloc] initWithFrame:self.frame];
-            sendChallengeDetailsView.challengeReceiver     = self.challengeReceiver;
-            sendChallengeDetailsView.challengeSender       = self.challengeSender;
-            sendChallengeDetailsView.challengeType         = SENDCHALLENGE_TYPE_BET_ME;
+            sendChallengeView2 = [sendChallengeView2 initWithFrame:self.frame];
+            sendChallengeView2.challengeReceiver     = self.challengeReceiver;
+            sendChallengeView2.challengeSender       = self.challengeSender;
+            sendChallengeView2.challengeType         = SENDCHALLENGE_TYPE_BET_ME;
             
-            [sendChallengeDetailsView drawSendChallengeView];
-            sendChallengeDetailsView.tag = BSENDCHALLENGEDETAILS_VIEW_TAG;
-            sendChallengeDetailsView.alpha = 0;
-            [self addSubview:sendChallengeDetailsView];
-            [sendChallengeDetailsView release];
+            [sendChallengeView2 drawSendChallengeView];
+            sendChallengeView2.tag = BSENDCHALLENGEDETAILS_VIEW_TAG;
+            sendChallengeView2.alpha = 0;
+            [self addSubview:sendChallengeView2];
             
-            [UIView beginAnimations:@"sendChallengeDetailsOpen" context:nil];
-            [UIView setAnimationDelay:0];
-            [UIView setAnimationDuration:0.3];
-            sendChallengeDetailsView.alpha = 1;
-            [UIView commitAnimations];
             
+            [UIView animateWithDuration:0.3
+                             animations:^(void){
+                                 sendChallengeView2.alpha = 1;
+                             }
+                             completion:^(BOOL finished){
+                               //  [sendChallengeDetailsView release];
+                             }
+             ];
             
             break;
         }
         case 2:{ // CHALLENGE -> actor = nil
-            BSendChallengeDetailsView       *sendChallengeDetailsView = [[BSendChallengeDetailsView alloc] initWithFrame:self.frame];
             
-            sendChallengeDetailsView.challengeReceiver     = self.challengeReceiver;
-            sendChallengeDetailsView.challengeSender       = self.challengeSender;
-            sendChallengeDetailsView.challengeType         = SENDCHALLENGE_TYPE_TIME;
+            sendChallengeView3 = [sendChallengeView3 initWithFrame:self.frame];
             
-            [sendChallengeDetailsView drawSendChallengeView];
-            sendChallengeDetailsView.tag = BSENDCHALLENGEDETAILS_VIEW_TAG;
-            sendChallengeDetailsView.alpha = 0;
-            [self addSubview:sendChallengeDetailsView];
-            [sendChallengeDetailsView release];
+            sendChallengeView3.challengeReceiver     = self.challengeReceiver;
+            sendChallengeView3.challengeSender       = self.challengeSender;
+            sendChallengeView3.challengeType         = SENDCHALLENGE_TYPE_TIME;
             
-            [UIView beginAnimations:@"sendChallengeDetailsOpen" context:nil];
-            [UIView setAnimationDelay:0];
-            [UIView setAnimationDuration:0.3];
-            sendChallengeDetailsView.alpha = 1;
-            [UIView commitAnimations];
-
+            [sendChallengeView3 drawSendChallengeView];
+            sendChallengeView3.tag = BSENDCHALLENGEDETAILS_VIEW_TAG;
+            sendChallengeView3.alpha = 0;
+            [self addSubview:sendChallengeView3];
+            
+            [UIView animateWithDuration:0.3
+                             animations:^(void){
+                                 sendChallengeView3.alpha = 1;
+                             }
+                             completion:^(BOOL finished){
+                                // [sendChallengeDetailsView release];
+                             }
+             ];
             
             break;
         }
@@ -255,10 +264,10 @@
     [elementsArrayList addObject:friendsChallDict];
     [elementsArrayList addObject:challenge24Dict];
     
-    
 }
 
 #pragma mark - ViewActions
+
 - (void)closeMainView{
     
     [UIView animateWithDuration:0.5
@@ -280,9 +289,12 @@
 
 - (void)dealloc {
     [elementsArrayList release];
+    [sendChallengeView1 release];
+    [sendChallengeView2 release];
+    [sendChallengeView3 release];
+    
     [super dealloc];
 }
-
 
 @end
 

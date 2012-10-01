@@ -48,5 +48,6 @@
 @property(nonatomic,retain) NSString *myUserExt;
 @property(nonatomic,retain) NSString *toUserExt;
 @property(nonatomic,retain) NSMutableArray *userImages;
+@property(nonatomic,assign) BOOL            isFromNotification;
 
 @end

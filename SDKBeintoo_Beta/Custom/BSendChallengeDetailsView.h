@@ -17,6 +17,7 @@
 #import <Foundation/Foundation.h>
 #import "BeintooUser.h"
 #import "BImageDownload.h"
+#import <UIKit/UIKit.h>
 
 #define BSENDCHALLENGEDETAILS_VIEW_TAG  200
 
@@ -50,7 +51,8 @@
     
     BImageDownload *imageToDownload1;
     BImageDownload *imageToDownload2;
-    int  remainToDowload;   
+    int  remainToDowload;
+    
 }
 
 - (void)drawSendChallengeView;

@@ -17,6 +17,7 @@
 #import "BeintooViewController.h"
 #import "Beintoo.h"
 
+
 @implementation BeintooViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -80,9 +81,9 @@
     /*
      *  Use 
      *
-     *  [Beintoo launchMarketplace];
+     *  [Beintoo launchBestore];
      *
-     *  to directly launch Marketplace, overlapping the dashboars
+     *  to directly launch the Bestore, avoiding the dashboard
      */
     
     [Beintoo launchBestore];
@@ -92,7 +93,7 @@
      * If your app uses Virtual Currency, you have to save user's Virtual Currency balance
      * so, we suggest to use the method
      *
-     * [Beintoo launchMarketplaceOnAppWithVirtualCurrencyBalance:user's_virtual_currency_balance];
+     * [Beintoo launchBestoreWithVirtualCurrencyBalance:user's_virtual_currency_balance];
      *
      *
      * Or in alternative, first store user's Virtual Currency balance
@@ -101,7 +102,7 @@
      *
      * and then
      *
-     * [Beintoo launchMarketplaceOnApp];
+     * [Beintoo launchBestore];
      *
      */
     
@@ -119,10 +120,7 @@
 
 - (IBAction)submitScoreForContest{
 	[BeintooPlayer setPlayerDelegate:nil];
-	//[BeintooPlayer submitScore:1 forContest:@"default"]; // Here the contest name instead of "default"
-    
-    [BeintooPlayer submitScoreAndGetVgoodForScore:10 andContest:@"default" withThreshold:100 andVgoodMultiple:YES];
-    
+	[BeintooPlayer submitScore:1 forContest:@"default"]; // Here the contest name instead of "default"
 }
 
 - (IBAction)getScoreForContest{
@@ -215,7 +213,8 @@
 }
 
 - (IBAction)getAd:(id)sender{
-    [BeintooVgood getAd];
+    [BeintooVgood setVgoodDelegate:self];
+    [BeintooVgood requestAndDisplayAd];
 }
 
 #pragma mark -
@@ -348,13 +347,11 @@
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration{
     
-    NSLog(@"beintoo will changed orient %i", toInterfaceOrientation);
     [Beintoo changeBeintooOrientation:toInterfaceOrientation];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     
-    NSLog(@"changed orient %i", interfaceOrientation);
     [Beintoo changeBeintooOrientation:interfaceOrientation];
     return YES;
 }
@@ -493,26 +490,6 @@
         [redLondon              setHidden:NO];
         [redSanFrancisco        setHidden:NO];
     }
-}
-
-- (IBAction)signup:(id)sender{
-    [Beintoo launchSignup];
-}
-
-- (IBAction)leaderboard:(id)sender{
-    [Beintoo launchLeaderboard];
-}
-
-- (IBAction)wallet:(id)sender{
-    [Beintoo launchMyOffers];
-}
-
-- (IBAction)achievements:(id)sender{
-    [Beintoo launchAchievements];
-}
-
-- (IBAction)notifications:(id)sender{
-    [Beintoo launchNotifications];
 }
 
 @end

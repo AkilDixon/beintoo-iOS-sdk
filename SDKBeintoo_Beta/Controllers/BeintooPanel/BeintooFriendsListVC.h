@@ -19,7 +19,7 @@
 #import "BeintooVGood.h"
 #import "BImageDownload.h"
 
-@class BView, BTableView, BeintooPlayer, BeintooProfileVC, BeintooMarketplaceVC, BeintooMarketplaceSelectedItemVC, BPickerView;
+@class BView, BTableView, BeintooPlayer, BeintooProfileVC , BPickerView;
 
 @interface BeintooFriendsListVC : UIViewController <BeintooUserDelegate,BeintooVgoodDelegate,BImageDownloadDelegate,UITableViewDelegate,UIActionSheetDelegate,UIAlertViewDelegate> {
 	
@@ -53,8 +53,7 @@
 @property(nonatomic,retain) BeintooVgood                        *vGood;
 @property(nonatomic,retain)	NSDictionary                        *startingOptions;
 @property(nonatomic,assign) BOOL                                backFromWebView;
-@property(nonatomic,retain) BeintooMarketplaceVC                *callerIstance;
-@property(nonatomic,retain) BeintooMarketplaceSelectedItemVC    *callerIstanceSC;
 @property(nonatomic,retain) NSString                            *caller;
+@property (nonatomic, assign) BOOL      isFromNotification;
 
 @end

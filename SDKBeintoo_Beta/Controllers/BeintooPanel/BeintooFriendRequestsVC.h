@@ -50,6 +50,6 @@
 @property(nonatomic,retain)	NSDictionary	*selectedElement;
 @property(nonatomic,retain)	NSDictionary	*startingOptions;
 @property(nonatomic,retain) NSMutableArray	*elementsImages;
-
+@property(nonatomic,assign) BOOL            isFromNotification;
 
 @end

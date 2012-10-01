@@ -19,7 +19,7 @@
 
 @implementation BeintooNewMessageVC
 
-@synthesize startingOptions, keyboardToolbar,selectedFriend;
+@synthesize startingOptions, keyboardToolbar, selectedFriend, isFromNotification;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
 	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -108,7 +108,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
     
     _message.delegate = self;
@@ -192,7 +192,6 @@
 - (IBAction)pickAFriend{
 	NSDictionary *friendsListOptions = [NSDictionary dictionaryWithObjectsAndKeys:@"newMessage",@"caller",self,@"callerVC",nil];
 	[friendsListVC initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle] andOptions:friendsListOptions];
-	//[self presentModalViewController:friendsListVC animated:YES];
 	[self.navigationController pushViewController:friendsListVC animated:YES];
 }
 
@@ -211,28 +210,28 @@
 	}    return YES;
 }
 
+- (BOOL)textViewShouldEndEditing:(UITextView *)aTextView {
+    if ([aTextView isFirstResponder])
+        [aTextView resignFirstResponder];
+    
+    return YES;
+}
+
 - (void)keyboardWillShow:(NSNotification *)aNotification {
 	if ([messageTextView isFirstResponder]){
 		
-		if (isAccessoryInputViewNotSupported) {
-			UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"done",@"BeintooLocalizable",@"")
-																		   style:UIBarButtonItemStylePlain target:self action:@selector(dismissKeyboard)];
-			self.navigationItem.rightBarButtonItem = doneButton;
-			[doneButton release];
-		}
-        if (![BeintooDevice isiPad]) {
+		//if (![BeintooDevice isiPad]) {
             [self moveTextViewForKeyboard:aNotification up:YES];
-        }
+        //}
     }
 }
 
 - (void)keyboardWillHide:(NSNotification *)aNotification {
 	if ([messageTextView isFirstResponder]) {
-		self.navigationItem.rightBarButtonItem = nil;
-
-        if (![BeintooDevice isiPad]) {
+		
+        //if (![BeintooDevice isiPad]) {
             [self moveTextViewForKeyboard:aNotification up:NO];        
-        }
+        //}
 	}
 }
 
@@ -254,14 +253,18 @@
 	CGRect keyboardFrame    = [self.view convertRect:keyboardEndFrame toView:nil];
 	
 	float shiftValue = 2.5;
-	if (self.view.bounds.size.width > 330) {
-		shiftValue = 3.8;
+	if (self.view.bounds.size.height > 330) {
+		shiftValue = 1.8;
 	}
 	
 	center.y			     -= (keyboardFrame.size.height/shiftValue) * (up? 1 : -1);	
 	
-	self.view.center = center;
-	
+    if (!([Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown)){
+        if (up == YES)
+            self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y - 120, self.view.frame.size.width, self.view.frame.size.height);
+        else
+            self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + 120, self.view.frame.size.width, self.view.frame.size.height);
+	}
 	[UIView commitAnimations];
 }
 
@@ -314,8 +317,16 @@
 }
 
 - (void)closeBeintoo{
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if (isFromNotification){
+        if ([BeintooDevice isiPad]){
+            [Beintoo dismissIpadNotifications];
+        }
+        else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
+    }
+    else
+        [Beintoo dismissBeintoo];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

@@ -16,6 +16,7 @@
 
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
+#import <UIKit/UIKit.h>
 
 @interface BPinAnnotation : NSObject <MKAnnotation> {
     CLLocationCoordinate2D  coordinate;

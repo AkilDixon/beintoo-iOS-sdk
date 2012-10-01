@@ -68,7 +68,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
     
     user.delegate			 = self;
@@ -477,9 +477,20 @@
         [Beintoo setLastLoggedPlayers:[(NSArray *)result retain]];        
         [BLoadingView stopActivity]; 
         
-        [Beintoo _launchPrivateSignup];
-        
-        isAlreadyLogging = NO;
+        if ([BeintooDevice isiPad]){
+            [Beintoo launchIpadLogin];
+        }
+        else {
+            BeintooLoginVC *signinVC            = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
+            UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
+            UINavigationController *signinNavController = [[UINavigationController alloc] initWithRootViewController:signinVC];
+            [[signinNavController navigationBar] setTintColor:barColor];
+            
+            [self presentModalViewController:signinNavController animated:YES];
+            
+            [signinVC release];
+            [signinNavController release];
+        }
     }	
 }
 
@@ -595,8 +606,7 @@
 }
 
 - (void)closeBeintoo{
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    [Beintoo dismissBeintoo];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

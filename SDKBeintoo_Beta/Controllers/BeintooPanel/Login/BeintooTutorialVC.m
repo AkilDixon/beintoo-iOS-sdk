@@ -37,8 +37,6 @@
 {
     [super viewDidLoad];
     
-    self.navigationItem.hidesBackButton = YES;
-    
     UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
 	[barCloseBtn release];
@@ -83,12 +81,14 @@
         
         label1.hidden = YES;
         
-        NSString *htmlString1 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:160%%; height:100%% \"><span style=\"font-size:16px; font-weight:bold; color:#2E4467; width:160%%; height:100%%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:14px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialFirstSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialFirstSentence", @"BeintooLocalizable", nil)];
+        NSString *htmlString1 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:160px; height:100px \'><span style=\"font-size:16px; font-weight:bold; color:#2E4467; width:160px; height:100px; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:14px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialFirstSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialFirstSentence", @"BeintooLocalizable", nil)];
         [webview1 loadHTMLString:htmlString1 baseURL:nil];
+        
         [mainView addSubview:webview1];
         
         
         webview2 = [[UIWebView alloc] initWithFrame:label2.frame];
+       // webview2.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
         webview2.delegate = self;
         webview2.alpha = 0.0;
         webview2.backgroundColor = [UIColor clearColor];
@@ -115,11 +115,12 @@
         
         label2.hidden = YES;
         
-        NSString *htmlString2 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:160%%; height:100%% \"><span style=\"font-size:16px; font-weight:bold; color:#2E4467; width:160%%; height:100%%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:14px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialSecondSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialSecondSentence", @"BeintooLocalizable", nil)];
+        NSString *htmlString2 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:160px; height:100px \"><span style=\"font-size:16px; font-weight:bold; color:#2E4467; width:160px; height:100px; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:14px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialSecondSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialSecondSentence", @"BeintooLocalizable", nil)];
         [webview2 loadHTMLString:htmlString2 baseURL:nil];
         [mainView addSubview:webview2];
         
         webview3 = [[UIWebView alloc] initWithFrame:label3.frame];
+       // webview3.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin;
         webview3.delegate = self;
         webview3.alpha = 0.0;
         webview3.backgroundColor = [UIColor clearColor];
@@ -145,7 +146,7 @@
         
         label3.hidden = YES;
         
-        NSString *htmlString3 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:160%%; height:100%% \"><span style=\"font-size:16px; font-weight:bold; color:#2E4467; width:160%%; height:100%%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:14px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialThirdSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialThirdSentence", @"BeintooLocalizable", nil)];
+        NSString *htmlString3 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:160px; height:100px \"><span style=\"font-size:16px; font-weight:bold; color:#2E4467; width:160px; height:100px; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:14px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialThirdSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialThirdSentence", @"BeintooLocalizable", nil)];
         [webview3 loadHTMLString:htmlString3 baseURL:nil];
         [mainView addSubview:webview3];
     }
@@ -178,7 +179,7 @@
         
         labelLand1.hidden = YES;
         
-        NSString *htmlString4 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:120%%; height:100%% \"><span style=\"font-size:15px; font-weight:bold; color:#2E4467; width:120%%; height:100%%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:13px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialFirstSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialFirstSentence", @"BeintooLocalizable", nil)];
+        NSString *htmlString4 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:120px; height:100px \"><span style=\"font-size:15px; font-weight:bold; color:#2E4467; width:120px; height:100px; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:13px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialFirstSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialFirstSentence", @"BeintooLocalizable", nil)];
         [webview1Land loadHTMLString:htmlString4 baseURL:nil];
         [landView addSubview:webview1Land];
         
@@ -210,7 +211,7 @@
         
         labelLand2.hidden = YES;
         
-        NSString *htmlString5 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:120%%; height:100%% \"><span style=\"font-size:15px; font-weight:bold; color:#2E4467; width:120%%; height:100%%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:13px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialSecondSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialSecondSentence", @"BeintooLocalizable", nil)];
+        NSString *htmlString5 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:120px; height:100px \"><span style=\"font-size:15px; font-weight:bold; color:#2E4467; width:120px; height:100px; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:13px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialSecondSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialSecondSentence", @"BeintooLocalizable", nil)];
         [webview2Land loadHTMLString:htmlString5 baseURL:nil];
         [landView addSubview:webview2Land];
         
@@ -241,7 +242,7 @@
         
         labelLand3.hidden = YES;
         
-        NSString *htmlString6 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:120%%; height:100%% \"><span style=\"font-size:15px; font-weight:bold; color:#2E4467; width:120%%; height:100%%; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:13px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialThirdSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialThirdSentence", @"BeintooLocalizable", nil)];
+        NSString *htmlString6 = [NSString stringWithFormat:@"<html><head> <style> body {font-family: 'Helvetica', sans-serif; background-color: transparent; } </style></head><body><div style=\"width:120px; height:100px \"><span style=\"font-size:15px; font-weight:bold; color:#2E4467; width:120px; height:100px; text-shadow: 0px 1px 0px #FFF;\">%@</span> <span style=\"font-size:13px; color:#586985; text-shadow: 0px 1px 0px #FFF;\">%@</span></div> </body></html>", NSLocalizedStringFromTable(@"tutorialThirdSentenceBold", @"BeintooLocalizable", nil), NSLocalizedStringFromTable(@"tutorialThirdSentence", @"BeintooLocalizable", nil)];
         [webview3Land loadHTMLString:htmlString6 baseURL:nil];
         [landView addSubview:webview3Land];
     
@@ -266,8 +267,6 @@
     mainView.backgroundColor = [UIColor colorWithRed:220.0/255 green:220.0/255 blue:220.0/255 alpha:1];
     landView.backgroundColor = [UIColor colorWithRed:220.0/255 green:220.0/255 blue:220.0/255 alpha:1];
 
-    self.view = nil;
-    
     BGradientView *footerView = [[BGradientView alloc] initWithGradientType:GRADIENT_FOOTER];
     
     if(![BeintooDevice isiPad] && (appOrientation == UIInterfaceOrientationLandscapeLeft || appOrientation == UIInterfaceOrientationLandscapeRight) ){
@@ -277,12 +276,13 @@
     else {
         self.view = mainView;
         footerView.frame = CGRectMake(0, self.view.frame.size.height - 4, [UIScreen mainScreen].bounds.size.width, 4);
+        
     }
     
     if ([BeintooDevice isiPad])
         footerView.frame = CGRectMake(0, self.view.frame.size.height + 4, [UIScreen mainScreen].bounds.size.width, 4);
     
-    [self.view addSubview:footerView];
+   // [self.view addSubview:footerView];
     [footerView release];
 
 }
@@ -291,10 +291,12 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
     
     goToDashboardLand.frame = CGRectMake((self.view.frame.size.width - goToDashboardLand.frame.size.width)/2 , goToDashboardLand.frame.origin.y, goToDashboardLand.frame.size.width, goToDashboardLand.frame.size.height);
+    
+    //goToDashboard.frame = CGRectMake(goToDashboard.frame.origin.x , self.view.frame.size.height - 10 - goToDashboard.frame.size.height, goToDashboard.frame.size.width, goToDashboard.frame.size.height);
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView{
@@ -311,9 +313,12 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
     
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
-    
+    if ([BeintooDevice isiPad]){
+        [Beintoo dismissIpadLogin];
+    }
+    else {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 - (UIView *)closeButton{
@@ -336,8 +341,12 @@
 - (void)closeBeintoo{
     [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
     
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if ([BeintooDevice isiPad]){
+        [Beintoo dismissIpadLogin];
+    }
+    else {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 - (void)dealloc{

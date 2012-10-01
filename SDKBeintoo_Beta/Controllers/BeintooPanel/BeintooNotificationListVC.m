@@ -20,24 +20,28 @@
 
 @implementation BeintooNotificationListVC
 
-@synthesize notificationTable, notificationArrayList, notificationImages, selectedNotification, startingOptions;
+@synthesize notificationTable, notificationArrayList, notificationImages, selectedNotification, startingOptions, isFromNotification;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-	self.title      = NSLocalizedStringFromTable(@"notifications",@"BeintooLocalizable",@"");
+	self.title      = NSLocalizedStringFromTable(@"notifications", @"BeintooLocalizable", nil);
     
-	mainView        = [[BView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+	mainView        = [[BView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    mainView.autoresizingMask  = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;
+    
     [mainView setTopHeight:0];
-	[mainView setBodyHeight:422];
+	[mainView setBodyHeight:self.view.frame.size.height];
     
     self.view = mainView;
-	
+    mainView.autoresizesSubviews = YES;
+    
     notificationTable = [[BTableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, mainView.frame.size.height - 9)];
     notificationTable.autoresizingMask  = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	self.notificationTable.delegate     = self;
     self.notificationTable.dataSource   = self;
-	self.notificationTable.rowHeight	= 90.0;	
+	self.notificationTable.rowHeight	= 90.0;
+    notificationTable.backgroundColor = [UIColor clearColor];
 	
     notificationArrayList = [[NSMutableArray alloc] init];
 	notificationImages    = [[NSMutableArray alloc] init];
@@ -70,8 +74,8 @@
     noNotificationLabel.numberOfLines   = 0;
     noNotificationLabel.textColor       = [UIColor colorWithWhite:0 alpha:0.8];
         
-    [self.view addSubview:notificationTable];
-    [self.view addSubview:noNotificationLabel];
+    [mainView addSubview:notificationTable];
+    [mainView addSubview:noNotificationLabel];
     
     [notificationTable release];
     [noNotificationLabel release];
@@ -81,12 +85,14 @@
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
+    [noNotificationLabel setHidden:YES];
+    
     if ([BeintooDevice isiPad])
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     
     [BLoadingView startActivity:self.view];
-    [_notification getNotificationListWithStart:0 andRows:50];	
-    [noNotificationLabel setHidden:YES];
+    [_notification getNotificationListWithStart:0 andRows:50];
+    
 }
 
 - (void)didGetNotificationListWithResult:(NSArray *)result{
@@ -146,8 +152,8 @@
 		}
 	}
     
+    [notificationTable reloadData];
     [BLoadingView stopActivity];
-	[notificationTable reloadData];
 
     if ([self.notificationArrayList count] > 0) {
         NSDictionary *lastNotification = [self.notificationArrayList objectAtIndex:0];
@@ -288,6 +294,7 @@
     
     if ([notificationType isEqualToString:@"FRIENDSHIP_GOT"]) {
         // Friendship request to be accepted
+        friendRequestVC.isFromNotification = YES;
         [self.navigationController pushViewController:friendRequestVC animated:YES];
     }
     else if ([notificationType isEqualToString:@"FRIENDSHIP_ACCEPTED"]) {
@@ -295,11 +302,13 @@
     }
     else if ([notificationType isEqualToString:@"MESSAGE_NEW"]) {
         // New message to read
+        messagesVC.isFromNotification = YES;
         [self.navigationController pushViewController:messagesVC animated:YES];
     }
     else if([notificationType isEqualToString:@"CHALLENGE_INVITED"] || [notificationType isEqualToString:@"CHALLENGE_ACCEPTED"] 
              || [notificationType isEqualToString:@"CHALLENGE_WON"] || [notificationType isEqualToString:@"CHALLENGE_LOST"]) {
         
+        challengesVC.isFromNotification = YES;
         [self.navigationController pushViewController:challengesVC animated:YES];
     }
     else if ([notificationType isEqualToString:@"MISSION_COMPLETED"]) {
@@ -307,6 +316,7 @@
     }
     else if ([notificationType isEqualToString:@"ALLIANCE_ACCEPTED"]) {
         // User has been accepted on alliance
+        viewAllianceVC.isFromNotification = YES;
         [self.navigationController pushViewController:viewAllianceVC animated:YES];
     }
     else if ([notificationType isEqualToString:@"ALLIANCE_ADMIN_PENDING"]) {
@@ -314,10 +324,12 @@
         NSDictionary *pendingOptions = [NSDictionary dictionaryWithObjectsAndKeys:[BeintooAlliance userAllianceID],@"allianceID",[Beintoo getUserID],@"allianceAdminID", nil];
         
         [pendigAllianceReqVC initWithNibName:@"BeintooAlliancePendingVC" bundle:[NSBundle mainBundle] andOptions:pendingOptions];
+        pendigAllianceReqVC.isFromNotification = YES;
         [self.navigationController pushViewController:pendigAllianceReqVC animated:YES];
     }
     else if ([notificationType isEqualToString:@"VGOOD_ASSIGNED"] || [notificationType isEqualToString:@"VGOOD_GIFTED"])  {
         // Vgood received
+        walletVC.isFromNotification = YES;
         [self.navigationController pushViewController:walletVC animated:YES];
     }
     
@@ -327,20 +339,37 @@
                              [Beintoo getApiKey],[Beintoo getUserID]];
         [tipsAndForumVC initWithNibName:@"BeintooBrowserVC" bundle:[NSBundle mainBundle] urlToOpen:nil];
         [tipsAndForumVC setUrlToOpen:tipsUrl];
-
+        tipsAndForumVC.isFromNotification = YES;
+        
         [self.navigationController pushViewController:tipsAndForumVC animated:YES];
     }
     else if ([notificationType isEqualToString:@"ACHIEVEMENT_UNLOCKED"]) {
         [self.navigationController pushViewController:achievementVC animated:YES];
     }
+    else if ([notificationType isEqualToString:@"PUSH_REQUEST_MARKETPLACE"]){
+        BeintooBestoreVC *bestoreVC = [[BeintooBestoreVC alloc] initWithNibName:@"BeintooBestoreVC" bundle:[NSBundle mainBundle]];
+        bestoreVC.isFromNotification = YES;
+        [self.navigationController pushViewController:bestoreVC animated:YES];
+        [bestoreVC release];
+    }
+    else if ([notificationType isEqualToString:@"BEINTOO_PROMOTIONAL"] || [notificationType isEqualToString:@"RECOMMEND_APP"]){
+        if([self.selectedNotification objectForKey:@"url"] != nil){
+            NSString *theUrl = [self.selectedNotification objectForKey:@"url"];
+            BeintooVGoodShowVC *showUrl = [[BeintooVGoodShowVC alloc] initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle] urlToOpen:theUrl];
+            showUrl.isFromNotification = YES;
+            [self.navigationController pushViewController:showUrl animated:YES];
+            [showUrl release];
+        }
+    }
     else{
         // If the notification is not one of the standard case, we open a webview with an url received on the notification (if received)
         if([self.selectedNotification objectForKey:@"url"] != nil){
             NSString *tipsUrl = [self.selectedNotification objectForKey:@"url"];
-            [tipsAndForumVC initWithNibName:@"BeintooBrowserVC" bundle:[NSBundle mainBundle] urlToOpen:nil];
-            [tipsAndForumVC setUrlToOpen:tipsUrl];
             
-            [self.navigationController pushViewController:tipsAndForumVC animated:YES];
+            BeintooWebViewVC *webView = [[BeintooWebViewVC alloc] initWithNibName:@"BeintooWebViewVC" bundle:[NSBundle mainBundle] urlToOpen:tipsUrl];
+            webView.isFromNotification = YES;
+            [self.navigationController pushViewController:webView animated:YES];
+            [webView release];
         }
     }
 
@@ -371,8 +400,12 @@
 #pragma mark - Close Notification
 
 - (void)closeBeintoo{
-	BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+	if ([BeintooDevice isiPad]){
+        [Beintoo dismissIpadNotifications];
+    }
+    else {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 - (UIView *)closeButton{

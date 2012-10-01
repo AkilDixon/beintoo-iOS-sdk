@@ -32,6 +32,7 @@
 }
 
 @property (nonatomic, retain) NSMutableArray *startingOptions;
+@property(nonatomic,assign) BOOL            isFromNotification;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSMutableArray *)options;
 

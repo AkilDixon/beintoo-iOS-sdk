@@ -19,7 +19,7 @@
 
 @implementation BeintooMessagesVC
 
-@synthesize elementsTable, elementsArrayList, elementsImages, selectedMessage, startingOptions;
+@synthesize elementsTable, elementsArrayList, elementsImages, selectedMessage, startingOptions, isFromNotification;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -66,8 +66,10 @@
 - (void)viewWillAppear:(BOOL)animated{
 	[super viewWillAppear:animated];
     
+    [noMessagesLabel setHidden:YES];
+    
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
 	[self.elementsTable deselectRowAtIndexPath:[self.elementsTable indexPathForSelectedRow] animated:YES];
 	
@@ -110,6 +112,8 @@
 
 - (IBAction)newMessage{
 	[newMessageVC initWithNibName:@"BeintooNewMessageVC" bundle:[NSBundle mainBundle] andOptions:nil];
+    if (isFromNotification)
+        newMessageVC.isFromNotification = YES;
 	[self.navigationController pushViewController:newMessageVC animated:YES];
 }
 
@@ -132,7 +136,7 @@
 	@catch (NSException * e) {
 	}
 
-	for (int i=0; i<[result count]; i++) {	
+	for (int i = 0; i < [result count]; i++) {	
 		@try {
 			NSMutableDictionary *messageEntry = [[NSMutableDictionary alloc]init];
 			NSString *from			= [[[result objectAtIndex:i] objectForKey:@"userFrom"] objectForKey:@"nickname"];
@@ -302,6 +306,8 @@
 	@try {
 		self.selectedMessage = [self.elementsArrayList objectAtIndex:indexPath.row];
 		[beintooMessageShowVC initWithNibName:@"BeintooMessagesShowVC" bundle:[NSBundle mainBundle] andOptions:self.selectedMessage];
+        if (isFromNotification)
+            beintooMessageShowVC.isFromNotification = YES;
 		[self.navigationController pushViewController:beintooMessageShowVC animated:YES];
 	}
 	@catch (NSException * e) {
@@ -357,8 +363,16 @@
 }
 
 - (void)closeBeintoo{
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if (isFromNotification){
+        if ([BeintooDevice isiPad]){
+            [Beintoo dismissIpadNotifications];
+        }
+        else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
+    }
+    else
+        [Beintoo dismissBeintoo];
 }
 
 - (void)viewWillDisappear:(BOOL)animated{

@@ -19,7 +19,7 @@
 
 @implementation BeintooShowChallengeVC
 
-@synthesize challengeStatus,myUserExt,toUserExt,userImages;
+@synthesize challengeStatus, myUserExt, toUserExt, userImages, isFromNotification;;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andChallengeStatus:(NSDictionary *)status {
@@ -67,17 +67,17 @@
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
-    [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+    [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     
     user.delegate = self;
     
     downloadImage1                          = [[[BImageDownload alloc] init] autorelease];
     downloadImage1.delegate                 = self;
-    downloadImage1.urlString                = [self.challengeStatus objectForKey:@"imgUrlFrom"];
+    downloadImage1.urlString                = ((BImageDownload *)[self.challengeStatus objectForKey:@"imgPlayerFrom"]).urlString;
     
     downloadImage2                          = [[[BImageDownload alloc] init] autorelease];
     downloadImage2.delegate                 = self;
-    downloadImage2.urlString                = [self.challengeStatus objectForKey:@"imgUrlTo"];
+    downloadImage2.urlString                = ((BImageDownload *)[self.challengeStatus objectForKey:@"imgPlayerTo"]).urlString;
     
     [self.userImages removeAllObjects];    
     [self.userImages addObject:downloadImage1];
@@ -110,6 +110,7 @@
 
 // Delegate response
 - (void)challengeRequestFinishedWithResult:(NSDictionary *)result{
+    
     [BLoadingView stopActivity];
 	if ([result objectForKey:@"messageID"]!=nil) {
         
@@ -156,7 +157,7 @@
 
 #pragma mark - UITableview methods
 
--(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
 }
 
@@ -177,12 +178,15 @@
     }
 }
 
--(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if ([[challengeStatus objectForKey:@"status"] isEqualToString:@"TO_BE_ACCEPTED"] == NO){
         return 4;
     }
     else {
-        return 5;
+        if ([[self.challengeStatus objectForKey:@"userExtFrom"] isEqualToString:self.myUserExt])
+            return 4;
+        else
+            return 5;
     }
 }
 
@@ -316,33 +320,31 @@
         
         if ([[challengeStatus objectForKey:@"status"] isEqualToString:@"TO_BE_ACCEPTED"] == NO){
             showStartEndDate = YES;
-            
         }
         else {
             showStartEndDate = NO;
             h = h + 20;
         }
         
-        
         //Challenge labels drawing
-        UILabel *contestNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, h, 200, 20)];
+        UILabel *contestNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, h, 220, 20)];
         contestNameLabel.text = [NSString stringWithFormat:@"App: %@", [challengeStatus objectForKey:@"contestName"]];
         contestNameLabel.backgroundColor = [UIColor clearColor];
         contestNameLabel.font = [UIFont systemFontOfSize:13];
         
-        UILabel *contestStatusLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, h+18, 200, 20)];
+        UILabel *contestStatusLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, h+18, 220, 20)];
         contestStatusLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedStringFromTable(@"status", @"BeintooLocalizable", nil), [NSString stringWithFormat: NSLocalizedStringFromTable([[[challengeStatus objectForKey:@"status"] stringByReplacingOccurrencesOfString:@"_" withString:@" "] lowercaseString], @"BeintooLocalizable", nil)]];
         contestStatusLabel.backgroundColor = [UIColor clearColor];
         contestStatusLabel.font = [UIFont systemFontOfSize:13];
         
-        UILabel *prizeLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, h+36, 200, 20)];
+        UILabel *prizeLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, h+36, 220, 20)];
         prizeLabel.text = [NSString stringWithFormat:@"%@ %@ %@", NSLocalizedStringFromTable(@"prize", @"BeintooLocalizable", nil), [challengeStatus objectForKey:@"prize"], NSLocalizedStringFromTable(@"bedollars", @"BeintooLocalizable", nil)];
         prizeLabel.font = [UIFont systemFontOfSize:13];
         prizeLabel.backgroundColor = [UIColor clearColor];
         
         h = h + 54;
         if (showTargetScore == YES){
-            UILabel *targetScoreLabel           = [[UILabel alloc] initWithFrame:CGRectMake(90, h, 200, 20)];
+            UILabel *targetScoreLabel           = [[UILabel alloc] initWithFrame:CGRectMake(90, h, 220, 20)];
             targetScoreLabel.text               = [NSString stringWithFormat:@"%@: %@", NSLocalizedStringFromTable(@"challPointsTarget", @"BeintooLocalizable", nil),  [challengeStatus objectForKey:@"targetScore"]];
             targetScoreLabel.backgroundColor    = [UIColor clearColor];
             targetScoreLabel.font = [UIFont systemFontOfSize:13];
@@ -354,14 +356,14 @@
         }
         
         if (showStartEndDate == YES){
-            UILabel *startDateLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, h, 200, 18)];
+            UILabel *startDateLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, h, 220, 18)];
             startDateLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedStringFromTable(@"startDate",@"BeintooLocalizable",@""),[BeintooNetwork convertToCurrentDate:[challengeStatus objectForKey:@"startDate"]]];
             startDateLabel.backgroundColor = [UIColor clearColor];
             startDateLabel.font = [UIFont systemFontOfSize:13];
             startDateLabel.textColor = [UIColor colorWithWhite:0 alpha:1];
             
             
-            UILabel *endDateLabel = [[UILabel alloc] initWithFrame:CGRectMake(90    , h+18, 200, 18)];
+            UILabel *endDateLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, h+18, 220, 18)];
             endDateLabel.text = [NSString stringWithFormat:@"%@ %@",NSLocalizedStringFromTable(@"endDate",@"BeintooLocalizable",@""), [BeintooNetwork convertToCurrentDate:[challengeStatus objectForKey:@"endDate"]]];
             endDateLabel.backgroundColor = [UIColor clearColor];
             endDateLabel.font = [UIFont systemFontOfSize:13];
@@ -470,8 +472,16 @@
 }
 
 - (void)closeBeintoo{
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if (isFromNotification){
+        if ([BeintooDevice isiPad]){
+            [Beintoo dismissIpadNotifications];
+        }
+        else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
+    }
+    else
+        [Beintoo dismissBeintoo];
 }
 
 - (void)dealloc {

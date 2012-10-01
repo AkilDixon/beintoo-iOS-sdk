@@ -15,14 +15,19 @@
  ******************************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 #define BSENDCHALLENGE_VIEW_TAG 100
 
 @class BGradientView, BSendChallengeDetailsView;
 
-@interface BSendChallengesView : UIView<UITableViewDelegate,UITableViewDataSource>{
+@interface BSendChallengesView : UIView <UITableViewDelegate, UITableViewDataSource> {
 
 	NSMutableArray                  *elementsArrayList;
+    
+    BSendChallengeDetailsView       *sendChallengeView1;
+    BSendChallengeDetailsView       *sendChallengeView2;
+    BSendChallengeDetailsView       *sendChallengeView3;
     
 }
 

@@ -61,7 +61,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
     
     kindOfDelegateNotification = 0;
@@ -168,8 +168,12 @@
             
             kindOfDelegateNotification = 0;
             
-            BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-            [Beintoo dismissBeintoo:navController.type]; 
+            if ([BeintooDevice isiPad]){
+                [Beintoo dismissIpadLogin];
+            }
+            else {
+                [self dismissModalViewControllerAnimated:YES];
+            }
         }
         else if (kindOfDelegateNotification == BEINTOO_FACEBOOK_SIGNUP){
             [Beintoo postNotificationBeintooUserDidSignup];
@@ -226,8 +230,12 @@
 - (void)closeBeintoo{
     [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
     
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if ([BeintooDevice isiPad]){
+        [Beintoo dismissIpadLogin];
+    }
+    else {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 - (void)dealloc {

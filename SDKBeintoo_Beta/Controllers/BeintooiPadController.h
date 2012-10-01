@@ -16,7 +16,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class BeintooVGoodVC,BeintooMultipleVgoodVC,BeintooVGoodShowVC,BeintooLoginVC;
+@class BeintooVGoodVC,BeintooMultipleVgoodVC,BeintooVGoodShowVC,BeintooLoginVC, BeintooNotificationListVC;
 
 @interface BeintooiPadController : UIViewController<
 #ifdef UI_USER_INTERFACE_IDIOM
@@ -49,6 +49,8 @@
 	NSString *transitionEnterSubtype;
 	NSString *transitionExitSubtype;
 	
+    UINavigationController *beintooPrivateNotificationController;
+    BeintooNotificationListVC *notificationVC;
 }
 
 #ifdef UI_USER_INTERFACE_IDIOM

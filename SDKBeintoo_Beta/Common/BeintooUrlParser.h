@@ -14,7 +14,8 @@
  * limitations under the License.
  ******************************************************************************/
 
-#import "BeintooUrlParser.h"
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface BeintooUrlParser: NSObject {
     NSArray *variables;

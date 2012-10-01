@@ -56,5 +56,6 @@
 @property(nonatomic,retain)	NSDictionary *startingOptions;
 @property(nonatomic,retain) UIToolbar	 *keyboardToolbar;
 @property(nonatomic,retain) NSDictionary *selectedFriend;
+@property(nonatomic,assign) BOOL            isFromNotification;
 
 @end

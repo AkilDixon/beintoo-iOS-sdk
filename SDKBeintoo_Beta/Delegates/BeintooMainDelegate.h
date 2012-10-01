@@ -84,4 +84,8 @@
 
 - (void)beintooUserDidSignup;
 
+- (void)userDidLogin;
+
+- (void)userDidSignup;
+
 @end

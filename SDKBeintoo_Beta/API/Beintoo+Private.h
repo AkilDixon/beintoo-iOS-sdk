@@ -75,6 +75,7 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (void)_launchIpadNotifications;
 + (void)_dismissIpadNotifications;
 + (void)_dismissBeintoo;
++ (void)_dismissSignup;
 + (void)_dismissBeintoo:(int)type;
 + (void)_dismissBeintooNotAnimated;
 + (void)_dismissPrize;

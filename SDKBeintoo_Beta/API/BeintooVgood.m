@@ -121,7 +121,7 @@
     [vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_IS_ELIGIBLE_FOR_REWARD_CALLER_ID];
 }
 
-+ (void)getAd{
++ (void)requestAndDisplayAd{
     
     if ([Beintoo getPlayerID] == nil){
         BeintooLOG(@"getAd needs a Player ID, retry.");
@@ -131,7 +131,7 @@
     BeintooVgood *vgoodService = [Beintoo beintooVgoodService];
     
     NSString *res;
-    res = [NSString stringWithFormat:@"%@serve", [vgoodService getDisplayRestResource]];
+    res = [NSString stringWithFormat:@"%@/display/serve", [Beintoo getDisplayBaseUrl]];
     
     CLLocation *loc	 = [Beintoo getUserLocation];
 	if (loc == nil || (loc.coordinate.latitude <= 0.01f && loc.coordinate.latitude >= -0.01f)
@@ -142,12 +142,50 @@
 		res	= [NSString stringWithFormat:@"%@?wrapInJson=true&latitude=%f&longitude=%f&radius=%f",
                res, loc.coordinate.latitude, loc.coordinate.longitude, loc.horizontalAccuracy];
     
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                            [Beintoo getApiKey], @"apikey",
-                            [BeintooDevice getUDID], @"deviceUUID",
-                            [BeintooDevice getMacAddress], @"macaddress",
-                            [BeintooOpenUDID value], @"openudid",
-                            nil];
+    NSDictionary *params;
+    
+    if ([BeintooDevice isASIdentifierSupported]){
+        if ([BeintooNetwork getCarrierBuiltString] != nil){
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooNetwork getCarrierBuiltString], @"carrier",
+                      [BeintooDevice getASIdentifier], @"iosaid",
+                      [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                      nil];
+        }
+        else {
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getASIdentifier], @"iosaid",
+                      [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                      nil];
+        }
+    }
+    else {
+        if ([BeintooNetwork getCarrierBuiltString] != nil){
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [Beintoo getApiKey], @"apikey",
+                                [BeintooDevice getUDID], @"deviceUUID",
+                                [BeintooDevice getMacAddress], @"macaddress",
+                                [BeintooOpenUDID value], @"openudid",
+                                [BeintooNetwork getCarrierBuiltString], @"carrier",
+                                nil];
+        }
+        else {
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      nil];
+        }
+    }
     
     [vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:REWARD_GET_AD_CALLER_ID];
 }
@@ -176,11 +214,24 @@
 		res	= [NSString stringWithFormat:@"%@byguid/%@?latitude=%f&longitude=%f&radius=%f&allowBanner=true&rows=1",
 				[vgoodService restResource],guid,loc.coordinate.latitude,loc.coordinate.longitude,loc.horizontalAccuracy];
 	
-	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                            [Beintoo getApiKey], @"apikey", 
-                            [BeintooDevice getMacAddress], @"macaddress",
-                            nil];
-	[vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_SINGLE_CALLER_ID];
+	NSDictionary *params;
+    
+    if ([BeintooDevice isASIdentifierSupported]){
+        params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                   [Beintoo getApiKey], @"apikey",
+                   [BeintooDevice getMacAddress], @"macaddress",
+                   [BeintooDevice getASIdentifier], @"iosaid",
+                   [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                   nil];
+    }
+    else {
+        params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                   [Beintoo getApiKey], @"apikey",
+                   [BeintooDevice getMacAddress], @"macaddress",
+                   nil];
+    }
+    
+    [vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_SINGLE_CALLER_ID];
 }
 
 // -------------------------------------------------------------------------------------
@@ -207,9 +258,24 @@
 			   [vgoodService restResource],guid,loc.coordinate.latitude,loc.coordinate.longitude,loc.horizontalAccuracy];
 	
 	vgoodService.callingDelegate = _delegate;
-	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",
-                            [BeintooDevice getMacAddress], @"macaddress",
-                            nil];
+    
+    NSDictionary *params;
+    
+    if ([BeintooDevice isASIdentifierSupported]){
+        params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                   [Beintoo getApiKey], @"apikey",
+                   [BeintooDevice getMacAddress], @"macaddress",
+                   [BeintooDevice getASIdentifier], @"iosaid",
+                   [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                   nil];
+    }
+    else {
+        params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                   [Beintoo getApiKey], @"apikey",
+                   [BeintooDevice getMacAddress], @"macaddress",
+                   nil];
+    }
+
 	[vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_SINGLEwDELEG_CALLER_ID];
 }
 
@@ -239,9 +305,22 @@
 		res	= [NSString stringWithFormat:@"%@byguid/%@?latitude=%f&longitude=%f&radius=%f&allowBanner=true&rows=3",
 			   [vgoodService restResource],guid,loc.coordinate.latitude,loc.coordinate.longitude,loc.horizontalAccuracy];
 
-	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",
-                            [BeintooDevice getMacAddress], @"macaddress",
-                            nil];
+    NSDictionary *params;
+    if ([BeintooDevice isASIdentifierSupported]){
+        params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                   [Beintoo getApiKey], @"apikey",
+                   [BeintooDevice getMacAddress], @"macaddress",
+                   [BeintooDevice getASIdentifier], @"iosaid",
+                   [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                   nil];
+    }
+    else {
+        params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                   [Beintoo getApiKey], @"apikey",
+                   [BeintooDevice getMacAddress], @"macaddress",
+                   nil];
+    }
+    
 	[vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_MULTIPLE_CALLER_ID];
 }
 
@@ -268,9 +347,23 @@
 			   [vgoodService restResource],guid,loc.coordinate.latitude,loc.coordinate.longitude,loc.horizontalAccuracy];
 	
 	vgoodService.callingDelegate = _delegate;
-	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",
-                            [BeintooDevice getMacAddress], @"macaddress",
-                            nil];
+	
+    NSDictionary *params;
+    if ([BeintooDevice isASIdentifierSupported]){
+        params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                   [Beintoo getApiKey], @"apikey",
+                   [BeintooDevice getMacAddress], @"macaddress",
+                   [BeintooDevice getASIdentifier], @"iosaid",
+                   [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                   nil];
+    }
+    else {
+        params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                   [Beintoo getApiKey], @"apikey",
+                   [BeintooDevice getMacAddress], @"macaddress",
+                   nil];
+    }
+    
 	[vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_MULTIPLEwDELEG_CALLER_ID];
 }
 
@@ -302,12 +395,42 @@
 	
     NSDictionary *params;
     if (!contestID) {
-        params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", [BeintooDevice getMacAddress], @"macaddress", nil];
+        
+        if ([BeintooDevice isASIdentifierSupported]){
+            params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                       [Beintoo getApiKey], @"apikey",
+                       [BeintooDevice getMacAddress], @"macaddress",
+                       [BeintooDevice getASIdentifier], @"iosaid",
+                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                       nil];
+        }
+        else {
+            params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                       [Beintoo getApiKey], @"apikey",
+                       [BeintooDevice getMacAddress], @"macaddress",
+                       nil];
+        }
+        
         BeintooLOG(@"Beintoo warning: you called getVirtualGood with contestID, but the constestID you passed is nil");
     }
     else{
-        params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",contestID,@"codeID", [BeintooDevice getMacAddress], @"macaddress",
-                  nil];
+        
+        if ([BeintooDevice isASIdentifierSupported]){
+            params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                       [Beintoo getApiKey], @"apikey",
+                       [BeintooDevice getMacAddress], @"macaddress",
+                       contestID,@"codeID",
+                       [BeintooDevice getASIdentifier], @"iosaid",
+                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                       nil];
+        }
+        else {
+            params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                       [Beintoo getApiKey], @"apikey",
+                       [BeintooDevice getMacAddress], @"macaddress",
+                       contestID,@"codeID",
+                       nil];
+        }
     }
 
 	[vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_SINGLE_CALLER_ID];
@@ -334,12 +457,44 @@
     
 	NSDictionary *params;
     if (!contestID) {
-        params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", [BeintooDevice getMacAddress], @"macaddress", nil];
+        
+        if ([BeintooDevice isASIdentifierSupported]){
+            params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                       [Beintoo getApiKey], @"apikey",
+                       [BeintooDevice getMacAddress], @"macaddress",
+                       [BeintooDevice getASIdentifier], @"iosaid",
+                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                       nil];
+        }
+        else {
+            params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                       [Beintoo getApiKey], @"apikey",
+                       [BeintooDevice getMacAddress], @"macaddress",
+                       nil];
+        }
+        
         BeintooLOG(@"Beintoo warning: you called getVirtualGood with contestID, but the constestID you passed is nil");
     }
     else{
-        params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",contestID,@"codeID",  [BeintooDevice getMacAddress], @"macaddress", nil];
+        
+        if ([BeintooDevice isASIdentifierSupported]){
+            params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                       [Beintoo getApiKey], @"apikey",
+                       [BeintooDevice getMacAddress], @"macaddress",
+                       contestID,@"codeID",
+                       [BeintooDevice getASIdentifier], @"iosaid",
+                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                       nil];
+        }
+        else {
+            params  = [NSDictionary dictionaryWithObjectsAndKeys:
+                       [Beintoo getApiKey], @"apikey",
+                       [BeintooDevice getMacAddress], @"macaddress",
+                       contestID,@"codeID",
+                       nil];
+        }
     }
+    
 	[vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_MULTIPLE_CALLER_ID];
 }
 
@@ -357,9 +512,10 @@
     }
     
     NSString *res = [NSString stringWithFormat:@"%@privatevgood/show/",[vgoodService restResource]];
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",
-                                                                       guid, @"guid",
-                                                                       [BeintooDevice getUDID],@"deviceUUID",
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            [Beintoo getApiKey], @"apikey",
+                            guid, @"guid",
+                            [BeintooDevice getUDID],@"deviceUUID",
                             [BeintooDevice getMacAddress], @"macaddress",
                             nil];
     
@@ -414,6 +570,24 @@
 	if ([_callingDelegate respondsToSelector:@selector(didBeintooFailToGenerateAVirtualGoodWithError:)]) {
 		[_callingDelegate didBeintooFailToGenerateAVirtualGoodWithError:_error];
 	}	
+}
+
++ (void)notifyAdGenerationOnUserDelegate{
+	BeintooVgood *vgoodService = [Beintoo beintooVgoodService];
+	id _callingDelegate = vgoodService.callingDelegate;
+    
+    if ([_callingDelegate respondsToSelector:@selector(didBeintooGenerateAnAd:)]) {
+		[_callingDelegate didBeintooGenerateAnAd:[Beintoo getLastGeneratedAd]];
+	}
+}
+
++ (void)notifyAdGenerationErrorOnUserDelegate:(NSDictionary *)_error{
+	BeintooVgood *vgoodService = [Beintoo beintooVgoodService];
+	id _callingDelegate = vgoodService.callingDelegate;
+    
+	if ([_callingDelegate respondsToSelector:@selector(didBeintooFailToGenerateAnAdWithError:)]) {
+		[_callingDelegate didBeintooFailToGenerateAnAdWithError:_error];
+	}
 }
 
 #pragma mark -
@@ -830,11 +1004,11 @@
 			break;
             
         case REWARD_GET_AD_CALLER_ID: {
-            BeintooLOG(@"result get ad %@", result);
             if ([result objectForKey:@"messageID"]) {
                 if ([[result objectForKey:@"messageID"] intValue] == B_NOTHING_TO_DISPATCH_ERRORCODE) {
                 
                     [Beintoo notifyAdGenerationErrorOnMainDelegate:result];
+                    [BeintooVgood notifyAdGenerationErrorOnUserDelegate:result];
                 
                     return;
                 }
@@ -845,6 +1019,7 @@
             [Beintoo setLastGeneratedAd:adContent];
             
             [Beintoo notifyAdGenerationOnMainDelegate];
+            [BeintooVgood notifyAdGenerationOnUserDelegate];
             
             if (callingDelegate != nil)
                 [Beintoo launchAdWithDelegate:callingDelegate];

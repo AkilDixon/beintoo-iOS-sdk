@@ -19,7 +19,7 @@
 
 @implementation BeintooChallengesVC
 
-@synthesize challengesArrayList,selectedChallenge,segControl,titleLabel,showChallengeVC,myImage,challengeImages;
+@synthesize challengesArrayList,selectedChallenge,segControl,titleLabel,showChallengeVC,myImage,challengeImages, isFromNotification;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -65,7 +65,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
 	[self.titleLabel setHidden:YES];	
     
@@ -91,9 +91,12 @@
 #pragma mark Delegates
 
 - (void)didShowChallengesByStatus:(NSArray *)result{
-    	
+    
     [self.challengesArrayList removeAllObjects];
     [self.challengeImages removeAllObjects];
+    
+    [challengesPlayerFromImagesArray removeAllObjects];
+    [challengesPlayerToImagesArray removeAllObjects];
 		
 	if ([result count] == 0) {
 		[titleLabel setHidden:NO];
@@ -242,19 +245,18 @@
 			NSString *userExtTo		= [[[[result objectAtIndex:i] objectForKey:@"playerTo"] objectForKey:@"user"] objectForKey:@"id"];
 			NSString *contestName	= [[[result objectAtIndex:i] objectForKey:@"contest"] objectForKey:@"name"];
 			NSString *contestCodeID = [[[result objectAtIndex:i] objectForKey:@"contest"] objectForKey:@"codeID"];
-            
 			
             downloadPlayerFrom.urlString = imgUrlFrom;
             downloadPlayerFrom.delegate = self;
+            downloadPlayerFrom.tag = 1;
             
             downloadPlayerTo.urlString = imgUrlTo;
             downloadPlayerTo.delegate = self;
+            downloadPlayerTo.tag = 2;
             
-            NSString *price			= [[result objectAtIndex:i] objectForKey:@"price"];
-			NSString *prize			= [[result objectAtIndex:i] objectForKey:@"prize"];
-			
-			[challengeEntry setObject:playerFrom forKey:@"playerFrom"];
+            [challengeEntry setObject:playerFrom forKey:@"playerFrom"];
 			[challengeEntry setObject:playerTo forKey:@"playerTo"];
+            
 			if (![status isEqualToString:@"TO_BE_ACCEPTED"]) {
 				[challengeEntry setObject:playerFromScore forKey:@"playerFromScore"];
 				[challengeEntry setObject:playerToScore forKey:@"playerToScore"];
@@ -272,9 +274,27 @@
 			[challengeEntry setObject:contestCodeID forKey:@"contestCodeID"];
 			[challengeEntry setObject:status forKey:@"status"];
 			[challengeEntry setObject:downloadPlayerFrom forKey:@"imgPlayerFrom"];
-			[challengeEntry setObject:price	forKey:@"price"];
-			[challengeEntry setObject:prize forKey:@"prize"];
-			[challengeEntry setObject:downloadPlayerTo forKey:@"imgPlayerTo"];		
+            [challengeEntry setObject:downloadPlayerTo forKey:@"imgPlayerTo"];
+            
+            if ( [[result objectAtIndex:i] objectForKey:@"price"] )
+                [challengeEntry setObject:[[result objectAtIndex:i] objectForKey:@"price"]	forKey:@"price"];
+            
+            if ( [[result objectAtIndex:i] objectForKey:@"prize"] )
+                [challengeEntry setObject:[[result objectAtIndex:i] objectForKey:@"prize"] forKey:@"prize"];
+            
+			if ( [[result objectAtIndex:i] objectForKey:@"targetScore"] ){
+                [challengeEntry setObject:[[result objectAtIndex:i] objectForKey:@"targetScore"] forKey:@"targetScore"];
+            }
+			
+            if ( [[result objectAtIndex:i] objectForKey:@"userActor"] ){
+                if ( [[[result objectAtIndex:i] objectForKey:@"userActor"] objectForKey:@"user"]){
+                      if ( [[[[result objectAtIndex:i] objectForKey:@"userActor"] objectForKey:@"user"] objectForKey:@"id"] )
+                        [challengeEntry setObject:[[[[result objectAtIndex:i] objectForKey:@"userActor"] objectForKey:@"user"] objectForKey:@"id"] forKey:@"actorId"];
+                }
+            }
+            
+            if ( [[result objectAtIndex:i] objectForKey:@"type"] )
+                [challengeEntry setObject:[[result objectAtIndex:i] objectForKey:@"type"] forKey:@"type"];
             
             [challengesPlayerFromImagesArray addObject:downloadPlayerFrom];
             [challengesPlayerToImagesArray addObject:downloadPlayerTo];
@@ -283,15 +303,15 @@
             
 		}
 		@catch (NSException * e) {
-			BeintooLOG(@"BeintooException: %@ \n for object: %@",e,[result objectAtIndex:i]);
+			BeintooLOG(@"BeintooException: %@ \n for object: %@", e, [result objectAtIndex:i]);
 		}
         [downloadPlayerFrom release];
         [downloadPlayerTo release];
         [challengeEntry release];
 	}
     
-	[BLoadingView stopActivity];
-	[challengesTable reloadData];
+    [challengesTable reloadData];
+	[BLoadingView stopActivity];	
 }
 
 - (IBAction)sendNewChallenge{
@@ -299,8 +319,7 @@
     NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:@"challenges", @"caller", nil];
     
     BeintooFriendsListVC *friendsListVC = [[BeintooFriendsListVC alloc] initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle] andOptions:options];
-    /*if (isFromNotification == YES)
-        friendsListVC.isFromNotification = YES;*/
+    
     [self.navigationController pushViewController:friendsListVC animated:YES];
     [friendsListVC release];
     
@@ -432,7 +451,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	self.selectedChallenge = [self.challengesArrayList objectAtIndex:indexPath.row];
-	[self.showChallengeVC initWithNibName:@"BeintooShowChallengeVC" bundle:[NSBundle mainBundle] andChallengeStatus:self.selectedChallenge];
+    
+    [self.showChallengeVC initWithNibName:@"BeintooShowChallengeVC" bundle:[NSBundle mainBundle] andChallengeStatus:self.selectedChallenge];
 	//NSString *devicePlayer = [[Beintoo getUserIfLogged] objectForKey:@"nickname"];
 	/*if ([[self.selectedChallenge objectForKey:@"status"]isEqualToString:@"TO_BE_ACCEPTED"]) {
 		if (![[self.selectedChallenge objectForKey:@"playerFrom"] isEqualToString:devicePlayer]){
@@ -486,8 +506,16 @@
 }
 
 - (void)closeBeintoo{
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if (isFromNotification){
+        if ([BeintooDevice isiPad]){
+            [Beintoo dismissIpadNotifications];
+        }
+        else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
+    }
+    else
+        [Beintoo dismissBeintoo];
 }
 
 #pragma mark - UIViewController end methods

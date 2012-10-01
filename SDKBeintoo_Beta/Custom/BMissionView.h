@@ -15,6 +15,7 @@
  ******************************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 #define MISSION_TYPE_NEW					1
 #define MISSION_TYPE_ONGOING                2

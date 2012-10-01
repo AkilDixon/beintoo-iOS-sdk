@@ -27,4 +27,11 @@
 + (int)elapsedHoursSinceTimestamp:(NSString *)_timestamp;
 + (NSString *)getMacAddress;
 
++ (NSString *)getASIdentifier;
++ (NSString *)isASIdentifierEnabledByUser;
++ (BOOL)isASIdentifierSupported;
+
++ (NSString *)getSystemVersion;
++ (NSString *)getDeviceType;
+
 @end

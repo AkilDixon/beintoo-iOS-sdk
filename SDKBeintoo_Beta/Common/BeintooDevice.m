@@ -17,6 +17,7 @@
 #import "BeintooDevice.h"
 #import "Beintoo.h"
 #import "UIDevice+IdentifierAddition.h"
+#import <AdSupport/AdSupport.h>
 
 @implementation BeintooDevice
 
@@ -74,38 +75,44 @@
     return hour;
 }
 
-/*
- + (BOOL)devoParsare:(NSString *)tipo orePassate:(int)ore{
- 
- NSDictionary *dictTabParser;
- NSDate *mydate = [NSDate date];
- NSTimeInterval secondsInHours = -ore * 60 * 60;
- NSDate *dateDueOreFa = [mydate dateByAddingTimeInterval:secondsInHours];
- 
- NSDateFormatter* formatter = [[[NSDateFormatter alloc] init] autorelease];
- [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
- NSString *timestampDueOreFa = [formatter stringFromDate:dateDueOreFa];
- 
- myVolantinoAppDelegate *appDelegate = (myVolantinoAppDelegate *)[[UIApplication sharedApplication] delegate];
- DBManager *dbMngr = [appDelegate getDBManager];
- 
- // Leggo timestamp dal DB
- [dbMngr returnLastTimestamp:tipo];
- dictTabParser = [dbMngr returnDictionary];
- 
- if (dictTabParser == nil) {
- return TRUE;
- }
- 
- NSString *timestamp = [dictTabParser objectForKey:@"timestamp"];
- if ([timestamp compare:timestampDueOreFa] == NSOrderedAscending) {
- return TRUE;
- }
- // Se non devo scaricare nulla di nuovo
- return FALSE;
- }
- */
++ (NSString *)getASIdentifier{
+    if ([ASIdentifierManager sharedManager])
+        return [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    else
+        return nil;
+}
 
++ (NSString *)isASIdentifierEnabledByUser{
+    if ([ASIdentifierManager sharedManager]){
+        if ([[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled] == TRUE)
+            return @"true";
+        else
+            return @"false";
+    }
+    else
+        return 0;
+}
+
++ (BOOL)isASIdentifierSupported{
+    if ([ASIdentifierManager sharedManager])
+        return TRUE;
+    else
+        return FALSE;
+}
+
++ (NSString *)getSystemVersion{
+    if ([[UIDevice currentDevice] respondsToSelector:@selector(systemVersion)])
+        return [[UIDevice currentDevice] systemVersion];
+    else
+        return @"systemVersion";
+}
+
++ (NSString *)getDeviceType{
+    if ([[UIDevice currentDevice] respondsToSelector:@selector(model)])
+        return [[UIDevice currentDevice] model];
+    else
+        return @"deviceType";
+}
 
 - (void)dealloc {
     [super dealloc];

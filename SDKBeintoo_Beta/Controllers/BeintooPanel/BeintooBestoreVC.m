@@ -15,8 +15,10 @@
  ******************************************************************************/
 
 #import "BeintooBestoreVC.h"
+#import "BeintooDevice.h"
 
 @implementation BeintooBestoreVC
+@synthesize isFromNotification;
 
 - (void)viewDidLoad{
     [super viewDidLoad];
@@ -48,7 +50,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
     
     beintooPlayer.delegate = self;
@@ -169,14 +171,19 @@
     // Check if we are going to open a content on the App Store or Itunes
     
     if (![url.scheme isEqual:@"http"] && ![url.scheme isEqual:@"https"]) {
-		
-        // ******** Remember that this will NOT work on the simulator ******* //
-		
         if ([[UIApplication sharedApplication] canOpenURL:url]) {
 			[[UIApplication sharedApplication] openURL:url];
 			
-            BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-            [Beintoo dismissBeintoo:navController.type];
+            if (isFromNotification){
+                if ([BeintooDevice isiPad]){
+                    [Beintoo dismissIpadNotifications];
+                }
+                else {
+                    [self dismissModalViewControllerAnimated:YES];
+                }
+            }
+            else
+                [Beintoo dismissBeintoo];
             
         }
 			
@@ -209,8 +216,16 @@
 }
 
 - (void)closeBeintoo{
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if (isFromNotification){
+        if ([BeintooDevice isiPad]){
+            [Beintoo dismissIpadNotifications];
+        }
+        else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
+    }
+    else
+        [Beintoo dismissBeintoo];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)_webView{

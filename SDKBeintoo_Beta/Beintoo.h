@@ -131,6 +131,7 @@ extern NSString *BNSDefIsUserLogged;
 	NSString			*apiSecret;
 	NSString			*deviceID;
 	NSString			*restBaseUrl;
+    NSString			*displayBaseUrl;
 	int					appOrientation;
 	BOOL				forceRegistration;
 	BOOL				isOnSandbox;
@@ -240,6 +241,7 @@ extern NSString *BNSDefIsUserLogged;
 + (NSDictionary *)getUserIfLogged;
 + (NSDictionary *)getAppVgoodThresholds;
 + (NSString *)getRestBaseUrl;
++ (NSString *)getDisplayBaseUrl;
 + (NSString *)getApiKey;
 + (NSString *)getPlayerID;
 + (NSString *)getUserID;
@@ -325,6 +327,8 @@ extern NSString *BNSDefIsUserLogged;
 + (void)adControllerDidDisappear;
 + (void)notifyAdGenerationOnMainDelegate;
 + (void)notifyAdGenerationErrorOnMainDelegate:(NSDictionary *)_error;
+
++ (void)dismissSignup;
 
 @end
 

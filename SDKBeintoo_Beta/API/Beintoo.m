@@ -235,14 +235,13 @@ NSString *BNSDefIsUserLogged;
 }
 
 + (BOOL)userHasAllowedLocationServices{
-	CLLocationManager *_locationManager = [Beintoo sharedInstance]->locationManager;
-	BOOL isLocationServicesEnabled;
+	
+    BOOL isLocationServicesEnabled;
 	
 	if ([CLLocationManager respondsToSelector:@selector(locationServicesEnabled)]) {
 		isLocationServicesEnabled = [CLLocationManager locationServicesEnabled];	
-	}else {
-		isLocationServicesEnabled = _locationManager.locationServicesEnabled;
 	}
+    
 	return isLocationServicesEnabled;
 }
 
@@ -462,7 +461,7 @@ NSString *BNSDefIsUserLogged;
 + (void)changeBeintooOrientation:(int)_orientation{
 	if ([Beintoo isBeintooInitialized]) {
 		[Beintoo setAppOrientation:_orientation];
-        
+       
         BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
         if (_prizeView.alpha == 1){
             [_prizeView preparePrizeAlertOrientation:_prizeView.frame];
@@ -472,11 +471,15 @@ NSString *BNSDefIsUserLogged;
         if (_adView.alpha == 1){
             [_adView preparePrizeAlertOrientation:_adView.frame];
         }
-	}
+    }
 }
 
 + (NSString *)getRestBaseUrl{
 	return [Beintoo sharedInstance]->restBaseUrl;
+}
+
++ (NSString *)getDisplayBaseUrl{
+	return [Beintoo sharedInstance]->displayBaseUrl;
 }
 
 + (NSString *)getPlayerID{
@@ -596,6 +599,10 @@ NSString *BNSDefIsUserLogged;
 
 + (void)dismissBeintoo:(int)type{
 	[Beintoo _dismissBeintoo:type];
+}
+
++ (void)dismissSignup{
+	[Beintoo _dismissSignup];
 }
 
 + (void)dismissBeintooNotAnimated{

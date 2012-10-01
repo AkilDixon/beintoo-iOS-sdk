@@ -27,17 +27,23 @@
 	
 	self.title = NSLocalizedStringFromTable(@"login", @"BeintooLocalizable", @"Login");
 	
-	scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 240);
-	scrollView.backgroundColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1];
+	scrollView.backgroundColor = [UIColor clearColor]; // [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1];
 	scrollView.exclusiveTouch = NO;
     
-	[beintooView setTopHeight:60];
-	[beintooView setBodyHeight:440];
+	[beintooView setTopHeight:0];
+	[beintooView setBodyHeight:[UIScreen mainScreen].bounds.size.height];
 	[beintooView setIsScrollView:YES];
+    beintooView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
     
+    [beintooView addSubview:scrollView];
+    
+    scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 440);
+	
     mainLabel.text = NSLocalizedStringFromTable(@"new_login_title",@"BeintooLocalizable",@"");
     mainLabelLand.text = NSLocalizedStringFromTable(@"new_login_title",@"BeintooLocalizable",@"");
 	
+    
+    
 	user			= [[BeintooUser alloc] init];
 	user.delegate	= self;
 	_player			= [[BeintooPlayer alloc]init];
@@ -84,7 +90,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) 
 												 name:UIKeyboardDidShowNotification object:self.view.window];
-	[[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(keyboardDidHide:) 
+	[[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(keyboardDidHide:)
 												 name:UIKeyboardDidHideNotification  object:self.view.window];
     
     // keyboardIsShown = NO;
@@ -187,6 +193,13 @@
     forgotPassword.titleLabel.textAlignment = UITextAlignmentLeft;
     forgotPasswordLand.titleLabel.textAlignment = UITextAlignmentLeft;
     
+    forgotPasswordBase = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    forgotPasswordBase.alpha = 0.0;
+    forgotPasswordBase.userInteractionEnabled = NO;
+    [self.view addSubview:forgotPasswordBase];
+    
+    [forgotPasswordBase addSubview:forgotPasswordView];
+    [forgotPasswordView addSubview:forgotPasswordTextField];
 }
 
 - (void)nextTextField{
@@ -211,7 +224,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
     
     eTF.text = @"";
@@ -220,17 +233,12 @@
     eTFLand.text = @"";
 	pTFLand.text = @"";
     
-    [UIView beginAnimations:nil context:nil];
-	[UIView setAnimationDuration:0.5];
-    
-    if (([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
+    if (([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight ||
          [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) && ![BeintooDevice isiPad]) {
         
-        self.view.frame = CGRectMake(self.view.frame.origin.x, - 20, self.view.frame.size.width, self.view.frame.size.height);
-        
-	}
-	[UIView commitAnimations];
-    
+        beintooView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+        scrollView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+    }
 }
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
@@ -368,7 +376,6 @@
     
     if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
         [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
-        
         self.view.frame = CGRectMake(self.view.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height);
 	}
 	[UIView commitAnimations];
@@ -383,8 +390,12 @@
     
     [Beintoo postNotificationBeintooUserDidLogin];
     
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if ([BeintooDevice isiPad]){
+        [Beintoo dismissIpadLogin];
+    }
+    else {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 - (UIView *)closeButton{
@@ -407,51 +418,41 @@
 - (void)closeBeintoo{
     [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
     
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
+    if ([BeintooDevice isiPad]){
+        [Beintoo dismissIpadLogin];
+    }
+    else {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 - (void)keyboardWillShow:(NSNotification *)aNotification {
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.1];
-    
+
     
     [UIView commitAnimations];
 }
 
 - (void)keyboardWillHide:(NSNotification *)aNotification {
-	
+    
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.2];
     
     if (![forgotPasswordTextField isFirstResponder])
         self.view.frame = CGRectMake(self.view.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height);
+    
     [UIView commitAnimations];
 }
 
 - (void)keyboardDidShow:(NSNotification *)aNotification {
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.1];
-   
-    if (![forgotPasswordTextField isFirstResponder])
-        [self moveTextViewForKeyboard:aNotification up:YES];
-    
-    [UIView commitAnimations];
+    [self moveTextViewForKeyboard:aNotification up:YES];
 }
 
 - (void)keyboardDidHide:(NSNotification *)aNotification {
 	
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.2];
-    
-    if (![forgotPasswordTextField isFirstResponder])
-        [self moveTextViewForKeyboard:aNotification up:NO];
-    
-    [UIView commitAnimations];
+  [self moveTextViewForKeyboard:aNotification up:NO];
+
 }
 
 - (void)moveTextViewForKeyboard:(NSNotification*)aNotification up:(BOOL)up{
@@ -465,15 +466,24 @@
 	 
     if ([BeintooDevice isiPad] && !(([Beintoo appOrientation] == UIInterfaceOrientationPortrait || 
                                      [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown))){
-        if (up == YES)
-            scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, scrollView.contentSize.height - self.view.frame.size.height);
-        else 
+        if (up == YES){
+            scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, 220);
+            scrollView.contentSize = CGSizeMake(scrollView.contentOffset.x, 650);
+            forgotPasswordBase.frame = self.view.frame;
+            forgotPasswordView.frame = CGRectMake((forgotPasswordBase.frame.size.width - forgotPasswordView.frame.size.width)/2, (forgotPasswordBase.frame.size.height - forgotPasswordView.frame.size.height)/2, forgotPasswordView.frame.size.width, forgotPasswordView.frame.size.height);
+            
+        }
+        else {
+            scrollView.contentSize = CGSizeMake(scrollView.contentOffset.x, 550);
             scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, 0);
+            [self closeForgotView:nil];
+        }
     }
 }
 
 - (void)dismissKeyboard{
     if ([forgotPasswordTextField isFirstResponder]){
+        
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:0.2];
         if (![BeintooDevice isiPad]){
@@ -502,24 +512,22 @@
 
 - (IBAction)openForgotView:(id)sender{
     
-    forgotPasswordBase = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    forgotPasswordBase.frame = self.view.frame;
     forgotPasswordBase.alpha = 0.0;
+    forgotPasswordBase.userInteractionEnabled = YES;
     forgotPasswordBase.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.65];
-    [self.view addSubview:forgotPasswordBase];
     
     forgotPasswordView.frame = CGRectMake((forgotPasswordBase.frame.size.width - forgotPasswordView.frame.size.width)/2, (forgotPasswordBase.frame.size.height - forgotPasswordView.frame.size.height)/2, forgotPasswordView.frame.size.width, forgotPasswordView.frame.size.height);
     forgotPasswordView.backgroundColor = [UIColor whiteColor];
     [forgotPasswordView.layer setCornerRadius:6.0];
-    [forgotPasswordBase addSubview:forgotPasswordView];
-    
+   
     forgotPasswordLabel.text = NSLocalizedStringFromTable(@"forgotPasswordTitle", @"BeintooLocalizable", nil);
     
     forgotPasswordTextField.delegate = self;
     forgotPasswordTextField.placeholder = NSLocalizedStringFromTable(@"loginEmailPlaceholder",@"BeintooLocalizable", nil);
     forgotPasswordTextField.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin;
     forgotPasswordTextField.text = @"";
-    [forgotPasswordView addSubview:forgotPasswordTextField];
-    
+   
     if ([[eTF.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] > 0){
         forgotPasswordTextField.text = [eTF.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     }
@@ -536,7 +544,8 @@
 						forgotPasswordBase.alpha = 1.0;
 					 } 
 					 completion:^(BOOL finished) {
-                        
+                        forgotPasswordBase.frame = self.view.frame;
+                        forgotPasswordView.frame = CGRectMake((forgotPasswordBase.frame.size.width - forgotPasswordView.frame.size.width)/2, (forgotPasswordBase.frame.size.height - forgotPasswordView.frame.size.height)/2, forgotPasswordView.frame.size.width, forgotPasswordView.frame.size.height);
 					 }];
 }
 
@@ -549,7 +558,8 @@
                          forgotPasswordBase.alpha = 0.0;
 					 } 
 					 completion:^(BOOL finished) {
-                          [forgotPasswordBase release];
+                        forgotPasswordBase.frame = self.view.frame;
+                        forgotPasswordView.frame = CGRectMake((forgotPasswordBase.frame.size.width - forgotPasswordView.frame.size.width)/2, (forgotPasswordBase.frame.size.height - forgotPasswordView.frame.size.height)/2, forgotPasswordView.frame.size.width, forgotPasswordView.frame.size.height);
 					 }];
 }
 
@@ -674,6 +684,7 @@
 	[_player release];
     [keyboardToolbar release];
     [keyboardToolbarForgot release];
+    [forgotPasswordBase release];
     
 	[super dealloc];
 }

@@ -18,14 +18,18 @@
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <netinet/in.h>
 #import <UIKit/UIKit.h>
+#import <CoreTelephony/CTTelephonyNetworkInfo.h>
+#import <CoreTelephony/CTCarrier.h>
 
 @interface BeintooNetwork : NSObject {
 	
 }
+
 + (void)showNoConnectionAlert;
 + (BOOL)connectedToNetwork;
 + (NSString *)convertToCurrentDate:(NSString *)date;
 + (NSString *)getUserAgent;
 + (NSData *)getSynchImageWithUA:(NSString *)url;
-	
++ (NSString *)getCarrierBuiltString;
+
 @end

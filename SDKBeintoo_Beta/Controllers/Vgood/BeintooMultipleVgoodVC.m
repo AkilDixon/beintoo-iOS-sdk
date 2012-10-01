@@ -65,7 +65,7 @@
     [super viewWillAppear:animated];
 		
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
 	[self.multipleVgoodTable deselectRowAtIndexPath:[self.multipleVgoodTable indexPathForSelectedRow] animated:YES];
 

@@ -15,6 +15,7 @@
  ******************************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 #define PRIZE_GOOD					1
 #define PRIZE_RECOMMENDATION		2

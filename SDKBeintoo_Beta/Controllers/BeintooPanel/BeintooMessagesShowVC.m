@@ -20,7 +20,7 @@
 
 @implementation BeintooMessagesShowVC
 
-@synthesize currentMessage;
+@synthesize currentMessage, isFromNotification;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
 	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -66,7 +66,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
     _message.delegate = self;
 	_player.delegate  = self;
@@ -194,8 +194,16 @@
 }
 
 - (void)closeBeintoo{
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if (isFromNotification){
+        if ([BeintooDevice isiPad]){
+            [Beintoo dismissIpadNotifications];
+        }
+        else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
+    }
+    else
+        [Beintoo dismissBeintoo];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

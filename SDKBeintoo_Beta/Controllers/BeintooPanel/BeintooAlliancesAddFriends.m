@@ -10,7 +10,7 @@
 #import "Beintoo.h"
 
 @implementation BeintooAlliancesAddFriends
-@synthesize startingOptions;
+@synthesize startingOptions, isFromNotification;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSMutableArray *)options{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -34,7 +34,7 @@
     [super viewDidLoad];
     
     if ([BeintooDevice isiPad]) {
-       [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+       [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
     
     noResultLabel.text	= NSLocalizedStringFromTable(@"noFriendsAlliance", @"BeintooLocalizable", nil);
@@ -298,8 +298,7 @@
 }
 
 - (void)closeBeintoo{
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    [Beintoo dismissBeintoo];
 }
 
 @end

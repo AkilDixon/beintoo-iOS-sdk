@@ -32,6 +32,7 @@ static BLoadingView *loading;
 		hudView.backgroundColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:0.7];
 		hudView.clipsToBounds = YES;
 		hudView.layer.cornerRadius = 10.0;
+        hudView.autoresizesSubviews = NO;
 		
 		activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
 		activityIndicatorView.frame = CGRectMake(11, 11, activityIndicatorView.bounds.size.width, activityIndicatorView.bounds.size.height);
@@ -46,6 +47,7 @@ static BLoadingView *loading;
 	
 	loading = [[BLoadingView alloc] initWithFrame:CGRectMake((callingView.frame.size.width/2)-30, (callingView.frame.size.height/2)-30, 100, 100)];
 	loading.alpha = 0.0;
+    loading.autoresizesSubviews = NO;
 	[callingView addSubview:loading];
 	
     [UIView beginAnimations:nil context:nil];
@@ -55,7 +57,7 @@ static BLoadingView *loading;
 	[UIView commitAnimations];
 
     
-	/*[UIView animateWithDuration:0.5
+    /*[UIView animateWithDuration:0.5
 						  delay: 0.0
 						options: UIViewAnimationOptionCurveEaseIn
 					 animations:^{

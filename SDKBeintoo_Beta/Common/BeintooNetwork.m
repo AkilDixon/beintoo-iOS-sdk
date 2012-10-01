@@ -97,6 +97,17 @@
 	return imgData;
 }
 
++ (NSString *)getCarrierBuiltString{
+    CTTelephonyNetworkInfo *netinfo = [[CTTelephonyNetworkInfo alloc] init];
+    CTCarrier *carrier = [netinfo subscriberCellularProvider];
+    NSString *carrierInfos = [NSString stringWithFormat:@"%@%@", [carrier mobileCountryCode], [carrier mobileNetworkCode]];
+    
+    if ([carrierInfos length] > 0)
+        return carrierInfos;
+    else
+        return nil;
+}
+
 - (void)dealloc {
     [super dealloc];
 }

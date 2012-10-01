@@ -45,14 +45,12 @@
 
 - (void)hide{
 	CATransition *applicationUnloadViewIn = [CATransition animation];
-	/*if ([Beintoo getPlayerID] != nil || isSignupDirectLaunch == YES)
-        [applicationUnloadViewIn setDuration:0.5f];
-    else*/
-        [applicationUnloadViewIn setDuration:0.5f];
+	[applicationUnloadViewIn setDuration:0.5f];
     
     if (type != NAV_TYPE_SIGNUP_PRIVATE && type != NAV_TYPE_NOTIFICATIONS_PRIVATE)
         [applicationUnloadViewIn setValue:@"unload" forKey:@"name"];
-	applicationUnloadViewIn.removedOnCompletion = YES;
+	
+    applicationUnloadViewIn.removedOnCompletion = YES;
 	[applicationUnloadViewIn setType:kCATransitionReveal];
 	applicationUnloadViewIn.subtype = transitionExitSubtype;
 	applicationUnloadViewIn.delegate = self;
@@ -76,33 +74,64 @@
 }
 
 - (void)prepareBeintooPanelOrientation{
-    if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
+    if ([BeintooDevice isiPad]){
+        if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
+            
+            self.view.frame  = CGRectMake(0, 0, 320, 550);
+            self.view.bounds = CGRectMake(0, 0, 550, 320);
+            self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(-90));
+            transitionEnterSubtype = kCATransitionFromRight;
+            transitionExitSubtype  = kCATransitionFromLeft;
+        }
+        if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight) {
+            self.view.frame  = CGRectMake(0, 0, 320, 550);
+            self.view.bounds = CGRectMake(0, 0, 550, 320);
+            self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(90));
+            transitionEnterSubtype = kCATransitionFromLeft;
+            transitionExitSubtype  = kCATransitionFromRight;
+        }
+        if ([Beintoo appOrientation] == UIInterfaceOrientationPortrait) {
+            self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
+            self.view.frame = CGRectMake(0, 0, 320, 550);
+            transitionEnterSubtype = kCATransitionFromTop;
+            transitionExitSubtype  = kCATransitionFromBottom;
+        }
+        if ([Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown) {
+            self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(180));
+            self.view.frame = CGRectMake(0, 0, 320, 550);
+            transitionEnterSubtype = kCATransitionFromBottom;
+            transitionExitSubtype  = kCATransitionFromTop;
+        }
+    }
+    else {
+        if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
 
-        self.view.frame  = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
-        self.view.bounds = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.height, [UIScreen mainScreen].bounds.size.width); 
-        self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(-90));
-        transitionEnterSubtype = kCATransitionFromRight;
-		transitionExitSubtype  = kCATransitionFromLeft;
-	}
-	if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight) {
-        self.view.frame  = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
-        self.view.bounds = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.height, [UIScreen mainScreen].bounds.size.width); 
-		self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(90));
-		transitionEnterSubtype = kCATransitionFromLeft;
-		transitionExitSubtype  = kCATransitionFromRight;
-	}
-	if ([Beintoo appOrientation] == UIInterfaceOrientationPortrait) {
-		self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
-		self.view.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
-		transitionEnterSubtype = kCATransitionFromTop;
-		transitionExitSubtype  = kCATransitionFromBottom;
-	}
-    if ([Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown) {
-		self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(180));
-		self.view.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
-		transitionEnterSubtype = kCATransitionFromBottom;
-		transitionExitSubtype  = kCATransitionFromTop;
-	}
+            self.view.frame  = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+            self.view.bounds = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.height, [UIScreen mainScreen].bounds.size.width); 
+            self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(-90));
+            transitionEnterSubtype = kCATransitionFromRight;
+            transitionExitSubtype  = kCATransitionFromLeft;
+        }
+        if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight) {
+            self.view.frame  = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+            self.view.bounds = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.height, [UIScreen mainScreen].bounds.size.width); 
+            self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(90));
+            transitionEnterSubtype = kCATransitionFromLeft;
+            transitionExitSubtype  = kCATransitionFromRight;
+        }
+        if ([Beintoo appOrientation] == UIInterfaceOrientationPortrait) {
+            self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
+            self.view.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+            transitionEnterSubtype = kCATransitionFromTop;
+            transitionExitSubtype  = kCATransitionFromBottom;
+        }
+        if ([Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown) {
+            self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(180));
+            self.view.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+            transitionEnterSubtype = kCATransitionFromBottom;
+            transitionExitSubtype  = kCATransitionFromTop;
+        }
+    }
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

@@ -80,5 +80,4 @@
 @property(nonatomic, assign) BOOL           needJoinAlliance;
 @property(nonatomic, assign) BOOL           needAddToAlliance;
 
-
 @end

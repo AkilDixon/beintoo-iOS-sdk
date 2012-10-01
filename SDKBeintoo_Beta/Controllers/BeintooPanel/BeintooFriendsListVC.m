@@ -20,7 +20,7 @@
 
 @implementation BeintooFriendsListVC
 
-@synthesize friendsTable, friendsArrayList, friendsImages, selectedFriend, vGood, startingOptions, backFromWebView, callerIstance, caller, callerIstanceSC;
+@synthesize friendsTable, friendsArrayList, friendsImages, selectedFriend, vGood, startingOptions, backFromWebView, caller, isFromNotification;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -61,9 +61,24 @@
 	vGood = [[BeintooVgood alloc] init];
 	vGood.delegate = self;
     
+    [noFriendsLabel setHidden:YES];
+	
+	if (![Beintoo isUserLogged])
+		[self.navigationController popToRootViewControllerAnimated:NO];
+	else {
+		[BLoadingView startActivity:self.view];
+		[user getFriendsByExtid];
+		[self.friendsTable deselectRowAtIndexPath:[self.friendsTable indexPathForSelectedRow] animated:YES];
+	}
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(reloadFriendsList) 
                                                  name:@"ReloadFriendsList"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(closePicker)
+                                                 name:@"ChallengesBPickerView"
                                                object:nil];
 }
 
@@ -71,19 +86,10 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
     user.delegate	= self;
 
-	[noFriendsLabel setHidden:YES];
-	
-	if (![Beintoo isUserLogged])
-		[self.navigationController popToRootViewControllerAnimated:NO];
-	else {
-		[BLoadingView startActivity:self.view];
-		[user getFriendsByExtid];	
-		[self.friendsTable deselectRowAtIndexPath:[self.friendsTable indexPathForSelectedRow] animated:YES];
-	}	
 }
 
 - (void)reloadFriendsList{
@@ -97,17 +103,21 @@
 	}
 }
 
+- (void)closePicker{
+    [bPickerView removeFromSuperview];
+}
+
 - (void)didGetFriendsByExtid:(NSMutableArray *)result{
 	[friendsArrayList removeAllObjects];
 	[friendsImages removeAllObjects];
 
 	[noFriendsLabel setHidden:YES];
 
-	if ([result count]<=0) {
+	if ([result count] <= 0) {
 		[noFriendsLabel setHidden:NO];
 	}
 	if ([result isKindOfClass:[NSArray class]]) {
-		for (int i=0; i<[result count]; i++) {
+		for (int i = 0; i < [result count]; i++) {
 			@try {
 				NSMutableDictionary *friendsEntry = [[NSMutableDictionary alloc]init];
 				NSString *nickname	 = [[result objectAtIndex:i] objectForKey:@"nickname"];
@@ -132,6 +142,11 @@
 	}
 
 	[BLoadingView stopActivity];
+    for (UIView *subview in self.view.subviews){
+        if ([subview isKindOfClass:[BLoadingView class]]){
+            [subview removeFromSuperview];
+        }
+    }
 	[friendsTable reloadData];
 }
 
@@ -345,8 +360,16 @@
 }
 
 - (void)closeBeintoo{
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if (isFromNotification){
+        if ([BeintooDevice isiPad]){
+            [Beintoo dismissIpadNotifications];
+        }
+        else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
+    }
+    else
+        [Beintoo dismissBeintoo];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

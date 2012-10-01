@@ -21,7 +21,7 @@
 
 @synthesize delegate, parser, callingDelegate;
 
--(id)init {
+- (id)init {
 	if (self = [super init])
 	{	
 		parser = [[Parser alloc] init];
@@ -97,23 +97,7 @@
 // -------------------------------------------------------------------------------------
 + (void)login{
     
-   /* UIAlertView *alert = [UIAlertView alloc];
-    
-    if ([ASIdentifierManager sharedManager]){
-        BeintooLOG(@"%@ %i", [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString], [[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]);
-        [alert initWithTitle:@"ASIdentifier" message:[[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString] delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-       // asIdentifier = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
-    }
-    else {
-        BeintooLOG(@"Your iOS version doesn't allow to use ASid!");
-        
-        [alert initWithTitle:@"ASIdentifier" message:@"Your iOS version doesn't allow to use ASid!" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-        //asIdentifier = @"not_allowed";
-    }
-    
-    [alert show];*/
-    
-	NSString *currentGuid	= [Beintoo getPlayerID];
+    NSString *currentGuid	= [Beintoo getPlayerID];
 	NSString *userId		= [Beintoo getUserID];
 	[Beintoo updateUserLocation];
 	
@@ -128,31 +112,81 @@
 	}
 	
 	if (currentGuid == nil) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:
+        if ([BeintooDevice isASIdentifierSupported]){
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getASIdentifier], @"iosaid",
+                      [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+        else {
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
 				  [Beintoo getApiKey], @"apikey", 
 				  [BeintooDevice getUDID], @"deviceUUID",
                   [BeintooDevice getMacAddress], @"macaddress",
                   [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
                   nil];
+        }
 	}
     else if ( (userId == nil) && (currentGuid != nil) ) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:
-                  [Beintoo getApiKey], @"apikey", 
-				  [BeintooDevice getUDID], @"deviceUUID", 
-				  currentGuid, @"guid", 
-                  [BeintooDevice getMacAddress], @"macaddress",
-                  [BeintooOpenUDID value], @"openudid",
+        if ([BeintooDevice isASIdentifierSupported]){
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey", 
+                      [BeintooDevice getUDID], @"deviceUUID", 
+                      currentGuid, @"guid", 
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getASIdentifier], @"iosaid",
+                      [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
                   nil];
+        }
+        else {
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      currentGuid, @"guid",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
 	}
     else if (userId != nil) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:
-                  [Beintoo getApiKey], @"apikey", 
-				  userId, @"userExt", 
-                  [BeintooDevice getUDID], @"deviceUUID",
-                  [BeintooDevice getMacAddress], @"macaddress",
-                  [BeintooOpenUDID value], @"openudid",
-                  nil];
-	} 
+        if ([BeintooDevice isASIdentifierSupported]){
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey", 
+                      userId, @"userExt", 
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getASIdentifier], @"iosaid",
+                      [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+        else {
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      userId, @"userExt",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+	}
 	[playerService.parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGINwDELEG_CALLER_ID];		
 }
 
@@ -422,30 +456,82 @@
 	}
 	
 	if (currentGuid == nil) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:
-				  [Beintoo getApiKey], @"apikey", 
-				  [BeintooDevice getUDID], @"deviceUUID", 
-                  [BeintooDevice getMacAddress], @"macaddress",
-                  [BeintooOpenUDID value], @"openudid",
-                  nil];
+        if ([BeintooDevice isASIdentifierSupported]){
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getASIdentifier], @"iosaid",
+                      [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+        else {
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
 	}
     else if ( (userId == nil) && (currentGuid != nil) ) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:
-                  [Beintoo getApiKey], @"apikey", 
-				  [BeintooDevice getUDID], @"deviceUUID", 
-				  currentGuid, @"guid", 
-                  [BeintooDevice getMacAddress], @"macaddress",
-                  [BeintooOpenUDID value], @"openudid",
-                  nil];
+        if ([BeintooDevice isASIdentifierSupported]){
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      currentGuid, @"guid",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getASIdentifier], @"iosaid",
+                      [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+        else {
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      currentGuid, @"guid",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
 	}
     else if (userId != nil) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:
-                  [Beintoo getApiKey], @"apikey", 
-				  userId, @"userExt",[BeintooDevice getUDID], @"deviceUUID", 
-                  [BeintooDevice getMacAddress], @"macaddress",
-                  [BeintooOpenUDID value], @"openudid",
-                  nil];
-	} 
+        if ([BeintooDevice isASIdentifierSupported]){
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      userId, @"userExt",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getASIdentifier], @"iosaid",
+                      [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+        else {
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      userId, @"userExt",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+	}
+ 
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGIN_CALLER_ID];		
 }
 
@@ -458,41 +544,92 @@
 	
 	NSString *isoLanguage = [BeintooDevice getISOLanguage];
 	if (isoLanguage != nil) {
-		res = [res stringByAppendingString:[NSString stringWithFormat:@"?language=%@",isoLanguage]];
+		res = [res stringByAppendingString:[NSString stringWithFormat:@"?language=%@", isoLanguage]];
 	}	
 		
-	if ( ([userid isEqualToString:@""]) && (currentGuid==nil)) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:
-                        [Beintoo getApiKey], @"apikey", 
-                        [BeintooDevice getUDID], @"deviceUUID", 
-                        [BeintooDevice getMacAddress], @"macaddress",
-                        [BeintooOpenUDID value], @"openudid",
-                        nil];
-		
-	}else if ( ([userid isEqualToString:@""]) && (currentGuid!=nil) ) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:
-                        [Beintoo getApiKey], @"apikey", 
-                        [BeintooDevice getUDID], @"deviceUUID", 
-                        currentGuid, @"guid", 
-                        [BeintooDevice getMacAddress], @"macaddress", 
-                        [BeintooOpenUDID value], @"openudid",
-                        nil];
-	}else {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:
-                        [Beintoo getApiKey], @"apikey", 
-                        userid, @"userExt",
-                        [BeintooDevice getUDID], @"deviceUUID", 
-                        [BeintooDevice getMacAddress], @"macaddress",
-                        [BeintooOpenUDID value], @"openudid",
-                        nil];
+	if ( ([userid isEqualToString:@""]) && (currentGuid == nil)) {
+        if ([BeintooDevice isASIdentifierSupported]){
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getASIdentifier], @"iosaid",
+                      [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+        else {
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
 	}
+    else if ( ([userid isEqualToString:@""]) && (currentGuid != nil) ) {
+        if ([BeintooDevice isASIdentifierSupported]){
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      currentGuid, @"guid",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getASIdentifier], @"iosaid",
+                      [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+        else {
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      currentGuid, @"guid",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+	}
+    else {
+        if ([BeintooDevice isASIdentifierSupported]){
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      userid, @"userExt",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getASIdentifier], @"iosaid",
+                      [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+        else {
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      userid, @"userExt",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+	}
+
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGIN_CALLER_ID];
 }
 
 - (void)backgroundLogin:(NSString *)userid{	
 	
 	NSString *res		  = [NSString stringWithFormat:@"%@login/",rest_resource];
-	NSString *currentGuid = [Beintoo getPlayerID]; 
 	[Beintoo updateUserLocation];
 	NSDictionary *params;
 	
@@ -501,31 +638,57 @@
 		res = [res stringByAppendingString:[NSString stringWithFormat:@"?language=%@",isoLanguage]];
 	}	
     
-	if ( ([userid isEqualToString:@""]) && (currentGuid==nil)) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:
-                  [Beintoo getApiKey], @"apikey", 
-                  [BeintooDevice getUDID], @"deviceUUID", 
-                  [BeintooDevice getMacAddress], @"macaddress",
-                  [BeintooOpenUDID value], @"openudid",
-                  nil];
-		
-	}else if ( ([userid isEqualToString:@""]) && (currentGuid!=nil) ) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:
-                  [Beintoo getApiKey], @"apikey", 
-                  [BeintooDevice getUDID], @"deviceUUID", 
-                  currentGuid, @"guid", 
-                  [BeintooDevice getMacAddress], @"macaddress",
-                  [BeintooOpenUDID value], @"openudid",
-                  nil];
-	}else {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:
-                  [Beintoo getApiKey], @"apikey", 
-                  userid, @"userExt",
-                  [BeintooDevice getUDID], @"deviceUUID", 
-                  [BeintooDevice getMacAddress], @"macaddress",
-                  [BeintooOpenUDID value], @"openudid",
-                  nil];
+	if ([userid isEqualToString:@""]) {
+        if ([BeintooDevice isASIdentifierSupported]){
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getASIdentifier], @"iosaid",
+                      [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+        else {
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
 	}
+    else {
+        if ([BeintooDevice isASIdentifierSupported]){
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      userid, @"userExt",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getASIdentifier], @"iosaid",
+                      [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+        else {
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      userid, @"userExt",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
+	}
+
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_BACKGROUND_LOGIN_CALLER_ID];
 }
 
@@ -539,21 +702,56 @@
 		res = [res stringByAppendingString:[NSString stringWithFormat:@"?language=%@",isoLanguage]];
 	}	
 	
-	if ([userid isEqualToString:@""]) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:
-                    [Beintoo getApiKey], @"apikey", 
-                    [BeintooDevice getUDID], @"deviceUUID", 
-                    [BeintooDevice getMacAddress], @"macaddress",
-                    [BeintooOpenUDID value], @"openudid",
-                    nil];
-	}else {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:
-                    [Beintoo getApiKey], @"apikey", 
-                    userid, @"userExt",
-                    [BeintooDevice getUDID], @"deviceUUID", 
-                    [BeintooDevice getMacAddress], @"macaddress",
-                    [BeintooOpenUDID value], @"openudid",
-                    nil];
+    if ([userid isEqualToString:@""]) {
+         if ([BeintooDevice isASIdentifierSupported]){
+             params = [NSDictionary dictionaryWithObjectsAndKeys:
+                       [Beintoo getApiKey], @"apikey",
+                       [BeintooDevice getUDID], @"deviceUUID",
+                       [BeintooDevice getMacAddress], @"macaddress",
+                       [BeintooOpenUDID value], @"openudid",
+                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                       [BeintooDevice getASIdentifier], @"iosaid",
+                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                       nil];
+         }
+         else {
+             params = [NSDictionary dictionaryWithObjectsAndKeys:
+                       [Beintoo getApiKey], @"apikey",
+                       [BeintooDevice getUDID], @"deviceUUID",
+                       [BeintooDevice getMacAddress], @"macaddress",
+                       [BeintooOpenUDID value], @"openudid",
+                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                       nil];
+         }
+	}
+    else {
+        if ([BeintooDevice isASIdentifierSupported]){
+            
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      userid, @"userExt",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      [BeintooDevice getASIdentifier], @"iosaid",
+                      [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                      nil];
+        }
+        else {
+            params = [NSDictionary dictionaryWithObjectsAndKeys:
+                      [Beintoo getApiKey], @"apikey",
+                      userid, @"userExt",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooDevice getMacAddress], @"macaddress",
+                      [BeintooOpenUDID value], @"openudid",
+                      [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
+                      [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
+                      nil];
+        }
 	}	
 	NSDictionary *result = [parser blockerParsePageAtUrl:res withHeaders:params];
 	
@@ -741,7 +939,7 @@
 		// -------------------------   INTERNAL PLAYER API   --------------------------------------
 		// ----------------------------------------------------------------------------------------
 		case PLAYER_LOGIN_CALLER_ID:{
-			if (![[result objectForKey:@"kind"] isEqualToString:@"error"]) {
+            if (![[result objectForKey:@"kind"] isEqualToString:@"error"]) {
 				if ([result objectForKey:@"guid"]!=nil) {
 					
 					NSString *playerGUID	= [result objectForKey:@"guid"];
@@ -753,16 +951,16 @@
 					loginError = LOGIN_NO_ERROR;
 					[Beintoo setBeintooPlayer:result];
 				
-					if ([[self delegate] respondsToSelector:@selector(playerDidLogin:)]) {
-						[[self delegate] playerDidLogin:self];			
-					}
-                    
-                    // Alliance check
+					// Alliance check
                     if ([result objectForKey:@"alliance"] != nil) {
                         [BeintooAlliance setUserWithAlliance:YES];
                     }else{
                         [BeintooAlliance setUserWithAlliance:NO];
                     }
+                    
+                    if ([[self delegate] respondsToSelector:@selector(playerDidLogin:)]) {
+						[[self delegate] playerDidLogin:self];
+					}
 				}
 			}
 			else {

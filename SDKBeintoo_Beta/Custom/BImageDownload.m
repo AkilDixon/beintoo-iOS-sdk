@@ -26,31 +26,40 @@
 @synthesize urlString, image, delegate, receivedData, tag;
 
 #pragma mark -
-- (UIImage *)image{
-    if (image == nil && !downloading){
 
-        if (urlString != nil && [urlString length] > 0){
-            NSURLRequest *req = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:self.urlString]];
-            NSURLConnection *con = [[NSURLConnection alloc] initWithRequest:req delegate:self startImmediately:NO];
-            [con scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-            [con start];
-            
-            if (con) {
-                NSMutableData *data = [[NSMutableData alloc] init];
-                self.receivedData   = data;
-                [data release];
-            }
-            else {
-                NSError *error = [NSError errorWithDomain:BeintooDownloadErrorDomain 
-                                                     code:BeintooDownloadErrorNoConnection 
-                                                 userInfo:nil];
-                if ([self.delegate respondsToSelector:@selector(bImageDownload:didFailWithError:)])
-                    [delegate bImageDownload:self didFailWithError:error];
-            }   
-            [req release];
-            downloading = YES;
+- (UIImage *)image{
+    
+    if (image == nil){
+        BImageCache *imageCache = [[BImageCache alloc] init];
+        if ([imageCache isRemoteFileCached:self.urlString]){
+            self.image = [UIImage imageWithContentsOfFile:[imageCache getCachedRemoteFile:urlString]];
         }
+        else if (!downloading){
+            if (urlString != nil && [urlString length] > 0){
+                NSURLRequest *req = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:self.urlString]];
+                NSURLConnection *con = [[NSURLConnection alloc] initWithRequest:req delegate:self startImmediately:NO];
+                [con scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+                [con start];
+                
+                if (con) {
+                    NSMutableData *data = [[NSMutableData alloc] init];
+                    self.receivedData   = data;
+                    [data release];
+                }
+                else {
+                    NSError *error = [NSError errorWithDomain:BeintooDownloadErrorDomain
+                                                         code:BeintooDownloadErrorNoConnection
+                                                     userInfo:nil];
+                    if ([self.delegate respondsToSelector:@selector(bImageDownload:didFailWithError:)])
+                        [delegate bImageDownload:self didFailWithError:error];
+                }
+                [req release];
+                downloading = YES;
+            }
+        }
+        [imageCache release];
     }
+    
     return image;
 }
 
@@ -74,9 +83,15 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
     @try{
         self.image = [UIImage imageWithData:receivedData];
-        if ([delegate respondsToSelector:@selector(bImageDownloadDidFinishDownloading:)])
-            [delegate bImageDownloadDidFinishDownloading:self];
+        
+        if (delegate && delegate != nil){
+            if ([delegate respondsToSelector:@selector(bImageDownloadDidFinishDownloading:)])
+                [delegate bImageDownloadDidFinishDownloading:self];
+        }
     
+        BImageCache *imageCache = [[BImageCache alloc] init];
+        [imageCache addRemoteFileToCache:urlString withData:receivedData];
+        [imageCache release];
     }
     @catch (NSException *e) {
          
@@ -94,9 +109,10 @@
 }
 
 - (void)dealloc {
+    delegate = nil;
+    
     [urlString release];
     [image release];
-    delegate = nil;
     [receivedData release];
     [super dealloc];
 }

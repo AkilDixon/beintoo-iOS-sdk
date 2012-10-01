@@ -28,14 +28,19 @@
 	if (self = [super init]){
 		loginVC = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
 		loginNavController = [[UINavigationController alloc] initWithRootViewController:loginVC];
+        
+        beintooPrivateNotificationController = [UINavigationController alloc];
+        notificationVC = [[BeintooNotificationListVC alloc] init];
 	}
     return self;
 }
 
 - (void)viewDidLoad{
+    [super viewDidLoad];
 }
 
-- (void)viewWillAppear:(BOOL)animated{	
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
@@ -52,15 +57,18 @@
     self.view.frame = [Beintoo getAppWindow].bounds;
 	
 	BeintooNavigationController *beintooMainNavController = [Beintoo getMainNavigationController];
+    
 	if (popoverController != nil) {
 		[popoverController release];
 		popoverController = nil;
 	}
 	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
-	[popoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	[popoverController setPopoverContentSize:CGSizeMake(320, 568)];
 	popoverController.delegate = self;
-    	
+    
+    [UIView beginAnimations:nil context:nil];
 	self.view.alpha = 1;
+    [UIView commitAnimations];
 
 	CATransition *applicationLoadViewIn = [CATransition animation];
 	[applicationLoadViewIn setDuration:0.1f];
@@ -96,14 +104,14 @@
 	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
     self.view.frame = [Beintoo getAppWindow].bounds;
 	
-	BeintooNavigationController *beintooMainNavController = [Beintoo getLeaderboardsNavigationController];
-	if (leaderboardPopoverController != nil) {
-		[leaderboardPopoverController release];
-		leaderboardPopoverController = nil;
+	BeintooNavigationController *beintooMainNavController = [Beintoo getMainNavigationController];
+	if (popoverController != nil) {
+		[popoverController release];
+		popoverController = nil;
 	}
-	leaderboardPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
-	[leaderboardPopoverController setPopoverContentSize:CGSizeMake(320, 475)];
-	leaderboardPopoverController.delegate = self;
+	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
+	[popoverController setPopoverContentSize:CGSizeMake(320, 568)];
+	popoverController.delegate = self;
     
 	self.view.alpha = 1;
     
@@ -117,17 +125,13 @@
 	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
 	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
 	
-	[leaderboardPopoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
+	[popoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
 	isMainPopoverVisible = YES;
 }
 
 - (void)hideLeaderboardPopover{
     
-    NSLog(@"type lead");
-    
-    
-    
-	self.view.alpha = 0;
+    self.view.alpha = 0;
 	CATransition *applicationUnloadViewIn = [CATransition animation];
 	[applicationUnloadViewIn setDuration:0.01f];
 	[applicationUnloadViewIn setValue:@"unloadMainPopover" forKey:@"name"];
@@ -145,14 +149,14 @@
 	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
     self.view.frame = [Beintoo getAppWindow].bounds;
 	
-	BeintooNavigationController *beintooMainNavController = [Beintoo getAchievementsNavigationController];
-	if (achievementsPopoverController != nil) {
-		[achievementsPopoverController release];
-		achievementsPopoverController = nil;
+	BeintooNavigationController *beintooMainNavController = [Beintoo getMainNavigationController];
+	if (popoverController != nil) {
+		[popoverController release];
+		popoverController = nil;
 	}
-	achievementsPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
-	[achievementsPopoverController setPopoverContentSize:CGSizeMake(320, 475)];
-	achievementsPopoverController.delegate = self;
+	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
+	[popoverController setPopoverContentSize:CGSizeMake(320, 568)];
+	popoverController.delegate = self;
     
 	self.view.alpha = 1;
     
@@ -166,7 +170,7 @@
 	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
 	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
 	
-	[achievementsPopoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
+	[popoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
 	isMainPopoverVisible = YES;
 }
 
@@ -190,14 +194,14 @@
 	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
     self.view.frame = [Beintoo getAppWindow].bounds;
 	
-	BeintooNavigationController *beintooMainNavController = [Beintoo getMyOffersNavigationController];
-	if (myOffersPopoverController != nil) {
-		[myOffersPopoverController release];
-		myOffersPopoverController = nil;
+	BeintooNavigationController *beintooMainNavController = [Beintoo getMainNavigationController];
+	if (popoverController != nil) {
+		[popoverController release];
+		popoverController = nil;
 	}
-	myOffersPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
-	[myOffersPopoverController setPopoverContentSize:CGSizeMake(320, 475)];
-	myOffersPopoverController.delegate = self;
+	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
+	[popoverController setPopoverContentSize:CGSizeMake(320, 568)];
+	popoverController.delegate = self;
     
 	self.view.alpha = 1;
     
@@ -211,13 +215,13 @@
 	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
 	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
 	
-	[myOffersPopoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
+	[popoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
 	isMainPopoverVisible = YES;
 }
 
 - (void)hideMyOffersPopover{
     
-	self.view.alpha = 0;
+    self.view.alpha = 0;
 	CATransition *applicationUnloadViewIn = [CATransition animation];
 	[applicationUnloadViewIn setDuration:0.01f];
 	[applicationUnloadViewIn setValue:@"unloadMainPopover" forKey:@"name"];
@@ -235,13 +239,13 @@
 	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
     self.view.frame = [Beintoo getAppWindow].bounds;
 	
-	BeintooNavigationController *beintooMainNavController = [Beintoo getNotificationsNavigationController];
+	BeintooNavigationController *beintooMainNavController = [Beintoo getMainNavigationController];
 	if (notificationsPopoverController != nil) {
 		[notificationsPopoverController release];
 		notificationsPopoverController = nil;
 	}
 	notificationsPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
-	[notificationsPopoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	[notificationsPopoverController setPopoverContentSize:CGSizeMake(320, 568)];
 	notificationsPopoverController.delegate = self;
     
 	self.view.alpha = 1;
@@ -287,7 +291,7 @@
 		popoverController = nil;
 	}
 	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
-	[popoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	[popoverController setPopoverContentSize:CGSizeMake(320, 568)];
 	popoverController.delegate = self;
     
 	self.view.alpha = 1;
@@ -326,13 +330,13 @@
 	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
     self.view.frame = [Beintoo getAppWindow].bounds;
 	
-	BeintooNavigationController *beintooBestoreNavController = [Beintoo getBestoreNavigationController];
+	BeintooNavigationController *beintooBestoreNavController = [Beintoo getMainNavigationController];
 	if (popoverController != nil) {
 		[popoverController release];
 		popoverController = nil;
 	}
 	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooBestoreNavController];
-	[popoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	[popoverController setPopoverContentSize:CGSizeMake(320, 568)];
 	popoverController.delegate = self;
     
 	self.view.alpha = 1;
@@ -381,7 +385,7 @@
 	}
 	[loginNavController popToRootViewControllerAnimated:NO];
 	loginPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:loginNavController];
-	[loginPopoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	[loginPopoverController setPopoverContentSize:CGSizeMake(320, 568)];
 	loginPopoverController.delegate = self;
 			
 	[popoverController dismissPopoverAnimated:NO];
@@ -408,7 +412,7 @@
 		vgoodPopoverController = nil;
 	}
 	vgoodPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:_vgoodNavController];
-	[vgoodPopoverController setPopoverContentSize:CGSizeMake(320, 455)];
+	[vgoodPopoverController setPopoverContentSize:CGSizeMake(320, 568)];
 	vgoodPopoverController.delegate = self;
 	
 	self.view.alpha = 1;
@@ -451,7 +455,7 @@
 		adPopoverController = nil;
 	}
 	adPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:_vgoodNavController];
-	[adPopoverController setPopoverContentSize:CGSizeMake(320, 455)];
+	[adPopoverController setPopoverContentSize:CGSizeMake(320, 568)];
 	adPopoverController.delegate = self;
 	
 	self.view.alpha = 1;
@@ -494,7 +498,7 @@
 		vgoodPopoverController = nil;
 	}
 	vgoodPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:_vgoodNavController];
-	[vgoodPopoverController setPopoverContentSize:CGSizeMake(320, 455)];
+	[vgoodPopoverController setPopoverContentSize:CGSizeMake(320, 568)];
 	vgoodPopoverController.delegate = self;
 	
 	self.view.alpha = 1;
@@ -531,42 +535,45 @@
 
 - (void)showPrivateNotificationsPopover{
     
-	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
-    self.view.frame = [Beintoo getAppWindow].bounds;
-	
-    BeintooNavigationController *beintooPrivateNotificationController = [Beintoo getPrivateNotificationsNavigationController];
+    if (beintooPrivateNotificationController != nil) {
+        [beintooPrivateNotificationController release];
+        beintooPrivateNotificationController = nil;
+	}
     
-	if (privateNotificationsPopoverController != nil) {
+    if (notificationVC != nil) {
+        [notificationVC release];
+        notificationVC = nil;
+    }
+    
+    beintooPrivateNotificationController = [UINavigationController alloc];
+    notificationVC = [[BeintooNotificationListVC alloc] init];
+    
+	[beintooPrivateNotificationController initWithRootViewController:notificationVC];
+    
+    if (privateNotificationsPopoverController != nil) {
         [privateNotificationsPopoverController release];
 		privateNotificationsPopoverController = nil;
 	}
     
     [beintooPrivateNotificationController popToRootViewControllerAnimated:NO];
 	privateNotificationsPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooPrivateNotificationController];
-	[privateNotificationsPopoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	[privateNotificationsPopoverController setPopoverContentSize:CGSizeMake(320, 568)];
 	privateNotificationsPopoverController.delegate = self;
     
 	[popoverController dismissPopoverAnimated:NO];
     
-	self.view.alpha = 1;
+	[privateNotificationsPopoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:NO];
     
-	CATransition *applicationLoadViewIn = [CATransition animation];
-	[applicationLoadViewIn setDuration:0.1f];
-	[applicationLoadViewIn setValue:@"loadPrivareNotifications" forKey:@"name"];
-	applicationLoadViewIn.removedOnCompletion = YES;
-	[applicationLoadViewIn setType:kCATransitionReveal];
-	applicationLoadViewIn.subtype = transitionEnterSubtype;
-	applicationLoadViewIn.delegate = self;
-	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
-	
-	[privateNotificationsPopoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
+  
 }
 
 - (void)hidePrivateNotificationsPopover{
     
 	[privateNotificationsPopoverController dismissPopoverAnimated:NO];
 	[popoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:NO];
+    
+    /*  [notificationVC release];
+     [beintooPrivateNotificationController release];*/
 }
 
 - (void)showPrivateSignupPopover{
@@ -583,7 +590,7 @@
     
     [beintooSignupController popToRootViewControllerAnimated:NO];
 	privateSignupPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooSignupController];
-	[privateSignupPopoverController setPopoverContentSize:CGSizeMake(320, 475)];
+	[privateSignupPopoverController setPopoverContentSize:CGSizeMake(320, 568)];
 	privateSignupPopoverController.delegate = self;
     
 	[popoverController dismissPopoverAnimated:NO];
@@ -620,7 +627,8 @@
 	if ([[animation valueForKey:@"name"] isEqualToString:@"unloadMainPopover"]) {
 		[self.view removeFromSuperview];
         [Beintoo beintooDidDisappear];
-	}
+        
+    }
 	if ([[animation valueForKey:@"name"] isEqualToString:@"loadMainPopover"]) {
 		[Beintoo beintooDidAppear];
 	}
@@ -712,6 +720,7 @@
 - (void)viewDidUnload {
     [super viewDidUnload];
 }
+
 - (void)dealloc {
 	[loginVC release];
 	[loginNavController release];

@@ -52,7 +52,7 @@
 + (void)getSingleVirtualGoodWithDelegate:(id)_delegate;
 + (void)getMultipleVirtualGoodWithDelegate:(id)_delegate;
 
-+ (void)getAd;
++ (void)requestAndDisplayAd;
 
 // Private vgoods
 + (void)getPlayerPrivateVgoods;
@@ -61,6 +61,9 @@
 
 + (void)notifyVGoodGenerationOnUserDelegate;
 + (void)notifyVGoodGenerationErrorOnUserDelegate:(NSDictionary *)_errorDict;
++ (void)notifyAdGenerationOnUserDelegate;
++ (void)notifyAdGenerationErrorOnUserDelegate:(NSDictionary *)_error;
+
 + (void)showNotificationForNothingToDispatch;
 
 - (NSString *)restResource;
@@ -100,6 +103,10 @@
 @optional
 - (void)didGenerateVgood:(BOOL)isVgoodGenerated withResult:(BeintooVgood *)theVgood;
 - (void)didGetAllvGoods:(NSArray *)vGoodList;
+
+- (void)didBeintooGenerateAnAd:(BVirtualGood *)theAd;
+- (void)didBeintooFailToGenerateAnAdWithError:(NSDictionary *)error;
+
 - (void)didSendVGoodAsGift:(BOOL)result;
 - (void)didAcceptVgood;
 

@@ -53,5 +53,6 @@
 @property(nonatomic,retain) IBOutlet UILabel *titleLabel;
 @property(nonatomic,retain) NSData *myImage;
 @property(nonatomic,retain) NSMutableArray *challengeImages;
+@property(nonatomic,assign) BOOL            isFromNotification;
 
 @end

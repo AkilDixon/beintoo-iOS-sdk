@@ -21,8 +21,7 @@
 
 @implementation BeintooProfileVC
 
-
-@synthesize sectionScores,allScores,allContests,allScoresForContest,arrayWithScoresForAllContests,startingOptions, isFromNotification, isFromDirectLaunch;
+@synthesize sectionScores, allScores, allContests, allScoresForContest, arrayWithScoresForAllContests, startingOptions, isFromNotification, isFromDirectLaunch;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
 	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -112,7 +111,7 @@
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
-        [self setContentSizeForViewInPopover:CGSizeMake(320, 436)];
+        [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
     _player.delegate	= self;
 	_user.delegate		= self;
@@ -125,10 +124,12 @@
                                     [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
         profileView.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.height, 450);
         self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, [UIScreen mainScreen].bounds.size.height, 320 - 32);
+        
     }
     else{
         profileView.frame = CGRectMake(0, 0, 320, [UIScreen mainScreen].bounds.size.height);
         self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, 320, [UIScreen mainScreen].bounds.size.height);
+        
     }
     profileView.clipsToBounds = YES;  
     
@@ -252,6 +253,8 @@
         [bedollarsTitle setHidden:NO];
         
         scoresTable.center = CGPointMake(scoresTable.center.x, scoresTable.center.y - 56);
+        scoresTable.frame = CGRectMake(scoresTable.frame.origin.x, scoresTable.frame.origin.y, scoresTable.frame.size.width, scoresTable.frame.size.height + 56);
+        
         [BLoadingView startActivity:profileView];
         [_player getPlayerByUserID:[self.startingOptions objectForKey:@"friendUserID"]];
     }
@@ -298,7 +301,7 @@
         
         [BLoadingView startActivity:profileView];
         [_player getAllScores];
-        if ([BeintooMessage unreadMessagesCount]>0) {
+        if ([BeintooMessage unreadMessagesCount] > 0) {
             [unreadMessagesLabel setHidden:NO];
         }
     }
@@ -462,10 +465,12 @@
 }
 
 - (IBAction)openBalance{	
-    if([Beintoo isUserLogged]){
+    if ([Beintoo isUserLogged]){
         [balanceVC initWithNibName:@"BeintooBalanceVC" bundle:[NSBundle mainBundle] andOptions:nil];
+        
         [self.navigationController pushViewController:balanceVC animated:YES];
-    }else{
+    }
+    else {
         UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
         featureView.tag = 3333;
         [self.view addSubview:featureView];
@@ -477,30 +482,39 @@
 - (IBAction)openMessages{	
     if([Beintoo isUserLogged]){
         [messagesVC initWithNibName:@"BeintooMessagesVC" bundle:[NSBundle mainBundle] andOptions:nil];
+        
         [self.navigationController pushViewController:messagesVC animated:YES];
-    }else{
+    }
+    else
+    {
         UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
         featureView.tag = 3333;
         [self.view addSubview:featureView];
         [self.view bringSubviewToFront:featureView];
-        [featureView release];    }
+        [featureView release];
+    }
 }
 
 - (IBAction)openFriends{	
-    if([Beintoo isUserLogged]){
+    if ([Beintoo isUserLogged]){
+        
         [self.navigationController pushViewController:friendActionsVC animated:YES];
-    }else{
+    }
+    else {
         UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
         featureView.tag = 3333;
         [self.view addSubview:featureView];
         [self.view bringSubviewToFront:featureView];
-        [featureView release];    }    
+        [featureView release];
+    }
 }
 
 - (IBAction)openAlliances{	
-    if([Beintoo isUserLogged]){
+    if ([Beintoo isUserLogged]){
+        
         [self.navigationController pushViewController:alliancesActionVC animated:YES];
-    }else{
+    }
+    else {
         UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
         featureView.tag = 3333;
         [self.view addSubview:featureView];
@@ -510,18 +524,19 @@
 }
 
 - (IBAction)openSettings{	
-    if([Beintoo isUserLogged]){
+    if ([Beintoo isUserLogged]){
         NSString *url;
         if (![Beintoo isOnPrivateSandbox])
             url = [NSString stringWithFormat:@"https://www.beintoo.com/nativeapp/settings.html?apikey=%@&guid=%@&extId=%@", [Beintoo getApiKey], [Beintoo getPlayerID], [Beintoo getUserID]];
         else
-            url = [NSString stringWithFormat:@"http://sandbox.beintoo.com/nativeapp/settings.html?apikey=%@&guid=%@&extId=%@", [Beintoo getApiKey], [Beintoo getPlayerID], [Beintoo getUserID]];
+            url = [NSString stringWithFormat:@"https://sandbox.beintoo.com/nativeapp/settings.html?apikey=%@&guid=%@&extId=%@", [Beintoo getApiKey], [Beintoo getPlayerID], [Beintoo getUserID]];
         
         webview = [[BeintooWebViewVC alloc] initWithNibName:@"BeintooWebViewVC" bundle:[NSBundle mainBundle] urlToOpen:url];
         
         [self.navigationController pushViewController:webview animated:YES];
         [webview release];
-    }else{
+    }
+    else {
         UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
         featureView.tag = 3333;
         [self.view addSubview:featureView];
@@ -541,6 +556,8 @@
 										[self.startingOptions objectForKey:@"friendUserID"],@"fromUserID",nil];
 	NSDictionary *newMsgOptions	= [NSDictionary dictionaryWithObjectsAndKeys:replyOptions,@"replyOptions",nil];
 	[newMessageVC initWithNibName:@"BeintooNewMessageVC" bundle:[NSBundle mainBundle] andOptions:newMsgOptions];
+    if (isFromNotification)
+        newMessageVC.isFromNotification = YES;
 	[self.navigationController pushViewController:newMessageVC animated:YES];
 }
 
@@ -791,9 +808,21 @@
         [Beintoo setLastLoggedPlayers:[(NSArray *)result retain]];        
         [BLoadingView stopActivity]; 
         
-        [Beintoo _launchPrivateSignup];
+        if ([BeintooDevice isiPad]){
+            [Beintoo launchIpadLogin];
+        }
+        else {
+            BeintooLoginVC *signinVC            = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
+            UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
+            UINavigationController *signinNavController = [[UINavigationController alloc] initWithRootViewController:signinVC];
+            [[signinNavController navigationBar] setTintColor:barColor];
+            
+            [self presentModalViewController:signinNavController animated:YES];
+            
+            [signinVC release];
+            [signinNavController release];
         
-        isAlreadyLogging = NO;
+        }
     }	
 }
 
@@ -824,6 +853,8 @@
     
 	if (isAFriendProfile) {
 		scoresTable.center = CGPointMake(scoresTable.center.x, scoresTable.center.y+56);
+        scoresTable.frame = CGRectMake(scoresTable.frame.origin.x, scoresTable.frame.origin.y, scoresTable.frame.size.width, scoresTable.frame.size.height - 56);
+        
 	}
     
     @try {        
@@ -854,8 +885,16 @@
 }
 
 - (void)closeBeintoo{
-    BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];
+    if (isFromNotification){
+        if ([BeintooDevice isiPad]){
+            [Beintoo dismissIpadNotifications];
+        }
+        else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
+    }
+    else
+        [Beintoo dismissBeintoo];
 }
 
 - (void)dealloc {

@@ -44,6 +44,21 @@
     
     [self initTableArrayElements];
     
+    
+    // Keyboard notifications
+	/*[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:)
+												 name:UIKeyboardWillShowNotification object:self.window];
+	
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:)
+												 name:UIKeyboardDidShowNotification object:self.window];*/
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(keyboardWillHide:)
+												 name:UIKeyboardWillHideNotification  object:self.window];
+	[[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(keyboardDidHide:)
+												 name:UIKeyboardDidHideNotification  object:self.window];
+   
+    
     shadowView                 = [[UIView alloc] initWithFrame:self.bounds];
     shadowView.userInteractionEnabled   = YES;
     shadowView.backgroundColor          = [UIColor colorWithWhite:0 alpha:0.6];
@@ -54,15 +69,21 @@
     UIButton* closeBtn      = [UIButton buttonWithType:UIButtonTypeCustom];
     closeBtn.alpha          = 1.0;
     [closeBtn setImage:closeBtnImg forState:UIControlStateNormal];
-    [closeBtn setFrame:CGRectMake(self.frame.size.width - closeBtnOffset, 6 ,
-                                  closeBtnImg.size.width+5, closeBtnImg.size.height+5)];
     
     [closeBtn addTarget:self action:@selector(closeMainView) forControlEvents:UIControlEventTouchUpInside];
     [shadowView addSubview: closeBtn];
     /* ----------------------------------------------------------- */
-        
-    elementsTable                       = [[BTableView alloc] initWithFrame:CGRectMake(15, 15, self.frame.size.width-30, 
-                                                                self.frame.size.height-30) style:UITableViewStylePlain];
+    
+    if ([BeintooDevice isiPad] || [Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown)
+        elementsTable = [[BTableView alloc] initWithFrame:CGRectMake(15, (self.frame.size.height - 115 - 220 - 71)/2, self.frame.size.width-30,
+                                                                115 + 220 + 71) style:UITableViewStylePlain];
+    else
+        elementsTable = [[BTableView alloc] initWithFrame:CGRectMake(15, 10, self.frame.size.width - 30,
+                                                                     self.frame.size.height - 20) style:UITableViewStylePlain];
+    
+    [closeBtn setFrame:CGRectMake(self.frame.size.width - closeBtnOffset, elementsTable.frame.origin.y - 8 ,
+                                  closeBtnImg.size.width+5, closeBtnImg.size.height+5)];
+    
     elementsTable.userInteractionEnabled= YES;
     elementsTable.separatorColor        = [UIColor clearColor];
     elementsTable.backgroundColor       = [UIColor clearColor];
@@ -76,6 +97,9 @@
     UITapGestureRecognizer *singleTapGestureRecognizer = [[UITapGestureRecognizer alloc]
                                                           initWithTarget:self action:@selector(handleSingleTap:)];
     singleTapGestureRecognizer.numberOfTapsRequired = 1;
+    if ([BeintooDevice isiPad])
+        singleTapGestureRecognizer.enabled = NO;
+
     [elementsTable addGestureRecognizer:singleTapGestureRecognizer];
     [singleTapGestureRecognizer release];
     
@@ -131,9 +155,12 @@
 }
 
 - (void)challengeRequestFinishedWithResult:(NSDictionary *)result{
+    
+    [BLoadingView stopActivity];
+    
 	if ([result objectForKey:@"messageID"] != nil) {
         
-        [BLoadingView stopActivity];
+       
 		
 		if ([[result objectForKey:@"messageID"] intValue] == -15) { // CHALLENGE ONGOING
 			UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"challengeOngoing",@"BeintooLocalizable",@"")
@@ -182,7 +209,7 @@
     return 1;
 }
 
--(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     CGFloat cellHeight;
     
     switch (indexPath.row) {
@@ -549,9 +576,7 @@
                 [sentBtn setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
                 [sentBtn setLowColor:[UIColor colorWithRed:89.0/255 green:112.0/255 blue:142.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
                 [sentBtn setTitle:NSLocalizedStringFromTable(@"sendButton",@"BeintooLocalizable",@"") forState:UIControlStateNormal];
-                [sentBtn addTarget:self action:@selector(handleButtonPressed:) forControlEvents:UIControlStateNormal];
-                [sentBtn addTarget:self action:@selector(handleButtonPressed:) forControlEvents:UIControlStateHighlighted];
-                [sentBtn addTarget:self action:@selector(handleButtonPressed:) forControlEvents:UIControlStateSelected];
+                [sentBtn addTarget:self action:@selector(handleButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
                 [sentBtn setButtonTextSize:13];
                 
                 [cell addSubview:sentBtn];
@@ -700,32 +725,86 @@
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
     
-    [UIView beginAnimations:@"keyboardUp" context:nil];
-    [UIView setAnimationDelay:0];
-    [UIView setAnimationDuration:0.2];
-    if (!textFieldAnimationPerformed) {
-        self.center = CGPointMake(self.center.x, self.center.y-80);
-        textFieldAnimationPerformed = YES;
-    }
+    if (!([BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown))){
+        [UIView beginAnimations:@"keyboardUp" context:nil];
+        [UIView setAnimationDelay:0];
+        [UIView setAnimationDuration:0.2];
+        if (!textFieldAnimationPerformed) {
+            self.center = CGPointMake(self.center.x, self.center.y - 100);
+            textFieldAnimationPerformed = YES;
+        }
 
-    [UIView commitAnimations];
-	
+        [UIView commitAnimations];
+    }
+    
 	return YES;
 }
 
+// This won't work on simulator, it will not be directly called, use the keyboardDidHide: delegate to call it
+
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    
+   // if ( !([Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown)){
+        [UIView beginAnimations:@"keyboardDown" context:nil];
+        [UIView setAnimationDelay:0];
+        [UIView setAnimationDuration:0.2];
+        if (textFieldAnimationPerformed) {
+            self.center = CGPointMake(self.center.x, self.center.y + 100);
+            textFieldAnimationPerformed = NO;
+        }
+        [UIView commitAnimations];    
+  //  }
+    
+	[textField resignFirstResponder];
+    [self checkTextFieldInputs];
+        
+	return YES;
+}
+
+- (void)keyboardDidHide:(NSNotification *)aNotification{
+    
+   
     [UIView beginAnimations:@"keyboardDown" context:nil];
     [UIView setAnimationDelay:0];
     [UIView setAnimationDuration:0.2];
     if (textFieldAnimationPerformed) {
-        self.center = CGPointMake(self.center.x, self.center.y+80);
+        self.center = CGPointMake(self.center.x, self.center.y + 100);
         textFieldAnimationPerformed = NO;
     }
-    [UIView commitAnimations];    
+    [UIView commitAnimations];
     
-	[textField resignFirstResponder];
+    
+    if ([bedollarsTextField isFirstResponder]) {
+        [bedollarsTextField resignFirstResponder];
+    }else if([pointsTextField isFirstResponder]) {
+        [pointsTextField resignFirstResponder];
+    }
+    
     [self checkTextFieldInputs];
-	return YES;
+}
+
+- (void)keyboardWillHide:(NSNotification *)aNotification{
+    
+    if (![BeintooDevice isiPad])
+    {
+        [UIView beginAnimations:@"keyboardDown" context:nil];
+        [UIView setAnimationDelay:0];
+        [UIView setAnimationDuration:0.2];
+        if (textFieldAnimationPerformed) {
+            self.center = CGPointMake(self.center.x, self.center.y + 100);
+            textFieldAnimationPerformed = NO;
+        }
+        [UIView commitAnimations];
+        
+        
+        if ([bedollarsTextField isFirstResponder]) {
+            [bedollarsTextField resignFirstResponder];
+        }else if([pointsTextField isFirstResponder]) {
+            [pointsTextField resignFirstResponder];
+        }
+        
+        [self checkTextFieldInputs];
+    }
 }
 
 - (void)checkTextFieldInputs{
@@ -763,7 +842,7 @@
     [UIView setAnimationDelay:0];
     [UIView setAnimationDuration:0.2];
     if (textFieldAnimationPerformed) {
-        self.center = CGPointMake(self.center.x, self.center.y+80);
+        self.center = CGPointMake(self.center.x, self.center.y + 100);
         textFieldAnimationPerformed = NO;
     }
     [UIView commitAnimations];    
@@ -782,7 +861,7 @@
     [UIView setAnimationDelay:0];
     [UIView setAnimationDuration:0.2];
     if (textFieldAnimationPerformed) {
-        self.center = CGPointMake(self.center.x, self.center.y+80);
+        self.center = CGPointMake(self.center.x, self.center.y + 100);
         textFieldAnimationPerformed = NO;
     }
     [UIView commitAnimations];    
@@ -836,6 +915,7 @@
     [challengeSender release];
     [challengeReceiverDef release];
     [challengeContest release];
+    
     [super dealloc];
 }
 
