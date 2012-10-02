@@ -281,22 +281,16 @@
         return YES;
     }
     
-    if(navigationType == UIWebViewNavigationTypeLinkClicked || navigationType == UIWebViewNavigationTypeOther){
+    if(navigationType == UIWebViewNavigationTypeLinkClicked){
         
-        NSString *nexageURLToOpen = @"http://";
-        if ([urlString rangeOfString:nexageURLToOpen].location != NSNotFound) {
-            
-            // We have to open a nexage URL on the webView
-             if (type == REWARD)
-                 [Beintoo getLastGeneratedVGood].getItRealURL = urlString;
-            else if (type == AD)
-                [Beintoo getLastGeneratedAd].getItRealURL = urlString;
-                     
-            [self userClickedOnWebView];
-        }
-        else{
-            [self userDidFailToClickOnWebView];
-        }
+        // We have to open a nexage URL on the webView
+         if (type == REWARD)
+             [Beintoo getLastGeneratedVGood].getItRealURL = urlString;
+        else if (type == AD)
+            [Beintoo getLastGeneratedAd].getItRealURL = urlString;
+                 
+        [self userClickedOnWebView];
+        
         return NO;
     }
     
