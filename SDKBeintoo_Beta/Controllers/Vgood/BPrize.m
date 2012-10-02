@@ -183,7 +183,7 @@
 		self.prizeThumb = [[UIImageView alloc] initWithFrame:CGRectMake(10, 
                                                                         ([self bounds].size.height/2 - 50/2), 
                                                                         [self bounds].size.width-20, 
-                                                                        50)];//self.bounds.size.height- RECOMMENDATION_TEXTHEIGHT)]
+                                                                        50)];
 		[self.prizeThumb setImage:[UIImage imageWithData:imgData]];
 		[self addSubview:self.prizeThumb];
 		[self.prizeThumb release];		
@@ -262,10 +262,8 @@
     NSString *urlString         = [req.URL absoluteString];
     
     if (navigationType == UIWebViewNavigationTypeLinkClicked  && ([urlString rangeOfString:@"#ios-close"].location != NSNotFound)){
-        self.isVisible = NO;
-        self.alpha = 0;
-        [self removeViews];
-        [self removeFromSuperview];
+        
+        [self userDidFailToClickOnWebView];
         
         if (type == REWARD){
             if ([[self delegate] respondsToSelector:@selector(userDidTapOnClosePrize)])
@@ -276,18 +274,18 @@
                 [[self delegate] userDidTapOnCloseAd];
         }
         
+        return NO;
+        
     }
     
     if(navigationType == UIWebViewNavigationTypeOther && ([urlString rangeOfString:@"about:blank"].location != NSNotFound)){
         return YES;
     }
     
-    if(navigationType == UIWebViewNavigationTypeLinkClicked || navigationType == UIWebViewNavigationTypeOther){
+    if(navigationType == UIWebViewNavigationTypeLinkClicked || navigationType == UIWebViewNavigationTypeOther || navigationType == UIWebViewNavigationTypeFormSubmitted){
         
-        NSString *nexageURLToOpen = @"http://";
-        if ([urlString rangeOfString:nexageURLToOpen].location != NSNotFound) {
+        if ([urlString rangeOfString:@"http://"].location != NSNotFound || [urlString rangeOfString:@"https://"].location != NSNotFound) {
             
-            // We have to open a nexage URL on the webView
             if (type == REWARD)
                 [Beintoo getLastGeneratedVGood].getItRealURL = urlString;
             else if (type == AD)
@@ -316,19 +314,33 @@
             [[self delegate] userDidTapOnTheAd];
     }
     
-	self.alpha  = 0;
-    
-	firstTouch = YES;
-    
-    [self removeViews];
-	[self removeFromSuperview];
+    [UIView animateWithDuration:0.4
+                     animations:^(void){
+                         self.alpha  = 0;
+                     }
+                     completion:^(BOOL finished){
+                         firstTouch = YES;
+                         self.isVisible = NO;
+                         
+                         [self removeViews];
+                         [self removeFromSuperview];
+                     }
+    ];
 }
 
 - (void)userDidFailToClickOnWebView{
-	self.alpha = 0;
-	[self removeViews];
-	[self removeFromSuperview];
-    
+    [recommWebView stopLoading];
+    [UIView animateWithDuration:0.4
+                     animations:^(void){
+                         self.alpha  = 0;
+                     }
+                     completion:^(BOOL finished){
+                         self.isVisible = NO;
+                         
+                         [self removeViews];
+                         [self removeFromSuperview];
+                     }
+     ];
 }
 
 - (void)dealloc {
