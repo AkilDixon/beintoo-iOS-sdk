@@ -68,30 +68,7 @@
 	sampleDelegate = [[BeintooDelegate alloc] init];
 	
 	[Beintoo initWithApiKey:your_apikey_here andApiSecret:nil andBeintooSettings:beintooSettings andMainDelegate:sampleDelegate];
-    
-    /*
-     *
-     *  If your app uses Virtual Currency, and you'd like to show your users the products of 
-     *  Markeplaces converted on your Virtual Currency, you first have to store your Virtual
-     *  Currency name, your unique user identifier, and optionally the user's balance (in 
-     *  alternative, you can store this value before launching Beintoo Dashboard or Marketplace).
-     * 
-     *  Use the method
-     * 
-     *  [Beintoo setVirtualCurrencyName:your_virtual_currency_name forUserId:your_user_ID
-     *      withBalance:user's_virtual_currency_balance];
-     *
-     *  Or in alternative, store your Virtual Currency name and the user ID
-     *
-     *  [Beintoo setVirtualCurrencyName:your_virtual_currency_name forUserId:your_user_ID];
-     *
-     *  and wherever or whenever user's virtual currency changes, stored the new balance in Beintoo
-     *  by using the method
-     *
-     *  [Beintoo setVirtualCurrencyBalance:user's_virtual_currency_balance];
-     *
-     */
-    
+     
     /*  UNCOMMENT the line below to use Beintoo in our testing environment sandbox 
 	*   
     *   [Beintoo switchBeintooToSandbox];
@@ -105,7 +82,6 @@
     
 	[beintooSettings release];
 	
-    //[self.window addSubview:viewController.view];
     [self.window setRootViewController:viewController];
     [self.window makeKeyAndVisible];
     

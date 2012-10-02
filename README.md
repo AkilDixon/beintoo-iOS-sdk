@@ -1,4 +1,4 @@
-The Beintoo iOS sdk allows you to integrate Beintoo into your iPhone iOS applications.
+The Beintoo iOS sdk allows you to integrate Beintoo into your iPhone and iPad iOS applications.
 The integration of Beintoo is extremely easy, in few steps you will be able to monetize and start engaging your users with social gaming features.
 
 Getting Started
@@ -13,16 +13,20 @@ To integrate Beintoo with an existing application, follow these steps:
 
  	https://github.com/Beintoo/beintoo-iOS-sdk
 
-2. Did you get your apikey? If not, register your application on Beintoo (http://www.beintoo.com/business). Simply register and create a your app from the developer dashboard to obtain your apikey.
+2. Have you got your apikey? If not, register your application on Beintoo (http://www.beintoo.com/business). Simply register and create a your app from the developer dashboard to obtain your apikey.
 
 3. Copy the entire SDKBeintoo_Beta folder inside your Xcode project. Simply drag and drop the folder into your application's project and check "Copy items into destination group's folder" when Xcode asks.
 	
 	 Make sure that these frameworks are included to respect the library dependencies: 
+	* UIKit.framework
+	* Foundation.framework
+	* CoreGraphics.framework
 	* CoreLocation.framework
  	* QuartzCore.framework
  	* CFNetwork.framework
 	* SystemConfiguration.framework
-	* MapKit.framework
+	* AdSupport.framework
+	* CoreTelephony.framework
 
 4. Import the BeintooApp headers in your initial viewcontroller:
  	

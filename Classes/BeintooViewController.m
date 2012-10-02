@@ -56,24 +56,6 @@
 
     [Beintoo launchBeintoo];
     
-    /*
-     *
-     *  If your app uses Virtual Currency, after setting your Virtual Currency name and your user 
-     *  ID in your App Delegate, you have to save user's Virtual Currency balance
-     *  so, we suggest to use the method
-     *
-     *  [Beintoo launchBeintooOnAppWithVirtualCurrencyBalance:user's_virtual_currency_balance];
-     *
-     *
-     *  Or in alternative, first store user's Virtual Currency balance
-     *
-     *  [Beintoo setVirtualCurrencyBalance:user's_virtual_currency_balance];
-     *
-     *  and then
-     *
-     *  [Beintoo launchBeintoo];
-     *
-     */
 }
 
 - (IBAction)startMarketplace{
@@ -87,24 +69,6 @@
      */
     
     [Beintoo launchBestore];
-    
-    /*
-     *
-     * If your app uses Virtual Currency, you have to save user's Virtual Currency balance
-     * so, we suggest to use the method
-     *
-     * [Beintoo launchBestoreWithVirtualCurrencyBalance:user's_virtual_currency_balance];
-     *
-     *
-     * Or in alternative, first store user's Virtual Currency balance
-     *
-     * [Beintoo setVirtualCurrencyBalance:user's_virtual_currency_balance];
-     *
-     * and then
-     *
-     * [Beintoo launchBestore];
-     *
-     */
     
 }
 

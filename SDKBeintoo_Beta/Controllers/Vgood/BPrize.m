@@ -259,7 +259,7 @@
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
     
     NSMutableURLRequest *req    = (NSMutableURLRequest *)request;
-    NSString *urlString         = [req.URL absoluteString];    
+    NSString *urlString         = [req.URL absoluteString];
     
     if (navigationType == UIWebViewNavigationTypeLinkClicked  && ([urlString rangeOfString:@"#ios-close"].location != NSNotFound)){
         self.isVisible = NO;
@@ -275,29 +275,34 @@
             if ([[self delegate] respondsToSelector:@selector(userDidTapOnCloseAd)])
                 [[self delegate] userDidTapOnCloseAd];
         }
+        
     }
     
     if(navigationType == UIWebViewNavigationTypeOther && ([urlString rangeOfString:@"about:blank"].location != NSNotFound)){
         return YES;
     }
     
-    if(navigationType == UIWebViewNavigationTypeLinkClicked){
+    if(navigationType == UIWebViewNavigationTypeLinkClicked || navigationType == UIWebViewNavigationTypeOther){
         
-        // We have to open a nexage URL on the webView
-         if (type == REWARD)
-             [Beintoo getLastGeneratedVGood].getItRealURL = urlString;
-        else if (type == AD)
-            [Beintoo getLastGeneratedAd].getItRealURL = urlString;
-                 
-        [self userClickedOnWebView];
-        
+        NSString *nexageURLToOpen = @"http://";
+        if ([urlString rangeOfString:nexageURLToOpen].location != NSNotFound) {
+            
+            // We have to open a nexage URL on the webView
+            if (type == REWARD)
+                [Beintoo getLastGeneratedVGood].getItRealURL = urlString;
+            else if (type == AD)
+                [Beintoo getLastGeneratedAd].getItRealURL = urlString;
+            
+            [self userClickedOnWebView];
+        }
+        else{
+            [self userDidFailToClickOnWebView];
+        }
         return NO;
     }
     
     return YES;
 }
-
-// WEB VIEW related methods
 
 - (void)userClickedOnWebView{
     [self setBackgroundColor:[UIColor colorWithRed:0.0/255 green:0.0/255 blue:0.0/255 alpha:0.7]];
