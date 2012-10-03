@@ -20,8 +20,6 @@
 #define BEINTOO_IOS_6_0  60000
 
 #import <UIKit/UIKit.h>
-#import <CoreTelephony/CTCarrier.h>
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import "Beintoo.h"
 
 @interface BeintooViewController : UIViewController <BeintooPlayerDelegate, BeintooVgoodDelegate, BeintooMissionDelegate, BeintooMissionDelegate, BeintooUserDelegate, BeintooAchievementsDelegate, BeintooPrizeDelegate>{

@@ -241,6 +241,126 @@
         }
     }
     
+    [vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:REWARD_GET_AND_DISPLAY_AD_CALLER_ID];
+}
+
++ (void)requestAdWithDeveloperUserGuid:(NSString *)_developerUserGuid{
+    
+    [Beintoo updateUserLocation];
+    
+    BeintooVgood *vgoodService = [Beintoo beintooVgoodService];
+    
+    NSString *res;
+    res = [NSString stringWithFormat:@"%@/display/serve", [Beintoo getDisplayBaseUrl]];
+    
+    CLLocation *loc	 = [Beintoo getUserLocation];
+	if (loc == nil || (loc.coordinate.latitude <= 0.01f && loc.coordinate.latitude >= -0.01f)
+		|| (loc.coordinate.longitude <= 0.01f && loc.coordinate.longitude >= -0.01f)) {
+		res	= [NSString stringWithFormat:@"%@?wrapInJson=true", res];
+	}
+	else
+		res	= [NSString stringWithFormat:@"%@?wrapInJson=true&latitude=%f&longitude=%f&radius=%f",
+               res, loc.coordinate.latitude, loc.coordinate.longitude, loc.horizontalAccuracy];
+    
+    if (_developerUserGuid != nil){
+        res = [res stringByAppendingFormat:@"&developer_user_guid=%@", _developerUserGuid];
+    }
+    
+    NSDictionary *params;
+    
+    if ([Beintoo getPlayerID] != nil){
+        if ([BeintooDevice isASIdentifierSupported]){
+            if ([BeintooNetwork getCarrierBuiltString] != nil){
+                params = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [Beintoo getApiKey], @"apikey",
+                          [BeintooDevice getUDID], @"deviceUUID",
+                          [BeintooDevice getMacAddress], @"macaddress",
+                          [BeintooOpenUDID value], @"openudid",
+                          [BeintooNetwork getCarrierBuiltString], @"carrier",
+                          [BeintooDevice getASIdentifier], @"iosaid",
+                          [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                          [Beintoo getPlayerID], @"guid",
+                          nil];
+            }
+            else {
+                params = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [Beintoo getApiKey], @"apikey",
+                          [BeintooDevice getUDID], @"deviceUUID",
+                          [BeintooDevice getMacAddress], @"macaddress",
+                          [BeintooOpenUDID value], @"openudid",
+                          [BeintooDevice getASIdentifier], @"iosaid",
+                          [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                          [Beintoo getPlayerID], @"guid",
+                          nil];
+            }
+        }
+        else {
+            if ([BeintooNetwork getCarrierBuiltString] != nil){
+                params = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [Beintoo getApiKey], @"apikey",
+                          [BeintooDevice getUDID], @"deviceUUID",
+                          [BeintooDevice getMacAddress], @"macaddress",
+                          [BeintooOpenUDID value], @"openudid",
+                          [BeintooNetwork getCarrierBuiltString], @"carrier",
+                          [Beintoo getPlayerID], @"guid",
+                          nil];
+            }
+            else {
+                params = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [Beintoo getApiKey], @"apikey",
+                          [BeintooDevice getUDID], @"deviceUUID",
+                          [BeintooDevice getMacAddress], @"macaddress",
+                          [BeintooOpenUDID value], @"openudid",
+                          [Beintoo getPlayerID], @"guid",
+                          nil];
+            }
+        }
+    }
+    else {
+        if ([BeintooDevice isASIdentifierSupported]){
+            if ([BeintooNetwork getCarrierBuiltString] != nil){
+                params = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [Beintoo getApiKey], @"apikey",
+                          [BeintooDevice getUDID], @"deviceUUID",
+                          [BeintooDevice getMacAddress], @"macaddress",
+                          [BeintooOpenUDID value], @"openudid",
+                          [BeintooNetwork getCarrierBuiltString], @"carrier",
+                          [BeintooDevice getASIdentifier], @"iosaid",
+                          [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                          nil];
+            }
+            else {
+                params = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [Beintoo getApiKey], @"apikey",
+                          [BeintooDevice getUDID], @"deviceUUID",
+                          [BeintooDevice getMacAddress], @"macaddress",
+                          [BeintooOpenUDID value], @"openudid",
+                          [BeintooDevice getASIdentifier], @"iosaid",
+                          [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
+                          nil];
+            }
+        }
+        else {
+            if ([BeintooNetwork getCarrierBuiltString] != nil){
+                params = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [Beintoo getApiKey], @"apikey",
+                          [BeintooDevice getUDID], @"deviceUUID",
+                          [BeintooDevice getMacAddress], @"macaddress",
+                          [BeintooOpenUDID value], @"openudid",
+                          [BeintooNetwork getCarrierBuiltString], @"carrier",
+                          nil];
+            }
+            else {
+                params = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [Beintoo getApiKey], @"apikey",
+                          [BeintooDevice getUDID], @"deviceUUID",
+                          [BeintooDevice getMacAddress], @"macaddress",
+                          [BeintooOpenUDID value], @"openudid",
+                          nil];
+            }
+        }
+    }
+    
     [vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:REWARD_GET_AD_CALLER_ID];
 }
 
@@ -768,7 +888,8 @@
 #pragma mark parser delegate
 
 - (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID{	
-	switch (callerID){
+    
+    switch (callerID){
             
         case VGOOD_CHECK_COVERAGE_CALLER_ID:
         {
@@ -1062,7 +1183,7 @@
         case REWARD_GET_AD_CALLER_ID: {
             if ([result objectForKey:@"messageID"]) {
                 if ([[result objectForKey:@"messageID"] intValue] == B_NOTHING_TO_DISPATCH_ERRORCODE) {
-                
+                    
                     [Beintoo notifyAdGenerationErrorOnMainDelegate:result];
                     [BeintooVgood notifyAdGenerationErrorOnUserDelegate:result];
                 
@@ -1077,10 +1198,31 @@
             [Beintoo notifyAdGenerationOnMainDelegate];
             [BeintooVgood notifyAdGenerationOnUserDelegate];
             
-          /*  if (callingDelegate != nil)
-                [Beintoo launchAdWithDelegate:callingDelegate];
-            else 
-                [Beintoo launchAd];*/
+        }
+            break;
+            
+        case REWARD_GET_AND_DISPLAY_AD_CALLER_ID: {
+            if ([result objectForKey:@"messageID"]) {
+                if ([[result objectForKey:@"messageID"] intValue] == B_NOTHING_TO_DISPATCH_ERRORCODE) {
+                    
+                    [Beintoo notifyAdGenerationErrorOnMainDelegate:result];
+                    [BeintooVgood notifyAdGenerationErrorOnUserDelegate:result];
+                    
+                    return;
+                }
+            }
+            
+            [adContent setVgoodContent:result];
+            [adContent setTheGood:result];
+            [Beintoo setLastGeneratedAd:adContent];
+            
+            [Beintoo notifyAdGenerationOnMainDelegate];
+            [BeintooVgood notifyAdGenerationOnUserDelegate];
+            
+            if (callingDelegate != nil)
+                [Beintoo displayAdWithDelegate:callingDelegate];
+            else
+                [Beintoo displayAd];
             
         }
             break;

@@ -23,8 +23,11 @@
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <netinet/in.h>
 #import <UIKit/UIKit.h>
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
-#import <CoreTelephony/CTCarrier.h>
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_4_0
+    #import <CoreTelephony/CTTelephonyNetworkInfo.h>
+    #import <CoreTelephony/CTCarrier.h>
+#endif
 
 @interface BeintooNetwork : NSObject {
 	

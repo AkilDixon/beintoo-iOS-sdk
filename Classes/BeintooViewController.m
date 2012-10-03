@@ -29,7 +29,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-	
+    
     //* This is just for testing: simulate other locations where marketplace is enabled
     [Beintoo updateUserLocation];
     
@@ -321,7 +321,6 @@
 
 #else
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    
     [Beintoo changeBeintooOrientation:interfaceOrientation];
     return YES;
 }

@@ -628,14 +628,22 @@
 #pragma mark - ViewActions
 - (void)closeMainView{
     
-    [UIView animateWithDuration:0.5
-                     animations:^(void) {
-                         self.alpha = 0;
-                     }
-                     completion:^(BOOL finished){
-                         [self removeFromSuperview];
-                     }
-     ];
+     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0){
+        [UIView animateWithDuration:0.5
+                         animations:^(void) {
+                             self.alpha = 0;
+                         }
+                         completion:^(BOOL finished){
+                             [self removeFromSuperview];
+                         }
+         ];
+     }
+     else {
+         [UIView beginAnimations:nil context:nil];
+         self.alpha = 0;
+         [self removeFromSuperview];
+         [UIView commitAnimations];
+     }
 }
 
 // Called when the user touch the send-challenge button

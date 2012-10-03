@@ -53,6 +53,7 @@
 + (void)getMultipleVirtualGoodWithDelegate:(id)_delegate;
 
 + (void)requestAndDisplayAdWithDeveloperUserGuid:(NSString *)_developerUserGuid;
++ (void)requestAdWithDeveloperUserGuid:(NSString *)_developerUserGuid;
 
 // Private vgoods
 + (void)getPlayerPrivateVgoods;

@@ -32,6 +32,7 @@
 
 - (void)parsePageAtUrl:(NSString *)URL withHeaders:(NSDictionary *)headers fromCaller:(int)caller{
 
+
     // Dispatching asynchronously a task for the request on the main FIFO queue
     dispatch_async([Beintoo beintooDispatchQueue], ^{
         BeintooLOG(@"resource called %@ with parameters %@ on GET", URL, headers);
@@ -46,7 +47,7 @@
                     caller == ACHIEVEMENTS_GETINCREMENTSCORE_CALLER_ID ||
                     caller == MISSION_GET_CALLER_ID || caller == MISSION_REFUSE_CALLER_ID ||
                     caller == VGOOD_SINGLE_CALLER_ID || caller == VGOOD_SINGLEwDELEG_CALLER_ID ||
-                    caller == VGOOD_MULTIPLE_CALLER_ID || caller == VGOOD_MULTIPLEwDELEG_CALLER_ID || caller == VGOOD_CHECK_COVERAGE_CALLER_ID || caller == VGOOD_IS_ELIGIBLE_FOR_REWARD_CALLER_ID || caller == USER_GIVE_BEDOLLARS_CALLER_ID || caller ==  REWARD_GET_AD_CALLER_ID) {
+                    caller == VGOOD_MULTIPLE_CALLER_ID || caller == VGOOD_MULTIPLEwDELEG_CALLER_ID || caller == VGOOD_CHECK_COVERAGE_CALLER_ID || caller == VGOOD_IS_ELIGIBLE_FOR_REWARD_CALLER_ID || caller == USER_GIVE_BEDOLLARS_CALLER_ID || caller ==  REWARD_GET_AD_CALLER_ID || caller ==  REWARD_GET_AND_DISPLAY_AD_CALLER_ID) {
                     BeintooLOG(@"Beintoo - no connection available, check the last action performed!");
                     
                     [self parsingEnd:nil];
@@ -79,7 +80,7 @@
             }
 
             [self retrievedWebPage:request];
-        }	
+        }
     });
 }
 
@@ -113,7 +114,7 @@
 }
 
 - (void)parsePageAtUrlWithPOST:(NSString *)URL withHeaders:(NSDictionary *)headers withHTTPBody:(NSString *)httpBody fromCaller:(int)caller{
-    
+
     // Dispatching asynchronously a task for the request on the main FIFO queue
     dispatch_async([Beintoo beintooDispatchQueue], ^{
         BeintooLOG(@"resource called %@ with parameters %@ and httpBody %@ on POST",URL,headers,httpBody);
@@ -146,7 +147,6 @@
         
         
         [self retrievedWebPage:request];
-
     });
 }
 

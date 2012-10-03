@@ -139,14 +139,10 @@
             sendChallengeView1.alpha = 0;
             [self addSubview:sendChallengeView1];
             
-            [UIView animateWithDuration:0.3
-                             animations:^(void){
-                                 sendChallengeView1.alpha = 1;
-                             }
-                             completion:^(BOOL finished){
-                                // [sendChallengeDetailsView release];
-                             }
-             ];
+            [UIView beginAnimations:nil context:nil];
+            [UIView setAnimationDuration:0.3];
+            sendChallengeView1.alpha = 1;
+            [UIView commitAnimations];
             
         }
             break;
@@ -163,14 +159,10 @@
             [self addSubview:sendChallengeView2];
             
             
-            [UIView animateWithDuration:0.3
-                             animations:^(void){
-                                 sendChallengeView2.alpha = 1;
-                             }
-                             completion:^(BOOL finished){
-                               //  [sendChallengeDetailsView release];
-                             }
-             ];
+            [UIView beginAnimations:nil context:nil];
+            [UIView setAnimationDuration:0.3];
+            sendChallengeView2.alpha = 1;
+            [UIView commitAnimations];
             
             break;
         }
@@ -187,14 +179,10 @@
             sendChallengeView3.alpha = 0;
             [self addSubview:sendChallengeView3];
             
-            [UIView animateWithDuration:0.3
-                             animations:^(void){
-                                 sendChallengeView3.alpha = 1;
-                             }
-                             completion:^(BOOL finished){
-                                // [sendChallengeDetailsView release];
-                             }
-             ];
+            [UIView beginAnimations:nil context:nil];
+            [UIView setAnimationDuration:0.3];
+            sendChallengeView3.alpha = 1;
+            [UIView commitAnimations];
             
             break;
         }
@@ -270,15 +258,22 @@
 
 - (void)closeMainView{
     
-    [UIView animateWithDuration:0.5
-                    animations:^(void) {
-                            self.alpha = 0;
-                        }
-                     completion:^(BOOL finished){
-                         [[self viewWithTag:BSENDCHALLENGEDETAILS_VIEW_TAG] removeFromSuperview];
-                         [self removeFromSuperview];
-                     }
-     ];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0){
+        [UIView animateWithDuration:0.5
+                        animations:^(void) {
+                                self.alpha = 0;
+                            }
+                         completion:^(BOOL finished){
+                             [[self viewWithTag:BSENDCHALLENGEDETAILS_VIEW_TAG] removeFromSuperview];
+                             [self removeFromSuperview];
+                         }
+         ];
+    }
+    else {
+        self.alpha = 0;
+        [[self viewWithTag:BSENDCHALLENGEDETAILS_VIEW_TAG] removeFromSuperview];
+        [self removeFromSuperview];
+    }
 }
 
 - (void)removeViews {

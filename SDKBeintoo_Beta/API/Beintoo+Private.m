@@ -101,8 +101,9 @@ NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 	beintooInstance->featuresArray          = [[NSArray alloc] init];
 	beintooInstance->notificationView       = [[BMessageAnimated alloc]init];
     beintooInstance->lastRetrievedMission   = [[NSDictionary alloc] init];
+ 
     beintooInstance->beintooDispatchQueue   = dispatch_queue_create("com.Beintoo.beintooQueue", NULL);
-
+    
     //beintooInstance->beintooPanelRootViewController     = [[BeintooVC alloc] init];
     beintooInstance->beintooBestoreVC                   = [[BeintooBestoreVC alloc] init];
     beintooInstance->beintooWalletViewController        = [[BeintooWalletVC alloc] init];
@@ -1539,7 +1540,7 @@ NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 			[_vgoodService acceptGoodWithId:lastVgood.vGoodID];
 		}
 	}
-	[Beintoo sharedInstance]->mainController.view.alpha = 0;
+	//[Beintoo sharedInstance]->mainController.view.alpha = 0;
 	
     if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeAlertDidDisappear)]) {
 		[[_prizeView globalDelegate] beintooPrizeAlertDidDisappear];
@@ -1617,7 +1618,7 @@ NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 		[_mainDelegate beintooAdWillDisappear];
 	}
     
-	[Beintoo sharedInstance]->mainAdController.view.alpha = 0;
+	//[Beintoo sharedInstance]->mainAdController.view.alpha = 0;
 	
     if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooAdDidDisappear)]) {
 		[[_prizeView globalDelegate] beintooAdDidDisappear];
@@ -1702,12 +1703,18 @@ NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 
 + (void)_updateUserLocation{
 	BOOL isLocationServicesEnabled;
+    
 	CLLocationManager *_locationManager = [Beintoo sharedInstance]->locationManager;
 	_locationManager.delegate = [Beintoo sharedInstance];
 	
-	if ([_locationManager respondsToSelector:@selector(locationServicesEnabled)]) {
+	if ([CLLocationManager respondsToSelector:@selector(locationServicesEnabled)]) {
 		isLocationServicesEnabled = [CLLocationManager locationServicesEnabled];	       
 	}
+#if __IPHONE_OS_VERSION_MIN_ALLOWED < BEINTOO_IOS_4_0
+    else {
+        isLocationServicesEnabled = _locationManager.locationServicesEnabled;
+	}
+#endif
     
     if(!isLocationServicesEnabled){
         BeintooLOG(@"Beintoo - User has not accepted to use location services.");

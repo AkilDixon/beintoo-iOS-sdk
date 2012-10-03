@@ -146,6 +146,8 @@
     
     if ([[animation valueForKey:@"name"] isEqualToString:@"loadAd"]) {
 		[Beintoo adControllerDidAppear];
+        
+        [Beintoo setLastGeneratedAd:nil];
 	}
     
     if ([[animation valueForKey:@"name"] isEqualToString:@"unloadVgood"]) {

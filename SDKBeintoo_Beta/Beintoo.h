@@ -153,8 +153,9 @@ extern NSString *BNSDefIsUserLogged;
     BOOL                forceTryBeintoo;
     BOOL                tryBeintooImageTypeReward;
     BOOL                statusBarHiddenOnApp;
-    
+
     dispatch_queue_t                beintooDispatchQueue;
+
     NSInteger                       notificationPosition;
 	CLLocation                      *userLocation;
 	CLLocationManager               *locationManager;
@@ -223,6 +224,8 @@ extern NSString *BNSDefIsUserLogged;
 + (void)launchAchievements;
 + (void)launchPrize;
 + (void)launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate;
++ (void)displayAd;
++ (void)displayAdWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate;
 + (void)launchAd;
 + (void)launchAdWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate;
 + (void)launchMission __attribute__((deprecated));
@@ -338,6 +341,8 @@ extern NSString *BNSDefIsUserLogged;
 + (void)notifyAdGenerationErrorOnMainDelegate:(NSDictionary *)_error;
 
 + (void)dismissSignup;
+
++ (BOOL)isAdReady;
 
 @end
 

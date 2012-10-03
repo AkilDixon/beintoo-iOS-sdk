@@ -133,18 +133,21 @@
 	beintooPlayer.delegate  = self;
 	
     // ----------- Setup notification view to receive single taps --------------
-    UITapGestureRecognizer *singleTapGestureRecognizer = [[UITapGestureRecognizer alloc]
-                                                          initWithTarget:self action:@selector(handleNotificationSingleTap:)];
-    singleTapGestureRecognizer.numberOfTapsRequired = 1;
-    [notificationView addGestureRecognizer:singleTapGestureRecognizer];
-    [singleTapGestureRecognizer release];
     
-    UITapGestureRecognizer *singleTapGestureRecognizerLand = [[UITapGestureRecognizer alloc]
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0){
+        UITapGestureRecognizer *singleTapGestureRecognizer = [[UITapGestureRecognizer alloc]
                                                               initWithTarget:self action:@selector(handleNotificationSingleTap:)];
-    singleTapGestureRecognizerLand.numberOfTapsRequired = 1;
-    [notificationViewLandscape addGestureRecognizer:singleTapGestureRecognizerLand];
-    [singleTapGestureRecognizerLand release];
-    
+        singleTapGestureRecognizer.numberOfTapsRequired = 1;
+        [notificationView addGestureRecognizer:singleTapGestureRecognizer];
+        [singleTapGestureRecognizer release];
+        
+        UITapGestureRecognizer *singleTapGestureRecognizerLand = [[UITapGestureRecognizer alloc]
+                                                                  initWithTarget:self action:@selector(handleNotificationSingleTap:)];
+        singleTapGestureRecognizerLand.numberOfTapsRequired = 1;
+        [notificationViewLandscape addGestureRecognizer:singleTapGestureRecognizerLand];
+        [singleTapGestureRecognizerLand release];
+        
+    }
 	// ----------- ViewControllers initialization ------------
 	self.loginVC            = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
 	beintooProfileVC        = [[BeintooProfileVC alloc]initWithNibName:@"BeintooProfileVC" bundle:[NSBundle mainBundle]];
@@ -375,6 +378,11 @@
         notificationNumbersLabel.text = @"0";
         notificationNumbersLabelLandscape.text = @"0";
     }
+    
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0)
+        toolBar.hidden = NO;
+    else 
+        toolBar.hidden = YES;
 }
 
 #pragma mark - Taps Gesture 
@@ -519,6 +527,11 @@
         }
         [homeTable reloadData];
     }
+    
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0)
+        toolBar.hidden = NO;
+    else 
+        toolBar.hidden = YES;
 }
 
 - (void)signupClosed{

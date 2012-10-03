@@ -539,28 +539,46 @@
 	[forgotPasswordButton setTitle:NSLocalizedStringFromTable(@"forgotPasswordSendEmail",@"BeintooLocalizable",@"") forState:UIControlStateNormal];
 	[forgotPasswordButton setButtonTextSize:18];
     
-    [UIView animateWithDuration:0.5
-					 animations:^(void) {
-						forgotPasswordBase.alpha = 1.0;
-					 } 
-					 completion:^(BOOL finished) {
-                        forgotPasswordBase.frame = self.view.frame;
-                        forgotPasswordView.frame = CGRectMake((forgotPasswordBase.frame.size.width - forgotPasswordView.frame.size.width)/2, (forgotPasswordBase.frame.size.height - forgotPasswordView.frame.size.height)/2, forgotPasswordView.frame.size.width, forgotPasswordView.frame.size.height);
-					 }];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0){
+        [UIView animateWithDuration:0.5
+                         animations:^(void) {
+                            forgotPasswordBase.alpha = 1.0;
+                         } 
+                         completion:^(BOOL finished) {
+                            forgotPasswordBase.frame = self.view.frame;
+                            forgotPasswordView.frame = CGRectMake((forgotPasswordBase.frame.size.width - forgotPasswordView.frame.size.width)/2, (forgotPasswordBase.frame.size.height - forgotPasswordView.frame.size.height)/2, forgotPasswordView.frame.size.width, forgotPasswordView.frame.size.height);
+                         }];
+    }
+    else {
+        [UIView beginAnimations:nil context:nil];
+        forgotPasswordBase.alpha = 1.0;
+        forgotPasswordBase.frame = self.view.frame;
+        forgotPasswordView.frame = CGRectMake((forgotPasswordBase.frame.size.width - forgotPasswordView.frame.size.width)/2, (forgotPasswordBase.frame.size.height - forgotPasswordView.frame.size.height)/2, forgotPasswordView.frame.size.width, forgotPasswordView.frame.size.height);
+        [UIView commitAnimations];    
+    }
 }
 
 - (IBAction)closeForgotView:(id)sender{
     if ([forgotPasswordTextField isFirstResponder])
         [forgotPasswordTextField resignFirstResponder];
         
-    [UIView animateWithDuration:0.5
-					 animations:^(void) {
-                         forgotPasswordBase.alpha = 0.0;
-					 } 
-					 completion:^(BOOL finished) {
-                        forgotPasswordBase.frame = self.view.frame;
-                        forgotPasswordView.frame = CGRectMake((forgotPasswordBase.frame.size.width - forgotPasswordView.frame.size.width)/2, (forgotPasswordBase.frame.size.height - forgotPasswordView.frame.size.height)/2, forgotPasswordView.frame.size.width, forgotPasswordView.frame.size.height);
-					 }];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0){
+        [UIView animateWithDuration:0.5
+                         animations:^(void) {
+                             forgotPasswordBase.alpha = 0.0;
+                         } 
+                         completion:^(BOOL finished) {
+                            forgotPasswordBase.frame = self.view.frame;
+                            forgotPasswordView.frame = CGRectMake((forgotPasswordBase.frame.size.width - forgotPasswordView.frame.size.width)/2, (forgotPasswordBase.frame.size.height - forgotPasswordView.frame.size.height)/2, forgotPasswordView.frame.size.width, forgotPasswordView.frame.size.height);
+                         }];
+    }
+    else {
+        [UIView beginAnimations:nil context:nil];
+        forgotPasswordBase.alpha = 0.0;
+        forgotPasswordBase.frame = self.view.frame;
+        forgotPasswordView.frame = CGRectMake((forgotPasswordBase.frame.size.width - forgotPasswordView.frame.size.width)/2, (forgotPasswordBase.frame.size.height - forgotPasswordView.frame.size.height)/2, forgotPasswordView.frame.size.width, forgotPasswordView.frame.size.height);
+        [UIView commitAnimations]; 
+    }
 }
 
 - (IBAction)forgotPassword:(id)sender{

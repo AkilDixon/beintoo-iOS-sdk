@@ -14,8 +14,7 @@
 		2899E5220DE3E06400AC0155 /* BeintooViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2899E5210DE3E06400AC0155 /* BeintooViewController.xib */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		28D7ACF80DDB3853001CB0EB /* BeintooViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* BeintooViewController.m */; };
-		5C1ADD501611B19C00035B23 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C1ADD4E1611B18800035B23 /* AdSupport.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		5C1ADD5416134CA900035B23 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 701C876A1395207B00F87777 /* CoreTelephony.framework */; };
+		5C1ADD5416134CA900035B23 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 701C876A1395207B00F87777 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5C26A19E1603270100A0F607 /* profile_balance.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C26A1981603270000A0F607 /* profile_balance.png */; };
 		5C26A19F1603270100A0F607 /* profile_balance@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C26A1991603270000A0F607 /* profile_balance@2x.png */; };
 		5C26A1A21603270100A0F607 /* profile_messages.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C26A19C1603270100A0F607 /* profile_messages.png */; };
@@ -52,6 +51,7 @@
 		5C6B162D15208E3100FA20B8 /* BeintooBestoreVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C6B162B15208E3100FA20B8 /* BeintooBestoreVC.xib */; };
 		5C6DC47616147C5B008DB822 /* BeintooFriendsListVC.h in Resources */ = {isa = PBXBuildFile; fileRef = 5C6DC47516147C54008DB822 /* BeintooFriendsListVC.h */; };
 		5C881A761610B301007F85C3 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CA4A8C914E5797000FA6CAC /* icon@2x.png */; };
+		5C8E110A161C866D0094C5D1 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C8E1109161C866D0094C5D1 /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5C903FDD14E3D1AB00788F4F /* BPinAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C903FD414E3D1AB00788F4F /* BPinAnnotation.m */; };
 		5C903FE014E3D20F00788F4F /* BeintooBestore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C903FDF14E3D20F00788F4F /* BeintooBestore.m */; };
 		5C903FE314E3D30B00788F4F /* BImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C903FE214E3D30B00788F4F /* BImageCache.m */; };
@@ -279,7 +279,6 @@
 		28D7ACF60DDB3853001CB0EB /* BeintooViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooViewController.h; sourceTree = "<group>"; };
 		28D7ACF70DDB3853001CB0EB /* BeintooViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeintooViewController.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* Beintoo_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Beintoo_Prefix.pch; sourceTree = "<group>"; };
-		5C1ADD4E1611B18800035B23 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		5C1ADD511611EAD300035B23 /* ko */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/BeintooLocalizable.strings; sourceTree = "<group>"; };
 		5C26A1981603270000A0F607 /* profile_balance.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = profile_balance.png; sourceTree = "<group>"; };
 		5C26A1991603270000A0F607 /* profile_balance@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile_balance@2x.png"; sourceTree = "<group>"; };
@@ -318,6 +317,7 @@
 		5C6B162A15208E3100FA20B8 /* BeintooBestoreVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeintooBestoreVC.m; sourceTree = "<group>"; };
 		5C6B162B15208E3100FA20B8 /* BeintooBestoreVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BeintooBestoreVC.xib; sourceTree = "<group>"; };
 		5C6DC47516147C54008DB822 /* BeintooFriendsListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooFriendsListVC.h; sourceTree = "<group>"; };
+		5C8E1109161C866D0094C5D1 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		5C903FD314E3D1AB00788F4F /* BPinAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BPinAnnotation.h; path = ../Controllers/BeintooPanel/BPinAnnotation.h; sourceTree = "<group>"; };
 		5C903FD414E3D1AB00788F4F /* BPinAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BPinAnnotation.m; path = ../Controllers/BeintooPanel/BPinAnnotation.m; sourceTree = "<group>"; };
 		5C903FDE14E3D20F00788F4F /* BeintooBestore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooBestore.h; sourceTree = "<group>"; };
@@ -636,8 +636,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C8E110A161C866D0094C5D1 /* AdSupport.framework in Frameworks */,
 				5C1ADD5416134CA900035B23 /* CoreTelephony.framework in Frameworks */,
-				5C1ADD501611B19C00035B23 /* AdSupport.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -709,7 +709,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5C1ADD4E1611B18800035B23 /* AdSupport.framework */,
+				5C8E1109161C866D0094C5D1 /* AdSupport.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				288765A40DF7441C002DB57D /* CoreGraphics.framework */,
@@ -1537,8 +1537,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BEINTOO_DEBUG = 1;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1548,8 +1548,10 @@
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "Resources/Beintoo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-weak-lSystem";
 				PRODUCT_NAME = "$(TARGET_NAME) ";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1569,7 +1571,7 @@
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "Resources/Beintoo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-weak-lSystem";
 				PRODUCT_NAME = "$(TARGET_NAME) ";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1580,8 +1582,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -1589,6 +1591,8 @@
 				INFOPLIST_FILE = "Beintoo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_LDFLAGS = "";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_LDFLAGS = "";

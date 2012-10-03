@@ -67,7 +67,7 @@
 
 	sampleDelegate = [[BeintooDelegate alloc] init];
 	
-	[Beintoo initWithApiKey:your_apikey_here andApiSecret:nil andBeintooSettings:beintooSettings andMainDelegate:sampleDelegate];
+    [Beintoo initWithApiKey:your_apikey_here andApiSecret:nil andBeintooSettings:beintooSettings andMainDelegate:sampleDelegate];
     
     /*  UNCOMMENT the line below to use Beintoo in our testing environment sandbox 
 	*   
@@ -81,8 +81,12 @@
     */
     
 	[beintooSettings release];
-	
-    [self.window setRootViewController:viewController];
+    
+    if( [[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0)
+        [self.window setRootViewController:viewController];
+    else 
+        [self.window addSubview:viewController.view];
+    
     [self.window makeKeyAndVisible];
     
     return YES;

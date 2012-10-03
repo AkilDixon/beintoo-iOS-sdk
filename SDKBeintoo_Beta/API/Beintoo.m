@@ -52,7 +52,8 @@ NSString *BNSDefIsUserLogged;
 
 	// Beintoo main controllers initialization
 	//[Beintoo initMainNavigationController];
-	[Beintoo initMainController];
+	
+    [Beintoo initMainController];
 	[Beintoo initVgoodNavigationController];
 	[Beintoo initiPadController];
 	
@@ -112,6 +113,14 @@ NSString *BNSDefIsUserLogged;
 
 + (void)launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate{
     [Beintoo _launchPrizeOnAppWithDelegate:_beintooPrizeDelegate];
+}
+
++ (void)displayAd{
+	[Beintoo _launchAd];
+}
+
++ (void)displayAdWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate{
+    [Beintoo _launchAdWithDelegate:_beintooPrizeDelegate];
 }
 
 + (void)launchAd{
@@ -236,11 +245,17 @@ NSString *BNSDefIsUserLogged;
 
 + (BOOL)userHasAllowedLocationServices{
 	
-    BOOL isLocationServicesEnabled;
-	
-	if ([CLLocationManager respondsToSelector:@selector(locationServicesEnabled)]) {
+    CLLocationManager *_locationManager = [Beintoo sharedInstance]->locationManager;
+	BOOL isLocationServicesEnabled;
+    
+    if ([CLLocationManager respondsToSelector:@selector(locationServicesEnabled)]) {
 		isLocationServicesEnabled = [CLLocationManager locationServicesEnabled];	
 	}
+#if __IPHONE_OS_VERSION_MIN_ALLOWED < BEINTOO_IOS_4_0
+    else {
+		isLocationServicesEnabled = _locationManager.locationServicesEnabled;
+	}
+#endif
     
 	return isLocationServicesEnabled;
 }
@@ -367,6 +382,13 @@ NSString *BNSDefIsUserLogged;
 	@synchronized(self){
 		return [[Beintoo sharedInstance]->lastGeneratedAd retain];
 	}
+}
+
++ (BOOL)isAdReady{
+    if ([Beintoo sharedInstance]->lastGeneratedAd != nil)
+        return YES;
+    else
+        return NO;
 }
 
 #pragma mark - Thresholds

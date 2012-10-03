@@ -260,10 +260,10 @@
     
     NSMutableURLRequest *req    = (NSMutableURLRequest *)request;
     NSString *urlString         = [req.URL absoluteString];
+    NSLog(@"url %@", urlString);
+    NSLog(@"navtype %i", navigationType);
     
     if (navigationType == UIWebViewNavigationTypeLinkClicked  && ([urlString rangeOfString:@"#ios-close"].location != NSNotFound)){
-        
-        [self userDidFailToClickOnWebView];
         
         if (type == REWARD){
             if ([[self delegate] respondsToSelector:@selector(userDidTapOnClosePrize)])
@@ -274,6 +274,8 @@
                 [[self delegate] userDidTapOnCloseAd];
         }
         
+        [self userDidFailToClickOnWebView];
+        
         return NO;
         
     }
@@ -282,20 +284,20 @@
         return YES;
     }
     
-    if(navigationType == UIWebViewNavigationTypeLinkClicked || navigationType == UIWebViewNavigationTypeOther || navigationType == UIWebViewNavigationTypeFormSubmitted){
+    if(type == REWARD && (navigationType == UIWebViewNavigationTypeLinkClicked || navigationType == UIWebViewNavigationTypeFormSubmitted)){
         
-        if ([urlString rangeOfString:@"http://"].location != NSNotFound || [urlString rangeOfString:@"https://"].location != NSNotFound) {
+        [Beintoo getLastGeneratedVGood].getItRealURL = urlString;
             
-            if (type == REWARD)
-                [Beintoo getLastGeneratedVGood].getItRealURL = urlString;
-            else if (type == AD)
-                [Beintoo getLastGeneratedAd].getItRealURL = urlString;
-            
-            [self userClickedOnWebView];
-        }
-        else{
-            [self userDidFailToClickOnWebView];
-        }
+        [self userClickedOnWebView];
+        
+        return NO;
+    }
+    
+    if(type == AD && (navigationType == UIWebViewNavigationTypeLinkClicked || navigationType == UIWebViewNavigationTypeFormSubmitted)){
+        
+        [Beintoo getLastGeneratedAd].getItRealURL = urlString;
+        [self userClickedOnWebView];
+       
         return NO;
     }
     
@@ -314,33 +316,60 @@
             [[self delegate] userDidTapOnTheAd];
     }
     
-    [UIView animateWithDuration:0.4
-                     animations:^(void){
-                         self.alpha  = 0;
-                     }
-                     completion:^(BOOL finished){
-                         firstTouch = YES;
-                         self.isVisible = NO;
-                         
-                         [self removeViews];
-                         [self removeFromSuperview];
-                     }
-    ];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0){
+        [UIView animateWithDuration:0.4
+                         animations:^(void){
+                             self.alpha  = 0;
+                         }
+                         completion:^(BOOL finished){
+                             firstTouch = YES;
+                             self.isVisible = NO;
+                             
+                             [self removeViews];
+                             [self removeFromSuperview];
+                             
+                             [Beintoo setLastGeneratedAd:nil];
+                         }
+        ];
+    }
+    else {
+        firstTouch = YES;
+        self.isVisible = NO;
+        
+        [self removeViews];
+        [self removeFromSuperview];
+        
+        [Beintoo setLastGeneratedAd:nil];
+    }
 }
 
 - (void)userDidFailToClickOnWebView{
     [recommWebView stopLoading];
-    [UIView animateWithDuration:0.4
-                     animations:^(void){
-                         self.alpha  = 0;
-                     }
-                     completion:^(BOOL finished){
-                         self.isVisible = NO;
-                         
-                         [self removeViews];
-                         [self removeFromSuperview];
-                     }
-     ];
+    
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0){
+        [UIView animateWithDuration:0.4
+                         animations:^(void){
+                             self.alpha  = 0;
+                         }
+                         completion:^(BOOL finished){
+                             self.isVisible = NO;
+                             
+                             [self removeViews];
+                             [self removeFromSuperview];
+                             
+                             [Beintoo setLastGeneratedAd:nil];
+                         }
+         ];
+    }
+    else {
+        self.alpha  = 0;
+        self.isVisible = NO;
+        
+        [self removeViews];
+        [self removeFromSuperview];
+        
+        [Beintoo setLastGeneratedAd:nil];
+    }
 }
 
 - (void)dealloc {

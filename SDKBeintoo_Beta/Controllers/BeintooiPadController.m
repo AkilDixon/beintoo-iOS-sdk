@@ -644,6 +644,8 @@
 	if ([[animation valueForKey:@"name"] isEqualToString:@"unloadAdPopover"]) {
 		[self.view removeFromSuperview];
 		[Beintoo adControllerDidDisappear];
+        
+        [Beintoo setLastGeneratedAd:nil];
 	}
 	if ([[animation valueForKey:@"name"] isEqualToString:@"loadAdPopover"]) {
 		[Beintoo adControllerDidAppear];
