@@ -1077,10 +1077,10 @@
             [Beintoo notifyAdGenerationOnMainDelegate];
             [BeintooVgood notifyAdGenerationOnUserDelegate];
             
-            if (callingDelegate != nil)
+          /*  if (callingDelegate != nil)
                 [Beintoo launchAdWithDelegate:callingDelegate];
             else 
-                [Beintoo launchAd];
+                [Beintoo launchAd];*/
             
         }
             break;

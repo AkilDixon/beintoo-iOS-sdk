@@ -17,7 +17,6 @@
 #import "BeintooDevice.h"
 #import "Beintoo.h"
 #import "UIDevice+IdentifierAddition.h"
-#import <AdSupport/AdSupport.h>
 
 @implementation BeintooDevice
 
@@ -75,14 +74,20 @@
     return hour;
 }
 
+
 + (NSString *)getASIdentifier{
+    #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
     if ([ASIdentifierManager sharedManager])
         return [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
     else
         return nil;
+    #else
+        return nil;
+    #endif
 }
 
 + (NSString *)isASIdentifierEnabledByUser{
+    #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
     if ([ASIdentifierManager sharedManager]){
         if ([[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled] == TRUE)
             return @"true";
@@ -91,14 +96,22 @@
     }
     else
         return 0;
+    #else
+    return 0;
+    #endif
 }
 
 + (BOOL)isASIdentifierSupported{
+    #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
     if ([ASIdentifierManager sharedManager])
         return TRUE;
     else
         return FALSE;
+    #else
+        return FALSE;
+    #endif
 }
+
 
 + (NSString *)getSystemVersion{
     if ([[UIDevice currentDevice] respondsToSelector:@selector(systemVersion)])

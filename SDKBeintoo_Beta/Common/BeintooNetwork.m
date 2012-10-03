@@ -16,7 +16,6 @@
 
 #import "BeintooNetwork.h"
 
-
 @implementation BeintooNetwork
 
 #pragma mark ConnectionAvailability check
@@ -98,15 +97,19 @@
 }
 
 + (NSString *)getCarrierBuiltString{
-    CTTelephonyNetworkInfo *netinfo = [[CTTelephonyNetworkInfo alloc] init];
-    CTCarrier *carrier = [netinfo subscriberCellularProvider];
-    if ([carrier mobileCountryCode] && [carrier mobileNetworkCode]){
-        NSString *carrierInfos = [NSString stringWithFormat:@"%@%@", [carrier mobileCountryCode], [carrier mobileNetworkCode]];
-        
-        return carrierInfos;
-    }
-    else
+    #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_4_0
+        CTTelephonyNetworkInfo *netinfo = [[CTTelephonyNetworkInfo alloc] init];
+        CTCarrier *carrier = [netinfo subscriberCellularProvider];
+        if ([carrier mobileCountryCode] && [carrier mobileNetworkCode]){
+            NSString *carrierInfos = [NSString stringWithFormat:@"%@%@", [carrier mobileCountryCode], [carrier mobileNetworkCode]];
+            
+            return carrierInfos;
+        }
+        else
+            return nil;
+    #else
         return nil;
+    #endif
 }
 
 - (void)dealloc {

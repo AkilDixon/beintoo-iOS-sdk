@@ -1158,7 +1158,7 @@ NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 	
 	if (![BeintooDevice isiPad]) { // iPhone-iPodTouch
 		BeintooMainController *_mainController = [Beintoo sharedInstance]->mainAdController;
-		[_mainController hideVgoodNavigationController];
+		[_mainController hideAdNavigationController];
 	}
 	else {  // ----------- iPad
 		

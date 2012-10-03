@@ -304,26 +304,28 @@
     NSLog(@"Main View Controller --- Tapped on Prize");
 }
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
+
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration{
     
     [Beintoo changeBeintooOrientation:toInterfaceOrientation];
 }
 
+- (BOOL)shouldAutorotate{
+    return YES;
+}
+
+- (NSUInteger)supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskAll;
+}
+
+#else
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     
     [Beintoo changeBeintooOrientation:interfaceOrientation];
     return YES;
 }
-
-- (BOOL)shouldAutorotate {
-    
-    return YES;
-}
-
-- (NSUInteger)supportedInterfaceOrientations {
-    
-    return UIInterfaceOrientationMaskAll;
-}
+#endif
 
 - (void)buttonsCustomization{
     

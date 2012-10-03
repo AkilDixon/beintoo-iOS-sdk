@@ -14,11 +14,20 @@
  * limitations under the License.
  ******************************************************************************/
 
+#define BEINTOO_IOS_4_0  40000
+#define BEINTOO_IOS_5_0  50000
+#define BEINTOO_IOS_5_1  50100
+#define BEINTOO_IOS_6_0  60000
+
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import <QuartzCore/QuartzCore.h>
-#import <AdSupport/AdSupport.h>
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
+    #import <AdSupport/AdSupport.h>
+#endif
+
 #import "BeintooPlayer.h"
 #import "BeintooVC.h"
 #import "BeintooVgood.h"
