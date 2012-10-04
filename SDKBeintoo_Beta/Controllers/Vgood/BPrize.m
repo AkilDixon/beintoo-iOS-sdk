@@ -260,8 +260,6 @@
     
     NSMutableURLRequest *req    = (NSMutableURLRequest *)request;
     NSString *urlString         = [req.URL absoluteString];
-    NSLog(@"url %@", urlString);
-    NSLog(@"navtype %i", navigationType);
     
     if (navigationType == UIWebViewNavigationTypeLinkClicked  && ([urlString rangeOfString:@"#ios-close"].location != NSNotFound)){
         

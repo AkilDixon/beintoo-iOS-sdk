@@ -14,7 +14,7 @@
 		2899E5220DE3E06400AC0155 /* BeintooViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2899E5210DE3E06400AC0155 /* BeintooViewController.xib */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		28D7ACF80DDB3853001CB0EB /* BeintooViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* BeintooViewController.m */; };
-		5C1ADD5416134CA900035B23 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 701C876A1395207B00F87777 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		5C1ADD5416134CA900035B23 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 701C876A1395207B00F87777 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		5C26A19E1603270100A0F607 /* profile_balance.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C26A1981603270000A0F607 /* profile_balance.png */; };
 		5C26A19F1603270100A0F607 /* profile_balance@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C26A1991603270000A0F607 /* profile_balance@2x.png */; };
 		5C26A1A21603270100A0F607 /* profile_messages.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C26A19C1603270100A0F607 /* profile_messages.png */; };
@@ -51,7 +51,7 @@
 		5C6B162D15208E3100FA20B8 /* BeintooBestoreVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C6B162B15208E3100FA20B8 /* BeintooBestoreVC.xib */; };
 		5C6DC47616147C5B008DB822 /* BeintooFriendsListVC.h in Resources */ = {isa = PBXBuildFile; fileRef = 5C6DC47516147C54008DB822 /* BeintooFriendsListVC.h */; };
 		5C881A761610B301007F85C3 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CA4A8C914E5797000FA6CAC /* icon@2x.png */; };
-		5C8E110A161C866D0094C5D1 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C8E1109161C866D0094C5D1 /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		5C8E110A161C866D0094C5D1 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C8E1109161C866D0094C5D1 /* AdSupport.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		5C903FDD14E3D1AB00788F4F /* BPinAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C903FD414E3D1AB00788F4F /* BPinAnnotation.m */; };
 		5C903FE014E3D20F00788F4F /* BeintooBestore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C903FDF14E3D20F00788F4F /* BeintooBestore.m */; };
 		5C903FE314E3D30B00788F4F /* BImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C903FE214E3D30B00788F4F /* BImageCache.m */; };
@@ -66,6 +66,7 @@
 		5C90402A14E3E8EB00788F4F /* new_message_button_on.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C90401914E3E8EB00788F4F /* new_message_button_on.png */; };
 		5C90402B14E3E8EB00788F4F /* new_message_button_on@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C90401A14E3E8EB00788F4F /* new_message_button_on@2x.png */; };
 		5CA4A8CA14E5797000FA6CAC /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CA4A8C814E5797000FA6CAC /* icon.png */; };
+		5CA6FA5F161D7C4A00D7229E /* icon-iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CA6FA5E161D7C4A00D7229E /* icon-iPad.png */; };
 		5CA76DE015F7A66300695DC3 /* BeintooOpenUDID.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA76DDF15F7A66300695DC3 /* BeintooOpenUDID.m */; };
 		5CA76DE915F7AA2D00695DC3 /* BeintooDirectLoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA76DE715F7AA2D00695DC3 /* BeintooDirectLoginVC.m */; };
 		5CA76DEA15F7AA2D00695DC3 /* BeintooDirectLoginVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5CA76DE815F7AA2D00695DC3 /* BeintooDirectLoginVC.xib */; };
@@ -337,6 +338,7 @@
 		5C90401A14E3E8EB00788F4F /* new_message_button_on@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "new_message_button_on@2x.png"; sourceTree = "<group>"; };
 		5CA4A8C814E5797000FA6CAC /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		5CA4A8C914E5797000FA6CAC /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
+		5CA6FA5E161D7C4A00D7229E /* icon-iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-iPad.png"; sourceTree = "<group>"; };
 		5CA76DDE15F7A66300695DC3 /* BeintooOpenUDID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooOpenUDID.h; sourceTree = "<group>"; };
 		5CA76DDF15F7A66300695DC3 /* BeintooOpenUDID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeintooOpenUDID.m; sourceTree = "<group>"; };
 		5CA76DE615F7AA2C00695DC3 /* BeintooDirectLoginVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooDirectLoginVC.h; sourceTree = "<group>"; };
@@ -675,6 +677,9 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				5CA6FA5E161D7C4A00D7229E /* icon-iPad.png */,
+				5CA4A8C914E5797000FA6CAC /* icon@2x.png */,
+				5CA4A8C814E5797000FA6CAC /* icon.png */,
 				5CAC15931615F68F00295E44 /* Default-568h@2x.png */,
 				70679F5A139E1C2A00457107 /* SDKBeintoo_Beta */,
 				080E96DDFE201D6D7F000001 /* Classes */,
@@ -698,7 +703,6 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				5CA4A8C714E5795800FA6CAC /* icons */,
 				2899E5210DE3E06400AC0155 /* BeintooViewController.xib */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* Beintoo-Info.plist */,
@@ -720,15 +724,6 @@
 				701C876A1395207B00F87777 /* CoreTelephony.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		5CA4A8C714E5795800FA6CAC /* icons */ = {
-			isa = PBXGroup;
-			children = (
-				5CA4A8C814E5797000FA6CAC /* icon.png */,
-				5CA4A8C914E5797000FA6CAC /* icon@2x.png */,
-			);
-			name = icons;
 			sourceTree = "<group>";
 		};
 		700734CB13A78B39009288D5 /* xib */ = {
@@ -1405,6 +1400,7 @@
 				5C881A761610B301007F85C3 /* icon@2x.png in Resources */,
 				5C6DC47616147C5B008DB822 /* BeintooFriendsListVC.h in Resources */,
 				5CAC15941615F69000295E44 /* Default-568h@2x.png in Resources */,
+				5CA6FA5F161D7C4A00D7229E /* icon-iPad.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1537,8 +1533,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BEINTOO_DEBUG = 1;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1548,10 +1544,8 @@
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "Resources/Beintoo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
-				OTHER_LDFLAGS = "-weak-lSystem";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME) ";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1571,7 +1565,7 @@
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "Resources/Beintoo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
-				OTHER_LDFLAGS = "-weak-lSystem";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME) ";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1582,8 +1576,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -1591,8 +1585,6 @@
 				INFOPLIST_FILE = "Beintoo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_LDFLAGS = "";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_LDFLAGS = "";
