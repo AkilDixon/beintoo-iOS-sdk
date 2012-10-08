@@ -155,7 +155,11 @@
             for (UIView *subview in cell.subviews){
                 if ([subview isKindOfClass:[UIProgressView class]]){
                     UIProgressView *progessView = (UIProgressView *)subview;
-                    [progessView setProgress:[percentage floatValue]/100 animated:YES];
+                    
+                    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                        [progessView setProgress:[percentage floatValue]/100 animated:YES];
+                    else
+                        [progessView setProgress:[percentage floatValue]/100];
                 }
             }
             [path release];
@@ -168,7 +172,11 @@
             for (UIView *subview in cell.subviews){
                 if ([subview isKindOfClass:[UIProgressView class]]){
                     UIProgressView *progessView = (UIProgressView *)subview;
-                    [progessView setProgress:1.0 animated:YES];
+                    
+                    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)   
+                        [progessView setProgress:1.0 animated:YES];
+                    else
+                        [progessView setProgress:1.0];
                 }
             }
             [path release];
@@ -240,10 +248,18 @@
         progressBar.opaque = YES;
         progressBar.progress = 0.0;
         
-        if ([[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"percentage"])
-            [progressBar setProgress:([[[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"percentage"] floatValue] / 100) animated:NO];
-        else if ([[[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"status"] isEqualToString:@"UNLOCKED"])
-            [progressBar setProgress:100 animated:NO];
+        if ([[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"percentage"]){
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [progressBar setProgress:([[[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"percentage"] floatValue] / 100) animated:NO];
+            else
+                [progressBar setProgress:([[[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"percentage"] floatValue] / 100)];
+        }
+        else if ([[[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"status"] isEqualToString:@"UNLOCKED"]){
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [progressBar setProgress:1.0 animated:NO];
+            else
+                [progressBar setProgress:1.0];
+        }
         
         [cell addSubview: progressBar];
         [progressBar release];
