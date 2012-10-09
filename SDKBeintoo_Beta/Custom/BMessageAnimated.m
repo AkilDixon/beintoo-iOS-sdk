@@ -115,11 +115,14 @@
     
     int kind = 0;
     int i = [[NSUserDefaults standardUserDefaults] integerForKey:@"submitScoreCount"];
-    for (NSString *elem in [Beintoo getFeatureList]){
-        if ([elem isEqualToString:@"Marketplace"]){
-            if (i >= [[[Beintoo getPlayer] objectForKey:@"minSubmitPerMarketplace"] intValue]){
-                kind = 1;
-                break;
+    
+    if ([Beintoo isUserLogged]){
+        for (NSString *elem in [Beintoo getFeatureList]){
+            if ([elem isEqualToString:@"Marketplace"]){
+                if (i >= [[[Beintoo getPlayer] objectForKey:@"minSubmitPerMarketplace"] intValue]){
+                    kind = 1;
+                    break;
+                }
             }
         }
     }
@@ -132,7 +135,7 @@
             notificationHeight = NOTIFICATION_HEIGHT_ACHIEV;
             break;
         case NOTIFICATION_TYPE_SSCORE:
-            if (kind == 1 && [Beintoo isVirtualCurrencyStored] && ![BeintooDevice isiPad])
+            if (kind == 1 && ![BeintooDevice isiPad])
                 notificationHeight = NOTIFICATION_HEIGHT_SSCORE + 18;
             else 
                 notificationHeight = NOTIFICATION_HEIGHT_SSCORE;
@@ -270,11 +273,8 @@
 	[self setFrame:notification_frame];
 	
 	self.backgroundColor = [UIColor colorWithRed:0.0/255 green:0.0/255 blue:0.0/255 alpha:0.8];
-	//self.layer.cornerRadius = 2;
-	//self.layer.borderColor = [UIColor colorWithWhite:1 alpha:1].CGColor;
-	//self.layer.borderWidth = 1;
 	
-	[self prepareNotificationOrientation:notification_frame];
+    [self prepareNotificationOrientation:notification_frame];
 }
 
 - (void)setNotificationContentForAchievement:(NSDictionary *)_theAchievement andMissionAchievement:(NSDictionary *)_missionAchievem WithWindowSize:(CGSize)windowSize{
@@ -290,11 +290,8 @@
 	[self setFrame:notification_frame];
 	
 	self.backgroundColor = [UIColor colorWithRed:0.0/255 green:0.0/255 blue:0.0/255 alpha:0.8];
-	//self.layer.cornerRadius = 2;
-	//self.layer.borderColor = [UIColor colorWithWhite:1 alpha:1].CGColor;
-	//self.layer.borderWidth = 1;
 	
-	[self prepareNotificationOrientation:notification_frame];
+    [self prepareNotificationOrientation:notification_frame];
 }
 
 - (void)drawAchievement{
@@ -410,11 +407,14 @@
     int kind = 0;
     
     int i = [[NSUserDefaults standardUserDefaults] integerForKey:@"submitScoreCount"];
-    for (NSString *elem in [Beintoo getFeatureList]){
-        if ([elem isEqualToString:@"Marketplace"]){
-            if (i >= [[[Beintoo getPlayer] objectForKey:@"minSubmitPerMarketplace"] intValue]){
-                kind = 1;
-                break;
+    
+    if ([Beintoo isUserLogged]){
+        for (NSString *elem in [Beintoo getFeatureList]){
+            if ([elem isEqualToString:@"Marketplace"]){
+                if (i >= [[[Beintoo getPlayer] objectForKey:@"minSubmitPerMarketplace"] intValue]){
+                    kind = 1;
+                    break;
+                }
             }
         }
     }
@@ -425,7 +425,7 @@
     //----> Check if submit score count overlaps threshold of Marketplace SubmitScore Message
     //----> If YES, let's show Marketplace SubmitScore Message with increased HEIGHT
     
-    if (kind == 1 && [Beintoo isVirtualCurrencyStored] && ![BeintooDevice isiPad]){
+    if (kind == 1 && ![BeintooDevice isiPad]){
         notification_frame = CGRectMake(0, callerFrameSize.height-NOTIFICATION_HEIGHT_SSCORE, callerFrameSize.width, NOTIFICATION_HEIGHT_SSCORE + 18);
     }
     else {
@@ -515,14 +515,18 @@
     int kind = 0;
     
     int i = [[NSUserDefaults standardUserDefaults] integerForKey:@"submitScoreCount"];
-    for (NSString *elem in [Beintoo getFeatureList]){
-        if ([elem isEqualToString:@"Marketplace"]){
-            if (i >= [[[Beintoo getPlayer] objectForKey:@"minSubmitPerMarketplace"] intValue]){
-                kind = 1;
-                break;
+    
+    if ([Beintoo isUserLogged]){
+        for (NSString *elem in [Beintoo getFeatureList]){
+            if ([elem isEqualToString:@"Marketplace"]){
+                if (i >= [[[Beintoo getPlayer] objectForKey:@"minSubmitPerMarketplace"] intValue]){
+                    kind = 1;
+                    break;
+                }
             }
         }
     }
+    
     NSString *msg;
     
     beintooLogo		= [[UIImageView alloc] initWithFrame:CGRectMake(7, 5, 24, 24)];	
@@ -714,11 +718,14 @@
     
     int kind = 0;
     int i = [[NSUserDefaults standardUserDefaults] integerForKey:@"submitScoreCount"];
-    for (NSString *elem in [Beintoo getFeatureList]){
-        if ([elem isEqualToString:@"Marketplace"]){
-            if (i >= [[[Beintoo getPlayer] objectForKey:@"minSubmitPerMarketplace"] intValue]){
-                kind = 1;
-                break;
+    
+    if ([Beintoo isUserLogged]){
+        for (NSString *elem in [Beintoo getFeatureList]){
+            if ([elem isEqualToString:@"Marketplace"]){
+                if (i >= [[[Beintoo getPlayer] objectForKey:@"minSubmitPerMarketplace"] intValue]){
+                    kind = 1;
+                    break;
+                }
             }
         }
     }
@@ -731,7 +738,7 @@
             notificationHeight = NOTIFICATION_HEIGHT_ACHIEV;
             break;
         case NOTIFICATION_TYPE_SSCORE:
-            if (kind == 1 && [Beintoo isVirtualCurrencyStored] && ![BeintooDevice isiPad])
+            if (kind == 1 && ![BeintooDevice isiPad])
                 notificationHeight = NOTIFICATION_HEIGHT_SSCORE + 18;
             else 
                 notificationHeight = NOTIFICATION_HEIGHT_SSCORE;

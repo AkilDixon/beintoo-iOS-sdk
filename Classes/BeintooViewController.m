@@ -100,7 +100,6 @@
 	 * the delegate  */
     [BeintooVgood setVgoodDelegate:self];
 	[BeintooVgood getSingleVirtualGood];
-    
 }
 
 - (IBAction)submitAchievement{
