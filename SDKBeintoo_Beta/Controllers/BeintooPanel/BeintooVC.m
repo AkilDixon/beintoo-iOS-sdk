@@ -378,11 +378,6 @@
         notificationNumbersLabel.text = @"0";
         notificationNumbersLabelLandscape.text = @"0";
     }
-    
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0)
-        toolBar.hidden = NO;
-    else 
-        toolBar.hidden = YES;
 }
 
 #pragma mark - Taps Gesture 
@@ -406,8 +401,6 @@
         [beintooNotificationVC release];
         [notificationNavigationController release];
     }
-    
-    //[Beintoo _launchPrivateNotifications];
 }
 
 - (void)reloadBeintoo{
