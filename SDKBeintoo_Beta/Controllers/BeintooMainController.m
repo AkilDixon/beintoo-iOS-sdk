@@ -21,7 +21,7 @@
 
 @synthesize singleVgoodVC, multipleVgoodVC, recommendationVC, webViewVC;
 
--(id)init {
+- (id)init {
 	if (self = [super init]){
 		// Everyone of this controllers has to be initialized with the correspondent good to be shown
 		singleVgoodVC       = [[BeintooVGoodVC alloc] initWithNibName:@"BeintooVGoodVC" bundle:[NSBundle mainBundle]];

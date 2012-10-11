@@ -21,14 +21,14 @@
 
 @synthesize delegate, generatedVGood, parser, callingDelegate, vgood, adContent;
 
--(id)init {
+- (id)init {
 	if (self = [super init])
 	{	
         parser = [[Parser alloc] init];
 		parser.delegate = self;
         
 		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/vgood/",[Beintoo getRestBaseUrl]]];
-        display_rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/display/",[Beintoo getRestBaseUrl]]];
+        display_rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/display/", [Beintoo getRestBaseUrl]]];
 
 		_player     = [[BeintooPlayer alloc] init];
         vgood       = [[BVirtualGood alloc] init];

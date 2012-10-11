@@ -16,7 +16,6 @@
 
 #import "BPrize.h"
 #import <QuartzCore/QuartzCore.h>
-#import "BButton.h"
 #import "Beintoo.h"
 
 @implementation BPrize
@@ -243,9 +242,7 @@
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView {
-    
     [self showHtmlWithAlphaAnimation];
-    
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{   

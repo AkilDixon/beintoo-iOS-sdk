@@ -303,28 +303,6 @@
     NSLog(@"Main View Controller --- Tapped on Prize");
 }
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
-
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration{
-    
-    [Beintoo changeBeintooOrientation:toInterfaceOrientation];
-}
-
-- (BOOL)shouldAutorotate{
-    return YES;
-}
-
-- (NSUInteger)supportedInterfaceOrientations {
-    return UIInterfaceOrientationMaskAll;
-}
-
-#else
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    [Beintoo changeBeintooOrientation:interfaceOrientation];
-    return YES;
-}
-#endif
-
 - (void)buttonsCustomization{
     
     [playerLogin setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
@@ -449,6 +427,28 @@
         [redLondon              setHidden:NO];
         [redSanFrancisco        setHidden:NO];
     }
+}
+
+
+
+// -------------- Update the Orientation of Beintoo here
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
+- (NSUInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskAll;
+}
+#endif
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    // -----> Change the Beintoo orientation when your app's one changes
+    
+    [Beintoo changeBeintooOrientation:toInterfaceOrientation];
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
+    return YES;
 }
 
 @end

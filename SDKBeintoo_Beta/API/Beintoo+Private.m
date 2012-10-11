@@ -86,7 +86,7 @@ NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 	beintooInstance->apiSecret              = [[NSString alloc] init];
 	beintooInstance->locationManager        = [[CLLocationManager alloc] init];
 	beintooInstance->userLocation           = nil;
-    //beintooInstance->lastGeneratedGood      = [[BVirtualGood alloc] init];
+    //beintooInstance->lastGeneratedGood    = [[BVirtualGood alloc] init];
 	beintooInstance->prizeView              = [[BPrize alloc] init];
     beintooInstance->adView                 = [[BPrize alloc] init];
     
@@ -316,11 +316,11 @@ NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 }
 
 + (void)setAppOrientation:(int)_appOrientation{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"OrientationChanged" 
-     object:self];
-    
-	[Beintoo sharedInstance]->appOrientation = _appOrientation;
+    [Beintoo sharedInstance]->appOrientation = _appOrientation;
 	BeintooLOG(@"Beintoo: new App orientation set: %d",[Beintoo sharedInstance]->appOrientation);
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"OrientationChanged"
+                                                        object:self];
 }
      
 + (void)setApplicationWindow:(UIWindow *)_window{
@@ -1213,7 +1213,6 @@ NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 	}		
 }
 
-
 + (void)_beintooDidDisappear{
 	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
 	if ([_mainDelegate respondsToSelector:@selector(beintooDidDisappear)]) {
@@ -1356,7 +1355,7 @@ NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 }
 
 + (void)_setLastLoggedPlayers:(NSArray *)_players{
-	if ([_players count]<1) {
+	if ([_players count] < 1) {
 		return;
 	}
 	[Beintoo sharedInstance]->lastLoggedPlayers = _players;
@@ -1540,7 +1539,6 @@ NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 			[_vgoodService acceptGoodWithId:lastVgood.vGoodID];
 		}
 	}
-	//[Beintoo sharedInstance]->mainController.view.alpha = 0;
 	
     if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeAlertDidDisappear)]) {
 		[[_prizeView globalDelegate] beintooPrizeAlertDidDisappear];
@@ -1618,9 +1616,7 @@ NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 		[_mainDelegate beintooAdWillDisappear];
 	}
     
-	//[Beintoo sharedInstance]->mainAdController.view.alpha = 0;
-	
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooAdDidDisappear)]) {
+	if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooAdDidDisappear)]) {
 		[[_prizeView globalDelegate] beintooAdDidDisappear];
 	}
     

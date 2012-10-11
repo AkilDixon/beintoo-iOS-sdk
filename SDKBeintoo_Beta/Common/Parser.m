@@ -152,18 +152,16 @@
 
 - (void)retrievedWebPage:(NSMutableURLRequest *)_request{
 	NSError         *requestError	= nil;
-	//NSURLResponse   *response		= nil;
 	NSData		    *urlData;
 	
     NSHTTPURLResponse *responseHTTP;
    
-    
     @try{ 
 		urlData = [NSURLConnection sendSynchronousRequest:_request returningResponse:&responseHTTP error:&requestError];
         
         if ([responseHTTP respondsToSelector:@selector(allHeaderFields)]) {
             
-            if ([responseHTTP statusCode] != 200 && callerID == REWARD_GET_AD_CALLER_ID){
+            if ([responseHTTP statusCode] != 200 && (callerID == REWARD_GET_AD_CALLER_ID || callerID == REWARD_GET_AND_DISPLAY_AD_CALLER_ID)){
                 NSDictionary *dictionary = [NSDictionary dictionaryWithObject:@"-10" forKey:@"messageID"];
                 @try {
                     if (self.callerID){

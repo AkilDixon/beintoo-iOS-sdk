@@ -130,4 +130,13 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (void)_adControllerDidAppear;
 + (void)_adControllerDidDisappear;
 
+
++ (void)_beintooAdsControllerWillAppear;
+
++ (void)_beintooAdsControllerDidAppear;
+
++ (void)_beintooAdsControllerWillDisappear;
+
++ (void)_beintooAdsControllerDidDisappear;
+
 @end

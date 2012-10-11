@@ -344,6 +344,8 @@ extern NSString *BNSDefIsUserLogged;
 
 + (BOOL)isAdReady;
 
++ (NSString *)getDisplayBaseUrl;
+
 @end
 
 
