@@ -22,7 +22,7 @@
 #import <UIKit/UIKit.h>
 #import "Beintoo.h"
 
-@interface BeintooViewController : UIViewController <BeintooPlayerDelegate, BeintooVgoodDelegate, BeintooMissionDelegate, BeintooMissionDelegate, BeintooUserDelegate, BeintooAchievementsDelegate, BeintooPrizeDelegate>{
+@interface BeintooViewController : UIViewController <BeintooPlayerDelegate, BeintooVgoodDelegate, BeintooMissionDelegate, BeintooMissionDelegate, BeintooUserDelegate, BeintooAchievementsDelegate, BeintooPrizeDelegate, BeintooVgoodDelegate>{
 	
     //---> Buttons
     IBOutlet BButton *playerLogin;

@@ -55,6 +55,9 @@
 + (void)requestAndDisplayAdWithDeveloperUserGuid:(NSString *)_developerUserGuid;
 + (void)requestAdWithDeveloperUserGuid:(NSString *)_developerUserGuid;
 
++ (void)checkRewardsCoverage;
++ (void)isEligibleForReward;
+
 // Private vgoods
 + (void)getPlayerPrivateVgoods;
 + (void)assignToPlayerPrivateVgood:(NSString *)vgoodID;

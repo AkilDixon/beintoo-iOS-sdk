@@ -111,7 +111,6 @@
 	//[BeintooAchievements incrementAchievement:@"123456789" withScore:5];
     
     [BeintooAchievements unlockAchievement:@"w234567"];
-    
 }
 
 - (IBAction)giveBedollars{
