@@ -574,6 +574,7 @@
         
 		cell.detailTextLabel.text		= [[self.featuresArray objectAtIndex:indexPath.row] objectForKey:@"featureDesc"];
         cell.detailTextLabel.alpha      = alphaValueForCell;
+        cell.detailTextLabel.numberOfLines = 0;
         
 		cell.imageView.image			= [UIImage imageNamed:[[self.featuresArray objectAtIndex:indexPath.row] objectForKey:@"featureImg"]];
         cell.imageView.alpha            = alphaValueForCell;

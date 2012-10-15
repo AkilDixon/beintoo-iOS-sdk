@@ -82,7 +82,7 @@
     
 	[beintooSettings release];
     
-    if( [[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0)
+    if( [[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
         [self.window setRootViewController:viewController];
     else 
         [self.window addSubview:viewController.view];

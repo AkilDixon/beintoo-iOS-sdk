@@ -27,6 +27,17 @@
 "nickname"				= "Spitzname:";
 "lederboardNoResult"    = "Mach neue Freunde und schlag ihre Highscore!";
 
+// Home
+"profileDesc"			= "";
+"leaderboardDesc"		= "";
+"walletDesc"			= "";
+"challengesDesc"		= "";
+"newMessages"			= "";
+"achievementsDesc"		= "";
+"tipsandforumDesc"      = "";
+"tryBeintooMessage"		= "";
+"playHardMessage"       = "";
+
 // Give Bedollars
 "giveBedollarMsg"      = "Du hast gerade %i Bedollar verdient! Benutze sie um tolle Angebote auf Beintoo einzulösen";
 "giveBedollarsMsg"      = "Du hast gerade %i Bedollars verdient! Benutze sie um tolle Angebote auf Beintoo einzulösen";
@@ -120,7 +131,7 @@
 "bedollars"                     = "Bedollars";
 "MPmarketplaceTitle"            = "Einlösen";
 "MPtextDescriptionLong"         = "Coupons einlösen oder als Geschenk verschicken";
-"MPdescription"                 = "Nutze deine Bedollars um Angebote einzulösen";
+"MPdescription"                 = "";
 "MPcredits"                     = "Deine Credits:";
 "MPmainSegmentedIndexTitle0"    = "Spotlight";
 "MPmainSegmentedIndexTitle1"    = "National";
