@@ -52,31 +52,34 @@
 }
 
 - (void)show{
-	
-    CATransition *applicationLoadViewIn = [CATransition animation];
-	[applicationLoadViewIn setDuration:0.7f];
-	[applicationLoadViewIn setValue:@"load" forKey:@"name"];
-	applicationLoadViewIn.removedOnCompletion = YES;
-	[applicationLoadViewIn setType:kCATransitionMoveIn];
-	applicationLoadViewIn.subtype = transitionEnterSubtype;
-	applicationLoadViewIn.delegate = self;
-	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-	[[self layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
-	
+    
+	if (type == REWARD){
+        CATransition *applicationLoadViewIn = [CATransition animation];
+        [applicationLoadViewIn setDuration:0.7f];
+        [applicationLoadViewIn setValue:@"load" forKey:@"name"];
+        applicationLoadViewIn.removedOnCompletion = YES;
+        [applicationLoadViewIn setType:kCATransitionMoveIn];
+        applicationLoadViewIn.subtype = transitionEnterSubtype;
+        applicationLoadViewIn.delegate = self;
+        [applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+        [[self layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+	}
 	self.alpha = 1;
 }
 
 - (void)showWithAlphaAnimation{
-    
-    CATransition *applicationLoadViewIn = [CATransition animation];
-    [applicationLoadViewIn setDuration:0.8f];
-    [applicationLoadViewIn setValue:@"load" forKey:@"name"];
-    applicationLoadViewIn.removedOnCompletion = YES;
-    [applicationLoadViewIn setType:kCATransitionMoveIn];
-    applicationLoadViewIn.subtype = kCATransitionFade;
-    applicationLoadViewIn.delegate = self;
-    [applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-    [[self layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+   
+    if (type == REWARD){
+        CATransition *applicationLoadViewIn = [CATransition animation];
+        [applicationLoadViewIn setDuration:0.8f];
+        [applicationLoadViewIn setValue:@"load" forKey:@"name"];
+        applicationLoadViewIn.removedOnCompletion = YES;
+        [applicationLoadViewIn setType:kCATransitionMoveIn];
+        applicationLoadViewIn.subtype = kCATransitionFade;
+        applicationLoadViewIn.delegate = self;
+        [applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+        [[self layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+    }
     
     self.alpha = 1;
     
@@ -84,18 +87,19 @@
 
 - (void)showHtmlWithAlphaAnimation{
     
-    CATransition *applicationLoadViewIn = [CATransition animation];
-    [applicationLoadViewIn setDuration:0.7f];
-    [applicationLoadViewIn setValue:@"load" forKey:@"name"];
-    applicationLoadViewIn.removedOnCompletion = YES;
-    [applicationLoadViewIn setType:kCATransitionMoveIn];
-    applicationLoadViewIn.subtype = kCATransitionFade;
-    applicationLoadViewIn.delegate = self;
-    [applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-    [[self layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+    if (type == REWARD){
+        CATransition *applicationLoadViewIn = [CATransition animation];
+        [applicationLoadViewIn setDuration:0.7f];
+        [applicationLoadViewIn setValue:@"load" forKey:@"name"];
+        applicationLoadViewIn.removedOnCompletion = YES;
+        [applicationLoadViewIn setType:kCATransitionMoveIn];
+        applicationLoadViewIn.subtype = kCATransitionFade;
+        applicationLoadViewIn.delegate = self;
+        [applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+        [[self layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+    }
     
     self.alpha = 1;
-    
 }
 
 - (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag{
