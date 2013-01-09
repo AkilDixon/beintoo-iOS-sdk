@@ -75,10 +75,12 @@
         }
     }
     
-    if ([urlToOpen rangeOfString: @"?"].location == NSNotFound)
-        urlToOpen = [urlToOpen stringByAppendingFormat:@"?os_source=ios"];
-    else 
-        urlToOpen = [urlToOpen stringByAppendingFormat:@"&os_source=ios"];
+    if (type != AD){
+        if ([urlToOpen rangeOfString: @"?"].location == NSNotFound)
+            urlToOpen = [urlToOpen stringByAppendingFormat:@"?os_source=ios"];
+        else 
+            urlToOpen = [urlToOpen stringByAppendingFormat:@"&os_source=ios"];
+    }
     
 	[vGoodWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[urlToOpen retain]]]];
 }
