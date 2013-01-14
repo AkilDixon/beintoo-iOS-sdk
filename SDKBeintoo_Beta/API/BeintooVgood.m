@@ -1189,6 +1189,23 @@
                 
                     return;
                 }
+                
+                if ([[result objectForKey:@"messageID"] intValue] == -1) {
+                    
+                    [Beintoo notifyAdGenerationErrorOnMainDelegate:result];
+                    [BeintooVgood notifyAdGenerationErrorOnUserDelegate:result];
+                    
+                    return;
+                }
+                
+            }
+            
+            if (![result objectForKey:@"content"])
+            {
+                [Beintoo notifyAdGenerationErrorOnMainDelegate:result];
+                [BeintooVgood notifyAdGenerationErrorOnUserDelegate:result];
+                
+                return;
             }
             
             [adContent setVgoodContent:result];
@@ -1210,6 +1227,22 @@
                     
                     return;
                 }
+                
+                if ([[result objectForKey:@"messageID"] intValue] == -1) {
+                    
+                    [Beintoo notifyAdGenerationErrorOnMainDelegate:result];
+                    [BeintooVgood notifyAdGenerationErrorOnUserDelegate:result];
+                    
+                    return;
+                }
+            }
+            
+            if (![result objectForKey:@"content"])
+            {
+                [Beintoo notifyAdGenerationErrorOnMainDelegate:result];
+                [BeintooVgood notifyAdGenerationErrorOnUserDelegate:result];
+                
+                return;
             }
             
             [adContent setVgoodContent:result];

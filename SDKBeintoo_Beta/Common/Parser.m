@@ -74,7 +74,7 @@
                 [request setValue:@"true" forHTTPHeaderField:@"sandbox"];
             }
             
-            if (self.callerID == VGOOD_MULTIPLE_CALLER_ID || self.callerID == VGOOD_SINGLE_CALLER_ID || self.callerID == VGOOD_MULTIPLEwDELEG_CALLER_ID || self.callerID == VGOOD_SINGLEwDELEG_CALLER_ID || self.callerID == REWARD_GET_AD_CALLER_ID) {
+            if (self.callerID == VGOOD_MULTIPLE_CALLER_ID || self.callerID == VGOOD_SINGLE_CALLER_ID || self.callerID == VGOOD_MULTIPLEwDELEG_CALLER_ID || self.callerID == VGOOD_SINGLEwDELEG_CALLER_ID || self.callerID == REWARD_GET_AD_CALLER_ID || self.callerID == REWARD_GET_AD_CALLER_ID || self.callerID == REWARD_GET_AND_DISPLAY_AD_CALLER_ID) {
                 [request setValue:[BeintooNetwork getUserAgent] forHTTPHeaderField:@"User-Agent"];
                 
             }
@@ -101,7 +101,7 @@
         [request setHTTPMethod:@"POST"];
         
         for (id theKey in headers) {
-            [request setValue:[NSString stringWithFormat:@"%@",[headers objectForKey:theKey]] forHTTPHeaderField:theKey];
+            [request setValue:[NSString stringWithFormat:@"%@", [headers objectForKey:theKey]] forHTTPHeaderField:theKey];
         }
         [request setValue:[Beintoo currentVersion] forHTTPHeaderField:@"X-BEINTOO-SDK-VERSION"];
         
