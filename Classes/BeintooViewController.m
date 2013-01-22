@@ -109,11 +109,12 @@
 	//[BeintooAchievements setAchievement:@"w234567" withScore:10];
 	//[BeintooAchievements setAchievement:@"w234567" withPercentage:50];
 	//[BeintooAchievements incrementAchievement:@"123456789" withScore:5];
+    //[BeintooAchievements unlockAchievementsByObjectIDInBackground:[NSArray arrayWithObjects:@"test_exist", @"share_100_times", @"sharing_top", @"share_10", nil]];
+    //[BeintooAchievements unlockAchievementByObjectID:@"test_exist" showNotification:YES];
+    //[BeintooAchievements unlockAchievementsInBackground:[NSArray arrayWithObjects:@"w234567", @"asfdgh4365768sdgdsgsd", @"35467867sadfhgs",  nil]];
+    //[BeintooAchievements unlockAchievement:@"w234567" showNotification:YES];
     
     [BeintooAchievements unlockAchievement:@"w234567"];
-    
-    //[BeintooAchievements unlockAchievementsInBackground:[NSArray arrayWithObjects:@"test_exist", @"share_100_times", @"sharing_top", @"share_10", nil]];
-    //[BeintooAchievements setAchievement:@"w234567" withPercentage:100 showNotification:YES];
 }
 
 - (IBAction)giveBedollars{
