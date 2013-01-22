@@ -101,6 +101,8 @@ NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 	beintooInstance->featuresArray          = [[NSArray alloc] init];
 	beintooInstance->notificationView       = [[BMessageAnimated alloc]init];
     beintooInstance->lastRetrievedMission   = [[NSDictionary alloc] init];
+    
+    beintooInstance->notificationQueue      = [[BAnimatedNotificationQueue alloc] init];
  
     beintooInstance->beintooDispatchQueue   = dispatch_queue_create("com.Beintoo.beintooQueue", NULL);
     

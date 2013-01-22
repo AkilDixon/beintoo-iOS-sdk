@@ -186,7 +186,7 @@ NSString *BNSDefIsUserLogged;
 }
 								
 + (NSString *)currentVersion{
-	return @"2.9.0beta-ios";
+	return @"2.9.1beta-ios";
 }
 
 + (NSInteger)notificationPosition{
@@ -278,6 +278,11 @@ NSString *BNSDefIsUserLogged;
 
 + (UIViewController *)getMainController{
 	return [Beintoo sharedInstance]->mainController;
+}
+
++ (BAnimatedNotificationQueue *)getNotificationQueue
+{
+    return [Beintoo sharedInstance]->notificationQueue;
 }
 
 + (BeintooNavigationController *)getMainNavigationController{

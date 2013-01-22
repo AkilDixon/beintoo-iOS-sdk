@@ -111,6 +111,9 @@
 	//[BeintooAchievements incrementAchievement:@"123456789" withScore:5];
     
     [BeintooAchievements unlockAchievement:@"w234567"];
+    
+    //[BeintooAchievements unlockAchievementsInBackground:[NSArray arrayWithObjects:@"test_exist", @"share_100_times", @"sharing_top", @"share_10", nil]];
+    //[BeintooAchievements setAchievement:@"w234567" withPercentage:100 showNotification:YES];
 }
 
 - (IBAction)giveBedollars{

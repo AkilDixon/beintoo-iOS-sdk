@@ -52,8 +52,7 @@
     
 	[_notification setNotificationContentForGiveBedollars:nil WithWindowSize:appWindow.bounds.size];
 	
-	[appWindow addSubview:_notification];
-	[_notification showNotification];
+    [[Beintoo getNotificationQueue] addNotificationToTheQueue:_notification];
 }
 
 #pragma mark -
@@ -601,6 +600,11 @@
         case USER_GIVE_BEDOLLARS_CALLER_ID:{
             if ([result objectForKey:@"message"]) {
 				BeintooLOG(@"Beintoo: error in Give Bedollars call: %@",[result objectForKey:@"message"]);
+            }
+            
+            if ([result objectForKey:@"message"] || ![result objectForKey:@"content"]) {
+				BeintooLOG(@"Beintoo: error in Give Bedollars call: %@", [result objectForKey:@"message"]);
+                return;
             }
             
             if ([[self delegate]respondsToSelector:@selector(didReceiveGiveBedollarsResponse:)]) 

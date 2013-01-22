@@ -51,6 +51,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+@protocol BMessageAnimatedDelegate;
+
 @interface BMessageAnimated : UIView{
 	
 	UIImageView		*beintooLogo;
@@ -65,7 +67,11 @@
 	
 	NSString		*transitionEnterSubtype;
 	NSString		*transitionExitSubtype;
+    
+    id <BMessageAnimatedDelegate> delegate;
 }
+
+@property(nonatomic, retain) id <BMessageAnimatedDelegate> delegate;
 
 - (void)showNotification;
 - (void)closeNotification;
@@ -88,5 +94,13 @@
 
 
 + (NSString *)getMessageFromCode:(int)code;
+
+@end
+
+@protocol BMessageAnimatedDelegate <NSObject>
+@optional
+
+- (void)messageDidAppear;
+- (void)messageDidDisappear;
 
 @end

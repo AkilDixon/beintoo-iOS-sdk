@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright 2011 Beintoo - author fmessina@beintoo.com
- * 
+ * Copyright 2011 Beintoo - author gpiazzese@beintoo.com
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,20 +14,17 @@
  * limitations under the License.
  ******************************************************************************/
 
-#import <UIKit/UIKit.h>
-#import "BeintooDelegate.h"
+#import <Foundation/Foundation.h>
+#import "BMessageAnimated.h"
 
-@class BeintooViewController;
-
-@interface BeintooAppDelegate : NSObject <UIApplicationDelegate>
+@interface BAnimatedNotificationQueue : NSObject <BMessageAnimatedDelegate>
 {
-    UIWindow                *window;
-    BeintooViewController   *viewController;
-	BeintooDelegate         *sampleDelegate;
+    NSMutableArray *notificationQueue;
+    BOOL            messageOnScreen;
 }
 
-@property (nonatomic, retain) IBOutlet UIWindow                 *window;
-@property (nonatomic, retain) IBOutlet BeintooViewController    *viewController;
+@property (nonatomic, retain) NSMutableArray *notificationQueue;
+
+- (void)addNotificationToTheQueue:(BMessageAnimated *)message;
 
 @end
-

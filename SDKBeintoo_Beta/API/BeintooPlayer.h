@@ -114,6 +114,7 @@
 + (int)getVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey;
 + (void)setVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey andScore:(int)_score;
 + (void)resetVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey andScore:(int)_score;
++ (int)getThresholdScoreForCurrentPlayerWithContest:(NSString *)codeID;
     
 // Offline SubmitScore handlers
 + (void)addScoreToLocallySavedScores:(NSString *)scoreValue forContest:(NSString *)codeID;

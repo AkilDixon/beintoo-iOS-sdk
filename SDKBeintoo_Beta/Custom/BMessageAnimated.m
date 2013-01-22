@@ -19,6 +19,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 @implementation BMessageAnimated
+@synthesize delegate;
 
 - (id)init {
 	if (self = [super init])
@@ -29,6 +30,9 @@
 }
 
 - (void)showNotification{
+    
+    if ([[self delegate] respondsToSelector:@selector(messageDidAppear)])
+        [[self delegate] messageDidAppear];
 	
 	notificationCurrentlyOnScreen = YES;
 	
@@ -98,6 +102,9 @@
 		for (UIView* child in self.subviews) {
 			[child removeFromSuperview];
 		}
+        
+        if ([[self delegate] respondsToSelector:@selector(messageDidDisappear)])
+            [[self delegate] messageDidDisappear];
 		
 		[self removeFromSuperview];
 		notificationCurrentlyOnScreen = NO;

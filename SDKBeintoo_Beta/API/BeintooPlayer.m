@@ -61,20 +61,23 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
++ (int)getThresholdScoreForCurrentPlayerWithContest:(NSString *)codeID{
+    NSString *playerKey = [NSString stringWithFormat:@"PlayerThresholdScore_%@_%@", [Beintoo getPlayerID], codeID];
+    int currentScore = [BeintooPlayer getVgoodThresholdScoreForPlayerKey:playerKey];
+    return currentScore;
+}
+
 #pragma mark -
 #pragma mark SubmitScore Notification
 
 + (void)showNotificationForSubmitScore{
 	
-	// The main delegate is not called: a notification is shown by Beintoo on top of the app window and then automatically hidden
-	// After the -showNotification, an animation is triggered and on complete the view is removed
 	BMessageAnimated *_notification = [[[BMessageAnimated alloc] init] autorelease];
 	UIWindow *appWindow = [Beintoo getAppWindow];
-    	
+    
 	[_notification setNotificationContentForSubmitScore:nil WithWindowSize:appWindow.bounds.size];
 	
-	[appWindow addSubview:_notification];
-	[_notification showNotification];
+    [[Beintoo getNotificationQueue] addNotificationToTheQueue:_notification];
 }
 
 + (void)showNotificationForLogin{

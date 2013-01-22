@@ -100,6 +100,7 @@
 #import "BeintooBestoreVC.h"
 #import "BeintooUrlParser.h"
 #import "BeintooOpenUDID.h"
+#import "BAnimatedNotificationQueue.h"
 
 #define BFEATURE_PROFILE			@"Profile"
 #define BFEATURE_MARKETPLACE		@"Marketplace"
@@ -168,6 +169,8 @@ extern NSString *BNSDefIsUserLogged;
     UIPopoverController             *vgoodPopover;
     UIPopoverController             *recommendationPopover;
 #endif
+    
+    BAnimatedNotificationQueue      *notificationQueue;
 	
     UIWindow                        *applicationWindow;
 	BeintooVgood                    *beintooVgoodService;
@@ -345,6 +348,7 @@ extern NSString *BNSDefIsUserLogged;
 + (BOOL)isAdReady;
 
 + (NSString *)getDisplayBaseUrl;
++ (BAnimatedNotificationQueue *)getNotificationQueue;
 
 @end
 
