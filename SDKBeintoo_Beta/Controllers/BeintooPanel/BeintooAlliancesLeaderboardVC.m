@@ -22,7 +22,8 @@
 
 @synthesize players, leaderboardEntries, leaderboardImages, selectedPlayer, isFromAlliances, isFromDirectLaunch;
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	//self.title = NSLocalizedStringFromTable(@"leaderboard",@"BeintooLocalizable",@"Leaderboard");
@@ -35,7 +36,12 @@
 
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];	
+	
+#ifdef BEINTOO_ARC_AVAILABLE
+    
+#else
+    [barCloseBtn release];
+#endif
 	
 	user					 = [[BeintooUser alloc] init];
 	_player					 = [[BeintooPlayer alloc] init];
@@ -49,10 +55,10 @@
 	
 	currentUser				= [[NSDictionary alloc] init];
 	self.players			= [[NSMutableArray alloc]init];
-    
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -69,17 +75,15 @@
 	[self.leaderboardImages removeAllObjects];
     noAlliancesLabel.hidden = YES;
 
-
     [BLoadingView startActivity:self.view];
     [_alliance topScoreFrom:startRows andRows:NUMBER_OF_ROWS_ALLIANCE
                 forContest:[[NSUserDefaults standardUserDefaults] objectForKey:@"selectedContest"]];
 
 }
 
-
 #pragma mark AppDelegates
-- (void)didGetAllianceTopScore:(NSDictionary *)result{
-    
+- (void)didGetAllianceTopScore:(NSDictionary *)result
+{    
     noAlliancesLabel.hidden = YES;
     
     @try {
@@ -119,14 +123,19 @@
 			[self.leaderboardEntries addObject:leaderboardEntry];
             //[self.leaderboardImages addObject:download];
 			
-			[leaderboardEntry release];
+#ifdef BEINTOO_ARC_AVAILABLE
+            
+#else
+            [leaderboardEntry release];
+#endif
+			
 		}
 		@catch (NSException * e) {
 			//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
 		}
 	}
     
-    for (int i=0; i<[self.players count]; i++) {
+    for (int i = 0; i < [self.players count]; i++) {
 		@try {
 			NSMutableDictionary *leaderboardEntry = [[NSMutableDictionary alloc]init];
 			
@@ -145,7 +154,12 @@
 			[self.leaderboardEntries addObject:leaderboardEntry];
 			//[self.leaderboardImages addObject:download];
 			
-			[leaderboardEntry release];
+#ifdef BEINTOO_ARC_AVAILABLE
+            
+#else
+            [leaderboardEntry release];
+#endif
+            
 		}
 		@catch (NSException * e) {
 			BeintooLOG(@"BeintooException: %@ \n for object: %@",e,[players objectAtIndex:i]);
@@ -158,14 +172,18 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [self.leaderboardEntries count] + plusOneCell;
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
 	static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
@@ -177,7 +195,13 @@
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || YES) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }
 	
 	if (indexPath.row == [self.leaderboardEntries count]) {
@@ -189,10 +213,16 @@
 		loadMoreLabel.text				= @"Load more";
 		
 		[cell addSubview:loadMoreLabel];
-		[loadMoreLabel release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+    
+#else
+        [loadMoreLabel release];
+#endif
 
 	}
-	else {
+	else
+    {
         NSDictionary *allianceToShow = [[self.leaderboardEntries objectAtIndex:indexPath.row] objectForKey:@"user"];
         
         cell.textLabel.text = [allianceToShow objectForKey:@"name"];
@@ -210,13 +240,18 @@
         
         cell.accessoryView = positionLabel;
         
-        [positionLabel release];		
+#ifdef BEINTOO_ARC_AVAILABLE
+        
+#else
+        [positionLabel release];
+#endif
+        
     }
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{	
 	/*if (indexPath.row == [self.leaderboardEntries count]) {
 		startRows = startRows + NUMBER_OF_ROWS_ALLIANCE;
 
@@ -245,7 +280,12 @@
             
             [self.navigationController pushViewController:beintooViewAllianceVC animated:YES];
             
+#ifdef BEINTOO_ARC_AVAILABLE
+            
+#else
             [beintooViewAllianceVC release];
+#endif
+            
         }
         [leaderboardContestTable deselectRowAtIndexPath:[leaderboardContestTable indexPathForSelectedRow] animated:NO];
 	}
@@ -254,20 +294,29 @@
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
 
-- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
     NSUInteger index = [self.leaderboardImages indexOfObject:download]; 
     NSUInteger indices[] = {0, index};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
     [leaderboardContestTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    
+#else
     [path release];
+#endif
+   
     download.delegate = nil;
 }
 
-- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
     BeintooLOG(@"BeintooImageError: %@", [error localizedDescription]);
 }
 
-- (void)viewWillDisappear:(BOOL)animated{
+- (void)viewWillDisappear:(BOOL)animated
+{
     [super viewWillDisappear:animated];
     
     user.delegate			 = nil;
@@ -281,7 +330,8 @@
 	}
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -298,14 +348,20 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     [Beintoo dismissBeintoo];
 }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return NO;
 }
+#endif
 
+#ifdef BEINTOO_ARC_AVAILABLE
+
+#else
 - (void)dealloc {
 	[currentUser release];
 	[self.players release];
@@ -316,5 +372,6 @@
 	[_player release];
     [super dealloc];
 }
+#endif
 
 @end

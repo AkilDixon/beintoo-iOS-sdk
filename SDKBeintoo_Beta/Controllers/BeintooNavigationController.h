@@ -29,12 +29,11 @@
 #define NAV_TYPE_SIGNUP_PRIVATE         8
 #define NAV_TYPE_NOTIFICATIONS_PRIVATE  9
 
-@interface BeintooNavigationController : UINavigationController{
-	
+@interface BeintooNavigationController : UINavigationController
+{	
 	UIView *ipadView;
 	NSString *transitionEnterSubtype;
 	NSString *transitionExitSubtype;
-
 }
 
 - (void)show;
@@ -44,6 +43,5 @@
 
 @property (nonatomic, assign) int type;
 @property (nonatomic, assign) BOOL isSignupDirectLaunch;
-
 
 @end

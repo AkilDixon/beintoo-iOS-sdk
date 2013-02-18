@@ -21,7 +21,8 @@
 
 @synthesize elementsTable, elementsArrayList, selectedElement, startingOptions;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.startingOptions	= options;
@@ -29,7 +30,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	self.title		= NSLocalizedStringFromTable(@"alliances",@"BeintooLocalizable",@"");
@@ -42,7 +44,12 @@
 		
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    
+#else
+    [barCloseBtn release];
+#endif
 		
 	self.elementsTable.delegate		= self;
 	self.elementsTable.rowHeight	= 85.0;	
@@ -50,23 +57,39 @@
     UILabel *allianceTipsLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 200, 300, 70)];
     allianceTipsLabel.text              = NSLocalizedStringFromTable(@"alliancemaintextfooter",@"BeintooLocalizable",@"");
     allianceTipsLabel.autoresizingMask  = UIViewAutoresizingFlexibleWidth;
-    allianceTipsLabel.textAlignment     = UITextAlignmentCenter;
-    allianceTipsLabel.textColor         = [UIColor colorWithWhite:0 alpha:0.7]; 
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    allianceTipsLabel.textAlignment = NSTextAlignmentCenter;   
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        allianceTipsLabel.textAlignment = NSTextAlignmentCenter;
+    else
+        allianceTipsLabel.textAlignment = UITextAlignmentCenter;
+#else
+    allianceTipsLabel.textAlignment = UITextAlignmentCenter;
+#endif
+    
+    allianceTipsLabel.textColor         = [UIColor colorWithWhite:0 alpha:0.7];
     allianceTipsLabel.font              = [UIFont systemFontOfSize:13];
     allianceTipsLabel.backgroundColor   = [UIColor clearColor];
     allianceTipsLabel.numberOfLines     = 3;
     
     [self.view addSubview:allianceTipsLabel];
     [self.view sendSubviewToBack:allianceTipsLabel];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    
+#else
     [allianceTipsLabel release];
+#endif
     
-    viewAllianceVC = [[BeintooViewAllianceVC alloc] initWithNibName:@"BeintooViewAllianceVC" bundle:[NSBundle mainBundle] andOptions:nil];
-    allianceListVC = [[BeintooAlliancesListVC alloc] initWithNibName:@"BeintooAlliancesListVC" bundle:[NSBundle mainBundle] andOptions:nil];
-    
-    allianceCreateVC = [[BeintooCreateAllianceVC alloc] initWithNibName:@"BeintooCreateAllianceVC" bundle:[NSBundle mainBundle] andOptions:nil];
+    viewAllianceVC      = [[BeintooViewAllianceVC alloc] initWithNibName:@"BeintooViewAllianceVC" bundle:[NSBundle mainBundle] andOptions:nil];
+    allianceListVC      = [[BeintooAlliancesListVC alloc] initWithNibName:@"BeintooAlliancesListVC" bundle:[NSBundle mainBundle] andOptions:nil];
+    allianceCreateVC    = [[BeintooCreateAllianceVC alloc] initWithNibName:@"BeintooCreateAllianceVC" bundle:[NSBundle mainBundle] andOptions:nil];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -95,8 +118,8 @@
     [elementsTable reloadData];
 }
 
-- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result{
-    
+- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result
+{    
     if ([result objectForKey:@"user"] != nil){
         [Beintoo setBeintooPlayer:result];
     }
@@ -104,7 +127,8 @@
     // Alliance check
     if ([result objectForKey:@"alliance"] != nil) {
         [BeintooAlliance setUserWithAlliance:YES];
-    }else{
+    }
+    else{
         [BeintooAlliance setUserWithAlliance:NO];
     }
     
@@ -126,22 +150,30 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [self.elementsArrayList count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
     static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
-        cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+         cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
+         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+    
     }
 	
 	NSString *choicheCode			= [self.elementsArrayList objectAtIndex:indexPath.row];
@@ -155,7 +187,8 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	NSString *selectedElem = [self.elementsArrayList objectAtIndex:indexPath.row];
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
@@ -183,7 +216,8 @@
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -200,19 +234,25 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     [Beintoo dismissBeintoo];
 }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return NO;
 }
+#endif
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+
     _player.delegate    = nil;
     
     @try {
@@ -222,16 +262,15 @@
     }  
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
+#ifdef BEINTOO_ARC_AVAILABLE
 
+#else
 - (void)dealloc {
 	[_player release];
 	[elementsArrayList release];
     [viewAllianceVC release];
     [super dealloc];
 }
-
+#endif
 
 @end

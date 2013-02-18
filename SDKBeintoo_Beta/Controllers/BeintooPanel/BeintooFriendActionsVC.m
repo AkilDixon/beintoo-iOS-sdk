@@ -21,7 +21,8 @@
 
 @synthesize elementsTable, elementsArrayList, selectedElement, startingOptions;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.startingOptions	= options;
@@ -29,7 +30,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	self.title		= NSLocalizedStringFromTable(@"friends",@"BeintooLocalizable",@"Select A Friend");
@@ -46,7 +48,11 @@
 		
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
 		
 	self.elementsTable.delegate		= self;
 	self.elementsTable.rowHeight	= 85.0;	
@@ -54,7 +60,8 @@
 	self.elementsArrayList = [NSArray arrayWithObjects:@"yourFriends",@"findFriends",@"friendRequests",@"recommendToAFriend",nil];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -70,20 +77,30 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [self.elementsArrayList count];
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif       
+    
     }
 	
 	NSString *choicheCode			= [self.elementsArrayList objectAtIndex:indexPath.row];
@@ -96,23 +113,25 @@
 	cell.imageView.image	= [UIImage imageNamed:[NSString stringWithFormat:@"beintoo_%@.png",choicheCode]];
     return cell;
 }
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	//self.selectedFriend = [self.friendsArrayList objectAtIndex:indexPath.row];
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
 	if (indexPath.row == 0) {
 		NSDictionary *friendsListOptions = [NSDictionary dictionaryWithObjectsAndKeys:@"profile",@"caller",nil,@"callerVC",nil];
-		[friendsVC initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle] andOptions:friendsListOptions];
+		friendsVC = [friendsVC initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle] andOptions:friendsListOptions];
 		[self.navigationController pushViewController:friendsVC animated:YES];
 	}
 	else if (indexPath.row == 1) {
 		NSDictionary *findFriendsOptions = nil;
-		[findFriendsVC initWithNibName:@"BeintooFindFriendsVC" bundle:[NSBundle mainBundle] andOptions:findFriendsOptions];
+		findFriendsVC = [findFriendsVC initWithNibName:@"BeintooFindFriendsVC" bundle:[NSBundle mainBundle] andOptions:findFriendsOptions];
 		[self.navigationController pushViewController:findFriendsVC animated:YES];		
 	}
 	else if	(indexPath.row == 2){
 		NSDictionary *friendRequestsOptions = nil;
-		[friendRequestsVC initWithNibName:@"BeintooFriendRequestsVC" bundle:[NSBundle mainBundle] andOptions:friendRequestsOptions];
+		friendRequestsVC = [friendRequestsVC initWithNibName:@"BeintooFriendRequestsVC" bundle:[NSBundle mainBundle] andOptions:friendRequestsOptions];
 		[self.navigationController pushViewController:friendRequestsVC animated:YES];		
 	}
 	else if (indexPath.row == 3){
@@ -123,11 +142,15 @@
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return NO;
 }
+#endif
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -144,10 +167,13 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     [Beintoo dismissBeintoo];
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[_player release];
 	[friendsVC release];
@@ -157,6 +183,6 @@
 	[elementsArrayList release];
     [super dealloc];
 }
-
+#endif
 
 @end

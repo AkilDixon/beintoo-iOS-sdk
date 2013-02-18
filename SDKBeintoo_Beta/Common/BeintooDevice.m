@@ -20,46 +20,62 @@
 
 @implementation BeintooDevice
 
--(id)init {
+- (id)init
+{
 	if (self = [super init])
 	{
 	}
     return self;
 }
 
-
-+ (BOOL)isiPad{
++ (BOOL)isiPad
+{
 	return (CGRectGetMaxX([[UIScreen mainScreen] bounds]) >= 768);
 }
 
-+ (NSString *)getUDID{
++ (NSString *)getUDID
+{
 	return [[UIDevice currentDevice] uniqueDeviceIdentifier];
 }
 
-+ (NSString *)getMacAddress{
++ (NSString *)getMacAddress
+{
 	return [[UIDevice currentDevice] _getMacAddress];
 }
 
-+ (NSString *)getISOLanguage{
++ (NSString *)getISOLanguage
+{
 	NSString   *language = [[NSLocale preferredLanguages] objectAtIndex:0];
-	if ([language length]==2) {
+	if ([language length] == 2) {
 		return language;
 	}
 	return nil;
 }
 
-+ (NSString *)getFormattedTimestampNow{
-    //Create the dateformatter object	
-	NSDateFormatter* formatter = [[[NSDateFormatter alloc] init] autorelease];
++ (NSString *)getFormattedTimestampNow
+{
+    //Create the dateformatter object
+#ifdef BEINTOO_ARC_AVAILABLE
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+#else
+    NSDateFormatter* formatter = [[[NSDateFormatter alloc] init] autorelease];
+#endif
+	
     [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];	
 	//Get the string date
 	NSString* timeStamp = [formatter stringFromDate:[NSDate date]];		
 	return timeStamp;
 }
 
-+ (int)elapsedHoursSinceTimestamp:(NSString *)_timestamp{
++ (int)elapsedHoursSinceTimestamp:(NSString *)_timestamp
+{
     
+#ifdef BEINTOO_ARC_AVAILABLE
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+#else
     NSDateFormatter* formatter = [[[NSDateFormatter alloc] init] autorelease];
+#endif
+    
     [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         
     if (!_timestamp) {
@@ -75,7 +91,8 @@
 }
 
 
-+ (NSString *)getASIdentifier{
++ (NSString *)getASIdentifier
+{
     #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
     if ([ASIdentifierManager sharedManager])
         return [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
@@ -86,7 +103,8 @@
     #endif
 }
 
-+ (NSString *)isASIdentifierEnabledByUser{
++ (NSString *)isASIdentifierEnabledByUser
+{
     #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
     if ([ASIdentifierManager sharedManager]){
         if ([[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled] == TRUE)
@@ -101,7 +119,8 @@
     #endif
 }
 
-+ (BOOL)isASIdentifierSupported{
++ (BOOL)isASIdentifierSupported
+{
     #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
     if ([ASIdentifierManager sharedManager])
         return TRUE;
@@ -113,22 +132,27 @@
 }
 
 
-+ (NSString *)getSystemVersion{
++ (NSString *)getSystemVersion
+{
     if ([[UIDevice currentDevice] respondsToSelector:@selector(systemVersion)])
         return [[UIDevice currentDevice] systemVersion];
     else
         return @"systemVersion";
 }
 
-+ (NSString *)getDeviceType{
++ (NSString *)getDeviceType
+{
     if ([[UIDevice currentDevice] respondsToSelector:@selector(model)])
         return [[UIDevice currentDevice] model];
     else
         return @"deviceType";
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [super dealloc];
 }
+#endif
 
 @end

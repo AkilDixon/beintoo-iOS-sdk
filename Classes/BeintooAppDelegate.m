@@ -18,6 +18,7 @@
 #import "BeintooViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "Beintoo.h"
+#import "BeintooDevice.h"
 
 @implementation BeintooAppDelegate
 
@@ -47,11 +48,10 @@
                                                             BFEATURE_MARKETPLACE, 
                                                             BFEATURE_LEADERBOARD, 
                                                             BFEATURE_WALLET, 
-                                                            BFEATURE_CHALLENGES,          
+                                                            BFEATURE_CHALLENGES,
                                                             BFEATURE_ACHIEVEMENTS,
                                                             BFEATURE_TIPSANDFORUM, nil];
 	
-
 	NSDictionary *beintooSettings = [[NSDictionary alloc] initWithObjectsAndKeys:
 									 beintooFeatures,   BeintooActiveFeatures,
 									 window,            BeintooApplicationWindow,
@@ -62,12 +62,12 @@
                                      [NSNumber numberWithInt:0], BeintooDismissAfterRegistration,
                                      [NSNumber numberWithInt:0], BeintooForceRegistration,
                                      [NSNumber numberWithInt:BeintooNotificationPositionBottom], BeintooNotificationPosition,
-									 [NSNumber numberWithInt:UIInterfaceOrientationPortrait],BeintooAppOrientation,
+									 [NSNumber numberWithInt:UIInterfaceOrientationPortrait], BeintooAppOrientation,
 									 nil];
 
 	sampleDelegate = [[BeintooDelegate alloc] init];
 	
-    [Beintoo initWithApiKey:yuor_apikey_here andApiSecret:nil andBeintooSettings:beintooSettings andMainDelegate:sampleDelegate];
+    [Beintoo initWithApiKey:your_apikey_here andApiSecret:nil andBeintooSettings:beintooSettings andMainDelegate:sampleDelegate];
     
     /*  UNCOMMENT the line below to use Beintoo in our testing environment sandbox 
 	*   
@@ -80,9 +80,12 @@
     *
     */
     
-	[beintooSettings release];
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [beintooSettings release];
+#endif
     
-    if( [[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    if( [[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0)
         [self.window setRootViewController:viewController];
     else 
         [self.window addSubview:viewController.view];
@@ -132,12 +135,17 @@
      */
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [viewController release];
 	[sampleDelegate release];
     [window release];
     [super dealloc];
+#endif
+   
 }
-
 
 @end

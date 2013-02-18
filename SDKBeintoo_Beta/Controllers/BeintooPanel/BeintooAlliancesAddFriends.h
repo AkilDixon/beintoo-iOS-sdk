@@ -12,6 +12,7 @@
 #import "BImageDownload.h"
 #import "BeintooAlliance.h"
 #import "BeintooUser.h"
+#import "BeintooDevice.h"
 
 @interface BeintooAlliancesAddFriends : UIViewController <UITableViewDelegate, UITableViewDataSource, BeintooAllianceDelegate, BeintooUserDelegate, BImageDownloadDelegate, UIAlertViewDelegate> {
     
@@ -28,7 +29,6 @@
     NSMutableArray          *selectedFriends;
     
     IBOutlet UIBarButtonItem         *barButton;
-
 }
 
 @property (nonatomic, retain) NSMutableArray *startingOptions;

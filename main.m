@@ -15,11 +15,25 @@
  ******************************************************************************/
 
 #import <UIKit/UIKit.h>
+#import "BeintooDevice.h"
 
 int main(int argc, char *argv[]) {
     
+#ifdef BEINTOO_ARC_AVAILABLE
+    @autoreleasepool {
+#else
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+#endif
+    
     int retVal = UIApplicationMain(argc, argv, nil, nil);
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        return retVal;
+    }
+#else
     [pool release];
     return retVal;
+#endif
+    
+    
 }

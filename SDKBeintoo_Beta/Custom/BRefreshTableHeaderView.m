@@ -16,7 +16,7 @@
 
 
 #import "BRefreshTableHeaderView.h"
-
+#import "Beintoo.h"
 
 #define TEXT_COLOR	 [UIColor colorWithRed:87.0/255.0 green:108.0/255.0 blue:137.0/255.0 alpha:1.0]
 #define BORDER_COLOR [UIColor colorWithRed:160.0/255.0 green:173.0/255.0 blue:182.0/255.0 alpha:1.0]
@@ -43,13 +43,15 @@ static NSDateFormatter *refreshFormatter;
 // Sets up the frame following the recipe in the samples except it doesn't *overlap* the partner view,
 // ensuring that if you choose to draw a bottom border (by setting bottomBorderThickness > 0.0) then
 // you'll get a proper border, not a partially obscured one.
-- (id)initWithFrameRelativeToFrame:(CGRect)originalFrame {
+- (id)initWithFrameRelativeToFrame:(CGRect)originalFrame
+{
 	CGRect relativeFrame = CGRectMake(0.0f, 0.0f - originalFrame.size.height, originalFrame.size.width, originalFrame.size.height);
 	[self setBottomBorderThickness:1.0f];
 	return [self initWithFrame:relativeFrame];
 }
 
-- (id)initWithFrame:(CGRect)frame {
+- (id)initWithFrame:(CGRect)frame
+{
     if (self = [super initWithFrame:frame]) {
 		
 		self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -61,9 +63,25 @@ static NSDateFormatter *refreshFormatter;
 		lastUpdatedLabel.shadowColor = [UIColor colorWithWhite:0.9f alpha:1.0f];
 		lastUpdatedLabel.shadowOffset = CGSizeMake(0.0f, 1.0f);
 		lastUpdatedLabel.backgroundColor = [UIColor clearColor];
-		lastUpdatedLabel.textAlignment = UITextAlignmentCenter;
-		[self addSubview:lastUpdatedLabel];
-		[lastUpdatedLabel release];
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        lastUpdatedLabel.textAlignment = NSTextAlignmentCenter;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+            lastUpdatedLabel.textAlignment = NSTextAlignmentCenter;
+        else
+            lastUpdatedLabel.textAlignment = UITextAlignmentCenter;
+#else
+        lastUpdatedLabel.textAlignment = UITextAlignmentCenter;
+#endif
+        
+        [self addSubview:lastUpdatedLabel];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [lastUpdatedLabel release];
+#endif
+
 
 //		if ([[NSUserDefaults standardUserDefaults] objectForKey:@"EGORefreshTableView_LastRefresh"]) {
 //			lastUpdatedLabel.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"EGORefreshTableView_LastRefresh"];
@@ -78,23 +96,39 @@ static NSDateFormatter *refreshFormatter;
 		statusLabel.shadowColor = [UIColor colorWithWhite:0.9f alpha:1.0f];
 		statusLabel.shadowOffset = CGSizeMake(0.0f, 1.0f);
 		statusLabel.backgroundColor = [UIColor clearColor];
-		statusLabel.textAlignment = UITextAlignmentCenter;
-		[self setState:EGOOPullRefreshNormal];
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        statusLabel.textAlignment = NSTextAlignmentCenter;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+            statusLabel.textAlignment = NSTextAlignmentCenter;
+        else
+            statusLabel.textAlignment = UITextAlignmentCenter;
+#else
+        statusLabel.textAlignment = UITextAlignmentCenter;
+#endif
+        
+        [self setState:EGOOPullRefreshNormal];
 		[self addSubview:statusLabel];
-		[statusLabel release];
-		
+        
 		arrowImage = [[CALayer alloc] init];
 		arrowImage.frame = CGRectMake(25.0f, frame.size.height - 65.0f, 30.0f, 55.0f);
 		arrowImage.contentsGravity = kCAGravityResizeAspect;
 		arrowImage.contents = (id)[UIImage imageNamed:@"blueArrow.png"].CGImage;
 		[[self layer] addSublayer:arrowImage];
-		[arrowImage release];
 		
 		activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 		activityView.frame = CGRectMake(25.0f, frame.size.height - 38.0f, 20.0f, 20.0f);
 		activityView.hidesWhenStopped = YES;
 		[self addSubview:activityView];
-		[activityView release];
+		
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [arrowImage release];
+        [activityView release];
+        [statusLabel release];
+#endif
 		
     }
     return self;
@@ -103,7 +137,8 @@ static NSDateFormatter *refreshFormatter;
 // Will only draw a bottom border if you've set bottomBorderThickness to be > 0.0
 // and makes sure that the stroke is correctly centered so you get a border as thick
 // as you've asked for.
-- (void)drawRect:(CGRect)rect{
+- (void)drawRect:(CGRect)rect
+{
 	if ([self bottomBorderThickness] == 0.0f) return;
 	CGFloat strokeOffset = [self bottomBorderThickness] / 2.0f;
 	CGContextRef context = UIGraphicsGetCurrentContext();
@@ -127,14 +162,15 @@ static NSDateFormatter *refreshFormatter;
 	lastUpdatedLabel.text = [NSString stringWithFormat:@"%@: %@", NSLocalizedStringFromTable(@"lastUpdate", @"BeintooLocalizable", nil), [refreshFormatter stringFromDate:date]];
 }
 
-- (void)setCurrentDate {
+- (void)setCurrentDate
+{
 	lastUpdatedLabel.text = [NSString stringWithFormat:@"%@: %@", NSLocalizedStringFromTable(@"lastUpdate", @"BeintooLocalizable", nil), [refreshFormatter stringFromDate:[NSDate date]]];
 //	[[NSUserDefaults standardUserDefaults] setObject:lastUpdatedLabel.text forKey:@"EGORefreshTableView_LastRefresh"];
 //	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (void)setState:(EGOPullRefreshState)aState{
-	
+- (void)setState:(EGOPullRefreshState)aState
+{	
 	switch (aState) {
 		case EGOOPullRefreshPulling:
 			
@@ -190,7 +226,10 @@ static NSDateFormatter *refreshFormatter;
 	_state = aState;
 }
 
-- (void)dealloc {
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+- (void)dealloc
+{
 	[bottomBorderColor release], bottomBorderColor = nil;
 	activityView = nil;
 	statusLabel = nil;
@@ -198,6 +237,6 @@ static NSDateFormatter *refreshFormatter;
 	lastUpdatedLabel = nil;
     [super dealloc];
 }
-
+#endif
 
 @end

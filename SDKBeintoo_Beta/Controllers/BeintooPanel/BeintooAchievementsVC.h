@@ -18,8 +18,9 @@
 #import "BeintooVGood.h"
 #import "BImageDownload.h"
 #import "BeintooAchievements.h"
+#import "BPopup.h"
 
-@class BTableView,BView,BeintooPlayer;
+@class BTableView, BView, BeintooPlayer;
 
 @interface BeintooAchievementsVC : UIViewController <UITableViewDelegate,BeintooAchievementsDelegate,BImageDownloadDelegate>{
 	
@@ -34,12 +35,15 @@
 	NSMutableArray		 *achievementsArrayList;
 	NSMutableArray		 *achievementsImages;
     NSMutableArray		 *archiveAchievements;
+    
+    BPopup *popup;
 
 }
 
 
-@property(nonatomic,retain) NSMutableArray *achievementsArrayList;
-@property(nonatomic,retain) NSMutableArray *achievementsImages;
-@property(nonatomic,assign) BOOL            isFromNotification;
+@property(nonatomic, retain) NSMutableArray *achievementsArrayList;
+@property(nonatomic, retain) NSMutableArray *achievementsImages;
+@property(nonatomic, assign) BOOL            isFromNotification;
+@property(nonatomic, retain) BPopup *popup;
 
 @end

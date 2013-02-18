@@ -1,23 +1,19 @@
 /*******************************************************************************
- * Copyright 2011 Beintoo - author fmessina@beintoo.com
- * 
+ * Copyright 2012 Beintoo
+ * Author Giuseppe Piazzese (gpiazzese@beintoo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-
-#define BEINTOO_IOS_4_0  40000
-#define BEINTOO_IOS_5_0  50000
-#define BEINTOO_IOS_5_1  50100
-#define BEINTOO_IOS_6_0  60000
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -101,6 +97,12 @@
 #import "BeintooUrlParser.h"
 #import "BeintooOpenUDID.h"
 #import "BAnimatedNotificationQueue.h"
+#import "BTemplateGiveBedollars.h"
+#import "BNavigationController.h"
+#import "BeintooApp.h"
+#import "BeintooAlliancesAddFriends.h"
+#import "BeintooAd.h"
+#import "BeintooReward.h"
 
 #define BFEATURE_PROFILE			@"Profile"
 #define BFEATURE_MARKETPLACE		@"Marketplace"
@@ -126,6 +128,15 @@ extern NSInteger BeintooNotificationPositionTop;
 extern NSInteger BeintooNotificationPositionBottom; 
 extern NSString *BeintooAppStatusBarHidden;
 
+extern NSString *BeintooSdkVersion;
+
+extern NSString *BeintooNotificationSignupClosed;
+extern NSString *BeintooNotificationOrientationChanged;
+extern NSString *BeintooNotificationReloadDashboard;
+extern NSString *BeintooNotificationReloadFriendsList;
+extern NSString *BeintooNotificationChallengeSent;
+extern NSString *BeintooNotificationCloseBPickerView;
+
 @class BeintooVC;
 
 extern NSString *BNSDefLastLoggedPlayers;
@@ -133,8 +144,8 @@ extern NSString *BNSDefLoggedPlayer;
 extern NSString *BNSDefLoggedUser;
 extern NSString *BNSDefIsUserLogged;
 
-@interface Beintoo : NSObject {
-	
+@interface Beintoo : NSObject
+{	
 	id <BeintooMainDelegate> mainDelegate;
 
 	NSString			*apiKey;
@@ -142,6 +153,7 @@ extern NSString *BNSDefIsUserLogged;
 	NSString			*deviceID;
 	NSString			*restBaseUrl;
     NSString			*displayBaseUrl;
+    
 	int					appOrientation;
 	BOOL				forceRegistration;
 	BOOL				isOnSandbox;
@@ -174,16 +186,22 @@ extern NSString *BNSDefIsUserLogged;
 	
     UIWindow                        *applicationWindow;
 	BeintooVgood                    *beintooVgoodService;
-	BeintooPlayer                   *beintooPlayerService;
+    BeintooPlayer                   *beintooPlayerService;
     BeintooUser                     *beintooUserService;
 	BeintooAchievements             *beintooAchievementsService;
     BeintooBestore                  *beintooBestoreService;
+    BeintooApp                      *beintooAppService;
+    BeintooAd                       *beintooAdService;
+    BeintooReward                   *beintooRewardService;
 	
     NSDictionary                    *lastRetrievedMission;
 	BVirtualGood                    *lastGeneratedGood;
     BVirtualGood                    *lastGeneratedAd;
+    BVirtualGood                    *lastGeneratedGiveBedollars;
+    
 	BPrize                          *prizeView;
     BPrize                          *adView;
+    BTemplateGiveBedollars          *giveBedollarsView;
     BMissionView                    *missionView;
 	BMessageAnimated                *notificationView;
 	
@@ -208,10 +226,67 @@ extern NSString *BNSDefIsUserLogged;
     BeintooLeaderboardContestVC     *beintooLeaderboardWithContestVC;
     BeintooNotificationListVC       *beintooNotificationsVC;
     BeintooBestoreVC                *beintooBestoreVC;
-    
 }
 
+#pragma mark - Init Beintoo
+
 + (void)initWithApiKey:(NSString *)_apikey andApiSecret:(NSString *)_apisecret andBeintooSettings:(NSDictionary *)_settings andMainDelegate:(id<BeintooMainDelegate>)beintooMainDelegate;
+
+#pragma mark - Player methods
+
++ (void)login;
++ (void)submitScore:(int)score;
++ (void)submitScore:(int)score forContest:(NSString *)contestID;
++ (void)submitScore:(int)score forContest:(NSString *)contestID withThreshold:(int)threshold;
++ (void)submitScoreAndGetRewardForScore:(int)score andContest:(NSString *)codeID withThreshold:(int)threshold;
++ (int)getThresholdScoreForCurrentPlayerWithContest:(NSString *)codeID;
++ (void)getScore;
++ (void)playerLogout;
+
+#pragma mark - Give Bedollars methods
+
++ (void)giveBedollars:(float)amount showNotification:(BOOL)showNotification withPosition:(int)position;
+
+#pragma mark - Reward methods
+
++ (void)getReward;
++ (void)getRewardWithDelegate:(id)_delegate;
++ (void)getRewardWithContest:(NSString *)contestID;
+
+#pragma mark - Ads methods
+
++ (void)requestAndDisplayAdWithDeveloperUserGuid:(NSString *)_developerUserGuid;
++ (void)requestAdWithDeveloperUserGuid:(NSString *)_developerUserGuid;
+
+#pragma mark - Achievements methods
+
++ (void)unlockAchievement:(NSString *)achievementID;
++ (void)unlockAchievement:(NSString *)achievementID showNotification:(BOOL)showNotification;
++ (void)setAchievement:(NSString *)achievementID withPercentage:(int)percentage;
++ (void)setAchievement:(NSString *)achievementID withPercentage:(int)percentage showNotification:(BOOL)showNotification;
++ (void)setAchievement:(NSString *)achievementID withScore:(int)score;
++ (void)incrementAchievement:(NSString *)achievementID withScore:(int)score;
++ (void)unlockAchievementsInBackground:(NSArray *)achievementArray;
++ (void)getAchievementStatusAndPercentage:(NSString *)achievementID;
+
+// BY OBJECT ID
+
++ (void)unlockAchievementByObjectID:(NSString *)objectID showNotification:(BOOL)showNotification;
++ (void)setAchievementByObjectID:(NSString *)objectID withPercentage:(int)percentage showNotification:(BOOL)showNotification;
++ (void)unlockAchievementsByObjectIDInBackground:(NSArray *)achievementArray;
+
+#pragma mark - Set Delegates methods
+
++ (void)setPlayerDelegate:(id)delegate;
++ (void)setUserDelegate:(id)delegate;
++ (void)setAchievementsDelegate:(id)delegate;
++ (void)setRewardDelegate:(id)delegate;
++ (void)setVgoodDelegate:(id)delegate;
++ (void)setAppDelegate:(id)delegate;
++ (void)setAdDelegate:(id)delegate;
+
+#pragma mark - Launch and Dismiss methods
+
 + (void)launchBeintoo;
 + (void)launchBeintooOnAppWithVirtualCurrencyBalance:(float)_value;
 + (void)launchNotifications;
@@ -237,19 +312,52 @@ extern NSString *BNSDefIsUserLogged;
 + (void)launchIpadNotifications;
 + (void)_launchPrivateNotifications;
 + (void)dismissIpadNotifications;
-+ (BOOL)isUserLogged;
-+ (BOOL)isRegistrationForced;
-+ (BOOL)isTryBeintooForced;
-+ (BOOL)showAchievementNotification;
-+ (BOOL)showLoginNotification;
-+ (BOOL)showScoreNotification;
-+ (BOOL)showNoRewardNotification;
-+ (BOOL)isTryBeintooImageTypeReward;
-+ (BOOL)dismissBeintooOnRegistrationEnd;
-+ (BOOL)isOnSandbox;
-+ (BOOL)isOnPrivateSandbox;
-+ (BOOL)userHasAllowedLocationServices;
-+ (void)setUserLogged:(BOOL)isLoggedValue;
++ (void)dismissBeintoo;
++ (void)dismissBeintoo:(int)type;
++ (void)dismissBeintooNotAnimated;
++ (void)dismissPrize;
++ (void)dismissAd;
++ (void)dismissRecommendation;
++ (void)dismissMission;
++ (void)dismissSignup;
++ (void)launchGiveBedollarsWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate position:(int)position;
++ (void)dismissGiveBedollarsController;
+
+#pragma mark - Global Services
+
++ (BeintooReward *)beintooRewardService;
++ (BeintooVgood *)beintooVgoodService;
++ (BeintooPlayer *)beintooPlayerService;
++ (BeintooUser *)beintooUserService;
++ (BeintooAchievements *)beintooAchievementService;
++ (BeintooBestore *)beintooBestoreService;
++ (BeintooApp *)beintooAppService;
++ (BeintooAd *)beintooAdService;
+
+#pragma mark - Global Controllers
+
++ (UIViewController *)getMainController;
++ (BeintooNavigationController *)getMainNavigationController;
++ (BeintooVgoodNavController *)getVgoodNavigationController;
++ (BeintooNavigationController *)getBestoreNavigationController;
++ (BeintooNavigationController *)getLeaderboardsNavigationController;
++ (BeintooNavigationController *)getMyOffersNavigationController;
++ (BeintooNavigationController *)getAchievementsNavigationController;
++ (BeintooNavigationController *)getNotificationsNavigationController;
++ (BeintooNavigationController *)getSignupNavigationController;
++ (BeintooNavigationController *)getPrivateNotificationsNavigationController;
++ (BeintooNavigationController *)getPrivateSignupNavigationController;
++ (BeintooNotificationListVC *)getPrivateNotificationsViewController;
++ (BeintooVC *)getBeintooPanelRootViewController;
++ (BMessageAnimated *)getNotificationView;
+
+#pragma mark - Private Methods
+
++ (UIWindow *)getAppWindow;
++ (int)appOrientation;
++ (id<BeintooMainDelegate>)getMainDelegate;
++ (dispatch_queue_t)beintooDispatchQueue;
++ (BAnimatedNotificationQueue *)getNotificationQueue;
 + (NSString *)currentVersion;
 + (NSInteger)notificationPosition;
 + (NSDictionary *)getPlayer;
@@ -263,67 +371,51 @@ extern NSString *BNSDefIsUserLogged;
 + (NSArray *)getFeatureList;
 + (NSArray *)getLastLoggedPlayers;
 + (NSString *)getMissionTimestamp;
-+ (void)setMissionTimestamp:(NSString *)_timestamp;
++ (NSArray *)getBeintooUserFriends;
++ (NSString *)getUserLocationForURL;
++ (CLLocation *)getUserLocation;
+
++ (void)updateUserLocation;
++ (void)changeBeintooOrientation:(int)_orientation;
+
 + (BVirtualGood *)getLastGeneratedVGood;
 + (BVirtualGood *)getLastGeneratedAd;
 + (NSDictionary *)getLastRetrievedMission;
++ (BVirtualGood *)getLastGeneratedGiveBedollars;
+
 + (void)setLastRetrievedMission:(NSDictionary *)_mission;
-+ (BeintooVgood *)beintooVgoodService;
-+ (BeintooPlayer *)beintooPlayerService;
-+ (BeintooUser *)beintooUserService;
-+ (BeintooAchievements *)beintooAchievementService;
-+ (BeintooBestore *)beintooBestoreService;
-+ (UIViewController *)getMainController;
-+ (BeintooNavigationController *)getMainNavigationController;
-+ (BeintooVgoodNavController *)getVgoodNavigationController;
-+ (BeintooNavigationController *)getBestoreNavigationController;
-+ (BeintooNavigationController *)getLeaderboardsNavigationController;
-+ (BeintooNavigationController *)getMyOffersNavigationController;
-+ (BeintooNavigationController *)getAchievementsNavigationController;
-+ (BeintooNavigationController *)getNotificationsNavigationController;
-+ (BeintooNavigationController *)getSignupNavigationController;
-+ (BeintooNavigationController *)getPrivateNotificationsNavigationController;
-+ (BeintooNavigationController *)getPrivateSignupNavigationController;
-+ (BeintooNotificationListVC *)getPrivateNotificationsViewController;
-+ (UIWindow *)getAppWindow;
 + (void)setLastGeneratedVgood:(BVirtualGood *)_theVGood;
 + (void)setLastGeneratedAd:(BVirtualGood *)_theAd;
-+ (int)appOrientation;
++ (void)setMissionTimestamp:(NSString *)_timestamp;
++ (void)setLastLoggedPlayers:(NSArray *)_players;
 + (void)setBeintooUser:(NSDictionary *)_user;
 + (void)setBeintooPlayer:(NSDictionary *)_player;
 + (void)setBeintooUserFriends:(NSArray *)friends;
-+ (NSArray *)getBeintooUserFriends;
-+ (BOOL)isAFriendOfMine:(NSString *)_friendID;
-+ (void)switchBeintooToSandbox;
-+ (void)dismissBeintoo;
-+ (void)dismissBeintoo:(int)type;
-+ (void)dismissBeintooNotAnimated;
-+ (void)dismissPrize;
-+ (void)dismissAd;
-+ (void)dismissRecommendation;
-+ (void)dismissMission;
-+ (void)beintooDidAppear;
-+ (void)beintooDidDisappear;
-+ (void)prizeDidAppear;
-+ (void)beintooWillDisappear;
-+ (void)prizeDidDisappear;
-+ (void)updateUserLocation;
-+ (void)setLastLoggedPlayers:(NSArray *)_players;
-+ (void)playerLogout;
-+ (void)notifyVGoodGenerationOnMainDelegate;
-+ (void)changeBeintooOrientation:(int)_orientation;
-+ (void)notifyVGoodGenerationErrorOnMainDelegate:(NSDictionary *)_error;
-+ (id<BeintooMainDelegate>)getMainDelegate;
-+ (dispatch_queue_t)beintooDispatchQueue;
-+ (NSString *)getUserLocationForURL;
-+ (BeintooVC *)getBeintooPanelRootViewController;
-+ (BMessageAnimated *)getNotificationView;
-+ (CLLocation *)getUserLocation;
-+ (void)shutdownBeintoo;
-+ (BOOL)isStatusBarHiddenOnApp;
 + (void)_setUserLocation:(CLLocation *)_location;
++ (void)setUserLogged:(BOOL)isLoggedValue;
++ (void)setLastGeneratedGiveBedollars:(BVirtualGood *)_content;
 
-//-------> Marketplace Developer Currency Management Methods <--------
++ (BOOL)isUserLogged;
++ (BOOL)isRegistrationForced;
++ (BOOL)isTryBeintooForced;
++ (BOOL)showAchievementNotification;
++ (BOOL)showLoginNotification;
++ (BOOL)showScoreNotification;
++ (BOOL)showNoRewardNotification;
++ (BOOL)isTryBeintooImageTypeReward;
++ (BOOL)dismissBeintooOnRegistrationEnd;
++ (BOOL)isOnSandbox;
++ (BOOL)isOnPrivateSandbox;
++ (BOOL)userHasAllowedLocationServices;
++ (BOOL)isAFriendOfMine:(NSString *)_friendID;
++ (BOOL)isAdReady;
++ (BOOL)isStatusBarHiddenOnApp;
+
++ (void)switchBeintooToSandbox;
++ (void)_privateSandbox;
+
+#pragma mark - Virtual Currency Methods
+
 + (void)setVirtualCurrencyName:(NSString *)_name forUserId:(NSString *)_userId withBalance:(float)_value;
 + (void)setDeveloperUserId:(NSString *)_userId withBalance:(float)_value;
 + (NSString *)getVirtualCurrencyName;
@@ -335,21 +427,32 @@ extern NSString *BNSDefIsUserLogged;
 + (void)removeStoredVirtualCurrency;
 + (BOOL)isVirtualCurrencyStored;
 
-+ (void)postNotificationBeintooUserDidLogin;
-+ (void)postNotificationBeintooUserDidSignup;
+#pragma mark - Notifications
 
 + (void)adControllerDidAppear;
 + (void)adControllerDidDisappear;
 + (void)notifyAdGenerationOnMainDelegate;
 + (void)notifyAdGenerationErrorOnMainDelegate:(NSDictionary *)_error;
 
-+ (void)dismissSignup;
++ (void)beintooDidAppear;
++ (void)beintooDidDisappear;
++ (void)prizeDidAppear;
++ (void)beintooWillDisappear;
++ (void)prizeDidDisappear;
 
-+ (BOOL)isAdReady;
++ (void)notifyVGoodGenerationOnMainDelegate;
++ (void)notifyVGoodGenerationErrorOnMainDelegate:(NSDictionary *)_error;
 
-+ (NSString *)getDisplayBaseUrl;
-+ (BAnimatedNotificationQueue *)getNotificationQueue;
++ (void)giveBedollarsControllerDidAppear;
++ (void)giveBedollarsControllerDidDisappear;
+
+#pragma mark - Post Notifications
+
++ (void)postNotificationBeintooUserDidLogin;
++ (void)postNotificationBeintooUserDidSignup;
+
+#pragma mark - Shutdown and release
+
++ (void)shutdownBeintoo;
 
 @end
-
-

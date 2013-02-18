@@ -298,7 +298,12 @@ static char ctrl[0x22];
                                             freeWhenDone:NO];
             if (t) {
                 [*o appendString:t];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
                 [t release];
+#endif
+            
                 c += len;
             }
         }
@@ -334,7 +339,12 @@ static char ctrl[0x22];
                     return NO;
                     break;
             }
+#ifdef BEINTOO_ARC_AVAILABLE
+            CFStringAppendCharacters((__bridge CFMutableStringRef)*o, &uc, 1);
+#else
             CFStringAppendCharacters((CFMutableStringRef)*o, &uc, 1);
+#endif
+            
             c++;
             
         } else if (*c < 0x20) {
@@ -457,7 +467,12 @@ static char ctrl[0x22];
                                             length:c - ns
                                           encoding:NSUTF8StringEncoding
                                       freeWhenDone:NO];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [str autorelease];
+#endif
+    
     if (str && (*o = [NSDecimalNumber decimalNumberWithString:str]))
         return YES;
     

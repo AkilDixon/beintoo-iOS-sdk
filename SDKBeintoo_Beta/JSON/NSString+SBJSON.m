@@ -38,7 +38,12 @@
     id repr = [jsonParser fragmentWithString:self];    
     if (!repr)
         NSLog(@"-JSONFragmentValue failed. Error trace is: %@", [jsonParser errorTrace]);
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [jsonParser release];
+#endif
+    
     return repr;
 }
 
@@ -48,7 +53,12 @@
     id repr = [jsonParser objectWithString:self];
     if (!repr)
         NSLog(@"-JSONValue failed. Error trace is: %@", [jsonParser errorTrace]);
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [jsonParser release];
+#endif
+    
     return repr;
 }
 

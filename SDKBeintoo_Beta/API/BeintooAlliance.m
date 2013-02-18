@@ -22,7 +22,8 @@
 
 @synthesize delegate,parser;
 
-- (id)init {
+- (id)init
+{
 	if (self = [super init])
 	{
         parser = [[Parser alloc] init];
@@ -37,21 +38,23 @@
 #pragma mark -
 #pragma mark API
 
-- (void)getAllianceWithID:(NSString *)_allianceID{
+- (void)getAllianceWithID:(NSString *)_allianceID
+{
     NSString *res		 = [NSString stringWithFormat:@"%@%@",rest_resource,_allianceID];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",nil];
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:ALLIANCE_GET_CALLER_ID];
 }
 
-- (void)getAllianceWithAdminDetailsWithID:(NSString *)_allianceID{
+- (void)getAllianceWithAdminDetailsWithID:(NSString *)_allianceID
+{
     NSString *res		 = [NSString stringWithFormat:@"%@%@?userExt=%@", rest_resource, _allianceID, [Beintoo getUserID]];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",nil];
     
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:ALLIANCE_ADMIN_GET_CALLER_ID];
 }
 
-- (void)getAllianceListWithQueryText:(NSString *)_queryText{
-
+- (void)getAllianceListWithQueryText:(NSString *)_queryText
+{
     NSString *res;
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",nil];
     
@@ -64,8 +67,8 @@
     [parser parsePageAtUrl:res withHeaders:params fromCaller:ALLIANCE_GETLIST_CALLER_ID];
 }
 
-- (void)createAllianceWithName:(NSString *)_allianceName andCreatorId:(NSString *)_creatorUserExt{
-    
+- (void)createAllianceWithName:(NSString *)_allianceName andCreatorId:(NSString *)_creatorUserExt
+{
     NSString *res        = [NSString stringWithFormat:@"%@",rest_resource];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",nil];
     NSString *httpBody   = [NSString stringWithFormat:@"userExt=%@&name=%@",_creatorUserExt,_allianceName];
@@ -73,37 +76,39 @@
     [parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:ALLIANCE_CREATE_CALLER_ID];
 }
 
-- (void)performActionOnAlliance:(NSString *)_allianceID withAction:(NSString *)_actionType forUser:(NSString *)_userID{
-
+- (void)performActionOnAlliance:(NSString *)_allianceID withAction:(NSString *)_actionType forUser:(NSString *)_userID
+{
     NSString *res = [NSString stringWithFormat:@"%@%@/%@/%@",rest_resource,_allianceID,_actionType,_userID];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",nil];
     
     [parser parsePageAtUrlWithPOST:res withHeaders:params fromCaller:ALLIANCE_ADMINACTION_CALLER_ID];
 }
 
-- (void)allianceAdmin:(NSString *)_adminUserID ofAlliance:(NSString *)_allianceID performAction:(NSString *)_actionType forUser:(NSString *)_userID{
-
+- (void)allianceAdmin:(NSString *)_adminUserID ofAlliance:(NSString *)_allianceID performAction:(NSString *)_actionType forUser:(NSString *)_userID
+{
     NSString *res = [NSString stringWithFormat:@"%@%@/%@/%@/%@",rest_resource,_allianceID,_adminUserID,_actionType,_userID];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",nil];
     
     [parser parsePageAtUrl:res withHeaders:params fromCaller:ALLIANCE_ADMINACTION_CALLER_ID];
 }
 
-- (void)getPendingRequestsForAlliance:(NSString *)_allianceID withAdmin:(NSString *)_adminUserID{
-        
+- (void)getPendingRequestsForAlliance:(NSString *)_allianceID withAdmin:(NSString *)_adminUserID
+{        
     NSString *res        = [NSString stringWithFormat:@"%@%@/%@/PENDING",rest_resource,_allianceID,_adminUserID];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",nil];
     [parser parsePageAtUrl:res withHeaders:params fromCaller:ALLIANCE_GETPENDINGREQUESTS_CALLER_ID];
 }
 
-- (void)sendJoinRequestForUser:(NSString *)_userID toAlliance:(NSString *)_allianceID{
+- (void)sendJoinRequestForUser:(NSString *)_userID toAlliance:(NSString *)_allianceID
+{
     NSString *res        = [NSString stringWithFormat:@"%@%@/addme/%@",rest_resource,_allianceID,_userID];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",nil];
 
     [parser parsePageAtUrlWithPOST:res withHeaders:params fromCaller:ALLIANCE_ADMINACTION_CALLER_ID];
 }
 
-- (void)topScoreFrom:(int)start andRows:(int)rows forContest:(NSString *)codeID{
+- (void)topScoreFrom:(int)start andRows:(int)rows forContest:(NSString *)codeID
+{
     NSString *res        = [NSString stringWithFormat:@"%@topscore?start=%d&rows=%d",rest_resource,start,rows];
 	NSDictionary *params;
     
@@ -120,7 +125,8 @@
     [parser parsePageAtUrl:res withHeaders:params fromCaller:ALLIANCE_TOPSCORE_CALLER_ID];
 }
 
-- (void)allianceAdminInviteFriends:(NSArray *)_friendsIDArray onAlliance:(NSString *)_allianceID{
+- (void)allianceAdminInviteFriends:(NSArray *)_friendsIDArray onAlliance:(NSString *)_allianceID
+{
     NSString *res        = [NSString stringWithFormat:@"%@%@/invite/",rest_resource,_allianceID];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",nil];
     
@@ -198,37 +204,47 @@
 #pragma mark -
 #pragma mark Class Methods
 
-+ (BOOL)userHasAlliance{
++ (BOOL)userHasAlliance
+{
     return [[NSUserDefaults standardUserDefaults] boolForKey:@"hasUserAlliance"];
 }
 
-+ (void)setUserWithAlliance:(BOOL)_allianceValue{
++ (void)setUserWithAlliance:(BOOL)_allianceValue
+{
     [[NSUserDefaults standardUserDefaults] setBool:_allianceValue forKey:@"hasUserAlliance"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-+ (BOOL)userIsAllianceAdmin{
++ (BOOL)userIsAllianceAdmin
+{
     return [[NSUserDefaults standardUserDefaults] boolForKey:@"isAllianceAdmin"];
 }
 
-+ (void)setUserAllianceAdmin:(BOOL)_adminValue{
++ (void)setUserAllianceAdmin:(BOOL)_adminValue
+{
     [[NSUserDefaults standardUserDefaults] setBool:_adminValue forKey:@"isAllianceAdmin"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-+ (NSString *)userAllianceID{
++ (NSString *)userAllianceID
+{
     return [[[Beintoo getPlayer] objectForKey:@"alliance"] objectForKey:@"id"];
 }
 
-+ (NSString *)userAllianceName{
++ (NSString *)userAllianceName
+{
     return [[[Beintoo getPlayer] objectForKey:@"alliance"] objectForKey:@"name"];
 }
 
 - (void)dealloc {
     parser.delegate = nil;
-	[parser release];
+	
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [parser release];
 	[rest_resource release];
     [super dealloc];
+#endif
 }
 
 @end

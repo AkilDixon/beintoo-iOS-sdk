@@ -19,6 +19,7 @@
 #import "BeintooUser.h"
 #import "BeintooAlliance.h"
 #import "BPickerView.h"
+#import "BNavigationController.h"
 
 #define POPUP_DETACH	44
 #define POPUP_LOGOUT	55
@@ -26,7 +27,7 @@
 
 @class BView, BGradientView, BButton, BTableView, BeintooMessagesVC, BeintooFriendsListVC, BeintooNewMessageVC, BeintooBalanceVC,BeintooFriendActionsVC,BeintooAllianceActionsVC,BGradientView,BeintooLoginVC, BeintooWebViewVC;
 
-@interface BeintooProfileVC : UIViewController <UITableViewDelegate,UIActionSheetDelegate,BeintooUserDelegate,BeintooPlayerDelegate> {
+@interface BeintooProfileVC : UIViewController <UITableViewDelegate, UIActionSheetDelegate, BeintooUserDelegate, BeintooPlayerDelegate, BImageDownloadDelegate> {
 	
 	IBOutlet UIScrollView *scrollView;
 	IBOutlet BView		 *profileView;
@@ -64,8 +65,8 @@
 	NSDictionary		 *allScores;
 	NSDictionary		 *startingOptions;
 	BOOL				 isAFriendProfile;
-
-	BeintooPlayer *_player;
+    
+    BeintooPlayer *_player;
 	BeintooUser	  *_user;
     BeintooAlliance     *_alliance;
     
@@ -79,7 +80,7 @@
 	NSMutableArray *feedNameLists;
     
     BeintooLoginVC                  *loginVC;
-    UINavigationController          *loginNavController;
+    BNavigationController          *loginNavController;
     UIView                          *signupViewForPlayers;
     
 }

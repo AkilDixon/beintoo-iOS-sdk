@@ -16,29 +16,30 @@
 
 #import <Foundation/Foundation.h>
 #import "Parser.h"
+#import "BeintooDevice.h"
 
 #define LOGIN_NO_PLAYER	  2
 #define LOGIN_NO_ERROR	  0
-
 
 @class BeintooUser,BScore;
 
 @protocol BeintooPlayerDelegate;
 
-@interface BeintooPlayer : NSObject <BeintooParserDelegate>{
-	
+@interface BeintooPlayer : NSObject <BeintooParserDelegate>
+{	
 	id <BeintooPlayerDelegate> delegate;
+    id callingDelegate;
+    
 	int loginError;
 	Parser *parser;
 	
-	NSString *rest_resource;
+    NSString *rest_resource;
 	NSString *app_rest_resource;
-		
-	id callingDelegate;
 }
 
-// --------------------------------- Developer API Calls ---------------------------------
 + (void)setPlayerDelegate:(id)_caller;
++ (void)setDelegate:(id)_delegate;
+
 /* 
  * PLAYER LOGIN: 
  *	
@@ -57,8 +58,9 @@
  */
 + (void)submitScore:(int)_score;
 + (void)submitScore:(int)_score forContest:(NSString *)_contestName;
-+ (void)submitScoreAndGetVgoodForScore:(int)_score andContest:(NSString *)_contestName withThreshold:(int)_threshold andVgoodMultiple:(BOOL)_isMultiple;
-+ (void)resetVgoodThresholdScoreForContest:(NSString *)_codeId;
++ (void)submitScoreAndGetRewardForScore:(int)_score andContest:(NSString *)_contestName withThreshold:(int)_threshold;
+
++ (void)submitScoreAndGetVgoodForScore:(int)_score andContest:(NSString *)_contestName withThreshold:(int)_threshold andVgoodMultiple:(BOOL)_isMultiple __attribute__((deprecated("use '[Beintoo submitScoreAndGetRewardForScore:andContest:withThreshold:]' instead")));
 /* 
  * PLAYER GETSCORE: 
  *	
@@ -101,7 +103,7 @@
 - (void)topScoreFrom:(int)start andRows:(int)rows forUser:(NSString *)userExt andContest:(NSString *)codeId;
 - (void)topScoreFrom:(int)start andRows:(int)rows closeToUser:(NSString *)userExt andContest:(NSString *)codeId;
 - (void)showContestList;
-- (void)logException:(NSString *)exception;
+- (void)logException:(NSString *    )exception;
 
 - (int)loginError;
 - (NSString *)restResource;
@@ -115,14 +117,21 @@
 + (void)setVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey andScore:(int)_score;
 + (void)resetVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey andScore:(int)_score;
 + (int)getThresholdScoreForCurrentPlayerWithContest:(NSString *)codeID;
++ (void)resetVgoodThresholdScoreForContest:(NSString *)_codeId;
     
 // Offline SubmitScore handlers
 + (void)addScoreToLocallySavedScores:(NSString *)scoreValue forContest:(NSString *)codeID;
 + (void)flushLocallySavedScore;
 + (void)submitScoreForOfflineScores:(NSString *)scores;
 
+#ifdef BEINTOO_ARC_AVAILABLE
+@property(nonatomic, retain) id <BeintooPlayerDelegate> delegate;
+@property(nonatomic, retain) id  callingDelegate;
+#else
 @property(nonatomic, assign) id <BeintooPlayerDelegate> delegate;
 @property(nonatomic, assign) id  callingDelegate;
+#endif
+
 @property(nonatomic, retain) Parser *parser;
 
 @end
@@ -131,7 +140,6 @@
 
 @optional
 
-// Developer Callbacks
 - (void)playerDidLoginWithResult:(NSDictionary *)result;
 - (void)playerDidFailLoginWithResult:(NSString *)error;
 - (void)playerDidSumbitScoreWithResult:(NSString *)result;
@@ -144,8 +152,6 @@
 - (void)playerDidCompleteBackgroundLogin:(NSDictionary *)result;
 - (void)playerDidNotCompleteBackgroundLogin;
 
-
-// Internal Callbacks
 - (void)playerDidLogin:(BeintooPlayer *)player;
 - (void)player:(BeintooPlayer *)player didSubmitScorewithResult:(NSString *)result andPoints:(NSString *)points;
 - (void)appDidGetTopScoreswithResult:(NSDictionary *)result;
@@ -153,7 +159,6 @@
 - (void)didgetPlayerByUser:(NSDictionary *)result;
 - (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result;
 
-// Called on user profile to retrieve all the scores for a certain user
 - (void)player:(BeintooPlayer *)player didGetAllScores:(NSDictionary *)result;
 
 @end

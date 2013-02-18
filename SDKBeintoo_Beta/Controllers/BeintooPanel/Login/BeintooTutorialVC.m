@@ -39,8 +39,12 @@
     
     UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
+	
     int appOrientation = [Beintoo appOrientation];
 	
 	UIImageView *logo;
@@ -51,9 +55,13 @@
         logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bar_logo.png"]];
     
     self.navigationItem.titleView = logo;
-	[logo release];
     
-    if(([BeintooDevice isiPad]) || 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [logo release];
+#endif
+
+	if(([BeintooDevice isiPad]) || 
        !(appOrientation == UIInterfaceOrientationLandscapeLeft || appOrientation == UIInterfaceOrientationLandscapeRight) ){
         webview1 = [[UIWebView alloc] initWithFrame:label1.frame];
         webview1.delegate = self;
@@ -283,11 +291,16 @@
         footerView.frame = CGRectMake(0, self.view.frame.size.height + 4, [UIScreen mainScreen].bounds.size.width, 4);
     
    // [self.view addSubview:footerView];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [footerView release];
-
+#endif
+    
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -295,33 +308,47 @@
     }
     
     goToDashboardLand.frame = CGRectMake((self.view.frame.size.width - goToDashboardLand.frame.size.width)/2 , goToDashboardLand.frame.origin.y, goToDashboardLand.frame.size.width, goToDashboardLand.frame.size.height);
-    
-    //goToDashboard.frame = CGRectMake(goToDashboard.frame.origin.x , self.view.frame.size.height - 10 - goToDashboard.frame.size.height, goToDashboard.frame.size.width, goToDashboard.frame.size.height);
 }
 
-- (void)webViewDidFinishLoad:(UIWebView *)webView{
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
     [UIView beginAnimations:nil context:nil];
     webView.alpha = 1.0;
     [UIView commitAnimations];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return (interfaceOrientation == [Beintoo appOrientation]);
 }
+#endif
 
-- (IBAction)goToDashboard:(id)sender{
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
+- (IBAction)goToDashboard:(id)sender
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationReloadDashboard object:self];
     
     if ([BeintooDevice isiPad]){
         [Beintoo dismissIpadLogin];
     }
     else {
-        [self dismissModalViewControllerAnimated:YES];
+        
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
+            [self dismissModalViewControllerAnimated:YES];
+#endif
+
     }
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -338,17 +365,31 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
+- (void)closeBeintoo
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationReloadDashboard object:self];
     
     if ([BeintooDevice isiPad]){
         [Beintoo dismissIpadLogin];
     }
     else {
-        [self dismissModalViewControllerAnimated:YES];
+        
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
+            [self dismissModalViewControllerAnimated:YES];
+#endif
+
     }
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc{
     [webview1 release];
     [webview2 release];
@@ -360,5 +401,6 @@
     
     [super dealloc];
 }
+#endif
 
 @end

@@ -24,8 +24,8 @@ typedef enum{
 	EGOOPullRefreshUpToDate,
 } EGOPullRefreshState;
 
-@interface BRefreshTableHeaderView : UIView {
-	
+@interface BRefreshTableHeaderView : UIView
+{	
 	UILabel *lastUpdatedLabel;
 	UILabel *statusLabel;
 	CALayer *arrowImage;
@@ -34,7 +34,6 @@ typedef enum{
 	EGOPullRefreshState _state;
 	UIColor *bottomBorderColor;
 	CGFloat bottomBorderThickness;
-
 }
 
 @property(nonatomic,assign) EGOPullRefreshState state;

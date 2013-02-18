@@ -58,7 +58,8 @@
     return self;
 }
 
-- (void)awakeFromNib{
+- (void)awakeFromNib
+{
     // Initialize the gradient layer
     gradientLayer = [[CAGradientLayer alloc] init];
     // Set its bounds to be the same of its parent
@@ -84,11 +85,13 @@
 	isSelected = NO;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context{
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
     [self setNeedsDisplay];
 }
 
-- (void)drawRect:(CGRect)rect{
+- (void)drawRect:(CGRect)rect
+{
 	self.titleLabel.adjustsFontSizeToFitWidth = YES;
 	[self setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 	if (textSize == nil) 
@@ -129,61 +132,76 @@
     [super drawRect:rect];
 }
 
-- (void)hesitateUpdate{
+- (void)hesitateUpdate
+{
     [self setNeedsDisplay];
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
     [super touchesBegan:touches withEvent:event];
 	isSelected = YES;
     [self setNeedsDisplay];
 }
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event{
+
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
     [super touchesCancelled:touches withEvent:event];
 	isSelected = NO;
     [self setNeedsDisplay];
     [self performSelector:@selector(hesitateUpdate) withObject:nil afterDelay:0.1];
 }
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
+
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
     [super touchesMoved:touches withEvent:event];
     [self setNeedsDisplay];
     
 }
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
     [super touchesEnded:touches withEvent:event];
 	isSelected = NO;
     [self setNeedsDisplay];
     [self performSelector:@selector(hesitateUpdate) withObject:nil afterDelay:0.1];
 }
 
-- (void)setHighColor:(UIColor*)color andRollover:(UIColor *)rollover{
+- (void)setHighColor:(UIColor*)color andRollover:(UIColor *)rollover
+{
     [self set_highColor:color];
 	[self set_rollHighColor:rollover];
     [[self layer] setNeedsDisplay];
 }
 
-- (void)setLowColor:(UIColor*)color andRollover:(UIColor *)rollover{
+- (void)setLowColor:(UIColor*)color andRollover:(UIColor *)rollover
+{
     [self set_lowColor:color];
 	[self set_rollLowColor:rollover];
     [[self layer] setNeedsDisplay];
 }
 
-- (void)setMediumHighColor:(UIColor*)color andRollover:(UIColor *)rollover{
+- (void)setMediumHighColor:(UIColor*)color andRollover:(UIColor *)rollover
+{
     [self set_mediumLowColor:color];
 	[self set_rollMediumLowColor:rollover];
     [[self layer] setNeedsDisplay];
 }
 
-- (void)setMediumLowColor:(UIColor*)color andRollover:(UIColor *)rollover{
+- (void)setMediumLowColor:(UIColor*)color andRollover:(UIColor *)rollover
+{
     [self set_mediumHighColor:color];
 	[self set_rollMediumHighColor:rollover];
     [[self layer] setNeedsDisplay];
 }
 
-- (void)setButtonTextSize:(int)size{
+- (void)setButtonTextSize:(int)size
+{
 	[self setTextSize:[NSNumber numberWithInt:size]];
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [_highColor release];
     [_rollHighColor release];
@@ -191,11 +209,12 @@
     [_rollLowColor release];
     [_mediumLowColor release];
     [_rollMediumLowColor release];
-    [_mediumHighColor release]; 
+    [_mediumHighColor release];
     [_rollMediumHighColor release];
     [textSize release];
     [gradientLayer release];
     [super dealloc];
 }
+#endif
 
 @end

@@ -16,14 +16,14 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "Beintoo.h"
 #import "BeintooUser.h"
 #import "BeintooPlayer.h"
+#import "BNavigationController.h"
 
-@class BView,BeintooNavigationController,BButton,BTableView,BeintooVgood,BeintooLoginVC,
+@class BView, BeintooNavigationController,BButton,BTableView,BeintooVgood,BeintooLoginVC,
 	BeintooProfileVC,BeintooLeaderboardVC,BeintooWalletVC,BeintooChallengesVC,BeintooAchievementsVC,BeintooMessagesVC,BeintooBrowserVC,BGradientView, BeintooNotificationListVC, BeintooMarketplaceVC, BeintooBestoreVC;
 
-@interface BeintooVC : UIViewController <UITableViewDelegate, UITableViewDataSource,BeintooPlayerDelegate, BeintooUserDelegate> {
+@interface BeintooVC : UIViewController <UITableViewDelegate, UITableViewDataSource, BeintooPlayerDelegate, BeintooUserDelegate> {
 	    
     BView                   *tryBeintooView;
 	IBOutlet BView			*homeView;
@@ -58,8 +58,8 @@
 	NSMutableArray			*featuresArray;
 	UIViewController		*homeSender;
 	BeintooNavigationController	*homeNavController;
-	UINavigationController	*loginNavController;
-    UINavigationController	*notificationNavController;
+	BNavigationController	*loginNavController;
+    BNavigationController	*notificationNavController;
 
     UIBarButtonItem         *notificationButtonItem;
     UIBarButtonItem         *fixedSpace;
@@ -94,7 +94,7 @@
 
 @property(nonatomic,retain) BeintooPlayer *beintooPlayer;
 @property(nonatomic,retain) BeintooUser   *_user;
-@property(nonatomic,retain) UINavigationController *loginNavController;
+@property(nonatomic,retain) BNavigationController *loginNavController;
 @property(nonatomic,retain) NSMutableArray *retrievedPlayersArray;
 @property(nonatomic,assign) BOOL isNotificationCenterOpen;
 @property(nonatomic,retain) BeintooLoginVC *loginVC;

@@ -16,16 +16,16 @@
 
 #import <UIKit/UIKit.h>
 #import "BPrize.h"
+#import "BTemplateGiveBedollars.h"
 
 @class BeintooVC,BeintooVGoodVC,BeintooMultipleVgoodVC,BeintooVGoodShowVC;
 
-@interface BeintooVgoodNavController : UINavigationController<BeintooPrizeDelegate>{
-	
+@interface BeintooVgoodNavController : UINavigationController <BeintooPrizeDelegate, BTemplateGiveBedollarsDelegate>
+{	
 	UIView *ipadView;
 	BPrize *prizeBanner;
 }
 
-//- (void)initAndShowPrizeView;
 - (void)show;
 - (void)hide;
 

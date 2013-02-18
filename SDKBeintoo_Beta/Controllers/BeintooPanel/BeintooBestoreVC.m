@@ -20,7 +20,8 @@
 @implementation BeintooBestoreVC
 @synthesize isFromNotification;
 
-- (void)viewDidLoad{
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
     beintooPlayer = [[BeintooPlayer alloc] init];
@@ -38,15 +39,20 @@
     }
     
 	self.navigationItem.titleView = logo;
-	[logo release];
-    
+	
     UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
     [self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [logo release];
     [barCloseBtn release];
+#endif
     
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -82,7 +88,6 @@
         CLLocation *loc     = [Beintoo getUserLocation];
         if (loc == nil || (loc.coordinate.latitude <= 0.01f && loc.coordinate.latitude >= -0.01f) 
             || (loc.coordinate.longitude <= 0.01f && loc.coordinate.longitude >= -0.01f)) {
-            
         }
         else	
             urlAddress      = [urlAddress stringByAppendingFormat:@"&lat=%f&lng=%f&acc=%f", loc.coordinate.latitude,loc.coordinate.longitude,loc.horizontalAccuracy];	
@@ -103,11 +108,11 @@
         
         //Load the request in the UIWebView.
         [webView loadRequest:requestObj];
-    
     }
 }
 
-- (void)viewDidDisappear:(BOOL)animated{
+- (void)viewDidDisappear:(BOOL)animated
+{
     [super viewDidDisappear:animated];
     
     [webView loadHTMLString:@"<html><head></head><body></body></html>" baseURL:nil];
@@ -129,7 +134,8 @@
     }
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi             = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -146,8 +152,8 @@
     return _vi;
 }
 
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
-    
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+{    
     NSMutableURLRequest *_request = (NSMutableURLRequest *)request;
 	
     NSURL *url = _request.URL;
@@ -163,8 +169,10 @@
         if ([urlParser valueForVariable:@"guid"])
             [beintooPlayer getPlayerByGUID:[urlParser valueForVariable:@"guid"]];
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [urlParser release];
-        
+#endif
 		return YES;
 	}
 
@@ -179,7 +187,17 @@
                     [Beintoo dismissIpadNotifications];
                 }
                 else {
-                    [self dismissModalViewControllerAnimated:YES];
+                    
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
+            [self dismissModalViewControllerAnimated:YES];
+#endif
                 }
             }
             else
@@ -193,7 +211,8 @@
     return YES;
 }
 
-- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result{
+- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result
+{
     if (![[result objectForKey:@"kind"] isEqualToString:@"error"]) {
         if ([result objectForKey:@"guid"] != nil) {
             
@@ -215,35 +234,55 @@
     }
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     if (isFromNotification){
         if ([BeintooDevice isiPad]){
             [Beintoo dismissIpadNotifications];
         }
         else {
+            
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
             [self dismissModalViewControllerAnimated:YES];
+#endif
+
         }
     }
     else
         [Beintoo dismissBeintoo];
 }
 
-- (void)webViewDidFinishLoad:(UIWebView *)_webView{
+- (void)webViewDidFinishLoad:(UIWebView *)_webView
+{
     [BLoadingView stopActivity];
 }
 
-- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error{
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+{
    [BLoadingView stopActivity];
 }
 
-- (void)webViewDidStartLoad:(UIWebView *)webView{
-   
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+	return NO;
 }
+#endif
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc{
     [beintooPlayer release];
     
     [super dealloc];
 }
+#endif
 
 @end

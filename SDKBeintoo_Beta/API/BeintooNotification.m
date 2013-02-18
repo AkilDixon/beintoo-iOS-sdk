@@ -22,7 +22,8 @@
 
 @synthesize delegate, parser, callingDelegate;
 
--(id)init {
+-(id)init
+{
 	if (self = [super init])
 	{
         parser = [[Parser alloc] init];
@@ -34,15 +35,16 @@
 }
 
 
-- (NSString *)restResource{
+- (NSString *)restResource
+{
 	return rest_resource;
 }
-
 
 #pragma mark -
 #pragma mark Private API
 
-- (void)getNotificationListWithStart:(int)_start andRows:(int)_rows{
+- (void)getNotificationListWithStart:(int)_start andRows:(int)_rows
+{
     if ([Beintoo getPlayerID] == nil) {
         BeintooLOG(@"BeintooNotifications error: player not logged.");
         return;
@@ -54,7 +56,8 @@
     
 }
 
-- (void)setNotificationReadWithNotificationID:(NSString *)_notificationID{
+- (void)setNotificationReadWithNotificationID:(NSString *)_notificationID
+{
     if ([Beintoo getPlayerID] == nil) {
         BeintooLOG(@"BeintooNotifications error: player not logged.");
         return;
@@ -67,7 +70,8 @@
    [parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:NOTIFICATION_SETREAD_CALLER_ID];
 }
 
-- (void)setAllNotificationReadUpToNotification:(NSString *)_notificationID{
+- (void)setAllNotificationReadUpToNotification:(NSString *)_notificationID
+{
     if ([Beintoo getPlayerID] == nil) {
         BeintooLOG(@"BeintooNotifications error: player not logged.");
         return;
@@ -78,14 +82,13 @@
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", [Beintoo getPlayerID], @"guid",nil];
     
     [parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:NOTIFICATION_SETREAD_CALLER_ID];
-    
 }
-
 
 #pragma mark -
 #pragma mark Parser Delegate
 
-- (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID{	
+- (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID
+{
 	switch (callerID){
 		case NOTIFICATION_GETLIST_CALLER_ID:{
             
@@ -116,12 +119,17 @@
 #pragma mark -
 #pragma mark Class Methods
 
-- (void)dealloc {
+- (void)dealloc
+{
     parser.delegate = nil;
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 	[parser release];
 	[rest_resource release];
     [super dealloc];
+#endif
+    
 }
 
 @end

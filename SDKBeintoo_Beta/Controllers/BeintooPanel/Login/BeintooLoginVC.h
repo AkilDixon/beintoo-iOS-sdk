@@ -17,6 +17,7 @@
 #import <UIKit/UIKit.h>
 #import "BeintooPlayer.h"
 #import "BImageDownload.h"
+#import "BeintooDevice.h"
 
 @class BeintooSigninVC;
 @class BView;

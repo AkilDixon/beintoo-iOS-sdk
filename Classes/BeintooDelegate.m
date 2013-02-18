@@ -43,17 +43,14 @@
  * Beintoo Reward
  * ----------------------------- */
 
-- (void)didBeintooGenerateAVirtualGood:(BVirtualGood *)theVgood{
-	if ([theVgood isMultiple]) {
-		BeintooLOG(@"Multiple Vgood generated: %@",[theVgood theGoodsList]);
-	}
-	else {
-		BeintooLOG(@"Single Vgood generated: %@",[theVgood theGood]);
-	}
+- (void)didBeintooGenerateAReward:(BVirtualGood *)theReward
+{
+    BeintooLOG(@"Reward generated: %@", [theReward theGood]);
 }
 
-- (void)didBeintooFailToGenerateAVirtualGoodWithError:(NSDictionary *)error{
-    BeintooLOG(@"Vgood generation error: %@",error);
+- (void)didBeintooFailToGenerateARewardWithError:(NSDictionary *)error
+{
+    BeintooLOG(@"Vgood generation error: %@", error);
 }
 
 /*
@@ -134,6 +131,42 @@
 
 - (void)didBeintooFailToGenerateAnAdWithError:(NSDictionary *)error{
     BeintooLOG(@"Failed while generating a new Ad!");
+}
+
+/*
+ * Give Bedollars Notifications
+ */
+
+- (void)beintooGiveBedollarsWillAppear{
+	BeintooLOG(@"Give Bedollars will appear!");
+}
+
+- (void)beintooGiveBedollarsDidAppear{
+	BeintooLOG(@"Give Bedollars did appear!");
+}
+
+- (void)beintooGiveBedollarsWillDisappear{
+	BeintooLOG(@"Give Bedollars will disappear!");
+}
+
+- (void)beintooGiveBedollarsDidDisappear{
+	BeintooLOG(@"Give Bedollars did disappear!");
+}
+
+- (void)beintooGiveBedollarsControllerWillAppear{
+	BeintooLOG(@"Give Bedollars Controller will appear");
+}
+
+- (void)beintooGiveBedollarsControllerDidAppear{
+	BeintooLOG(@"Give Bedollars Controller did appear");
+}
+
+- (void)beintooGiveBedollarsControllerWillDisappear{
+	BeintooLOG(@"Give Bedollars Controller will disappear");
+    
+}
+- (void)beintooGiveBedollarsControllerDidDisappear{
+	BeintooLOG(@"Give Bedollars Controller did disappear");
 }
 
 /* ---------------------------

@@ -22,7 +22,8 @@
 @synthesize challengeStatus, myUserExt, toUserExt, userImages, isFromNotification;;
 
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andChallengeStatus:(NSDictionary *)status {
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andChallengeStatus:(NSDictionary *)status
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.challengeStatus = status;
@@ -36,7 +37,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	self.title = NSLocalizedStringFromTable(@"challenge",@"BeintooLocalizable",@"Challenge");
@@ -57,25 +59,36 @@
 				
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];		
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];	
+#endif
     
     self.userImages = [[NSMutableArray alloc] init];
 	
 	user = [[BeintooUser alloc] init];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     
     user.delegate = self;
     
+#ifdef BEINTOO_ARC_AVAILABLE
+    downloadImage1                          = [[BImageDownload alloc] init];
+    downloadImage2                          = [[BImageDownload alloc] init];
+#else
     downloadImage1                          = [[[BImageDownload alloc] init] autorelease];
+    downloadImage2                          = [[[BImageDownload alloc] init] autorelease];
+#endif
+    
     downloadImage1.delegate                 = self;
     downloadImage1.urlString                = ((BImageDownload *)[self.challengeStatus objectForKey:@"imgPlayerFrom"]).urlString;
     
-    downloadImage2                          = [[[BImageDownload alloc] init] autorelease];
     downloadImage2.delegate                 = self;
     downloadImage2.urlString                = ((BImageDownload *)[self.challengeStatus objectForKey:@"imgPlayerTo"]).urlString;
     
@@ -99,18 +112,21 @@
     [table reloadData];
 }
 
-- (IBAction)acceptChallenge{
+- (IBAction)acceptChallenge
+{
     [BLoadingView startActivity:self.view];
 	[user challengeRequestfrom:self.myUserExt to:self.toUserExt withAction:@"ACCEPT" forContest:[self.challengeStatus objectForKey:@"contestCodeID"] withBedollarsToBet:nil andScoreToReach:nil forKindOfChallenge:nil andActor:nil];
 }
-- (IBAction)refuseChallenge{
+
+- (IBAction)refuseChallenge
+{
     [BLoadingView startActivity:self.view];
 	[user challengeRequestfrom:self.myUserExt to:self.toUserExt withAction:@"REFUSE" forContest:[self.challengeStatus objectForKey:@"contestCodeID"] withBedollarsToBet:nil andScoreToReach:nil forKindOfChallenge:nil andActor:nil];
 }
 
 // Delegate response
-- (void)challengeRequestFinishedWithResult:(NSDictionary *)result{
-    
+- (void)challengeRequestFinishedWithResult:(NSDictionary *)result
+{    
     [BLoadingView stopActivity];
 	if ([result objectForKey:@"messageID"]!=nil) {
         
@@ -118,32 +134,54 @@
 			UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"challengeOngoing",@"BeintooLocalizable",@"")
 														delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 			[av show];
-			[av release];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [av release];
+#endif
+			
 			return;
 		}
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"errorMessage",@"BeintooLocalizable",@"")
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];
-		return;
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+        
+        return;
 		
 	}
 	if ([[result objectForKey:@"status"] isEqualToString:@"STARTED"]) {
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"challengeAccepted",@"BeintooLocalizable",@"")
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];
-		[self.navigationController popViewControllerAnimated:YES];
-	} else{
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+        
+        [self.navigationController popViewControllerAnimated:YES];
+	}
+    else{
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"challengeRefused",@"BeintooLocalizable",@"")
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];
-		[self.navigationController popViewControllerAnimated:YES];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+		
+        [self.navigationController popViewControllerAnimated:YES];
 	}
 }
 
-- (NSString *)translateStatusCode:(NSString *)code{
+- (NSString *)translateStatusCode:(NSString *)code
+{
 	if ([code isEqualToString:@"TO_BE_ACCEPTED"]) {
 		return NSLocalizedStringFromTable(@"pending",@"BeintooLocalizable",@"Pending");
 	}else if ([code isEqualToString:@"STARTED"]) {
@@ -157,16 +195,18 @@
 
 #pragma mark - UITableview methods
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
     return 0;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
     if (indexPath.row == 0){
         return 95;
     } 
@@ -178,7 +218,8 @@
     }
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
     if ([[challengeStatus objectForKey:@"status"] isEqualToString:@"TO_BE_ACCEPTED"] == NO){
         return 4;
     }
@@ -190,8 +231,8 @@
     }
 }
 
--(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     static NSString *CellIdentifier = @"Cell";
     int _gradientType = GRADIENT_CELL_GRAY;
     if (indexPath.row == 0 || indexPath.row == 2 || indexPath.row == 4){
@@ -200,8 +241,14 @@
     
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
-    }   
+#endif
+    
+    }
     
     if (indexPath.row == 0){
                 
@@ -236,8 +283,12 @@
         [cell addSubview:challengeTitle];
         [cell addSubview:challengeDescription];
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [challengeTitle release];
         [challengeDescription release];
+#endif
+        
     }
     
     else if (indexPath.row == 1 || indexPath.row == 3){
@@ -264,7 +315,12 @@
             }
             
             [cell addSubview:descrizioneUtente];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [descrizioneUtente release];
+#endif
+
         }
         
         if (indexPath.row == 1){
@@ -281,8 +337,12 @@
         [cell addSubview:userImage];
         [cell addSubview:nomeUtente];
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [userImage release];
-        [nomeUtente release];        
+        [nomeUtente release];
+#endif
+        
     }
     else if (indexPath.row == 2) {  
         
@@ -293,9 +353,19 @@
         UILabel *imageTypeLabel         = [[UILabel alloc] initWithFrame:CGRectMake(challengesImg.frame.origin.x + 1, 47, imageVert.size.width, 30)];
         imageTypeLabel.textColor        = [UIColor whiteColor];
         imageTypeLabel.backgroundColor  = [UIColor clearColor];
-        imageTypeLabel.font             = [UIFont systemFontOfSize:15]; 
-        imageTypeLabel.textAlignment    = UITextAlignmentCenter;
+        imageTypeLabel.font             = [UIFont systemFontOfSize:15];
         
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        imageTypeLabel.textAlignment = NSTextAlignmentCenter;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+            imageTypeLabel.textAlignment = NSTextAlignmentCenter;
+        else
+            imageTypeLabel.textAlignment = UITextAlignmentCenter;
+#else
+        imageTypeLabel.textAlignment = UITextAlignmentCenter;
+#endif
+            
         if ([[challengeStatus objectForKey:@"type"] isEqualToString:@"CHALLENGE"] == YES) {
             imageTypeLabel.text = @"48h";
         }
@@ -351,7 +421,12 @@
             targetScoreLabel.backgroundColor    = [UIColor clearColor];
             
             [cell addSubview:targetScoreLabel];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [targetScoreLabel release];
+#endif
+            
             h = h + 18;
         }
         
@@ -372,22 +447,28 @@
             [cell addSubview:startDateLabel];
             [cell addSubview:endDateLabel];
             
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [startDateLabel release];
             [endDateLabel release];
+#endif
+            
         }
-        
         
         [cell addSubview:challengesImg];
         [cell addSubview:contestNameLabel];
         [cell addSubview:contestStatusLabel];
         [cell addSubview:prizeLabel];
         [cell addSubview:imageTypeLabel];
-                
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [challengesImg release];
         [contestNameLabel release];
         [contestStatusLabel release];
         [prizeLabel release];
         [imageTypeLabel release];
+#endif
         
     }
     
@@ -415,8 +496,11 @@
         [cell addSubview:acceptBtn];
         [cell addSubview:refuseBtn];
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [acceptBtn release];
         [refuseBtn release];
+#endif
         
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -424,37 +508,49 @@
 }
 
 #pragma mark - ImageDownload Delegate
-- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
     NSUInteger index = [self.userImages indexOfObject:download]; 
     int rowToReload = (index == 0) ? 1 : 3;
     
     NSUInteger indices[] = {0, rowToReload};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
     [table reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [path release];
+#endif
+    
     download.delegate = nil;
 }
-- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
     BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
-
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return NO;
 }
+#endif
 
-
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
     [super viewWillDisappear:animated];
     
     user.delegate = nil;
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -471,23 +567,38 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     if (isFromNotification){
         if ([BeintooDevice isiPad]){
             [Beintoo dismissIpadNotifications];
         }
         else {
+            
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
             [self dismissModalViewControllerAnimated:YES];
+#endif
+
         }
     }
     else
         [Beintoo dismissBeintoo];
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [self.userImages release];
 	[user release];
     [super dealloc];
 }
+#endif
 
 @end

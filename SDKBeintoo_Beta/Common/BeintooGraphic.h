@@ -16,6 +16,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "Beintoo.h"
 
 #define PIXELS_FOR_CHAR		6
 #define DegreesToRadians(x) ((x) * M_PI / 180.0)

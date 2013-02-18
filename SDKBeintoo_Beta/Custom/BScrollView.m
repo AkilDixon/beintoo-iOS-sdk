@@ -21,8 +21,8 @@
 
 @implementation BScrollView
 
--(void) touchesEnded: (NSSet *) touches withEvent: (UIEvent *) event {	
-	
+-(void) touchesEnded: (NSSet *) touches withEvent: (UIEvent *) event
+{	
 	if (!self.dragging) {
 		[self.nextResponder touchesEnded: touches withEvent:event]; 
 	}		
@@ -30,16 +30,19 @@
 	[super touchesEnded: touches withEvent: event];
 }
 
--(void)setGradientType:(int)_gradientType{
+-(void)setGradientType:(int)_gradientType
+{
 	gradientType = _gradientType;
 }
 
-- (void) removeViews {
+- (void) removeViews
+{
 	[[self viewWithTag:22] removeFromSuperview];
 	[[self viewWithTag:33] removeFromSuperview];
 }
 
-- (void)drawRect:(CGRect)rect {
+- (void)drawRect:(CGRect)rect
+{
     [super drawRect:rect];
 	self.contentMode = UIViewContentModeRedraw;
 	
@@ -66,7 +69,12 @@
 			CGPoint midCenter = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMaxY(self.bounds));
 			
 			CGContextDrawLinearGradient(ctx, gradient, topCenter, midCenter, (CGGradientDrawingOptions)NULL);
-			CGGradientRelease(gradient);
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            CGGradientRelease(gradient);
+#endif
+			
 		}
 			break;
 			
@@ -101,9 +109,13 @@
 			[self addSubview:upperBorder];
 			[self addSubview:lowerBorder];
 			
-			[upperBorder release];
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [upperBorder release];
 			[lowerBorder release];
 			CGGradientRelease(gradient);
+#endif
+			
 		}
 			break;
 			
@@ -126,7 +138,11 @@
 			
 			CGContextDrawLinearGradient(ctx, gradient, topCenter, midCenter, (CGGradientDrawingOptions)NULL);
 			
-			CGGradientRelease(gradient);
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            CGGradientRelease(gradient);
+#endif
+			
 		}
 			break;	
 			
@@ -153,7 +169,11 @@
 			
 			CGContextDrawLinearGradient(ctx, gradient, topCenter, midCenter, (CGGradientDrawingOptions)NULL);
 			
-			CGGradientRelease(gradient);
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            CGGradientRelease(gradient);
+#endif
+            
 		}
 			break;
 			
@@ -184,9 +204,13 @@
 			[self addSubview:upperBorder];
 			[self addSubview:lowerBorder];
 			
-			[upperBorder release];
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [upperBorder release];
 			[lowerBorder release];
 			CGGradientRelease(gradient);
+#endif
+			
 		}
 			break;
 			
@@ -214,9 +238,13 @@
 			[self addSubview:upperBorder];
 			[self addSubview:lowerBorder];
 			
-			[upperBorder release];
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [upperBorder release];
 			[lowerBorder release];
 			CGGradientRelease(gradient);
+#endif
+			
 		}
 			break;
 			
@@ -244,9 +272,13 @@
 			[self addSubview:upperBorder];
 			[self addSubview:lowerBorder];
 			
-			[upperBorder release];
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [upperBorder release];
 			[lowerBorder release];
 			CGGradientRelease(gradient);
+#endif
+            
 		}
 			break;
 			
@@ -267,17 +299,27 @@
 			
 			CGContextDrawLinearGradient(ctx, gradient, topCenter, midCenter, (CGGradientDrawingOptions)NULL);
 			
-			CGGradientRelease(gradient);
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            CGGradientRelease(gradient);
+#endif
+			
 		}
 			break;
 	}
 	
-	CGColorSpaceRelease(colorSpace);
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    CGColorSpaceRelease(colorSpace);
+#endif
+	
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [super dealloc];
 }
-
+#endif
 
 @end

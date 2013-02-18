@@ -17,17 +17,18 @@
 #import "BeintooViewController.h"
 #import "Beintoo.h"
 
-
 @implementation BeintooViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
     }
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
     //* This is just for testing: simulate other locations where marketplace is enabled
@@ -36,16 +37,18 @@
     //* SampleBeintoo buttons customization
 	[self buttonsCustomization];
     
+    scroll.contentSize = CGSizeMake(self.view.frame.size.width, 568);
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     [self manageLocation];
 }
 
-- (IBAction)startBeintoo{
-    
+- (IBAction)startBeintoo
+{    
     /*
      *  Use 
      *  
@@ -55,11 +58,10 @@
      */
 
     [Beintoo launchBeintoo];
-    
 }
 
-- (IBAction)startMarketplace{
-    
+- (IBAction)startMarketplace
+{    
     /*
      *  Use 
      *
@@ -69,52 +71,52 @@
      */
     
     [Beintoo launchBestore];
-    
 }
 
-- (IBAction)playerLogin{
-	[BeintooPlayer setPlayerDelegate:self];
-    [BeintooPlayer login];
+- (IBAction)playerLogin
+{
+	[Beintoo setPlayerDelegate:self];
+    [Beintoo login];
 }
 
-- (IBAction)submitScore{
-	[BeintooPlayer setPlayerDelegate:self];
-    [BeintooPlayer submitScore:1];
+- (IBAction)submitScore
+{
+	[Beintoo setPlayerDelegate:self];
+    [Beintoo submitScore:1];
 }
 
-- (IBAction)submitScoreForContest{
-	[BeintooPlayer setPlayerDelegate:nil];
-	[BeintooPlayer submitScore:1 forContest:@"default"]; // Here the contest name instead of "default"
+- (IBAction)submitScoreForContest
+{
+	[Beintoo setPlayerDelegate:nil];
+	[Beintoo submitScore:1 forContest:@"default"]; // Here the contest name instead of "default"
 }
 
-- (IBAction)getScoreForContest{
-	[BeintooPlayer setPlayerDelegate:self];
-	[BeintooPlayer getScore];
+- (IBAction)getScoreForContest
+{
+	[Beintoo setPlayerDelegate:self];
+	[Beintoo getScore];
 }
 
-- (IBAction)getVgood{
-	/**
-	 * VGOOD GET VIRTUAL GOOD : 
-	 * This function must be called every time the developer wants to deliver a virtual good to the user. 
-	 * Note that not always a virtual good will be generated from Beintoo. Wait for the generation response from 
-	 * the delegate  */
-    [BeintooVgood setVgoodDelegate:self];
-	[BeintooVgood getSingleVirtualGood];
+- (IBAction)getVgood
+{
+	[Beintoo setRewardDelegate:self];
+	[Beintoo getReward];
 }
 
-- (IBAction)submitAchievement{
-	[BeintooAchievements setAchievementDelegate:self];
+- (IBAction)submitAchievement
+{
+	[Beintoo setAchievementsDelegate:self];
 	
     // These are all possible ways to submit an achievement progress
-	//[BeintooAchievements setAchievement:@"w234567" withScore:10];
-	//[BeintooAchievements setAchievement:@"w234567" withPercentage:50];
-	//[BeintooAchievements incrementAchievement:@"123456789" withScore:5];
-    //[BeintooAchievements unlockAchievementsByObjectIDInBackground:[NSArray arrayWithObjects:@"test_exist", @"share_100_times", @"sharing_top", @"share_10", nil]];
-    //[BeintooAchievements unlockAchievementByObjectID:@"test_exist" showNotification:YES];
-    //[BeintooAchievements unlockAchievementsInBackground:[NSArray arrayWithObjects:@"w234567", @"asfdgh4365768sdgdsgsd", @"35467867sadfhgs",  nil]];
-    //[BeintooAchievements unlockAchievement:@"w234567" showNotification:YES];
+	//[Beintoo setAchievement:@"w234567" withScore:10];
+	//[Beintoo setAchievement:@"w234567" withPercentage:50];
+	//[Beintoo incrementAchievement:@"123456789" withScore:5];
+    //[Beintoo unlockAchievementsByObjectIDInBackground:[NSArray arrayWithObjects:@"test_exist", @"share_100_times", @"sharing_top", @"share_10", nil]];
+    //[Beintoo unlockAchievementByObjectID:@"test_exist" showNotification:YES];
+    //[Beintoo unlockAchievementsInBackground:[NSArray arrayWithObjects:@"w234567", @"asfdgh4365768sdgdsgsd", @"35467867sadfhgs",  nil]];
+    //[Beintoo unlockAchievement:@"w234567" showNotification:YES];
     
-    [BeintooAchievements unlockAchievement:@"w234567"];
+    [Beintoo unlockAchievement:@"w234567"];
 }
 
 - (IBAction)giveBedollars{
@@ -125,19 +127,14 @@
     ** else choose NO
     */
     
-    [BeintooUser setUserDelegate:self];
-    [BeintooUser giveBedollars:0.5 showNotification:YES];
-    
-    /* in alternative, it's possible to use the giveBedollarsByString:showNotification: method 
-    ** using the built in GIVE_*_BEDOLLAR enum
-    ** Possibile values to give bedollars:
-    ** GIVE_1_BEDOLLAR --> to give 1 bedollar
-    ** GIVE_2_BEDOLLAR --> to give 2 bedollars
-    ** GIVE_5_BEDOLLAR --> to give 5 bedollars
-    **
-    ** ex.:
-    ** [BeintooUser giveBedollarsByString:GIVE_1_BEDOLLAR showNotification:YES];
-    */
+    [Beintoo setAppDelegate:self];
+    [Beintoo giveBedollars:1.0 showNotification:YES withPosition:BeintooNotificationPositionBottom];
+}
+
+- (IBAction)requestAd
+{
+    [Beintoo setAdDelegate:self];
+	[Beintoo requestAndDisplayAdWithDeveloperUserGuid:nil];
 }
 
 - (IBAction)playerLogout{
@@ -181,9 +178,9 @@
 #pragma mark -
 #pragma mark Delegates
 
-/**
- * Use the delegates callback to perform custom actions on your app
- * Check the iOS Beintoo sdk documentation for more informations.
+ /*
+ ** Use the delegates callback to perform custom actions on your app
+ ** Check the iOS Beintoo sdk documentation for more informations.
  */
 
 // -------------- PLAYER LOGIN CALLBACKS
@@ -228,10 +225,6 @@
 // -------------- ACHIEVEMENT SUBMIT CALLBACKS
 - (void)didSubmitAchievementWithResult:(NSDictionary *)result{
 	NSLog(@"Beintoo: achievement submitted with result: %@",result);
-    
-    if ([[result objectForKey:@"status"] isEqualToString:@"UNLOCKED"]){
-        [BeintooVgood getSingleVirtualGood];
-    }
 }
 - (void)didFailToSubmitAchievementWithError:(NSString *)error{
 	NSLog(@"Beintoo: achievement submit error: %@",error);
@@ -242,10 +235,9 @@
     
 }
 
-- (void)didGetAchievementStatus:(NSString *)_status andPercentage:(int)_percentage forAchievementId:(NSString *)_achievementId{
-
+- (void)didGetAchievementStatus:(NSString *)_status andPercentage:(int)_percentage forAchievementId:(NSString *)_achievementId
+{
     NSLog(@"Achieve %@ || status %@ || precentage %i", _achievementId, _status, _percentage);
-
 }
 
 // GIVE BEDOLLARS
@@ -253,17 +245,32 @@
     NSLog(@"Give Bedollars response %@", result);
 }
 
-- (void)didBeintooGenerateAVirtualGood:(BVirtualGood *)theVgood{
-	if ([theVgood isMultiple]) {
-		NSLog(@"Multiple Vgood generated from user delegate: %@",[theVgood theGoodsList]);
-	}
-	else {
-		NSLog(@"Single Vgood generated from user delegate: %@",[theVgood theGood]);
-	}
+/**
+ *** ADS callbacks
+ **/
+
+- (void)didBeintooGenerateAnAd:(BVirtualGood *)theAd
+{
+    BeintooLOG(@"Main View Controller, AD generated: %@", [theAd theGood]);
 }
 
-- (void)didBeintooFailToGenerateAVirtualGoodWithError:(NSString *)error{
-	NSLog(@"Main View Controller --- Vgood generation error from user delegate: %@",error);
+- (void)didBeintooFailToGenerateAnAdWithError:(NSDictionary *)error
+{
+    BeintooLOG(@"Main View Controller, AD generation error: %@", error);
+}
+
+/**
+*** REWARD callbacks
+**/
+
+- (void)didBeintooGenerateAReward:(BVirtualGood *)theReward
+{
+    BeintooLOG(@"Main View Controller, Reward generated: %@", [theReward theGood]);
+}
+
+- (void)didBeintooFailToGenerateARewardWithError:(NSDictionary *)error
+{
+    BeintooLOG(@"Main View Controller, Reward generation error: %@", error);
 }
 
 - (void)beintooPrizeWillAppear{
@@ -373,7 +380,12 @@
 	[giveBedollars setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
     [giveBedollars setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
     [giveBedollars setTextSize:[NSNumber numberWithInt:14]];
-
+    
+    [requestAd setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
+	[requestAd setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
+	[requestAd setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
+    [requestAd setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
+    [requestAd setTextSize:[NSNumber numberWithInt:14]];
 }
 
 - (void)manageLocation{
@@ -384,74 +396,61 @@
             
             //Milan
             NSLog(@"Location updated to: Milan");
-            [greenMilan         setHidden:NO];
-            [greenLondon        setHidden:YES];
-            [greenSanFrancisco  setHidden:YES];
-            [redMilan           setHidden:YES];
-            [redLondon          setHidden:NO];
-            [redSanFrancisco    setHidden:NO];
+            [lightLondon            setBackgroundColor:[UIColor redColor]];
+            [lightSanFrancisco      setBackgroundColor:[UIColor redColor]];
+            [lightMilan             setBackgroundColor:[UIColor greenColor]];
+            
+            return;
         }
         else if ([Beintoo getUserLocation].coordinate.latitude == 51.492500 && [Beintoo getUserLocation].coordinate.longitude == -0.105057){
             
             //London
             NSLog(@"Location updated to: London");
-            [greenMilan         setHidden:YES];
-            [greenLondon        setHidden:NO];
-            [greenSanFrancisco  setHidden:YES];
-            [redMilan           setHidden:NO];
-            [redLondon          setHidden:YES];
-            [redSanFrancisco    setHidden:NO];
+            [lightLondon            setBackgroundColor:[UIColor greenColor]];
+            [lightSanFrancisco      setBackgroundColor:[UIColor redColor]];
+            [lightMilan             setBackgroundColor:[UIColor redColor]];
+            
+            return;
         }
         else if ([Beintoo getUserLocation].coordinate.latitude == 37.771258 && [Beintoo getUserLocation].coordinate.longitude == -122.417564){
             
             //San Francesco
             NSLog(@"Location updated to: San Francesco");
-            [greenMilan         setHidden:YES];
-            [greenLondon        setHidden:YES];
-            [greenSanFrancisco  setHidden:NO];
-            [redMilan           setHidden:NO];
-            [redLondon          setHidden:NO];
-            [redSanFrancisco    setHidden:YES];
-        }
-        else {
-            [greenMilan             setHidden:YES];
-            [greenLondon            setHidden:YES];
-            [greenSanFrancisco      setHidden:YES];
-            [redMilan               setHidden:NO];
-            [redLondon              setHidden:NO];
-            [redSanFrancisco        setHidden:NO];
+            [lightLondon            setBackgroundColor:[UIColor redColor]];
+            [lightSanFrancisco      setBackgroundColor:[UIColor greenColor]];
+            [lightMilan             setBackgroundColor:[UIColor redColor]];
+            
+            return;
         }
     }
-    else {
-        [greenMilan             setHidden:YES];
-        [greenLondon            setHidden:YES];
-        [greenSanFrancisco      setHidden:YES];
-        [redMilan               setHidden:NO];
-        [redLondon              setHidden:NO];
-        [redSanFrancisco        setHidden:NO];
-    }
+
+    [lightLondon            setBackgroundColor:[UIColor redColor]];
+    [lightSanFrancisco      setBackgroundColor:[UIColor redColor]];
+    [lightMilan             setBackgroundColor:[UIColor redColor]];
 }
 
-
-
-// -------------- Update the Orientation of Beintoo here
+// ------------------------------------------
+//  Update the Orientation of Beintoo here
+// ------------------------------------------
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
 - (NSUInteger)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskAll;
 }
-#endif
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+- (BOOL)shouldAutorotate
 {
-    // -----> Change the Beintoo orientation when your app's one changes
-    
-    [Beintoo changeBeintooOrientation:toInterfaceOrientation];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
+    [Beintoo changeBeintooOrientation:self.interfaceOrientation];
     return YES;
 }
+#endif
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
+    [Beintoo changeBeintooOrientation:toInterfaceOrientation];
+    return YES;
+}
+#endif
 
 @end

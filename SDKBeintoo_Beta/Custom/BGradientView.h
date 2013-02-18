@@ -33,7 +33,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-
+#import "BeintooDevice.h"
 
 @interface BGradientView : UIView {
 	

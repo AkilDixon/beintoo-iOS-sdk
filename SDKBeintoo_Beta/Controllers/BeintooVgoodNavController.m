@@ -19,16 +19,14 @@
 
 @implementation BeintooVgoodNavController
 
-- (void)show{
+- (void)show
+{
 	self.view.alpha = 1;
 	
 	ipadView = [[UIView alloc] initWithFrame:[self.view bounds]];
 	ipadView.backgroundColor = [UIColor colorWithWhite:1.0f alpha:0.6f];
 	
 	if ([BeintooDevice isiPad]) {
-		// UTILIZZARE UNA VIEW GRIGia o totalmente trasparente
-		// attaccarci sopra i vari popover
-		// se uno clicca exit o fuori dal popover rimuovere la view dalla window
 		self.view = ipadView;
 	}
 	
@@ -41,10 +39,10 @@
 	applicationLoadViewIn.delegate = self;
 	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
 	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
-	
 }
 
-- (void)hide{
+- (void)hide
+{
 	self.view.alpha = 0;
 	CATransition *applicationUnloadViewIn = [CATransition animation];
 	[applicationUnloadViewIn setDuration:0.5f];
@@ -57,7 +55,8 @@
 	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
 }
 
-- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag{
+- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag
+{
 	if ([[animation valueForKey:@"name"] isEqualToString:@"unload"]) {
 		[self.view removeFromSuperview];
 		[Beintoo beintooDidDisappear];
@@ -67,17 +66,22 @@
 	}
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
     return [Beintoo appOrientation];
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [ipadView release];
     [super dealloc];
 }
+#endif
 
 @end

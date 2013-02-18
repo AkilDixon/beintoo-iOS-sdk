@@ -32,10 +32,10 @@
 	BeintooWebViewVC   *webViewVC;
 }
 
-@property(nonatomic,retain) BeintooVGoodVC *singleVgoodVC;
-@property(nonatomic,retain) BeintooMultipleVgoodVC *multipleVgoodVC;
-@property(nonatomic,retain) BeintooVGoodShowVC *recommendationVC;
-@property(nonatomic,retain) BeintooWebViewVC *webViewVC;
+@property(nonatomic, retain) BeintooVGoodVC *singleVgoodVC;
+@property(nonatomic, retain) BeintooMultipleVgoodVC *multipleVgoodVC;
+@property(nonatomic, retain) BeintooVGoodShowVC *recommendationVC;
+@property(nonatomic, retain) BeintooWebViewVC *webViewVC;
 
 - (void)hide;
 - (void)showVgoodNavigationController;
@@ -46,5 +46,8 @@
 
 - (void)showAdNavigationController;
 - (void)hideAdNavigationController;
+
+- (void)showGiveBedollarsNC;
+- (void)hideGiveBedollarsNC;
 
 @end

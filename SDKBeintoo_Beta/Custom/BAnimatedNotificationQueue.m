@@ -71,10 +71,13 @@
     [self executeQueue];
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc
 {
     [notificationQueue release];
     [super dealloc];
 }
+#endif
 
 @end

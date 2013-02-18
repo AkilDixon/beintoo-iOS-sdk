@@ -15,6 +15,7 @@
  ******************************************************************************/
 
 #import "BImageDownload.h"
+#import "BeintooDevice.h"
 
 @interface BImageDownload()
 @property (nonatomic, retain) NSMutableData *receivedData;
@@ -27,8 +28,8 @@
 
 #pragma mark -
 
-- (UIImage *)image{
-    
+- (UIImage *)image
+{    
     if (image == nil){
         BImageCache *imageCache = [[BImageCache alloc] init];
         if ([imageCache isRemoteFileCached:self.urlString]){
@@ -44,7 +45,12 @@
                 if (con) {
                     NSMutableData *data = [[NSMutableData alloc] init];
                     self.receivedData   = data;
+                    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
                     [data release];
+#endif
+                    
                 }
                 else {
                     NSError *error = [NSError errorWithDomain:BeintooDownloadErrorDomain
@@ -53,34 +59,56 @@
                     if ([self.delegate respondsToSelector:@selector(bImageDownload:didFailWithError:)])
                         [delegate bImageDownload:self didFailWithError:error];
                 }
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
                 [req release];
+#endif
+               
                 downloading = YES;
             }
         }
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [imageCache release];
+#endif
+        
     }
     
     return image;
 }
 
-- (NSString *)filename{
+- (NSString *)filename
+{
     return [urlString lastPathComponent];
 }
 
 #pragma mark -
 #pragma mark NSURLConnection Callbacks
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response{
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
     [receivedData setLength:0];
 }
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data{
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
     [receivedData appendData:data];
 }
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [connection release];
+#endif
+    
     if ([delegate respondsToSelector:@selector(bImageDownload:didFailWithError:)])
         [delegate bImageDownload:self didFailWithError:error];
 }
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+{
     @try{
         self.image = [UIImage imageWithData:receivedData];
         
@@ -91,23 +119,36 @@
     
         BImageCache *imageCache = [[BImageCache alloc] init];
         [imageCache addRemoteFileToCache:urlString withData:receivedData];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [imageCache release];
+#endif
+        
     }
     @catch (NSException *e) {
          
     }
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [connection release];
+#endif
+    
     self.receivedData = nil;
 }
 
 #pragma mark -
 #pragma mark Comparison
-- (NSComparisonResult)compare:(id)theOther{
+
+- (NSComparisonResult)compare:(id)theOther
+{
     BImageDownload *other = (BImageDownload *)theOther;
     return [self.filename compare:other.filename];
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     delegate = nil;
     
@@ -116,5 +157,6 @@
     [receivedData release];
     [super dealloc];
 }
+#endif
 
 @end

@@ -15,20 +15,26 @@
  ******************************************************************************/
 
 #import "BeintooNetwork.h"
+#import "Beintoo.h"
 
 @implementation BeintooNetwork
 
 #pragma mark ConnectionAvailability check
 
-+ (void)showNoConnectionAlert{
-	
++ (void)showNoConnectionAlert
+{	
 	UIAlertView *noConnectionAlert = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"connectionError",@"BeintooLocalizable",@"no Thanks") delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 	[noConnectionAlert show];
-	[noConnectionAlert release];	
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [noConnectionAlert release];
+#endif
+		
 }
 
-+ (BOOL)connectedToNetwork{
-	
++ (BOOL)connectedToNetwork
+{	
 	struct sockaddr_in zeroAddress;
 	bzero(&zeroAddress, sizeof(zeroAddress));
 	zeroAddress.sin_len = sizeof(zeroAddress);
@@ -48,8 +54,8 @@
 	return (isReachable && !needsConnection) ? YES : NO;
 }
 
-+ (NSString *)convertToCurrentDate:(NSString *)date{
-	
++ (NSString *)convertToCurrentDate:(NSString *)date
+{	
 	NSDateFormatter *df = [[NSDateFormatter alloc] init];
 	[df setDateFormat:@"d-MMM-y HH:mm:ss"];
 	NSLocale *gbLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"];
@@ -64,13 +70,19 @@
 	[df2 setTimeZone:[NSTimeZone localTimeZone]];
 
 	NSString *timeStamp = [df2 stringFromDate:theDate];
-	[df release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [df release];
 	[df2 release];
 	[gbLocale release];
+#endif
+	
 	return timeStamp;
 }	
 
-+ (NSString *)getUserAgent{
++ (NSString *)getUserAgent
+{
     return [[NSUserDefaults standardUserDefaults]objectForKey:@"beintooDeviceUserAgent"];
     /*
     NSString *userAgent = [[NSUserDefaults standardUserDefaults] objectForKey:@"userAgent"];
@@ -86,7 +98,8 @@
 	}*/
 }
 
-+ (NSData *)getSynchImageWithUA:(NSString *)url{
++ (NSData *)getSynchImageWithUA:(NSString *)url
+{
 	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
 	[theRequest setValue:[BeintooNetwork getUserAgent] forHTTPHeaderField:@"User-Agent"];
 	[theRequest setHTTPMethod:@"GET"];
@@ -96,7 +109,8 @@
 	return imgData;
 }
 
-+ (NSString *)getCarrierBuiltString{
++ (NSString *)getCarrierBuiltString
+{
     #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_4_0
         CTTelephonyNetworkInfo *netinfo = [[CTTelephonyNetworkInfo alloc] init];
         CTCarrier *carrier = [netinfo subscriberCellularProvider];
@@ -112,8 +126,11 @@
     #endif
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [super dealloc];
 }
+#endif
 
 @end

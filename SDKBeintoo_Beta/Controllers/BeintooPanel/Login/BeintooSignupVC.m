@@ -22,7 +22,8 @@
 
 @synthesize urlToOpen, registrationWebView, caller;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil urlToOpen:(NSString *)URL {
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil urlToOpen:(NSString *)URL
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.urlToOpen = URL;
@@ -30,7 +31,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	int appOrientation = [Beintoo appOrientation];
@@ -43,7 +45,11 @@
         logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bar_logo.png"]];
     
     self.navigationItem.titleView = logo;
-	[logo release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [logo release];
+#endif
 	
 	// Registration View Initial Settings
 	registrationWebView.delegate = self;
@@ -51,13 +57,18 @@
     
     UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
 	
 	_player = [[BeintooPlayer alloc] init];
 	_player.delegate = self;
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -82,21 +93,22 @@
     
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlToOpen]];
 	[request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [BLoadingView startActivity:self.view];
-	[self.registrationWebView loadRequest:request];	
+    
+    [self.registrationWebView loadRequest:request];	
 }
 
 #pragma mark -
 #pragma mark WebViewDelegates
 
-- (void)webViewDidStartLoad:(UIWebView *)theWebView{
+- (void)webViewDidStartLoad:(UIWebView *)theWebView
+{
     [BLoadingView startActivity:self.view];
 }
 
-- (void)webViewDidFinishLoad:(UIWebView *)theWebView{
+- (void)webViewDidFinishLoad:(UIWebView *)theWebView
+{
     [BLoadingView stopActivity];
     
-    [BLoadingView stopActivity];
     for (UIView *view in [self.view subviews]) {
         if([view isKindOfClass:[BLoadingView class]]){
             [view removeFromSuperview];
@@ -113,7 +125,7 @@
         else if ([url rangeOfString:@"landing_logged.html"].location != NSNotFound)
             kindOfDelegateNotification = BEINTOO_FACEBOOK_LOGIN;
         
-		if( (id_range.location < 200) && ([url rangeOfString:@"#close"].location>200) && ([url rangeOfString:@"already_logged.html"].location>200) ) {
+		if( (id_range.location < 200) && ([url rangeOfString:@"#close"].location > 200) && ([url rangeOfString:@"already_logged.html"].location>200) ) {
 			ext_id = [url substringFromIndex:(id_range.location+id_range.length)];
 			[_player login:ext_id];	
 		}
@@ -122,8 +134,8 @@
 	}
 }
 
-- (BOOL)webView:(UIWebView*)webView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType{
-
+- (BOOL)webView:(UIWebView*)webView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
+{
 	@try {
 		NSString *url           = [[request URL] absoluteString];
 		NSRange registr_ok		= [url rangeOfString:@"#close"]; // Welcome in beintoo (registration ok)
@@ -136,7 +148,7 @@
 		}
 		
 		if (logged_ok.location != NSNotFound) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationReloadDashboard object:self];
 			[self closeButton];
 		}
         
@@ -150,21 +162,33 @@
 	return YES;
 }
 
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+{
+    [BLoadingView stopActivity];
+    
+    for (UIView *view in [self.view subviews]) {
+        if([view isKindOfClass:[BLoadingView class]]){
+            [view removeFromSuperview];
+        }
+    }
+}
+
 #pragma mark Delegates
-- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result{
+- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result
+{
 	[Beintoo setBeintooPlayer:result];	
 	[_player login];
 	[Beintoo setUserLogged:YES];
-	
 }
 
-- (void)playerDidLogin:(BeintooPlayer *)player{
+- (void)playerDidLogin:(BeintooPlayer *)player
+{
 	if ([Beintoo getUserIfLogged] != nil) {
         
         if (kindOfDelegateNotification == BEINTOO_FACEBOOK_LOGIN){
             [Beintoo postNotificationBeintooUserDidLogin];
             
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationReloadDashboard object:self];
             
             kindOfDelegateNotification = 0;
             
@@ -172,7 +196,18 @@
                 [Beintoo dismissIpadLogin];
             }
             else {
+                
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_6_0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_6_0)
+                if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+                    [self dismissViewControllerAnimated:YES completion:nil];
+                else if ([[[UIDevice currentDevice] systemVersion] floatValue] < 6.0)
+                    [self dismissModalViewControllerAnimated:YES];
+#else
                 [self dismissModalViewControllerAnimated:YES];
+#endif
+
             }
         }
         else if (kindOfDelegateNotification == BEINTOO_FACEBOOK_SIGNUP){
@@ -183,16 +218,24 @@
             BeintooTutorialVC *beintooTutorialVC = [[BeintooTutorialVC alloc] initWithNibName:@"BeintooTutorialVC" bundle:[NSBundle mainBundle]];
             [self.navigationController pushViewController:beintooTutorialVC animated:YES];
             
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [beintooTutorialVC release];
+#endif
+            
         }
 	}
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return (interfaceOrientation == [Beintoo appOrientation]);
 }
+#endif
 
-- (void)viewDidDisappear:(BOOL)animated {
+- (void)viewDidDisappear:(BOOL)animated
+{
     [super viewDidDisappear:animated];
     
     [registrationWebView loadHTMLString:@"<html><head></head><body></body></html>" baseURL:nil];
@@ -210,7 +253,8 @@
 	}
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -227,20 +271,35 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
+- (void)closeBeintoo
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationSignupClosed object:self];
     
     if ([BeintooDevice isiPad]){
         [Beintoo dismissIpadLogin];
     }
     else {
-        [self dismissModalViewControllerAnimated:YES];
+        
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
+            [self dismissModalViewControllerAnimated:YES];
+#endif
+
     }
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[_player release];
     [super dealloc];
 }
+#endif
 
 @end

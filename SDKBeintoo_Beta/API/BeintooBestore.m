@@ -21,7 +21,8 @@
 
 @synthesize parser, delegate;
 
--(id)init {
+-(id)init
+{
 	if (self = [super init])
 	{
         parser              = [[Parser alloc] init];
@@ -32,15 +33,16 @@
     return self;
 }
 
-- (NSString *)restResource{
+- (NSString *)restResource
+{
 	return rest_resource;
 }
 
 #pragma mark -
 #pragma mark API
 
-- (void)getContentForKind:(NSString *)_kind andStart:(int)_start andNumberOfRows:(int)_rows andSorting:(NSString *)_sorting{
-	
+- (void)getContentForKind:(NSString *)_kind andStart:(int)_start andNumberOfRows:(int)_rows andSorting:(NSString *)_sorting
+{	
     CLLocation *loc	 = [Beintoo getUserLocation];
 	
 	NSString *location_res;
@@ -61,8 +63,8 @@
     [parser parsePageAtUrl:res withHeaders:params fromCaller:MARKETPLACE_GET_CONTENT_CALLER_ID];
 }
 
-- (void)getContentForKind:(NSString *)_kind andCategory:(NSString *)_category andStart:(int)_start andNumberOfRows:(int)_rows andSorting:(NSString *)_sorting{
-	
+- (void)getContentForKind:(NSString *)_kind andCategory:(NSString *)_category andStart:(int)_start andNumberOfRows:(int)_rows andSorting:(NSString *)_sorting
+{	
     CLLocation *loc	 = [Beintoo getUserLocation];
 	NSString *location_res;
     
@@ -82,20 +84,20 @@
    [parser parsePageAtUrl:res withHeaders:params fromCaller:MARKETPLACE_GET_CATEGORY_CONTENT_CALLER_ID];
 }
 
-- (void)getCategories{
-	
+- (void)getCategories
+{
     NSString *res		 = [NSString stringWithFormat:@"%@show/categories", rest_resource_vgood];
     
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", [Beintoo getPlayerID], @"guid", nil];
     
     [parser parsePageAtUrl:res withHeaders:params fromCaller:MARKETPLACE_GET_CATEGORIES_CALLER_ID];
-    
 }
 
 #pragma mark -
 #pragma mark parser delegate response
 
-- (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID{	
+- (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID
+{
 	switch (callerID){
 		case MARKETPLACE_GET_CONTENT_CALLER_ID:{
             
@@ -146,10 +148,14 @@
 
 - (void)dealloc {
     parser.delegate = nil;
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 	[parser release];
 	[rest_resource release];
     [rest_resource_vgood release];
     [super dealloc];
+#endif
 }
 
 @end

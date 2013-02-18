@@ -21,10 +21,13 @@
 
 @synthesize singleVgoodVC, multipleVgoodVC, recommendationVC, webViewVC;
 
-- (id)init {
+- (id)init
+{
 	if (self = [super init]){
-		// Everyone of this controllers has to be initialized with the correspondent good to be shown
-		singleVgoodVC       = [[BeintooVGoodVC alloc] initWithNibName:@"BeintooVGoodVC" bundle:[NSBundle mainBundle]];
+		
+        // Everyone of this controllers has to be initialized with the correspondent good to be shown
+		
+        singleVgoodVC       = [[BeintooVGoodVC alloc] initWithNibName:@"BeintooVGoodVC" bundle:[NSBundle mainBundle]];
 		multipleVgoodVC     = [[BeintooMultipleVgoodVC alloc] init];
 		recommendationVC    = [[BeintooVGoodShowVC alloc] init];
         webViewVC           = [[BeintooWebViewVC alloc] init];
@@ -35,26 +38,32 @@
     return self;
 }
 
-- (void)hide{
+- (void)hide
+{
 	[self.view removeFromSuperview];
 	self.view.alpha = 0;
 }
 
-- (void)viewDidLoad{
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
 	[super viewWillAppear:animated];
 }
 
-- (void)viewWillDisappear:(BOOL)animated{
+- (void)viewWillDisappear:(BOOL)animated
+{
 	[super viewWillDisappear:animated];
 }
 
 #pragma mark -
 #pragma mark Vgood-Show-Hide-FromCaller
 
-- (void)showVgoodNavigationController{
+- (void)showVgoodNavigationController
+{
 	self.view.alpha = 1;
 	CATransition *applicationLoadViewIn = [CATransition animation];
 	[applicationLoadViewIn setDuration:0.5f];
@@ -67,7 +76,8 @@
 	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
 }
 
-- (void)hideVgoodNavigationController{
+- (void)hideVgoodNavigationController
+{
     self.view.alpha = 0;
 	CATransition *applicationUnloadViewIn = [CATransition animation];
 	[applicationUnloadViewIn setDuration:0.5f];
@@ -80,7 +90,8 @@
 	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
 }
 
-- (void)showAdNavigationController{
+- (void)showAdNavigationController
+{
 	self.view.alpha = 1;
 	CATransition *applicationLoadViewIn = [CATransition animation];
 	[applicationLoadViewIn setDuration:0.5f];
@@ -93,7 +104,8 @@
 	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
 }
 
-- (void)hideAdNavigationController{
+- (void)hideAdNavigationController
+{
     self.view.alpha = 0;
 	CATransition *applicationUnloadViewIn = [CATransition animation];
 	[applicationUnloadViewIn setDuration:0.5f];
@@ -107,7 +119,8 @@
 }
 
 
-- (void)showMissionVgoodNavigationController{
+- (void)showMissionVgoodNavigationController
+{
 	self.view.alpha = 1;
 	CATransition *applicationLoadViewIn = [CATransition animation];
 	[applicationLoadViewIn setDuration:0.5f];
@@ -120,7 +133,8 @@
 	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
 }
 
-- (void)hideMissionVgoodNavigationController{
+- (void)hideMissionVgoodNavigationController
+{
     self.view.alpha = 0;
 	CATransition *applicationUnloadViewIn = [CATransition animation];
 	[applicationUnloadViewIn setDuration:0.5f];
@@ -133,11 +147,41 @@
 	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
 }
 
+- (void)showGiveBedollarsNC
+{
+	self.view.alpha = 1;
+	CATransition *applicationLoadViewIn = [CATransition animation];
+	[applicationLoadViewIn setDuration:0.5f];
+	[applicationLoadViewIn setValue:@"loadGiveBedollars" forKey:@"name"];
+	applicationLoadViewIn.removedOnCompletion = YES;
+	[applicationLoadViewIn setType:kCATransitionMoveIn];
+	applicationLoadViewIn.subtype = transitionEnterSubtype;
+	applicationLoadViewIn.delegate = self;
+	[applicationLoadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
+}
+
+- (void)hideGiveBedollarsNC
+{
+    self.view.alpha = 0;
+	CATransition *applicationUnloadViewIn = [CATransition animation];
+	[applicationUnloadViewIn setDuration:0.5f];
+	[applicationUnloadViewIn setValue:@"unloadGiveBedollars" forKey:@"name"];
+	applicationUnloadViewIn.removedOnCompletion = YES;
+	[applicationUnloadViewIn setType:kCATransitionReveal];
+	applicationUnloadViewIn.subtype = transitionExitSubtype;
+	applicationUnloadViewIn.delegate = self;
+	[applicationUnloadViewIn setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[[self.view layer] addAnimation:applicationUnloadViewIn forKey:@"Show"];
+}
+
 #pragma mark -
 #pragma mark animationFinish
 
-- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag{
-	if ([[animation valueForKey:@"name"] isEqualToString:@"loadVgood"]) {
+- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag
+{	
+    // LOAD
+    if ([[animation valueForKey:@"name"] isEqualToString:@"loadVgood"]) {
 		[Beintoo prizeDidAppear];
 	}
     
@@ -149,6 +193,12 @@
         
         [Beintoo setLastGeneratedAd:nil];
 	}
+    
+    if ([[animation valueForKey:@"name"] isEqualToString:@"loadGiveBedollars"]) {
+		[Beintoo giveBedollarsControllerDidAppear];
+    }
+    
+    // UNLOAD
     
     if ([[animation valueForKey:@"name"] isEqualToString:@"unloadVgood"]) {
 		[self.view removeFromSuperview];
@@ -164,10 +214,14 @@
 		[self.view removeFromSuperview];
 		[Beintoo adControllerDidDisappear];
     }
+    
+    if ([[animation valueForKey:@"name"] isEqualToString:@"unloadGiveBedollars"]) {
+		[Beintoo giveBedollarsControllerDidDisappear];
+    }
 }
 
-- (void)prepareBeintooVgoodOrientation{
-	
+- (void)prepareBeintooVgoodOrientation
+{	
 	if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
         self.view.frame  = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
         self.view.bounds = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.height, [UIScreen mainScreen].bounds.size.width);
@@ -198,16 +252,35 @@
 
 #pragma mark -
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return [Beintoo appOrientation];
+    return [Beintoo appOrientation];
+}
+#endif
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotate
+{
+    return NO;
 }
 
+- (NSUInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskAll;
+}
+#endif
+
 - (void)dealloc {
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 	[singleVgoodVC release];
 	[multipleVgoodVC release];
-	[recommendationVC release];	
+	[recommendationVC release];
     [webViewVC release];
     [super dealloc];
+#endif
+    
 }
 
 @end

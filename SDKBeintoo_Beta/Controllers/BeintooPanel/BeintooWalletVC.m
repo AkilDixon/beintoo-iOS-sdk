@@ -22,7 +22,8 @@
 
 @synthesize vGoodArrayList,walletImages,segControl, isFromNotification;
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	self.title = NSLocalizedStringFromTable(@"wallet",@"BeintooLocalizable",@"Wallet");
@@ -46,13 +47,18 @@
 
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
 	
 	self.vGoodArrayList = [[NSMutableArray alloc] init];
 	self.walletImages   = [[NSMutableArray alloc]init];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -73,10 +79,10 @@
     [vWalletTable deselectRowAtIndexPath:[vWalletTable indexPathForSelectedRow] animated:YES];
     [BLoadingView startActivity:self.view];
     
-    if (self.segControl.selectedSegmentIndex==0) {
+    if (self.segControl.selectedSegmentIndex == 0) {
         [vGood showGoodsByPlayerForState:TO_BE_CONVERTED];
     }
-    else if (self.segControl.selectedSegmentIndex==1) {
+    else if (self.segControl.selectedSegmentIndex == 1) {
         [vGood showGoodsByPlayerForState:CONVERTED];
     }
 }
@@ -84,7 +90,8 @@
 #pragma mark -
 #pragma mark SegmentedControl
 
-- (IBAction) segmentedControlIndexChanged{
+- (IBAction) segmentedControlIndexChanged
+{
     [vWalletTable scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
     
 	switch (self.segControl.selectedSegmentIndex) {
@@ -108,8 +115,8 @@
 
 #pragma mark -
 #pragma mark Delegates
-- (void)didGetAllvGoods:(NSArray *)vGoodList{
-    
+- (void)didGetAllvGoods:(NSArray *)vGoodList
+{    
 	[vWalletTable reloadData];
 	[self.vGoodArrayList removeAllObjects];
 	[self.walletImages removeAllObjects];
@@ -125,14 +132,19 @@
 		return;
 	}
 	
-	for (int i=0; i<[vGoodList count]; i++) {
+	for (int i = 0; i < [vGoodList count]; i++) {
 		@try {
 			NSMutableDictionary *walletEntry = [[NSMutableDictionary alloc]init];
 			NSString *name                   = [[vGoodList objectAtIndex:i] objectForKey:@"name"]; 
 			NSString *vgoodid                = [[vGoodList objectAtIndex:i] objectForKey:@"id"]; 
 			
-			BImageDownload *download         = [[[BImageDownload alloc] init] autorelease];
-			download.delegate                = self;
+#ifdef BEINTOO_ARC_AVAILABLE
+            BImageDownload *download         = [[BImageDownload alloc] init];
+#else
+            BImageDownload *download         = [[[BImageDownload alloc] init] autorelease];
+#endif
+            
+            download.delegate                = self;
 			download.urlString               = [[vGoodList objectAtIndex:i] objectForKey:@"imageSmallUrl"];
 			
 			NSString *showUrl                = [[vGoodList objectAtIndex:i] objectForKey:@"showURL"];
@@ -144,13 +156,19 @@
 			[walletEntry setObject:endDate forKey:@"endDate"];
 			[self.vGoodArrayList addObject:walletEntry];
 			[self.walletImages addObject:download];
-			[walletEntry release];
-			[self.walletImages count];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [walletEntry release];
+#endif
+			
+            [self.walletImages count];
 		}
 		@catch (NSException * e) {
 			BeintooLOG(@"BeintooException: %@ \n for object: %@",e,[vGoodList objectAtIndex:i]);
 		}
 	}
+    
 	[vWalletTable reloadData];
 	[BLoadingView stopActivity];
 }
@@ -158,20 +176,30 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [self.vGoodArrayList count];
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
 	static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }	
 	
 	@try {
@@ -200,9 +228,13 @@
 		[cell addSubview:detailTextLabel];
 		[cell addSubview:imageView];
 		
-		[textLabel release];
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [textLabel release];
 		[detailTextLabel release];
 		[imageView release];
+#endif
+		
 	}
 	@catch (NSException * e) {
 		//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
@@ -210,8 +242,9 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	if (self.segControl.selectedSegmentIndex==0) {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	if (self.segControl.selectedSegmentIndex == 0) {
 		UIActionSheet	*popup = [[UIActionSheet alloc] initWithTitle:nil 
 														   delegate:self 
 												  cancelButtonTitle:NSLocalizedStringFromTable(@"cancel",@"BeintooLocalizable",@"") 
@@ -221,10 +254,14 @@
 		popup.actionSheetStyle = UIActionSheetStyleDefault;
 		popup.tag = indexPath.row;
 		[popup showInView:[self.view superview]];
-		[popup release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [popup release];
+#endif
 		
 	}else {
-		[vgoodShowVC initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle] urlToOpen:[[self.vGoodArrayList objectAtIndex:indexPath.row] objectForKey:@"showURL"]];
+		vgoodShowVC = [vgoodShowVC initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle] urlToOpen:[[self.vGoodArrayList objectAtIndex:indexPath.row] objectForKey:@"showURL"]];
 		[self.navigationController pushViewController:vgoodShowVC animated:YES];
 	}
 }
@@ -232,7 +269,8 @@
 #pragma mark -
 #pragma mark UIActionSheetDelegate
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
 	[vWalletTable deselectRowAtIndexPath:[vWalletTable indexPathForSelectedRow] animated:YES];
 	if (buttonIndex == 0) { // --  GET IT REAL
 		
@@ -242,21 +280,27 @@
 			getRealURLWithLocation = [getRealURLWithLocation stringByAppendingString:locationParams];
 		}
 		
-		[vgoodShowVC initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle] urlToOpen:getRealURLWithLocation];
+		vgoodShowVC= [vgoodShowVC initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle] urlToOpen:getRealURLWithLocation];
 		[self.navigationController pushViewController:vgoodShowVC animated:YES];
-	}else if (buttonIndex == 1) { // -- SEND AS A GIFT
+	}
+    else if (buttonIndex == 1) { // -- SEND AS A GIFT
 		
 		if ([[Beintoo getUserIfLogged]objectForKey:@"id"]!=nil){
 			
 			NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[[self.vGoodArrayList objectAtIndex:actionSheet.tag] objectForKey:@"id"], @"vGoodID", @"sendAsAGift",@"caller",self,@"callerVC",nil];
 			
-			[friendsListVC  initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle] andOptions:options];
+			friendsListVC = [friendsListVC  initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle] andOptions:options];
 			[self.navigationController pushViewController:friendsListVC animated:YES];
 		}
         else{
             UIAlertView *av = [[UIAlertView alloc]initWithTitle:nil message:NSLocalizedStringFromTable(@"unableToSendAsAGift",@"BeintooLocalizable",@"Send as a gift") delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
             [av show];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [av release];
+#endif
+            
         }
 	}
 	else if (buttonIndex == 2){
@@ -266,23 +310,35 @@
 
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
-- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
     NSUInteger index = [self.walletImages indexOfObject:download]; 
     NSUInteger indices[] = {0, index};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
     [vWalletTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [path release];
+#endif
+    
     download.delegate = nil;
 }
-- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
     BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return NO;
 }
+#endif
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -299,20 +355,33 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     if (isFromNotification){
         if ([BeintooDevice isiPad]){
             [Beintoo dismissIpadNotifications];
         }
         else {
+
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
             [self dismissModalViewControllerAnimated:YES];
+#endif
+
         }
     }
     else
         [Beintoo dismissBeintoo];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
     [super viewWillDisappear:animated];
     
     vGood.delegate   = nil;
@@ -324,6 +393,8 @@
 	}
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[self.vGoodArrayList release];
 	[self.walletImages	release];
@@ -333,5 +404,6 @@
 	[friendsListVC release];
     [super dealloc];
 }
+#endif
 
 @end

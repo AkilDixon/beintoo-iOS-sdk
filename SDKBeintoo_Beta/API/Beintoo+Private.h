@@ -21,14 +21,27 @@
 
 @interface Beintoo (Private) <CLLocationManagerDelegate,
 #ifdef UI_USER_INTERFACE_IDIOM 
-UIPopoverControllerDelegate,
+    UIPopoverControllerDelegate, 
 #endif 
-BeintooPrizeDelegate, BeintooMissionViewDelegate> 
+BeintooPrizeDelegate, BeintooMissionViewDelegate, BTemplateGiveBedollarsDelegate>
 
-+ (Beintoo *)sharedInstance;
-+ (UIWindow *)getApplicationWindow;
+#pragma mark - Init methods
+
 + (void)setApiKey:(NSString *)_apikey andApisecret:(NSString *)_apisecret;
 + (void)createSharedBeintoo;
++ (Beintoo *)sharedInstance;
+
++ (BOOL)isBeintooInitialized;
+
++ (void)initBeintooSettings:(NSDictionary *)_settings;
++ (void)initLocallySavedScoresArray;
++ (void)initLocallySavedAchievementsArray;
++ (void)initUserAgent;
+- (void)initDelegates;
+
+#pragma mark - Common methods
+
++ (void)setApplicationWindow:(UIWindow *)_window;
 + (void)setAppOrientation:(int)_appOrientation;
 + (void)setForceRegistration:(BOOL)_value;
 + (void)setShowAchievementNotificatio:(BOOL)_value;
@@ -39,21 +52,36 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (void)setDismissBeintooAfterRegistration:(BOOL)_value;
 + (void)setTryBeintooImageTypeReward:(BOOL)_value;
 + (void)setNotificationPosition:(NSInteger)_value;
+
+#pragma mark - API Services
+
 + (void)initAPI;
-+ (void)initMainAdController;
 + (void)initPlayerService;
 + (void)initUserService;
 + (void)initVgoodService;
 + (void)initAchievementsService;
 + (void)initBestoreService;
++ (void)initAppService;
++ (void)initAdService;
++ (void)initRewardService;
+
+#pragma mark - Init Controllers
+
 + (void)initMainController;
++ (void)initMainAdController;
 + (void)initVgoodNavigationController;
 + (void)initMainNavigationController;
 + (void)initAdNavigationController;
 + (void)initiPadController;
 + (void)initPopoversForiPad;
+
+#pragma mark - Production/Sandbox environments
+
 + (void)switchToSandbox;
 + (void)privateSandbox;
+
+#pragma mark - Launch and Dismiss methods
+
 + (void)_launchBeintooOnApp;
 + (void)_launchBeintooOnAppWithDeveloperCurrencyValue:(float)_value;
 + (void)_launchNotificationsOnApp;
@@ -82,33 +110,30 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (void)_dismissAd;
 + (void)_dismissMission;
 + (void)_dismissRecommendation;
-+ (void)_updateUserLocation;
-+ (void)initBeintooSettings:(NSDictionary *)_settings;
-+ (void)initLocallySavedScoresArray;
-+ (void)initLocallySavedAchievementsArray;
-+ (void)initUserAgent;
++ (void)_launchGiveBedollarsWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate position:(int)position;
++ (void)_dismissGiveBedollarsController;
+
+#pragma mark - Private methods
+
++ (UIWindow *)getApplicationWindow;
 + (void)_setBeintooPlayer:(NSDictionary *)_player;
 + (void)_setBeintooUser:(NSDictionary *)_user;
++ (void)_setLastLoggedPlayers:(NSArray *)_players;
 + (void)_setLastVgood:(BVirtualGood *)_vgood;
 + (void)_setLastAd:(BVirtualGood *)_ad;
-+ (void)_setLastLoggedPlayers:(NSArray *)_players;
-+ (void)_playerLogout;
-+ (void)_beintooDidAppear;
-+ (void)_beintooWillDisappear;
-+ (void)_beintooDidDisappear;
-+ (void)_prizeDidAppear;
-+ (void)_prizeDidDisappear;
-+ (void)setApplicationWindow:(UIWindow *)_window;
-+ (BOOL)isBeintooInitialized;
-+ (NSString *)getLastTimeForTryBeintooShowTimestamp;
++ (void)_setLastGiveBedollars:(BVirtualGood *)_content;
 + (void)setLastTimeForTryBeintooShowTimestamp:(NSString *)_value;
 + (void)_setBeintooUserFriends:(NSArray *)friends;
-+ (NSArray *)_getBeintooUserFriends;
+
++ (void)_playerLogout;
+
 + (BOOL)_isAFriendOfMine:(NSString *)_friendID;
 
-- (void)initDelegates;
++ (NSString *)getLastTimeForTryBeintooShowTimestamp;
++ (NSArray *)_getBeintooUserFriends;
 
-//--> Currency Management
+#pragma mark - Virtual Currency Methods
+
 + (void)_setDeveloperCurrencyName:(NSString *)_name;
 + (NSString *)_getDeveloperCurrencyName; 
 + (void)_setDeveloperUserId:(NSString *)_id;
@@ -118,16 +143,33 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate>
 + (void)_removeStoredCurrencyAndUser;
 + (BOOL)_isCurrencyStored;
 + (BOOL)_isLoggedUserIdStored;
-// <--
+
+#pragma mark - Location management
+
++ (void)_updateUserLocation;
+
+#pragma mark - StatusBar management
 
 + (void)manageStatusBarOnLaunch;
 + (void)manageStatusBarOnDismiss;
 + (void)_setIsStatusBarHiddenOnApp:(BOOL)_value;
+
+#pragma mark - Notifications
 
 + (void)_beintooUserDidLogin;
 + (void)_beintooUserDidSignup;
 
 + (void)_adControllerDidAppear;
 + (void)_adControllerDidDisappear;
+
++ (void)_giveBedollarsControllerDidAppear;
++ (void)_giveBedollarsControllerDidDisappear;
+
++ (void)_beintooDidAppear;
++ (void)_beintooWillDisappear;
++ (void)_beintooDidDisappear;
+
++ (void)_prizeDidAppear;
++ (void)_prizeDidDisappear;
 
 @end

@@ -21,7 +21,8 @@
 
 @synthesize urlToOpen, isFromNotification;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil urlToOpen:(NSString *)URL {
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil urlToOpen:(NSString *)URL
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.urlToOpen = URL;
@@ -29,11 +30,13 @@
     return self;
 }
 
-- (void)setAllowCloseWebView:(BOOL)_value{
+- (void)setAllowCloseWebView:(BOOL)_value
+{
     allowCloseWebViewAndDismissBeintoo = _value;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	self.title = @"Beintoo";
@@ -48,11 +51,16 @@
     
     UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
     [self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [barCloseBtn release];
+#endif
     
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
 	[loadingIndicator stopAnimating];
@@ -69,40 +77,51 @@
     }
 }
 
-- (IBAction)back:(id)sender{
+- (IBAction)back:(id)sender
+{
     [_webView goBack];
 }
-- (IBAction)forward:(id)sender{
+
+- (IBAction)forward:(id)sender
+{
     [_webView goForward];
 }
-- (IBAction)stop:(id)sender{
+
+- (IBAction)stop:(id)sender
+{
     [_webView stopLoading];
 }
-- (IBAction)refresh:(id)sender{
+
+- (IBAction)refresh:(id)sender
+{
     [_webView reload];    
 }
 
 #pragma mark -
 #pragma mark webViewDelegates
 
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)req navigationType:(UIWebViewNavigationType)navigationType {
-    
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)req navigationType:(UIWebViewNavigationType)navigationType
+{    
     return YES; 
 }
 
-- (void)webViewDidStartLoad:(UIWebView *)theWebView{
+- (void)webViewDidStartLoad:(UIWebView *)theWebView
+{
 	[loadingIndicator startAnimating];
 }
-- (void)webViewDidFinishLoad:(UIWebView *)theWebView{
-	[loadingIndicator stopAnimating];
- }
 
-- (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
-	
+- (void)webViewDidFinishLoad:(UIWebView *)theWebView
+{
 	[loadingIndicator stopAnimating];
 }
 
-- (UIView *)closeButton{
+- (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error
+{
+	[loadingIndicator stopAnimating];
+}
+
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -119,42 +138,54 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     if (isFromNotification){
         if ([BeintooDevice isiPad]){
             [Beintoo dismissIpadNotifications];
         }
         else {
+            
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
             [self dismissModalViewControllerAnimated:YES];
+#endif
+
         }
     }
     else
         [Beintoo dismissBeintoo];
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
-    
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return NO;
 }
+#endif
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
 	[_webView loadHTMLString:@"<html><head></head><body></body></html>" baseURL:nil];
 }
 
-- (void)viewDidDisappear:(BOOL)animated{
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [super dealloc];
 }
-
+#endif
 
 @end

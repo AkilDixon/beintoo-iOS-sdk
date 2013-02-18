@@ -23,18 +23,25 @@
 
 @synthesize sectionScores, allScores, allContests, allScoresForContest, arrayWithScoresForAllContests, startingOptions, isFromNotification, isFromDirectLaunch;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options
+{
 	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.startingOptions	= options;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(removeBPickerViewFromSuperView:)
+                                                     name:BeintooNotificationCloseBPickerView
+                                                   object:nil];
 	}
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-	
-	isAFriendProfile = NO;
+    
+    isAFriendProfile = NO;
 	if ([[self.startingOptions objectForKey:@"caller"] isEqualToString:@"friendsProfile"]) {
 		isAFriendProfile = YES;
 	}		 
@@ -44,10 +51,9 @@
     loginVC                 = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
     
     UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
-	loginNavController      = [[UINavigationController alloc] initWithRootViewController:loginVC];
+	loginNavController      = [[BNavigationController alloc] initWithRootViewController:loginVC];
 	[[loginNavController navigationBar] setTintColor:barColor];	
 
-    
 	levelTitle.text		= NSLocalizedStringFromTable(@"level",@"BeintooLocalizable",@"UserLevel");
 	noScoreLabel.text	= NSLocalizedStringFromTable(@"noscoreLabel",@"BeintooLocalizable",@"You don't have any points on this app.");
 	
@@ -88,8 +94,12 @@
 
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
+    
 	self.sectionScores	 = [[NSMutableArray alloc] init];
 	
 	_player				= [[BeintooPlayer alloc] init];
@@ -100,14 +110,10 @@
 	[toolbarView setGradientType:GRADIENT_TOOLBAR];
     
     settingsLabel.text = NSLocalizedStringFromTable(@"settingsLabel", @"BeintooLocalizable", nil);
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(removeBPickerViewFromSuperView:) 
-                                                 name:@"ChallengesBPickerView"
-                                               object:nil];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -137,7 +143,7 @@
     userImg.image       = nil;
     isAlreadyLogging    = NO;
     
-    unreadMessagesLabel.text	= [NSString stringWithFormat:@"%d",[BeintooMessage unreadMessagesCount]];
+    unreadMessagesLabel.text	= [NSString stringWithFormat:@"%d", [BeintooMessage unreadMessagesCount]];
     [unreadMessagesLabel setHidden:YES];
     
     [noScoreLabel setHidden:YES];
@@ -159,11 +165,21 @@
                         
         if (signupViewForPlayers != nil) {
             signupViewForPlayers = nil;
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [signupViewForPlayers release];
+#endif
+            
         }
         [[self.view viewWithTag:1111] removeFromSuperview];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        signupViewForPlayers = [BSignupLayouts getBeintooSignupViewForProfileWithFrame:CGRectMake(100, 10 , 220, 90) andButtonActionSelector:@selector(tryBeintoo) fromSender:self];
+#else
         signupViewForPlayers = [[BSignupLayouts getBeintooSignupViewForProfileWithFrame:CGRectMake(100, 10 , 220, 90) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
-        signupViewForPlayers.tag = 1111;
+#endif
+         signupViewForPlayers.tag = 1111;
         [self.view addSubview:signupViewForPlayers];
         
         [BLoadingView startActivity:self.view];
@@ -190,12 +206,9 @@
         
         if ([Beintoo isAFriendOfMine:[self.startingOptions objectForKey:@"friendUserID"]]){
             friendTypeRequest = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"cancel_friend.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(sendUnfriendRequest)];
-            
         }
         else {
-            
             friendTypeRequest = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"add_friend.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(sendFriendRequest)];
-            
         }
         
         UIBarButtonItem *addToAllianceButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"add_alliance.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(addToAlliance)];
@@ -204,45 +217,95 @@
         
         UIBarButtonItem *sendChallenge = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"challenge.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(sendNewChallenge)];
         
+        BOOL addChallenges = FALSE;
+        NSArray *features = [Beintoo getFeatureList];
+        for (NSString *feature in features){
+            if ([feature isEqualToString:BFEATURE_CHALLENGES]){
+                addChallenges = TRUE;
+                break;
+            }
+        }
+        
         if ([BeintooAlliance userIsAllianceAdmin]){
             if ([BeintooDevice isiPad] || [Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown){
-                friendTypeRequest.width = 70;
-                addToAllianceButtonItem.width = 70;
-                sendMessageButtonItem.width = 70;
-                sendChallenge.width = 70;
+                
+                int total_width = 280;
+                int single_width = 0;
+                if (addChallenges == TRUE)
+                    single_width  = total_width / 4;
+                else
+                    single_width  = total_width / 3;
+                    
+                friendTypeRequest.width = single_width;
+                addToAllianceButtonItem.width = single_width;
+                sendMessageButtonItem.width = single_width;
+                sendChallenge.width = single_width;
             }
-            else { 
-                friendTypeRequest.width = 110;
-                addToAllianceButtonItem.width = 110;
-                sendMessageButtonItem.width = 110;
-                sendChallenge.width = 110;
+            else {
+                
+                int total_width = 440;
+                int single_width = 0;
+                if (addChallenges == TRUE)
+                    single_width  = total_width / 4;
+                else
+                    single_width  = total_width / 3;
+                
+                friendTypeRequest.width = single_width;
+                addToAllianceButtonItem.width = single_width;
+                sendMessageButtonItem.width = single_width;
+                sendChallenge.width = single_width;
             }
             
-            [toolBar setItems:[NSArray arrayWithObjects: fixedSpace, sendMessageButtonItem, flexibleSpace, sendChallenge, flexibleSpace, addToAllianceButtonItem, flexibleSpace, friendTypeRequest,  fixedSpace, nil]];
+            if (addChallenges == TRUE)
+                [toolBar setItems:[NSArray arrayWithObjects: fixedSpace, sendMessageButtonItem, flexibleSpace, sendChallenge, flexibleSpace, addToAllianceButtonItem, flexibleSpace, friendTypeRequest,  fixedSpace, nil]];
+            else
+                [toolBar setItems:[NSArray arrayWithObjects: fixedSpace, sendMessageButtonItem, flexibleSpace, addToAllianceButtonItem, flexibleSpace, friendTypeRequest,  fixedSpace, nil]];
         }
         else {
             if ([BeintooDevice isiPad] || [Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown){
-                friendTypeRequest.width = 95;
-                addToAllianceButtonItem.width = 95;
-                sendMessageButtonItem.width = 95;
-                sendChallenge.width = 95;
+                
+                int total_width = 280;
+                int single_width = 0;
+                if (addChallenges == TRUE)
+                    single_width  = total_width / 3;
+                else
+                    single_width  = total_width / 2;
+                
+                friendTypeRequest.width = single_width;
+                addToAllianceButtonItem.width = single_width;
+                sendMessageButtonItem.width = single_width;
+                sendChallenge.width = single_width;
             }
-            else { 
-                friendTypeRequest.width = 150;
-                addToAllianceButtonItem.width = 150;
-                sendMessageButtonItem.width = 150;
-                sendChallenge.width = 150;
+            else {
+                
+                int total_width = 440;
+                int single_width = 0;
+                if (addChallenges == TRUE)
+                    single_width  = total_width / 3;
+                else
+                    single_width  = total_width / 2;
+                
+                friendTypeRequest.width = single_width;
+                addToAllianceButtonItem.width = single_width;
+                sendMessageButtonItem.width = single_width;
+                sendChallenge.width = single_width;
             }
             
-            [toolBar setItems:[NSArray arrayWithObjects: fixedSpace, sendMessageButtonItem, flexibleSpace, sendChallenge, flexibleSpace, friendTypeRequest, fixedSpace, nil]];
+            if (addChallenges == TRUE)
+                [toolBar setItems:[NSArray arrayWithObjects: fixedSpace, sendMessageButtonItem, flexibleSpace, sendChallenge, flexibleSpace, friendTypeRequest, fixedSpace, nil]];
+            else
+                [toolBar setItems:[NSArray arrayWithObjects: fixedSpace, sendMessageButtonItem, flexibleSpace, friendTypeRequest, fixedSpace, nil]];
         }
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [addToAllianceButtonItem release];
         [friendTypeRequest release];
         [sendMessageButtonItem release];
         [sendChallenge release];
         [flexibleSpace release];
         [fixedSpace release];
+#endif
         
         [alliancekey setHidden:YES];
         [allianceValue setHidden:YES];
@@ -286,10 +349,13 @@
         
         [toolBar setItems:[NSArray arrayWithObjects:fixedSpace, logoutButtonItem, flexibleSpace, removeButtonItem, fixedSpace, nil]];
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [logoutButtonItem release];
         [removeButtonItem release];
         [fixedSpace release];
         [flexibleSpace release];
+#endif
         
         [alliancekey setHidden:NO];
         [allianceValue setHidden:NO];
@@ -301,11 +367,14 @@
         
         [BLoadingView startActivity:profileView];
         [_player getAllScores];
+        
         if ([BeintooMessage unreadMessagesCount] > 0) {
             [unreadMessagesLabel setHidden:NO];
         }
     }
 }
+
+#pragma mark - SendChalllenge methods
 
 - (IBAction)sendNewChallenge
 {
@@ -325,35 +394,52 @@
     [bPickerView removeFromSuperview];
 }
 										
-#pragma mark -
-#pragma mark delegates
-- (void)player:(BeintooPlayer *)player didGetAllScores:(NSDictionary *)result{
-	
-    self.allScores = result; 
+#pragma mark - Beintoo Delegates
+
+- (void)player:(BeintooPlayer *)player didGetAllScores:(NSDictionary *)result
+{	
+    self.allScores = result;
+    
 	if (self.allScores == nil) {
 		[noScoreLabel setHidden:NO];
 	}
 	
 	@try {
-		NSDictionary *currentUser = [Beintoo getUserIfLogged];	
+		NSDictionary *currentUser = [Beintoo getUserIfLogged];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        BImageDownload *download = [[BImageDownload alloc] init];
+#else
+        BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
+#endif
+    
+        download.delegate = self;
         if (!currentUser) {
-            userImg.contentMode = UIViewContentModeCenter;
-            userImg.image       = [UIImage imageNamed:@"beintoo_profile.png"];
+            
+            download.urlString = @"beintoo_profile.png";
+            /*userImg.contentMode = UIViewContentModeCenter;
+            userImg.image       = [UIImage imageNamed:@"beintoo_profile.png"];*/
         }
         else{
-            NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[currentUser objectForKey:@"userimg"]]];
-            [userImg setImage:[UIImage imageWithData:imgData]];
+            /*NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[currentUser objectForKey:@"userimg"]]];
+            [userImg setImage:[UIImage imageWithData:imgData]];*/
+            
+            download.urlString = [currentUser objectForKey:@"userimg"];
         }
+        
+        userImg.image = download.image;
+        
 		nickname.text  = [currentUser objectForKey:@"nickname"];
 		level.text	   = [self translateLevel:[currentUser objectForKey:@"level"]];
-		beDollars.text = [NSString stringWithFormat:@"%.2f",[[currentUser objectForKey:@"bedollars"]floatValue]];
+		beDollars.text = [NSString stringWithFormat:@"%.2f", [[currentUser objectForKey:@"bedollars"]floatValue]];
 		
 		[self.allContests removeAllObjects];
 		[self.allScoresForContest removeAllObjects];
 		
-		for (id theKey in allScores) {
+		for (id theKey in allScores)
+        {
 			NSDictionary *contestValues = [[allScores objectForKey:theKey]objectForKey:@"contest"];
-			if ( ([[contestValues objectForKey:@"isPublic"] intValue]==1) || ([[contestValues objectForKey:@"codeID"] isEqualToString:@"default"]) ) {
+			if ( ([[contestValues objectForKey:@"isPublic"] intValue] == 1) || ([[contestValues objectForKey:@"codeID"] isEqualToString:@"default"]) ) {
 				[self.allContests addObject:theKey];
 			}
 		}
@@ -361,7 +447,7 @@
 	@catch (NSException * e) {
 	}
 	
-	for (int i=0; i<[self.allContests count]; i++) {
+	for (int i = 0; i < [self.allContests count]; i++) {
 		@try {
 			NSMutableArray *scores = [[NSMutableArray alloc]init];
 			NSString *totalScore = [[self.allScores objectForKey:[self.allContests objectAtIndex:i]]objectForKey:@"balance"];
@@ -373,17 +459,24 @@
 			[scores addObject:lastScore];
 			
             [self.allScoresForContest addObject:scores];
-			[scores release];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [scores release];
+#endif
+			
 		}
 		@catch (NSException * e) {
 			BeintooLOG(@"BeintooException: %@ \n for object: %@",e,[self.allContests objectAtIndex:i]);
 		}
 	}
+    
 	[scoresTable reloadData];
 	[BLoadingView stopActivity];
 }
 
-- (void)didgetPlayerByUser:(NSDictionary *)result{
+- (void)didgetPlayerByUser:(NSDictionary *)result
+{
 	@try {
 		
 		self.allScores = [result objectForKey:@"playerScore"];
@@ -393,8 +486,19 @@
 		}
 		
 		NSDictionary *currentUser = [result objectForKey:@"user"];	
-		NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[currentUser objectForKey:@"userimg"]]];
-		[userImg setImage:[UIImage imageWithData:imgData]];
+		/*NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[currentUser objectForKey:@"userimg"]]];
+		[userImg setImage:[UIImage imageWithData:imgData]];*/
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        BImageDownload *download = [[BImageDownload alloc] init];
+#else
+        BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
+#endif
+        
+        download.delegate = self;
+        download.urlString = [currentUser objectForKey:@"userimg"];
+        userImg.image = download.image;
+
 		nickname.text  = [currentUser objectForKey:@"nickname"];
 		level.text	   = [self translateLevel:[currentUser objectForKey:@"level"]];
 		beDollars.text = [NSString stringWithFormat:@"%.2f",[[currentUser objectForKey:@"bedollars"]floatValue]];
@@ -413,7 +517,7 @@
 		BeintooLOG(@"BeintooException - Profile: %@",e);
 	}
 	
-	for (int i=0; i<[self.allContests count]; i++) {
+	for (int i = 0; i < [self.allContests count]; i++) {
 		@try {
 			NSMutableArray *scores = [[NSMutableArray alloc]init];
 			NSString *totalScore = [[self.allScores objectForKey:[self.allContests objectAtIndex:i]]objectForKey:@"balance"];
@@ -425,20 +529,27 @@
 			[scores addObject:lastScore];
 			
 			[self.allScoresForContest addObject:scores];
-			[scores release];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [scores release];
+#endif
+        
 		}
 		@catch (NSException * e) {
 			BeintooLOG(@"BeintooException - Profile: %@ \n for object: %@",e,[self.allContests objectAtIndex:i]);
 		}
 	}
-	[scoresTable reloadData];
+	
+    [scoresTable reloadData];
 	[BLoadingView stopActivity];
 }
 
 #pragma mark -
 #pragma mark IBActions
 
-- (IBAction)logout{
+- (IBAction)logout
+{
 	UIActionSheet	*popup = [[UIActionSheet alloc] initWithTitle:NSLocalizedStringFromTable(@"logout",@"BeintooLocalizable",@"Are you sure?") 
 													   delegate:self 
 											  cancelButtonTitle:nil 
@@ -448,10 +559,16 @@
 	popup.actionSheetStyle = UIActionSheetStyleDefault;
 	[popup showInView:[self.view superview]];
 	popup.tag = POPUP_LOGOUT;
-	[popup release];	
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [popup release];
+#endif
+	
 }
 
-- (IBAction)detachUserFromDevice{	
+- (IBAction)detachUserFromDevice
+{
 	UIActionSheet	*popup = [[UIActionSheet alloc] initWithTitle:NSLocalizedStringFromTable(@"detachFromDevice",@"BeintooLocalizable",@"Are you sure?") 
 													   delegate:self 
 											  cancelButtonTitle:nil 
@@ -461,37 +578,66 @@
 	popup.actionSheetStyle = UIActionSheetStyleDefault;
 	[popup showInView:[self.view superview]];
 	popup.tag = POPUP_DETACH;
-	[popup release];
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [popup release];
+#endif
+
 }
 
-- (IBAction)openBalance{	
+- (IBAction)openBalance
+{
     if ([Beintoo isUserLogged]){
-        [balanceVC initWithNibName:@"BeintooBalanceVC" bundle:[NSBundle mainBundle] andOptions:nil];
+        balanceVC = [balanceVC initWithNibName:@"BeintooBalanceVC" bundle:[NSBundle mainBundle] andOptions:nil];
         
         [self.navigationController pushViewController:balanceVC animated:YES];
     }
     else {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        UIView *featureView = [BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self];
+#else
         UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
+#endif
+
         featureView.tag = 3333;
         [self.view addSubview:featureView];
         [self.view bringSubviewToFront:featureView];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [featureView release];
+#endif
+
     }
 }	 
 
-- (IBAction)openMessages{	
+- (IBAction)openMessages
+{
     if([Beintoo isUserLogged]){
-        [messagesVC initWithNibName:@"BeintooMessagesVC" bundle:[NSBundle mainBundle] andOptions:nil];
+        messagesVC = [messagesVC initWithNibName:@"BeintooMessagesVC" bundle:[NSBundle mainBundle] andOptions:nil];
         
         [self.navigationController pushViewController:messagesVC animated:YES];
     }
     else
     {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        UIView *featureView = [BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self];
+#else
         UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
+#endif
+        
         featureView.tag = 3333;
         [self.view addSubview:featureView];
         [self.view bringSubviewToFront:featureView];
+       
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [featureView release];
+#endif
+        
     }
 }
 
@@ -501,11 +647,22 @@
         [self.navigationController pushViewController:friendActionsVC animated:YES];
     }
     else {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        UIView *featureView = [BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self];
+#else
         UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
+#endif
+        
         featureView.tag = 3333;
         [self.view addSubview:featureView];
         [self.view bringSubviewToFront:featureView];
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [featureView release];
+#endif
+    
     }
 }
 
@@ -515,15 +672,27 @@
         [self.navigationController pushViewController:alliancesActionVC animated:YES];
     }
     else {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        UIView *featureView = [BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self];
+#else
         UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
+#endif
+        
         featureView.tag = 3333;
         [self.view addSubview:featureView];
         [self.view bringSubviewToFront:featureView];
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [featureView release];
-    } 
+#endif
+    
+    }
 }
 
-- (IBAction)openSettings{	
+- (IBAction)openSettings
+{
     if ([Beintoo isUserLogged]){
         NSString *url;
         if (![Beintoo isOnPrivateSandbox])
@@ -534,28 +703,46 @@
         webview = [[BeintooWebViewVC alloc] initWithNibName:@"BeintooWebViewVC" bundle:[NSBundle mainBundle] urlToOpen:url];
         
         [self.navigationController pushViewController:webview animated:YES];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [webview release];
+#endif
+        
     }
     else {
+
+#ifdef BEINTOO_ARC_AVAILABLE
+        UIView *featureView = [BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self];
+#else
         UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureProfileWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
+#endif
+        
         featureView.tag = 3333;
         [self.view addSubview:featureView];
         [self.view bringSubviewToFront:featureView];
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [featureView release];
-    } 
+#endif
+    
+    }
 }
 
-- (void)dismissFeatureSignupView{
+- (void)dismissFeatureSignupView
+{
     UIView *featureView = [self.view viewWithTag:3333];
     [featureView removeFromSuperview];
 }
 
 // Friend profile
-- (IBAction)sendMessage{
+- (IBAction)sendMessage
+{
 	NSDictionary *replyOptions	= [NSDictionary dictionaryWithObjectsAndKeys:[self.startingOptions objectForKey:@"friendNickname"],@"from",
 										[self.startingOptions objectForKey:@"friendUserID"],@"fromUserID",nil];
 	NSDictionary *newMsgOptions	= [NSDictionary dictionaryWithObjectsAndKeys:replyOptions,@"replyOptions",nil];
-	[newMessageVC initWithNibName:@"BeintooNewMessageVC" bundle:[NSBundle mainBundle] andOptions:newMsgOptions];
+	newMessageVC = [newMessageVC initWithNibName:@"BeintooNewMessageVC" bundle:[NSBundle mainBundle] andOptions:newMsgOptions];
     if (isFromNotification)
         newMessageVC.isFromNotification = YES;
 	[self.navigationController pushViewController:newMessageVC animated:YES];
@@ -574,9 +761,14 @@
         message = NSLocalizedStringFromTable(@"errorMessage", @"BeintooLocalizable", nil); 
     
     [BLoadingView stopActivity];
-    [alert initWithTitle:nil message:message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    alert = [alert initWithTitle:nil message:message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
     [alert show];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [alert release];
+#endif
+    
 }
 
 - (void)didInviteFriendsToAllianceWithResult:(NSDictionary *)result
@@ -591,9 +783,13 @@
     }
 	else
 		alertMessage = NSLocalizedStringFromTable(@"requestNotSent", @"BeintooLocalizable",@"");
-	[av initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+	av = [av initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 	[av show];
-	[av release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [av release];
+#endif
     
 }
 
@@ -610,19 +806,26 @@
         message = NSLocalizedStringFromTable(@"errorMessage", @"BeintooLocalizable", nil); 
     
     [BLoadingView stopActivity];
-    [alert initWithTitle:nil message:message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    alert = [alert initWithTitle:nil message:message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
     [alert show];
-    [alert release];                                                                                                                                                                                
-}                                                                                                                                                                              
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [alert release];
+#endif
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
     if (alertView.tag == 1){
         [self.navigationController popViewControllerAnimated:YES];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadFriendsList" object:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationReloadFriendsList object:nil];
     }
 }
 
-- (void)addToAlliance{
+- (void)addToAlliance
+{
     NSArray *friends = [NSArray arrayWithObject:[self.startingOptions objectForKey:@"friendUserID"]];
     
     [_alliance allianceAdminInviteFriends:friends onAlliance:[BeintooAlliance userAllianceID]];
@@ -641,12 +844,11 @@
     [_user sendFriendshipRequestTo:[self.startingOptions objectForKey:@"friendUserID"]];
 } 
 
-
 #pragma mark -
 #pragma mark UIActionSheetDelegate
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-	
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{	
 	if (actionSheet.tag == POPUP_DETACH){
 		if(buttonIndex == 0){
 			[_user removeUDIDConnectionFromUserID:[[Beintoo getUserIfLogged] objectForKey:@"id"]];
@@ -663,21 +865,31 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return [self.allContests count];
 }
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	//NSArray *scores = [allScores objectForKey:[self.allContests objectAtIndex:section]];
 	//return [scores count]-1;
 	return 1;
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
     static NSString *CellIdentifier = @"Cell";
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || YES) {
-        cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:GRADIENT_CELL_BODY] autorelease];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+#else
+        cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier] autorelease];
+#endif
+    
     }
 	
 	@try {
@@ -714,10 +926,13 @@
 		[cell addSubview:totLabel];
 		[cell addSubview:bestLabel];
 		[cell addSubview:lastLabel];
-		
-		[totLabel release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [totLabel release];
 		[bestLabel release];
 		[lastLabel release];
+#endif
 		
 	}
 	@catch (NSException * e) {
@@ -727,19 +942,24 @@
 }
 
 - (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-	BGradientView *gradientView = [[[BGradientView alloc] initWithGradientType:GRADIENT_HEADER]autorelease];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    BGradientView *gradientView = [[BGradientView alloc] initWithGradientType:GRADIENT_HEADER];
+#else
+    BGradientView *gradientView = [[[BGradientView alloc] initWithGradientType:GRADIENT_HEADER]autorelease];
+#endif
+    
 	gradientView.frame = CGRectMake(0, 0, tableView.bounds.size.width, 40);
 
-	UILabel *contestNameLbl			= [[UILabel alloc]initWithFrame:CGRectMake(10,2,300,20)];
+	UILabel *contestNameLbl			= [[UILabel alloc] initWithFrame:CGRectMake(10,2,300,20)];
 	contestNameLbl.backgroundColor	= [UIColor clearColor];
 	contestNameLbl.textColor		= [UIColor blackColor];
 	contestNameLbl.font				= [UIFont boldSystemFontOfSize:14];
 	
-	UILabel *feedNameLbl		= [[UILabel alloc]initWithFrame:CGRectMake(10,2,300,50)];
+	UILabel *feedNameLbl		= [[UILabel alloc] initWithFrame:CGRectMake(10,2,300,50)];
 	feedNameLbl.backgroundColor = [UIColor clearColor];
 	feedNameLbl.textColor	    = [UIColor blackColor];
 	feedNameLbl.font		    = [UIFont systemFontOfSize:12];
-	
 	
 	NSDictionary *contest = [[self.allScores objectForKey:[self.allContests objectAtIndex:section]] objectForKey:@"contest"];
 	NSString *feedName = [contest objectForKey:@"feed"];
@@ -755,24 +975,35 @@
 	feedNameLbl.text	= feedName;
 	[gradientView addSubview:contestNameLbl];
 	[gradientView addSubview:feedNameLbl];
-	[contestNameLbl release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [contestNameLbl release];
 	[feedNameLbl release];
+#endif
+    
 	return gradientView;
 }
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
 	return 40.0;
 }
 
-- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	return nil;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return NO;
 }
+#endif
 
-
-- (NSString *)translateLevel:(NSNumber *)levelNumber{	
+- (NSString *)translateLevel:(NSNumber *)levelNumber
+{
 	if (levelNumber.intValue==1) {return NSLocalizedStringFromTable(@"novice",@"BeintooLocalizable",@"Novice");}
 	else if(levelNumber.intValue==2){return NSLocalizedStringFromTable(@"learner",@"BeintooLocalizable",@"Learner");}
 	else if(levelNumber.intValue==3){return NSLocalizedStringFromTable(@"passionate",@"BeintooLocalizable",@"Passionate");}
@@ -782,13 +1013,14 @@
 		return @"";
 }
 
-- (void)logoutUser{
+- (void)logoutUser
+{
 	[Beintoo setUserLogged:NO];
 	[Beintoo dismissBeintoo];
 }
 
-- (void)tryBeintoo{	
-    
+- (void)tryBeintoo
+{
     if (!isAlreadyLogging) {
         isAlreadyLogging = YES;
         @try {
@@ -803,39 +1035,55 @@
     }
 }
 
-- (void)didGetUserByUDID:(NSMutableArray *)result{
+- (void)didGetUserByUDID:(NSMutableArray *)result
+{
     @synchronized(self){
-        [Beintoo setLastLoggedPlayers:[(NSArray *)result retain]];        
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        [Beintoo setLastLoggedPlayers:(NSArray *)result];
+#else
+        [Beintoo setLastLoggedPlayers:[(NSArray *)result retain]];
+#endif
+        
         [BLoadingView stopActivity]; 
         
         if ([BeintooDevice isiPad]){
             [Beintoo launchIpadLogin];
         }
         else {
-            BeintooLoginVC *signinVC            = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
-            UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
-            UINavigationController *signinNavController = [[UINavigationController alloc] initWithRootViewController:signinVC];
+            BeintooLoginVC *signinVC        = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
+            UIColor *barColor               = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
+            BNavigationController *signinNavController = [[BNavigationController alloc] initWithRootViewController:signinVC];
             [[signinNavController navigationBar] setTintColor:barColor];
             
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self presentViewController:signinNavController animated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self presentViewController:signinNavController animated:YES completion:nil];
+            else 
+                [self presentModalViewController:signinNavController animated:YES];
+#else
             [self presentModalViewController:signinNavController animated:YES];
+#endif
             
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [signinVC release];
             [signinNavController release];
-        
+#endif
+            
         }
     }	
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
 }
 
-- (void)viewDidUnload {
-	
-    [super viewDidUnload];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
     [super viewDidDisappear:animated];
     
     _player.delegate  = nil;
@@ -848,13 +1096,13 @@
 	}
 }
 
-- (void)viewDidDisappear:(BOOL)animated {
+- (void)viewDidDisappear:(BOOL)animated
+{
     [super viewDidDisappear:animated];
     
 	if (isAFriendProfile) {
 		scoresTable.center = CGPointMake(scoresTable.center.x, scoresTable.center.y+56);
         scoresTable.frame = CGRectMake(scoresTable.frame.origin.x, scoresTable.frame.origin.y, scoresTable.frame.size.width, scoresTable.frame.size.height - 56);
-        
 	}
     
     @try {        
@@ -867,7 +1115,8 @@
     }
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -884,19 +1133,45 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     if (isFromNotification){
         if ([BeintooDevice isiPad]){
             [Beintoo dismissIpadNotifications];
         }
         else {
+            
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
             [self dismissModalViewControllerAnimated:YES];
+#endif
+            
         }
     }
     else
         [Beintoo dismissBeintoo];
 }
 
+#pragma mark - ImageDownload delegate 
+
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
+    userImg.image = download.image;
+}
+
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
+
+}
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[listOfContests release];
 	[self.allScores release];
@@ -914,5 +1189,6 @@
     [_alliance release];
     [super dealloc];
 }
+#endif
 
 @end

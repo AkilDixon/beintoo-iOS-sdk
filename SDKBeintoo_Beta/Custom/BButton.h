@@ -17,7 +17,7 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import "QuartzCore/QuartzCore.h"
-
+#import "BeintooDevice.h"
 
 @interface BButton : UIButton {
 	

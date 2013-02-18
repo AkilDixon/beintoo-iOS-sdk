@@ -41,9 +41,12 @@
         
         [toolbar setItems:[NSArray arrayWithObjects:cancelButton, flexibleSpace, sendButton, nil]];
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [cancelButton release];
         [flexibleSpace release];
         [sendButton release];
+#endif
         
         [self addSubview:toolbar];
         
@@ -54,7 +57,7 @@
         contestsCodeIDDictionary    = [[NSMutableArray alloc] init];
         selectedContest             = [[NSString alloc] init];
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hide) name:@"ChallengeSent" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hide) name:BeintooNotificationChallengeSent object:nil];
     }
     return self;
 }
@@ -76,7 +79,11 @@
     sendChallengeView.tag = BSENDCHALLENGE_VIEW_TAG;
     sendChallengeView.alpha = 0;
     [self addSubview:sendChallengeView];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [sendChallengeView release];
+#endif
     
     [UIView beginAnimations:@"sendChallengeOpen" context:nil];
     [UIView setAnimationDelay:0];
@@ -102,7 +109,7 @@
 
 - (void)hide
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"ChallengeSent" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:BeintooNotificationChallengeSent object:nil];
     
     [UIView beginAnimations:@"disappear_animation" context:nil];
     [UIView setAnimationDuration:0.5];
@@ -120,9 +127,7 @@
 {
     if ([animationID isEqualToString:@"disappear_animation"])
     {
-        [[NSNotificationCenter defaultCenter] 
-         postNotificationName:@"ChallengesBPickerView" 
-         object:self];
+        [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationCloseBPickerView object:self];
     }
 }
 
@@ -153,8 +158,8 @@
     [self show];
 }
 
-- (void)challengeRequestFinishedWithResult:(NSDictionary *)result{
-    
+- (void)challengeRequestFinishedWithResult:(NSDictionary *)result
+{    
     [BLoadingView stopActivity];
     
     if ([result objectForKey:@"messageID"] != nil) {
@@ -163,21 +168,36 @@
 			UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"challengeOngoing",@"BeintooLocalizable",@"")
 														delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 			[av show];
-			[av release];
+			
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [av release];
+#endif
+            
 			return;
 		}
         if([[result objectForKey:@"messageID"] intValue] == -12){ // NOT ENOUGH BEDOLLARS
             UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"noBedollarsForChall",@"BeintooLocalizable",@"")
 														delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 			[av show];
-			[av release];
+			
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [av release];
+#endif
+            
 			return;
         }
         
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"errorMessage",@"BeintooLocalizable",@"")
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];
+		
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+        
 		return;
 		
 	}
@@ -185,22 +205,39 @@
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"challengeAccepted",@"BeintooLocalizable",@"")
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];
-	}else if ([[result objectForKey:@"status"] isEqualToString:@"TO_BE_ACCEPTED"]) {
+		
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+        
+	}
+    else if ([[result objectForKey:@"status"] isEqualToString:@"TO_BE_ACCEPTED"]) {
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"challengeSent",@"BeintooLocalizable",@"")
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];
-	} else{
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+		
+	}
+    else{
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"challengeRefused",@"BeintooLocalizable",@"")
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];
+		
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+        
 	}
-    
 }
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
     [self hide];
 }
 
@@ -231,6 +268,8 @@
     selectedContest = [contestsCodeIDDictionary objectAtIndex:row];
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc{
     [user release];
     [player release];
@@ -242,5 +281,6 @@
     
     [super dealloc];
 }
+#endif
 
 @end

@@ -20,13 +20,14 @@
 #import "BeintooUser.h"
 #import "BImageDownload.h"
 #import "BeintooAlliance.h"
+#import "BNavigationController.h"
 
 #define NUMBER_OF_ROWS	25
 
 @class BView, BTableView, BeintooProfileVC, BGradientView, BeintooLoginVC;
 
-@interface BeintooLeaderboardContestVC : UIViewController<UITableViewDelegate,BImageDownloadDelegate,BeintooPlayerDelegate,BeintooUserDelegate, UIActionSheetDelegate> {
-	
+@interface BeintooLeaderboardContestVC : UIViewController <UITableViewDelegate,BImageDownloadDelegate,BeintooPlayerDelegate,BeintooUserDelegate, UIActionSheetDelegate>
+{	
 	IBOutlet BView				*leaderboardContestView;
 	IBOutlet BTableView			*leaderboardContestTable;
 	IBOutlet UISegmentedControl *segControl;
@@ -51,10 +52,7 @@
     BeintooProfileVC                *profileVC;
     UIView                          *signupViewForPlayers;
     BeintooLoginVC                  *loginVC;
-    UINavigationController          *loginNavController;
-    
-    
-
+    BNavigationController          *loginNavController;
 }
 
 - (void)openSelectedPlayer;

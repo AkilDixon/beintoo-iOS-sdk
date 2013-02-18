@@ -23,7 +23,8 @@
 
 @synthesize nickname, caller, isFromDirectLaunch;
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	int appOrientation = [Beintoo appOrientation];
@@ -36,7 +37,11 @@
         logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bar_logo.png"]];
     
     self.navigationItem.titleView = logo;
-	[logo release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [logo release];
+#endif
 	
 	registrationFBVC = [BeintooSignupVC alloc];
 	
@@ -66,7 +71,11 @@
 	
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
 	
 	emailTF.delegate = self;
 	nickTF.delegate = self;
@@ -76,8 +85,7 @@
 	emailTF.hidden = NO;
 	title1.text = NSLocalizedStringFromTable(@"enteremail", @"BeintooLocalizable", @"");
 	title1.numberOfLines = 2;
-	title1.textAlignment = UITextAlignmentCenter;
-	
+    
 	[newUserButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
 	[newUserButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
 	[newUserButton setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
@@ -87,26 +95,34 @@
     [disclaimer setScrollEnabled:YES];
     [disclaimerLand setScrollEnabled:YES];
 	
-	emailTF.delegate = self;
-	nickTF.delegate = self;
-    
-    emailTFLand.delegate = self;
+	emailTFLand.delegate = self;
 	nickTFLand.delegate = self;
-    
-    emailTF.text = @"";
-	emailTF.placeholder = NSLocalizedStringFromTable(@"signupTextFieldPlaceholder",@"BeintooLocalizable", nil);
-	emailTF.hidden = NO;
-	title1.text = NSLocalizedStringFromTable(@"signupMainSentence",@"BeintooLocalizable",@"");
-	title1.numberOfLines = 2;
-	title1.textAlignment = UITextAlignmentCenter;
     
     emailTFLand.text = @"";
 	emailTFLand.placeholder = NSLocalizedStringFromTable(@"signupTextFieldPlaceholder",@"BeintooLocalizable", nil);
 	emailTFLand.hidden = NO;
 	title1Land.text = NSLocalizedStringFromTable(@"signupMainSentence",@"BeintooLocalizable",@"");
 	title1Land.numberOfLines = 2;
-	title1Land.textAlignment = UITextAlignmentCenter;
     
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    title1.textAlignment = NSTextAlignmentCenter;
+    title1Land.textAlignment = NSTextAlignmentCenter;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    {
+        title1.textAlignment = NSTextAlignmentCenter;
+        title1Land.textAlignment = NSTextAlignmentCenter;
+    }
+    else
+    {
+        title1.textAlignment = UITextAlignmentCenter;
+        title1Land.textAlignment = UITextAlignmentCenter;
+    }
+#else
+    title1.textAlignment = UITextAlignmentCenter;
+    title1Land.textAlignment = UITextAlignmentCenter;
+#endif
+   
     [newUserButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
 	[newUserButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
 	[newUserButton setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
@@ -131,18 +147,37 @@
     imageFb.image = [UIImage imageNamed:@"fb.png"];
     imageFb.backgroundColor = [UIColor clearColor];
     [fbButton addSubview:imageFb];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [imageFb release];
+#endif
     
     UILabel *labelFb = [[UILabel alloc] initWithFrame:CGRectMake(65, 4, 245, 34)];
     labelFb.backgroundColor = [UIColor clearColor];
     labelFb.textColor = [UIColor whiteColor];
     labelFb.text = NSLocalizedStringFromTable(@"connectWithFacebook", @"BeintooLocalizable", nil);
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    labelFb.minimumScaleFactor = 2.0;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        labelFb.minimumScaleFactor = 2.0;
+    else
+        labelFb.minimumFontSize = 8.0;
+#else
     labelFb.minimumFontSize = 8.0;
+#endif
+    
     labelFb.font = [UIFont systemFontOfSize:19];
     labelFb.shadowOffset = CGSizeMake(0, -1);
     labelFb.shadowColor = [UIColor colorWithRed:38.0/255.0 green:60.0/255.0 blue:86.0/255.0 alpha:0.8];
     [fbButton addSubview:labelFb];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [labelFb release];
+#endif
     
     [beintooView addSubview:fbButton];
     facebookButton.hidden = YES;
@@ -160,22 +195,40 @@
     imageFbLand.image = [UIImage imageNamed:@"fb.png"];
     imageFbLand.backgroundColor = [UIColor clearColor];
     [fbButtonLand addSubview:imageFbLand];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [imageFbLand release];
+#endif
     
     UILabel *labelFbLand = [[UILabel alloc] initWithFrame:CGRectMake(65, 4, 235, 34)];
     labelFbLand.backgroundColor = [UIColor clearColor];
     labelFbLand.textColor = [UIColor whiteColor];
     labelFbLand.text = NSLocalizedStringFromTable(@"connectWithFacebook", @"BeintooLocalizable", nil);
     labelFbLand.font = [UIFont systemFontOfSize:18];
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    labelFbLand.minimumScaleFactor = 2.0;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        labelFbLand.minimumScaleFactor = 2.0;
+    else
+        labelFbLand.minimumFontSize = 8.0;
+#else
     labelFbLand.minimumFontSize = 8.0;
+#endif
+
     labelFbLand.shadowOffset = CGSizeMake(0, -1);
     labelFbLand.shadowColor = [UIColor colorWithRed:38.0/255.0 green:60.0/255.0 blue:86.0/255.0 alpha:0.8];
     [fbButtonLand addSubview:labelFbLand];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [labelFbLand release];
+#endif
     
     [beintooViewLand addSubview:fbButtonLand];
     facebookButtonLand.hidden = YES;
-    
     
     // Keyboard notifications
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:)
@@ -198,10 +251,15 @@
 		
 		UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissKeyboard)];
         
-		[keyboardToolbar setItems:[[[NSArray alloc] initWithObjects:extraSpace,doneButton,nil] autorelease]];
+#ifdef BEINTOO_ARC_AVAILABLE
+        [keyboardToolbar setItems:[[NSArray alloc] initWithObjects:extraSpace,doneButton,nil]];
+#else
+        [keyboardToolbar setItems:[[[NSArray alloc] initWithObjects:extraSpace,doneButton,nil] autorelease]];
 		
 		[doneButton release];
 		[extraSpace release];
+#endif
+		
 	}
     
     @try {
@@ -224,7 +282,10 @@
 		isAccessoryInputViewNotSupported = YES;
 	}
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [keyboardToolbar release];
+#endif
     
     if ( ![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
         [beintooViewLand removeFromSuperview];
@@ -317,7 +378,6 @@
     registrazioneComplete.font = [UIFont boldSystemFontOfSize:14.0];
     registrazioneComplete.numberOfLines = 1;
     registrazioneComplete.alpha = 0.0;
-    registrazioneComplete.textAlignment = UITextAlignmentLeft;
     registrazioneComplete.backgroundColor = [UIColor clearColor];
     registrazioneComplete.textColor = [UIColor colorWithRed:46.0/255.0 green:68.0/255.0 blue:103.0/255.0 alpha:1.0];
     [beintooView addSubview:registrazioneComplete];
@@ -327,7 +387,6 @@
     confirmNickname.font = [UIFont boldSystemFontOfSize:14.0];
     confirmNickname.numberOfLines = 1;
     confirmNickname.alpha = 0.0;
-    confirmNickname.textAlignment = UITextAlignmentLeft;
     confirmNickname.backgroundColor = [UIColor clearColor];
     confirmNickname.textColor = [UIColor colorWithRed:46.0/255.0 green:68.0/255.0 blue:103.0/255.0 alpha:1.0];
     [beintooView addSubview:confirmNickname];
@@ -338,7 +397,6 @@
     registrazioneCompleteLand.font = [UIFont boldSystemFontOfSize:14.0];
     registrazioneCompleteLand.numberOfLines = 0;
     registrazioneCompleteLand.alpha = 0.0;
-    registrazioneCompleteLand.textAlignment = UITextAlignmentLeft;
     registrazioneCompleteLand.textColor = [UIColor colorWithRed:46.0/255.0 green:68.0/255.0 blue:103.0/255.0 alpha:1.0];
     [beintooViewLand addSubview:registrazioneCompleteLand];
     
@@ -347,7 +405,6 @@
     confirmNicknameLand.font = [UIFont boldSystemFontOfSize:14.0];
     confirmNicknameLand.numberOfLines = 1;
     confirmNicknameLand.alpha = 0.0;
-    confirmNicknameLand.textAlignment = UITextAlignmentLeft;
     confirmNicknameLand.backgroundColor = [UIColor clearColor];
     confirmNicknameLand.textColor = [UIColor colorWithRed:46.0/255.0 green:68.0/255.0 blue:103.0/255.0 alpha:1.0];
     [beintooViewLand addSubview:confirmNicknameLand];
@@ -372,9 +429,38 @@
 	[loginWithDifferentLand setTitle:NSLocalizedStringFromTable(@"loginExistingBtn",@"BeintooLocalizable",@"") forState:UIControlStateNormal];
 	[loginWithDifferentLand setTitle:NSLocalizedStringFromTable(@"loginExistingBtn",@"BeintooLocalizable",@"") forState:UIControlStateHighlighted];
 	[loginWithDifferentLand setTitle:NSLocalizedStringFromTable(@"loginExistingBtn",@"BeintooLocalizable",@"") forState:UIControlStateSelected];
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    registrazioneComplete.textAlignment = NSTextAlignmentLeft;
+    registrazioneCompleteLand.textAlignment = NSTextAlignmentLeft;
+    confirmNickname.textAlignment = NSTextAlignmentLeft;
+    confirmNicknameLand.textAlignment = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    {
+        registrazioneComplete.textAlignment = NSTextAlignmentLeft;
+        registrazioneCompleteLand.textAlignment = NSTextAlignmentLeft;
+        confirmNickname.textAlignment = NSTextAlignmentLeft;
+        confirmNicknameLand.textAlignment = NSTextAlignmentLeft;
+    }
+    else
+    {
+        registrazioneComplete.textAlignment = UITextAlignmentLeft;
+        registrazioneCompleteLand.textAlignment = UITextAlignmentLeft;
+        confirmNickname.textAlignment = UITextAlignmentLeft;
+        confirmNicknameLand.textAlignment = UITextAlignmentLeft;
+    }
+#else
+    registrazioneComplete.textAlignment = UITextAlignmentLeft;
+    registrazioneCompleteLand.textAlignment = UITextAlignmentLeft;
+    confirmNickname.textAlignment = UITextAlignmentLeft;
+    confirmNicknameLand.textAlignment = UITextAlignmentLeft;
+#endif
+    
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     emailTF.text = @"";
@@ -466,19 +552,24 @@
     [scrollView setContentOffset:CGPointMake(0, 0) animated:NO];
 }
 
-- (void)viewDidAppear:(BOOL)animated{
+- (void)viewDidAppear:(BOOL)animated
+{
     [super viewDidAppear:animated];
-    
-    
 }
 
-- (void)webViewDidFinishLoad:(UIWebView *)webView{
+#pragma mark - UIWebView methods
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
     [UIView beginAnimations:nil context:nil];
     webView.alpha = 1.0;
     [UIView commitAnimations];
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+#pragma mark - TextField delegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
 	if( !([BeintooDevice isiPad]) && 
        ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight) ){
         if ([emailTFLand tag] == 10)
@@ -496,8 +587,10 @@
 	return YES;
 }
 
-- (void)keyboardWillShow:(NSNotification *)aNotification {
-    
+#pragma mark - Keyboard delegate methods
+
+- (void)keyboardWillShow:(NSNotification *)aNotification
+{    
     if ([emailTF isFirstResponder] || [emailTFLand isFirstResponder]){
 		if (![BeintooDevice isiPad]) {
             [UIView beginAnimations:nil context:nil];
@@ -516,8 +609,8 @@
 	}
 }
 
-- (void)keyboardWillHide:(NSNotification *)aNotification {
-	
+- (void)keyboardWillHide:(NSNotification *)aNotification
+{	
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.2];
     
@@ -525,8 +618,8 @@
     [UIView commitAnimations];
 }
 
-- (void)keyboardDidShow:(NSNotification *)aNotification {
-    
+- (void)keyboardDidShow:(NSNotification *)aNotification
+{    
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.2];
     [self moveTextViewForKeyboard:aNotification up:YES];
@@ -534,8 +627,8 @@
     [UIView commitAnimations];
 }
 
-- (void)keyboardDidHide:(NSNotification *)aNotification {
-	
+- (void)keyboardDidHide:(NSNotification *)aNotification
+{	
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.2];
     
@@ -544,7 +637,8 @@
     [UIView commitAnimations];
 }
 
-- (void)moveTextViewForKeyboard:(NSNotification*)aNotification up:(BOOL)up{
+- (void)moveTextViewForKeyboard:(NSNotification*)aNotification up:(BOOL)up
+{
 	NSDictionary* userInfo = [aNotification userInfo];
 	
 	NSTimeInterval animationDuration;
@@ -563,28 +657,34 @@
     }
 }
 
-- (void)dismissKeyboard{
+- (void)dismissKeyboard
+{
 	if ([emailTF isFirstResponder])
 		[emailTF resignFirstResponder];
     else if ([emailTFLand isFirstResponder])
         [emailTFLand resignFirstResponder];
 }
 
-- (IBAction)loginWithDifferent{
+- (IBAction)loginWithDifferent
+{
 	//[self.navigationController pushViewController:alreadyRegisteredSigninVC animated:YES];
     
     BeintooSigninAlreadyVC *alreadyRegisteredSigninVC = [[BeintooSigninAlreadyVC alloc] initWithNibName:@"BeintooSigninAlreadyVC" bundle:[NSBundle mainBundle]];
     
     [self.navigationController pushViewController:alreadyRegisteredSigninVC animated:YES];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [alreadyRegisteredSigninVC release];
+#endif
+    
 }
-
 
 #pragma mark -
 #pragma mark newUser Process
 
-- (IBAction)newUser{
-	
+- (IBAction)newUser
+{	
     if ([emailTFLand isFirstResponder])
         [emailTFLand resignFirstResponder];
     if ([emailTF isFirstResponder])
@@ -611,7 +711,12 @@
 												cancelButtonTitle:@"Ok" 
 												otherButtonTitles:nil];
 		[errorAV show];
-		[errorAV release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [errorAV release];
+#endif
+		
 		return;
 	}
     
@@ -646,8 +751,8 @@
 #pragma mark -
 #pragma mark Player-User Delegates
 
-- (void)didCompleteRegistration:(NSDictionary *)result{
-    
+- (void)didCompleteRegistration:(NSDictionary *)result
+{    
     if ([result objectForKey:@"message"] != nil) {
         
         [UIView beginAnimations:nil context:nil];
@@ -669,20 +774,25 @@
         [BLoadingView stopActivity];
         UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"useralreadyregistered",@"BeintooLocalizable",@"")  delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [av show];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [av release];
+#endif
+        
     }
     else{
         [self dismissKeyboard];
         NSString *newUserID = [result objectForKey:@"id"];
         
-        if (newUserID!=nil) {
+        if (newUserID != nil) {
             [_player login:newUserID];
         }
     }
 }
 
-- (void)playerDidLogin:(BeintooPlayer *)player{
-	
+- (void)playerDidLogin:(BeintooPlayer *)player
+{	
     [UIView beginAnimations:nil context:nil];
     if( !([BeintooDevice isiPad]) && 
        ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight) ){
@@ -707,11 +817,17 @@
         [BLoadingView stopActivity];
         UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"useralreadyregistered",@"BeintooLocalizable",@"")  delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [av show];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [av release];
+#endif
+        
     }
 }
 
-- (void)confirmNickname{
+- (void)confirmNickname
+{
     NSString *newNickname;
     if( !([BeintooDevice isiPad]) && 
        ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight)){
@@ -727,12 +843,15 @@
 	[user updateUser:[Beintoo getUserID] withNickname:newNickname];
 }
 
-- (void)didCompleteUserNickUpdate:(NSDictionary *)result{
-    
+- (void)didCompleteUserNickUpdate:(NSDictionary *)result
+{    
     BeintooTutorialVC *beintooTutorialVC = [[BeintooTutorialVC alloc] initWithNibName:@"BeintooTutorialVC" bundle:[NSBundle mainBundle]];
     [self.navigationController pushViewController:beintooTutorialVC animated:YES];
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [beintooTutorialVC release];
+#endif
     
     [Beintoo postNotificationBeintooUserDidSignup];
 }
@@ -740,7 +859,8 @@
 #pragma mark -
 #pragma mark emailValidation
 
-- (BOOL)NSStringIsValidEmail:(NSString *)email{
+- (BOOL)NSStringIsValidEmail:(NSString *)email
+{
 	NSString *emailRegex = @"[A-Z0-9a-z._%+-]+@(?:[A-Za-z0-9-]+\\.)+[A-Za-z]{2,4}";
 	NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
 	BOOL isValid = [emailTest evaluateWithObject:email];
@@ -751,9 +871,9 @@
 #pragma mark -
 #pragma mark nicknameAnimation
 
-- (void)startNickAnimation{
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
+- (void)startNickAnimation
+{    
+    [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationReloadDashboard object:self];
 
     if( !([BeintooDevice isiPad]) && 
        ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight) ){
@@ -804,8 +924,8 @@
     }
 }
 
-- (void)closeNickAnimation{
-    
+- (void)closeNickAnimation
+{    
     CATransition *signFormAnimation = [CATransition animation];
 	[signFormAnimation setDuration:0.3f];
 	[signFormAnimation setValue:@"formAnimationDisappear" forKey:@"name"];
@@ -858,7 +978,8 @@
     }
 }
 
-- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag{
+- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag
+{
 	if ([[animation valueForKey:@"name"] isEqualToString:@"formAnimationStart"]) {
 		[self closeNickAnimation];
 	}
@@ -867,8 +988,8 @@
 #pragma mark -
 #pragma mark LoginFacebook
 
-- (IBAction)loginFB{
-	
+- (IBAction)loginFB
+{	
 	if (![BeintooNetwork connectedToNetwork]) {
 		[BeintooNetwork showNoConnectionAlert];
 		return;
@@ -890,14 +1011,15 @@
 	}
 	
 	
-	[registrationFBVC initWithNibName:@"BeintooSignupVC" bundle:[NSBundle mainBundle] urlToOpen:loginFBURL];
+	registrationFBVC = [registrationFBVC initWithNibName:@"BeintooSignupVC" bundle:[NSBundle mainBundle] urlToOpen:loginFBURL];
 	[self.navigationController pushViewController:registrationFBVC animated:YES];
 }
 
 #pragma mark -
 #pragma mark GeneratePlayer
 
-- (void)generatePlayerIfNotExists{
+- (void)generatePlayerIfNotExists
+{
 	if ([Beintoo getPlayerID] == nil) {
 		NSDictionary *anonymPlayer = [_player blockingLogin:@""];
 		if ([anonymPlayer objectForKey:@"guid"] == nil) {
@@ -912,7 +1034,8 @@
 	}
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -929,22 +1052,39 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
+- (void)closeBeintoo
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationSignupClosed object:self];
     
     if ([BeintooDevice isiPad]){
         [Beintoo dismissIpadLogin];
     }
-    else {
-        [self dismissModalViewControllerAnimated:YES];
+    else
+    {
+        
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
+            [self dismissModalViewControllerAnimated:YES];
+#endif
+
     }
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return (interfaceOrientation == [Beintoo appOrientation]);
 }
+#endif
 
-- (void)viewWillDisappear:(BOOL)animated{
+- (void)viewWillDisappear:(BOOL)animated
+{
     [super viewWillDisappear:animated];
 
     @try {
@@ -969,6 +1109,8 @@
 	}
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[user release];
 	[_player release];
@@ -978,5 +1120,6 @@
     [webview release];
     [super dealloc];
 }
+#endif
 
 @end

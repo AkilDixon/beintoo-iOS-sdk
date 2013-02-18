@@ -24,26 +24,30 @@
 #endif
 @synthesize isLoginOngoing;
 
--(id)init {
+- (id)init
+{
 	if (self = [super init]){
 		loginVC = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
-		loginNavController = [[UINavigationController alloc] initWithRootViewController:loginVC];
+		loginNavController = [[BNavigationController alloc] initWithRootViewController:loginVC];
         
-        beintooPrivateNotificationController = [UINavigationController alloc];
+        beintooPrivateNotificationController = [BNavigationController alloc];
         notificationVC = [[BeintooNotificationListVC alloc] init];
 	}
     return self;
 }
 
-- (void)viewDidLoad{
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
 }
 
-- (void)viewWillDisappear:(BOOL)animated{
+- (void)viewWillDisappear:(BOOL)animated
+{
 	[super viewWillDisappear:animated];
 }
 
@@ -59,7 +63,13 @@
 	BeintooNavigationController *beintooMainNavController = [Beintoo getMainNavigationController];
     
 	if (popoverController != nil) {
-		[popoverController release];
+
+#ifdef BEINTOO_ARC_AVAILABLE
+        
+#else
+       [popoverController release];
+#endif
+		
 		popoverController = nil;
 	}
 	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
@@ -106,9 +116,15 @@
 	
 	BeintooNavigationController *beintooMainNavController = [Beintoo getMainNavigationController];
 	if (popoverController != nil) {
-		[popoverController release];
-		popoverController = nil;
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [popoverController release];
+#endif
+		
+        popoverController = nil;
 	}
+    
 	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
 	[popoverController setPopoverContentSize:CGSizeMake(320, 568)];
 	popoverController.delegate = self;
@@ -151,9 +167,15 @@
 	
 	BeintooNavigationController *beintooMainNavController = [Beintoo getMainNavigationController];
 	if (popoverController != nil) {
-		[popoverController release];
-		popoverController = nil;
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [popoverController release];
+#endif
+		
+        popoverController = nil;
 	}
+    
 	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
 	[popoverController setPopoverContentSize:CGSizeMake(320, 568)];
 	popoverController.delegate = self;
@@ -174,8 +196,8 @@
 	isMainPopoverVisible = YES;
 }
 
-- (void)hideAchievementsPopover{
-    
+- (void)hideAchievementsPopover
+{    
 	self.view.alpha = 0;
 	CATransition *applicationUnloadViewIn = [CATransition animation];
 	[applicationUnloadViewIn setDuration:0.01f];
@@ -190,13 +212,19 @@
 	isMainPopoverVisible = NO;
 }
 
-- (void)showMyOffersPopover{
+- (void)showMyOffersPopover
+{
 	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
     self.view.frame = [Beintoo getAppWindow].bounds;
 	
 	BeintooNavigationController *beintooMainNavController = [Beintoo getMainNavigationController];
 	if (popoverController != nil) {
-		[popoverController release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [popoverController release];
+#endif
+        
 		popoverController = nil;
 	}
 	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
@@ -241,7 +269,12 @@
 	
 	BeintooNavigationController *beintooMainNavController = [Beintoo getMainNavigationController];
 	if (notificationsPopoverController != nil) {
-		[notificationsPopoverController release];
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [popoverController release];
+#endif
+        
 		notificationsPopoverController = nil;
 	}
 	notificationsPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
@@ -280,14 +313,18 @@
 	isMainPopoverVisible = NO;
 }
 
-
 - (void)showSignupPopover{
 	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
     self.view.frame = [Beintoo getAppWindow].bounds;
 	
 	BeintooNavigationController *beintooMainNavController = [Beintoo getSignupNavigationController];
 	if (popoverController != nil) {
-		[popoverController release];
+		
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [popoverController release];
+#endif
+        
 		popoverController = nil;
 	}
 	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooMainNavController];
@@ -332,7 +369,13 @@
 	
 	BeintooNavigationController *beintooBestoreNavController = [Beintoo getMainNavigationController];
 	if (popoverController != nil) {
-		[popoverController release];
+		
+#ifdef BEINTOO_ARC_AVAILABLE
+        
+#else
+        [popoverController release];
+#endif
+        
 		popoverController = nil;
 	}
 	popoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:beintooBestoreNavController];
@@ -377,10 +420,16 @@
 #pragma mark LoginPopover - show-hide-FromCaller
 
 #ifdef UI_USER_INTERFACE_IDIOM
-- (void)showLoginPopover{
-	
+- (void)showLoginPopover
+{	
 	if (loginPopoverController != nil) {
-		[loginPopoverController release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        
+#else
+        [loginPopoverController release];
+#endif
+        
 		loginPopoverController = nil;
 	}
 	[loginNavController popToRootViewControllerAnimated:NO];
@@ -393,7 +442,8 @@
 	isLoginOngoing = YES;
 }
 
-- (void)hideLoginPopover{
+- (void)hideLoginPopover
+{
 	[loginPopoverController dismissPopoverAnimated:NO];
 	[popoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:NO];
 	isLoginOngoing = NO;
@@ -404,11 +454,18 @@
 #pragma mark Vgood-Show-Hide-FromCaller
 
 #ifdef UI_USER_INTERFACE_IDIOM
-- (void)showVgoodPopoverWithVGoodController:(UINavigationController *)_vgoodNavController{
+- (void)showVgoodPopoverWithVGoodController:(BNavigationController *)_vgoodNavController
+{
 	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
 		
 	if (vgoodPopoverController != nil) {
-		[vgoodPopoverController release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        
+#else
+        [vgoodPopoverController release];
+#endif
+        
 		vgoodPopoverController = nil;
 	}
 	vgoodPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:_vgoodNavController];
@@ -432,7 +489,8 @@
 	isVgoodPopoverVisible = YES;
 }
 
-- (void)hideVgoodPopover{
+- (void)hideVgoodPopover
+{
 	self.view.alpha = 0;
 	CATransition *applicationUnloadViewIn = [CATransition animation];
 	[applicationUnloadViewIn setDuration:0.01f];
@@ -447,11 +505,18 @@
 	isVgoodPopoverVisible= NO;
 }
 
-- (void)showAdPopoverWithVGoodController:(UINavigationController *)_vgoodNavController{
+- (void)showAdPopoverWithVGoodController:(BNavigationController *)_vgoodNavController
+{
 	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
     
 	if (adPopoverController != nil) {
-		[adPopoverController release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        
+#else
+        [adPopoverController release];
+#endif
+        
 		adPopoverController = nil;
 	}
 	adPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:_vgoodNavController];
@@ -490,12 +555,18 @@
 	isVgoodPopoverVisible= NO;
 }
 
-- (void)showMissionVgoodPopoverWithVGoodController:(UINavigationController *)_vgoodNavController{
+- (void)showMissionVgoodPopoverWithVGoodController:(BNavigationController *)_vgoodNavController{
     self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
     
 	if (vgoodPopoverController != nil) {
-		[vgoodPopoverController release];
-		vgoodPopoverController = nil;
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        
+#else
+        [vgoodPopoverController release];
+#endif
+		
+        vgoodPopoverController = nil;
 	}
 	vgoodPopoverController = [[NSClassFromString(@"UIPopoverController") alloc] initWithContentViewController:_vgoodNavController];
 	[vgoodPopoverController setPopoverContentSize:CGSizeMake(320, 568)];
@@ -536,22 +607,39 @@
 - (void)showPrivateNotificationsPopover{
     
     if (beintooPrivateNotificationController != nil) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        
+#else
         [beintooPrivateNotificationController release];
+#endif
+        
         beintooPrivateNotificationController = nil;
 	}
     
     if (notificationVC != nil) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        
+#else
         [notificationVC release];
+#endif
+        
         notificationVC = nil;
     }
     
-    beintooPrivateNotificationController = [UINavigationController alloc];
+    beintooPrivateNotificationController = [BNavigationController alloc];
     notificationVC = [[BeintooNotificationListVC alloc] init];
     
-	[beintooPrivateNotificationController initWithRootViewController:notificationVC];
+	beintooPrivateNotificationController = [beintooPrivateNotificationController initWithRootViewController:notificationVC];
     
     if (privateNotificationsPopoverController != nil) {
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [privateNotificationsPopoverController release];
+#endif
+        
 		privateNotificationsPopoverController = nil;
 	}
     
@@ -563,29 +651,30 @@
 	[popoverController dismissPopoverAnimated:NO];
     
 	[privateNotificationsPopoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:NO];
-    
-  
 }
 
-- (void)hidePrivateNotificationsPopover{
-    
-	[privateNotificationsPopoverController dismissPopoverAnimated:NO];
+- (void)hidePrivateNotificationsPopover
+{
+    [privateNotificationsPopoverController dismissPopoverAnimated:NO];
 	[popoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:NO];
-    
-    /*  [notificationVC release];
-     [beintooPrivateNotificationController release];*/
 }
 
-- (void)showPrivateSignupPopover{
-    
+- (void)showPrivateSignupPopover
+{    
 	self.view.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
     self.view.frame = [Beintoo getAppWindow].bounds;
 	
     BeintooNavigationController *beintooSignupController = [Beintoo getPrivateSignupNavigationController];
     
 	if (privateSignupPopoverController != nil) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        
+#else
         [privateSignupPopoverController release];
-		privateSignupPopoverController = nil;
+#endif
+        
+        privateSignupPopoverController = nil;
 	}
     
     [beintooSignupController popToRootViewControllerAnimated:NO];
@@ -610,14 +699,13 @@
 	[privateSignupPopoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:YES];
 }
 
-- (void)hidePrivateSignupPopover{
-    
+- (void)hidePrivateSignupPopover
+{    
 	[privateSignupPopoverController dismissPopoverAnimated:NO];
 	[popoverController presentPopoverFromRect:startingRect inView:self.view permittedArrowDirections:0 animated:NO];
 }
 
 #endif
-
 
 #pragma mark -
 #pragma mark animationFinish
@@ -659,8 +747,8 @@
 	}
 }
 
-- (void)preparePopoverOrientation{
-	
+- (void)preparePopoverOrientation
+{	
 	if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
 		startingRect = CGRectMake(370, 510, 1, 1);
 		transitionEnterSubtype = kCATransitionFromTop;
@@ -711,22 +799,38 @@
 
 #pragma mark -
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return ([Beintoo appOrientation] == interfaceOrientation);
+    return (interfaceOrientation == [Beintoo appOrientation]);
 }
+#endif
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotate
+{
+    return NO;
+}
+
+- (NSUInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskAll;
+}
+#endif
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
-- (void)dealloc {
+- (void)dealloc
+{
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 	[loginVC release];
 	[loginNavController release];
     [super dealloc];
+#endif
+    
 }
 
 @end

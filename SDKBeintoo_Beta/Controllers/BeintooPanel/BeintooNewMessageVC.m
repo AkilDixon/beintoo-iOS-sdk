@@ -21,7 +21,8 @@
 
 @synthesize startingOptions, keyboardToolbar, selectedFriend, isFromNotification;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options
+{
 	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.startingOptions	= options;
@@ -35,7 +36,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	[sendMessageView setTopHeight:40.0];
@@ -57,13 +59,16 @@
 	
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];			
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];	
+#endif
 	
 	[messageTextView.layer setCornerRadius:0];
 	[messageTextView.layer setMasksToBounds:YES];
 	[messageTextView.layer setBorderWidth:1.0f];
 	[messageTextView.layer setBorderColor:[UIColor colorWithWhite:0 alpha:0.9].CGColor];
-
 	
 	// Keyboard notifications
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) 
@@ -79,11 +84,15 @@
 		UIBarButtonItem *extraSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 		
 		UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissKeyboard)];
-
-		[keyboardToolbar setItems:[[[NSArray alloc] initWithObjects:extraSpace,doneButton,nil] autorelease]];
 		
-		[doneButton release];
+#ifdef BEINTOO_ARC_AVAILABLE
+        [keyboardToolbar setItems:[[NSArray alloc] initWithObjects:extraSpace,doneButton,nil]];
+#else
+        [keyboardToolbar setItems:[[[NSArray alloc] initWithObjects:extraSpace,doneButton,nil] autorelease]];
+        [doneButton release];
 		[extraSpace release];
+#endif
+		
 	}
 	
 	@try {
@@ -104,7 +113,8 @@
 	[sendButton setButtonTextSize:16];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -139,26 +149,38 @@
 #pragma mark -
 #pragma mark MessageDelegate
 
-- (void)didSendMessageWithResult:(BOOL)messageSent{
+- (void)didSendMessageWithResult:(BOOL)messageSent
+{
 	[BLoadingView stopActivity];
 	if (messageSent) {
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:nil message:NSLocalizedStringFromTable(@"messageSent",@"BeintooLocalizable",@"") 
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		av.tag = 123;
 		[av show];
-		[av release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+		
 	}
 	else {
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:nil message:NSLocalizedStringFromTable(@"messageNotSent",@"BeintooLocalizable",@"") 
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];		
+		
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+        
 	}
 }
 
 #pragma mark AlertView delegate
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{ 
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
 	if (buttonIndex == 0 && alertView.tag == 123)
 		[self.navigationController popViewControllerAnimated:YES];
 }
@@ -166,7 +188,8 @@
 #pragma mark -
 #pragma mark IBActions
 
-- (IBAction)sendMessage{
+- (IBAction)sendMessage
+{
 	NSString *textToSend = messageTextView.text;
 	
 	if (self.selectedFriend != nil) { // A friend is selected
@@ -174,7 +197,12 @@
 			UIAlertView *av = [[UIAlertView alloc] initWithTitle:nil message:NSLocalizedStringFromTable(@"shortMessageError",@"BeintooLocalizable",@"") 
 														delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 			[av show];
-			[av release];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [av release];
+#endif
+			
 		}
 		else {
 			[_message sendMessageTo:[self.selectedFriend objectForKey:@"userExt"] withText:textToSend];
@@ -185,20 +213,27 @@
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:nil message:NSLocalizedStringFromTable(@"noFriendSelected",@"BeintooLocalizable",@"") 
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];
-	}	
+		
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+        
+	}
 }
 
-- (IBAction)pickAFriend{
+- (IBAction)pickAFriend
+{
 	NSDictionary *friendsListOptions = [NSDictionary dictionaryWithObjectsAndKeys:@"newMessage",@"caller",self,@"callerVC",nil];
-	[friendsListVC initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle] andOptions:friendsListOptions];
+	friendsListVC = [friendsListVC initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle] andOptions:friendsListOptions];
 	[self.navigationController pushViewController:friendsListVC animated:YES];
 }
 
 #pragma mark -
 #pragma mark Animations For Keyboard
 
-- (BOOL)textViewShouldBeginEditing:(UITextView *)aTextView {
+- (BOOL)textViewShouldBeginEditing:(UITextView *)aTextView
+{
     @try {
 		if ([messageTextView respondsToSelector:@selector(setInputAccessoryView:)])
 			[messageTextView setInputAccessoryView:keyboardToolbar];
@@ -210,14 +245,16 @@
 	}    return YES;
 }
 
-- (BOOL)textViewShouldEndEditing:(UITextView *)aTextView {
+- (BOOL)textViewShouldEndEditing:(UITextView *)aTextView
+{
     if ([aTextView isFirstResponder])
         [aTextView resignFirstResponder];
     
     return YES;
 }
 
-- (void)keyboardWillShow:(NSNotification *)aNotification {
+- (void)keyboardWillShow:(NSNotification *)aNotification
+{
 	if ([messageTextView isFirstResponder]){
 		
 		//if (![BeintooDevice isiPad]) {
@@ -226,7 +263,8 @@
     }
 }
 
-- (void)keyboardWillHide:(NSNotification *)aNotification {
+- (void)keyboardWillHide:(NSNotification *)aNotification
+{
 	if ([messageTextView isFirstResponder]) {
 		
         //if (![BeintooDevice isiPad]) {
@@ -235,7 +273,8 @@
 	}
 }
 
-- (void)moveTextViewForKeyboard:(NSNotification*)aNotification up:(BOOL)up{
+- (void)moveTextViewForKeyboard:(NSNotification*)aNotification up:(BOOL)up
+{
 	NSDictionary* userInfo = [aNotification userInfo];
 	
 	NSTimeInterval animationDuration;
@@ -268,21 +307,26 @@
 	[UIView commitAnimations];
 }
 
-- (void) dismissKeyboard {
+- (void) dismissKeyboard
+{
 	if ([messageTextView isFirstResponder])
 		[messageTextView resignFirstResponder];
 } 
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
 	[textField resignFirstResponder];
 	return NO;
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
     
     _message.delegate = nil;
     
@@ -299,7 +343,8 @@
 	}	
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -316,35 +361,52 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     if (isFromNotification){
         if ([BeintooDevice isiPad]){
             [Beintoo dismissIpadNotifications];
         }
         else {
+            
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
             [self dismissModalViewControllerAnimated:YES];
+#endif
+
         }
     }
     else
         [Beintoo dismissBeintoo];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return NO;
 }
+#endif
 
-- (void)viewDidUnload {
-	// Unregister keyboard notifications
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil]; 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];  	
-}
-
-- (void)dealloc {
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 	[keyboardToolbar release];
 	[friendsListVC release];
 	[_player release];
 	[_message release];
     [super dealloc];
+#endif
+    
 }
 
 @end

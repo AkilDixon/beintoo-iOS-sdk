@@ -23,15 +23,14 @@
 @class BGradientView;
 @class BScrollView;
 
-@interface BPopup : NSObject{
-    UIView* bgView;
-    //BGradientView* bigPanelView;
-	BScrollView *bigPanelView;
-	NSString *achievementOpenAppURL;
+@interface BPopup : NSObject
+{
+    UIView          *bgView;
+    BScrollView     *bigPanelView;
+	NSString        *achievementOpenAppURL;
 }
 
-+ (void)showPopupForAchievement:(NSDictionary *)_achievementInfo insideView:(UIView *)view;
 - (id)initWithSuperview:(UIView *)sview andAchievement:(NSDictionary *)_achievement;
-
+- (void)closePopupWindow;
 
 @end

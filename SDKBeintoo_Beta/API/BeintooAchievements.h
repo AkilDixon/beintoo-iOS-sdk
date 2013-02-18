@@ -22,24 +22,25 @@
 
 NSString *currentGlobalAchievementId;
 
-@interface BeintooAchievements : NSObject <BeintooParserDelegate>{
-	
+@interface BeintooAchievements : NSObject <BeintooParserDelegate>
+{	
 	id <BeintooAchievementsDelegate> delegate;
-	Parser *parser;
+	Parser          *parser;
 	
-	id callingDelegate;
-	NSString *rest_resource;
+	id              callingDelegate;
+	NSString        *rest_resource;
 	
 	// current Achievement informations
-	NSString *currentAchievementID;
-	int currentPercentage;
-	int currentScore;
+	NSString        *currentAchievementID;
+	int             currentPercentage;
+	int             currentScore;
     
-    NSMutableArray *achievementQueue;
-    
+    NSMutableArray  *achievementQueue;
 }
 
 - (NSString *)restResource;
++ (void)setDelegate:(id)delegate;
++ (void)setAchievementsDelegate:(id)_caller;
 
 + (void)unlockAchievement:(NSString *)_achievementID;
 + (void)unlockAchievement:(NSString *)_achievementID showNotification:(BOOL)showNotification;
@@ -51,7 +52,6 @@ NSString *currentGlobalAchievementId;
 + (void)incrementAchievement:(NSString *)_achievementID withScore:(int)_score;
 + (void)notifyAchievementSubmitSuccessWithResult:(NSDictionary *)result;
 + (void)notifyAchievementSubmitErrorWithResult:(NSString *)error;
-+ (void)setAchievementDelegate:(id)_caller;
 + (void)getAchievementStatusAndPercentage:(NSString *)_achievementId;
 
 // BY OBJECT ID
@@ -72,17 +72,18 @@ NSString *currentGlobalAchievementId;
 + (void)showNotificationForUnlockedAchievement:(NSDictionary *)_achievement;
 + (void)showNotificationForUnlockedAchievement:(NSDictionary *)_achievement withMissionAchievement:(NSDictionary *)_missionAchiev;
 
-- (void)unlockAchievement:(NSString *)_achievementID;
-- (void)unlockAchievement:(NSString *)_achievementID showNotification:(BOOL)_showNotification;
-- (void)setAchievement:(NSString *)_achievementID withPercentage:(int)_percentageFromZeroTo100;
-- (void)setAchievement:(NSString *)_achievementID withPercentage:(int)_percentageFromZeroTo100 showNotification:(BOOL)_showNotification;
-
+#ifdef BEINTOO_ARC_AVAILABLE
+@property(nonatomic, retain) id <BeintooAchievementsDelegate> delegate;
+@property(nonatomic, retain) id  callingDelegate;
+#else
 @property(nonatomic, assign) id <BeintooAchievementsDelegate> delegate;
 @property(nonatomic, assign) id  callingDelegate;
-@property(nonatomic,retain) Parser *parser;
-@property(nonatomic,retain) NSString *currentAchievementID;
-@property(nonatomic,assign) int currentPercentage;
-@property(nonatomic,assign) int currentScore;
+#endif
+
+@property(nonatomic, retain) Parser *parser;
+@property(nonatomic, retain) NSString *currentAchievementID;
+@property(nonatomic, assign) int currentPercentage;
+@property(nonatomic, assign) int currentScore;
 @property(nonatomic, assign) BOOL showNotification;
 @property(nonatomic, retain) NSMutableArray *achievementQueue;
 

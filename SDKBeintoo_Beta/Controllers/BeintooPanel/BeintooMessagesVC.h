@@ -21,6 +21,7 @@
 #import "BeintooUser.h"
 #import "BeintooPlayer.h"
 #import <QuartzCore/QuartzCore.h>
+#import "BeintooDevice.h"
 
 #define MSGFORPAGE 10
 

@@ -38,10 +38,13 @@ static BImageCache *sharedInstance = nil;
 	return self;
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc
 {
     [super dealloc];
 }
+#endif
 
 + (BImageCache *) instance
 {
@@ -64,21 +67,35 @@ static BImageCache *sharedInstance = nil;
         NSString *cachedFileDictionary = [currentpath stringByAppendingFormat:@"/%@",[self makeKeyFromUrl:url]];	
         NSData *cachedFile = [filemgr contentsAtPath:cachedFileDictionary]; 
         if (cachedFile != nil){
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [dateFormatter release];
+#endif
+            
             return YES;
         }
         else {
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [dateFormatter release];
+#endif
+            
             return NO;
         }
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [dateFormatter release];
+#endif
+        
     }
     @catch (NSException *exception) {
         BeintooLOG(@"Exception on image cache file check: %@", exception);
     }
     
     return NO;
-    
 }
 
 - (NSString *)getCachedRemoteFile:(NSString*)url
@@ -127,18 +144,33 @@ static BImageCache *sharedInstance = nil;
             [filemgr createFileAtPath:cachedFileDictionary contents:data attributes:attributes];
             
             if ([self isRemoteFileCached:url]){
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
                 [dateFormatter release];
                 [attributes release];
+#endif
+                
                 return  YES;
             }
             else {
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
                 [dateFormatter release];
                 [attributes release];
+#endif
+                
                 return NO;
             }
         }
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [dateFormatter release];
         [attributes release];
+#endif
+        
     }
     @catch (NSException *exception) {
         BeintooLOG(@"Exception on image cache file save: %@", exception);

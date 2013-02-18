@@ -14,18 +14,26 @@
  * limitations under the License.
  ******************************************************************************/
 
+#define BEINTOO_IOS_2_0  20000
+#define BEINTOO_IOS_3_0  30000
 #define BEINTOO_IOS_4_0  40000
 #define BEINTOO_IOS_5_0  50000
 #define BEINTOO_IOS_5_1  50100
 #define BEINTOO_IOS_6_0  60000
+#define BEINTOO_IOS_6_1  60100
+
+#if __has_feature(objc_arc) && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_4_0
+    #define BEINTOO_ARC_AVAILABLE
+    // ARC is available and enabled!
+#elif !__has_feature(objc_arc)
+    // ARC is not enabled 
+#elif __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_4_0
+    // Your project's iOS Deployment Target is lower than 4.0, then ARC is unavailable");
+    #warning "Your project's iOS Deployment Target is lower than 4.0, then ARC could not be applied on Beintoo";
+#endif
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "Beintoo.h"
-
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
-    #import <AdSupport/AdSupport.h>
-#endif 
 
 @interface BeintooDevice : NSObject {
 }

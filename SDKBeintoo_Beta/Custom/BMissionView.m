@@ -23,14 +23,16 @@
 
 @synthesize beintooLogo,prizeImg,prizeThumb,textLabel,detailedTextLabel,delegate,missionType;
 
--(id)init {
+- (id)init
+{
 	if (self = [super init]){
 		
 	}
     return self;
 }
 
-- (void)setMissionContentWithWindowSize:(CGSize)windowSize{
+- (void)setMissionContentWithWindowSize:(CGSize)windowSize
+{
 	firstTouch = YES;
 	
 	self.backgroundColor = [UIColor colorWithRed:0.0/255 green:0.0/255 blue:0.0/255 alpha:0.7];
@@ -58,8 +60,8 @@
 	[self prepareMissionAlertOrientation:vgoodFrame];
 }
 
-- (void)show{
-	
+- (void)show
+{	
 	self.alpha = 0;
 		
 	CATransition *applicationLoadViewIn = [CATransition animation];
@@ -75,14 +77,14 @@
 	self.alpha = 1;
 }
 
-- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag{
+- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag
+{
 	if ([[animation valueForKey:@"name"] isEqualToString:@"load"]) {
 	}
 }
 
-
-- (void)drawMission{
-	
+- (void)drawMission
+{
     @try {
        
         NSDictionary *lastMission           = [Beintoo getLastRetrievedMission];
@@ -106,7 +108,6 @@
         welcomeToLabel.font                = [UIFont fontWithName:@"MarkerFelt-Thin" size:22];
         welcomeToLabel.adjustsFontSizeToFitWidth = YES;
         welcomeToLabel.autoresizingMask    = UIViewAutoresizingFlexibleWidth;
-        welcomeToLabel.textAlignment       = UITextAlignmentLeft;
         welcomeToLabel.backgroundColor     = [UIColor clearColor];
         welcomeToLabel.textColor           = [UIColor colorWithWhite:1 alpha:1];
         welcomeToLabel.text                = (missionType == MISSION_TYPE_NEW) ? NSLocalizedStringFromTable(@"missionwelcometo",@"BeintooLocalizable",@"") : NSLocalizedStringFromTable(@"missionstatusof",@"BeintooLocalizable",@"") ;
@@ -121,10 +122,29 @@
         missionOTWLabel.font            = [UIFont fontWithName:@"MarkerFelt-Thin" size:24];
         missionOTWLabel.numberOfLines   = 1;
         missionOTWLabel.autoresizingMask  = UIViewAutoresizingFlexibleWidth;
-        missionOTWLabel.textAlignment   = UITextAlignmentLeft;
         missionOTWLabel.backgroundColor = [UIColor clearColor];
         missionOTWLabel.textColor       = [UIColor colorWithRed:171.0/255 green:194.0/255 blue:54.0/255 alpha:1.0];
         missionOTWLabel.text            = missionText;
+        
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        welcomeToLabel.textAlignment       = NSTextAlignmentLeft;
+        missionOTWLabel.textAlignment      = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        {
+            welcomeToLabel.textAlignment       = NSTextAlignmentLeft;
+            missionOTWLabel.textAlignment      = NSTextAlignmentLeft;
+        }
+        else
+        {
+            missionOTWLabel.textAlignment      = UITextAlignmentLeft;
+            welcomeToLabel.textAlignment       = UITextAlignmentLeft;
+        }
+#else
+        missionOTWLabel.textAlignment      = UITextAlignmentLeft;
+        welcomeToLabel.textAlignment       = UITextAlignmentLeft;
+#endif
         
         // --------------- Achievement subview
         float heightWhereMissionTitleEnds      = missionOTWLabel.frame.origin.y + missionOTWLabel.frame.size.height;
@@ -166,7 +186,11 @@
             
             [self setContentForOngoingAcceptview:ongoingAcceptSubview];
             [self addSubview:ongoingAcceptSubview];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [ongoingAcceptSubview release];
+#endif
             
         }else if(missionType == MISSION_TYPE_NEW){
             float missionNewViewHeight =  ([lastMission objectForKey:@"vgood"] != nil) ? 145 : 45 ;
@@ -182,8 +206,12 @@
             
             [self setContentForMissionNewView:missionOverSubview];
             [self addSubview:missionOverSubview];
-            [missionOverSubview release];
             
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [missionOverSubview release];
+#endif
+                        
         }else if(missionType == MISSION_TYPE_ACCOMPLISHED){
             
             BOOL isLandscapeMode = ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight);
@@ -206,7 +234,12 @@
                 [self setContentForMissionOverView:missionOverSubview];
             }
             [self addSubview:missionOverSubview];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [missionOverSubview release];
+#endif
+            
         }
 
         [self addSubview:achievementSubview];
@@ -215,9 +248,12 @@
         }
         [self addSubview:missionOTWLabel];
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [achievementSubview release];
         [welcomeToLabel release];
         [missionOTWLabel release];
+#endif
     
     }
     @catch (NSException *exception) {
@@ -227,8 +263,8 @@
 
 #pragma mark - Content for mission
 
-- (void)setContentForAchievementsView:(UIView *)_achievView withSponsAch:(NSDictionary *)_sponsoredAch andPlayerAch:(NSDictionary *)_playerAch{
-    
+- (void)setContentForAchievementsView:(UIView *)_achievView withSponsAch:(NSDictionary *)_sponsoredAch andPlayerAch:(NSDictionary *)_playerAch
+{
     NSMutableArray *achievementsToShow = [NSMutableArray array];
     CGSize viewSize = _achievView.frame.size;
     
@@ -268,7 +304,18 @@
         appNameLabel.numberOfLines    = 1;
         appNameLabel.adjustsFontSizeToFitWidth = YES;
         appNameLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        appNameLabel.textAlignment    = UITextAlignmentLeft;
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        appNameLabel.textAlignment       = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+            appNameLabel.textAlignment       = NSTextAlignmentLeft;
+        else
+            appNameLabel.textAlignment       = UITextAlignmentLeft;
+#else
+        appNameLabel.textAlignment       = UITextAlignmentLeft;
+#endif
+        
         appNameLabel.backgroundColor  = [UIColor clearColor];
         appNameLabel.textColor        = [UIColor colorWithRed:171.0/255 green:194.0/255 blue:54.0/255 alpha:1.0];
         appNameLabel.text             = nameText;
@@ -288,7 +335,12 @@
             [goToApp setButtonTextSize:13];
             
             [_achievView addSubview:goToApp];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [goToApp release];
+#endif
+            
         }
 
         // --------------- achievement description
@@ -301,7 +353,18 @@
         achievDescLabel.numberOfLines    = 2;
         achievDescLabel.adjustsFontSizeToFitWidth = YES;
         achievDescLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        achievDescLabel.textAlignment    = UITextAlignmentLeft;
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        achievDescLabel.textAlignment       = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+            achievDescLabel.textAlignment       = NSTextAlignmentLeft;
+        else
+            achievDescLabel.textAlignment       = UITextAlignmentLeft;
+#else
+        achievDescLabel.textAlignment       = UITextAlignmentLeft;
+#endif
+        
         achievDescLabel.backgroundColor  = [UIColor clearColor];
         achievDescLabel.textColor        = [UIColor colorWithWhite:1 alpha:1];
         achievDescLabel.text             = [[_achiev objectForKey:@"achievement"]objectForKey:@"description"];
@@ -309,9 +372,13 @@
         [_achievView addSubview:achievImageView];
         [_achievView addSubview:appNameLabel];
         [_achievView addSubview:achievDescLabel];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [achievImageView release];
         [appNameLabel release];
         [achievDescLabel release];
+#endif
 
         elementHeight += 80;
     }
@@ -319,7 +386,8 @@
 
 #pragma mark - Content for mission Ongoing subview
 
-- (void)setContentForOngoingAcceptview:(UIView *)_ongoingAcceptView{
+- (void)setContentForOngoingAcceptview:(UIView *)_ongoingAcceptView
+{
     CGSize viewSize = _ongoingAcceptView.frame.size;
     
     // --------------- text1
@@ -333,7 +401,6 @@
     achYourMissionLabel.numberOfLines    = 1;
     achYourMissionLabel.adjustsFontSizeToFitWidth = YES;
     achYourMissionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    achYourMissionLabel.textAlignment    = UITextAlignmentLeft;
     achYourMissionLabel.backgroundColor  = [UIColor clearColor];
     achYourMissionLabel.textColor        = [UIColor colorWithWhite:1 alpha:1];
     achYourMissionLabel.text             = NSLocalizedStringFromTable(@"missionachieveyour",@"BeintooLocalizable",@"");
@@ -348,10 +415,29 @@
     andWinRewardLabel.numberOfLines    = 2;
     andWinRewardLabel.adjustsFontSizeToFitWidth = YES;
     andWinRewardLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    andWinRewardLabel.textAlignment    = UITextAlignmentLeft;
     andWinRewardLabel.backgroundColor  = [UIColor clearColor];
     andWinRewardLabel.textColor        = [UIColor colorWithRed:171.0/255 green:194.0/255 blue:54.0/255 alpha:1.0];
     andWinRewardLabel.text             = NSLocalizedStringFromTable(@"missionandwinreward",@"BeintooLocalizable",@"");
+    
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    achYourMissionLabel.textAlignment       = NSTextAlignmentLeft;
+    andWinRewardLabel.textAlignment       = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    {
+        achYourMissionLabel.textAlignment       = NSTextAlignmentLeft;
+        andWinRewardLabel.textAlignment       = NSTextAlignmentLeft;
+    }
+    else
+    {
+        achYourMissionLabel.textAlignment       = UITextAlignmentLeft;
+        andWinRewardLabel.textAlignment       = UITextAlignmentLeft;
+    }
+#else
+    achYourMissionLabel.textAlignment       = UITextAlignmentLeft;
+    andWinRewardLabel.textAlignment       = UITextAlignmentLeft;
+#endif
     
     // ----------------- ok button
     BButton *okButton = [[BButton alloc] initWithFrame:CGRectMake(andWinRewardLabel.frame.size.width+30,
@@ -370,14 +456,19 @@
     [_ongoingAcceptView addSubview:andWinRewardLabel];
     [_ongoingAcceptView addSubview:okButton];
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [achYourMissionLabel release];
     [andWinRewardLabel release];
     [okButton release];
+#endif
+    
 }
 
 #pragma mark - Content for mission Over subview
 
-- (void)setContentForMissionOverView:(UIView *)_missionOverView{
+- (void)setContentForMissionOverView:(UIView *)_missionOverView
+{
     CGSize viewSize = _missionOverView.frame.size;
     
     NSDictionary *_mission = [Beintoo getLastRetrievedMission];
@@ -404,7 +495,6 @@
         achYourMissionLabel.numberOfLines    = 1;
         achYourMissionLabel.adjustsFontSizeToFitWidth = YES;
         achYourMissionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        achYourMissionLabel.textAlignment    = UITextAlignmentLeft;
         achYourMissionLabel.backgroundColor  = [UIColor clearColor];
         achYourMissionLabel.textColor        = [UIColor colorWithRed:171.0/255 green:194.0/255 blue:54.0/255 alpha:1.0];
         achYourMissionLabel.text             = NSLocalizedStringFromTable(@"missiongetrewardnow",@"BeintooLocalizable",@"");
@@ -419,10 +509,29 @@
         andWinRewardLabel.numberOfLines    = 3;
         andWinRewardLabel.adjustsFontSizeToFitWidth = YES;
         andWinRewardLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        andWinRewardLabel.textAlignment    = UITextAlignmentLeft;
         andWinRewardLabel.backgroundColor  = [UIColor clearColor];
         andWinRewardLabel.textColor        = [UIColor colorWithWhite:1 alpha:1];
         andWinRewardLabel.text             = NSLocalizedStringFromTable(@"missiongetbedollars",@"BeintooLocalizable",@"");
+        
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        achYourMissionLabel.textAlignment       = NSTextAlignmentLeft;
+        andWinRewardLabel.textAlignment       = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        {
+            achYourMissionLabel.textAlignment       = NSTextAlignmentLeft;
+            andWinRewardLabel.textAlignment       = NSTextAlignmentLeft;
+        }
+        else
+        {
+            achYourMissionLabel.textAlignment       = UITextAlignmentLeft;
+            andWinRewardLabel.textAlignment       = UITextAlignmentLeft;
+        }
+#else
+        achYourMissionLabel.textAlignment       = UITextAlignmentLeft;
+        andWinRewardLabel.textAlignment       = UITextAlignmentLeft;
+#endif
         
         // ----------------- redeem button
         BButton *okButton = [[BButton alloc] initWithFrame:CGRectMake(viewSize.width -  80 - 10,
@@ -442,11 +551,16 @@
         [_missionOverView addSubview:andWinRewardLabel];
         [_missionOverView addSubview:achievImageView];
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [achYourMissionLabel release];
         [okButton release];
         [andWinRewardLabel release];
         [achievImageView release];
-    }else{
+#endif
+        
+    }
+    else{
          
         // --------------- achievement image
         UIImageView *achievImageView = [[UIImageView alloc] initWithFrame:CGRectMake(2*MISSION_NORMAL_PADDING,
@@ -468,7 +582,6 @@
         achYourMissionLabel.numberOfLines    = 1;
         achYourMissionLabel.adjustsFontSizeToFitWidth = YES;
         achYourMissionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        achYourMissionLabel.textAlignment    = UITextAlignmentLeft;
         achYourMissionLabel.backgroundColor  = [UIColor clearColor];
         achYourMissionLabel.textColor        = [UIColor colorWithRed:171.0/255 green:194.0/255 blue:54.0/255 alpha:1.0];
         achYourMissionLabel.text             = NSLocalizedStringFromTable(@"missiongetrewardnow",@"BeintooLocalizable",@"");
@@ -483,10 +596,28 @@
         andWinRewardLabel.numberOfLines    = 3;
         andWinRewardLabel.adjustsFontSizeToFitWidth = YES;
         andWinRewardLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        andWinRewardLabel.textAlignment    = UITextAlignmentLeft;
         andWinRewardLabel.backgroundColor  = [UIColor clearColor];
         andWinRewardLabel.textColor        = [UIColor colorWithWhite:1 alpha:1];
         andWinRewardLabel.text             = [[_mission objectForKey:@"vgood"]objectForKey:@"description"];
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        achYourMissionLabel.textAlignment       = NSTextAlignmentLeft;
+        andWinRewardLabel.textAlignment       = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        {
+            achYourMissionLabel.textAlignment       = NSTextAlignmentLeft;
+            andWinRewardLabel.textAlignment       = NSTextAlignmentLeft;
+        }
+        else
+        {
+            achYourMissionLabel.textAlignment       = UITextAlignmentLeft;
+            andWinRewardLabel.textAlignment       = UITextAlignmentLeft;
+        }
+#else
+        achYourMissionLabel.textAlignment       = UITextAlignmentLeft;
+        andWinRewardLabel.textAlignment       = UITextAlignmentLeft;
+#endif
         
         // ----------------- redeem button
         BButton *okButton = [[BButton alloc] initWithFrame:CGRectMake(viewSize.width -  80 - 10,
@@ -506,15 +637,19 @@
         [_missionOverView addSubview:okButton];
         [_missionOverView addSubview:achievImageView];
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [achYourMissionLabel release];
         [andWinRewardLabel release];
         [okButton release];
         [achievImageView release];
+#endif
+        
     }
 }
 
-
-- (void)setContentForMissionOverLandscapeView:(UIView *)_missionOverView{
+- (void)setContentForMissionOverLandscapeView:(UIView *)_missionOverView
+{
     CGSize viewSize = _missionOverView.frame.size;
     
     NSDictionary *_mission = [Beintoo getLastRetrievedMission];
@@ -541,7 +676,18 @@
         achYourMissionLabel.numberOfLines    = 1;
         achYourMissionLabel.adjustsFontSizeToFitWidth = YES;
         achYourMissionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        achYourMissionLabel.textAlignment    = UITextAlignmentLeft;
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        achYourMissionLabel.textAlignment       = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+            achYourMissionLabel.textAlignment       = NSTextAlignmentLeft;
+        else
+            achYourMissionLabel.textAlignment       = UITextAlignmentLeft;
+#else
+        achYourMissionLabel.textAlignment       = UITextAlignmentLeft;
+#endif
+        
         achYourMissionLabel.backgroundColor  = [UIColor clearColor];
         achYourMissionLabel.textColor        = [UIColor colorWithRed:171.0/255 green:194.0/255 blue:54.0/255 alpha:1.0];
         achYourMissionLabel.text             = NSLocalizedStringFromTable(@"missiongetrewardnow",@"BeintooLocalizable",@"");
@@ -563,10 +709,15 @@
         [_missionOverView addSubview:okButton];
         [_missionOverView addSubview:achievImageView];
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [achYourMissionLabel release];
         [okButton release];
         [achievImageView release];
-    }else{
+#endif
+        
+    }
+    else{
         
         // --------------- achievement image
         UIImageView *achievImageView = [[UIImageView alloc] initWithFrame:CGRectMake(2*MISSION_NORMAL_PADDING,
@@ -588,7 +739,18 @@
         achYourMissionLabel.numberOfLines    = 1;
         achYourMissionLabel.adjustsFontSizeToFitWidth = YES;
         achYourMissionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        achYourMissionLabel.textAlignment    = UITextAlignmentLeft;
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        achYourMissionLabel.textAlignment       = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+            achYourMissionLabel.textAlignment       = NSTextAlignmentLeft;
+        else
+            achYourMissionLabel.textAlignment       = UITextAlignmentLeft;
+#else
+        achYourMissionLabel.textAlignment       = UITextAlignmentLeft;
+#endif
+        
         achYourMissionLabel.backgroundColor  = [UIColor clearColor];
         achYourMissionLabel.textColor        = [UIColor colorWithRed:171.0/255 green:194.0/255 blue:54.0/255 alpha:1.0];
         achYourMissionLabel.text             = NSLocalizedStringFromTable(@"missiongetrewardnow",@"BeintooLocalizable",@"");
@@ -611,16 +773,20 @@
         [_missionOverView addSubview:okButton];
         [_missionOverView addSubview:achievImageView];
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [achYourMissionLabel release];
         [okButton release];
         [achievImageView release];
+#endif
+        
     }
 }
 
-
 #pragma mark - Content for mission New subview
 
-- (void)setContentForMissionNewView:(UIView *)_missionNewView{
+- (void)setContentForMissionNewView:(UIView *)_missionNewView
+{
     CGSize viewSize = _missionNewView.frame.size;
     
     NSDictionary *_mission = [Beintoo getLastRetrievedMission];
@@ -645,7 +811,6 @@
         achYourMissionLabel.numberOfLines    = 1;
         achYourMissionLabel.adjustsFontSizeToFitWidth = YES;
         achYourMissionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        achYourMissionLabel.textAlignment    = UITextAlignmentLeft;
         achYourMissionLabel.backgroundColor  = [UIColor clearColor];
         achYourMissionLabel.textColor        = [UIColor colorWithRed:171.0/255 green:194.0/255 blue:54.0/255 alpha:1.0];
         achYourMissionLabel.text             = NSLocalizedStringFromTable(@"missiongetrewardnow",@"BeintooLocalizable",@"");
@@ -660,10 +825,29 @@
         andWinRewardLabel.numberOfLines    = 3;
         andWinRewardLabel.adjustsFontSizeToFitWidth = YES;
         andWinRewardLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        andWinRewardLabel.textAlignment    = UITextAlignmentLeft;
         andWinRewardLabel.backgroundColor  = [UIColor clearColor];
         andWinRewardLabel.textColor        = [UIColor colorWithWhite:1 alpha:1];
         andWinRewardLabel.text             = NSLocalizedStringFromTable(@"missiongetbedollars",@"BeintooLocalizable",@"");
+        
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        achYourMissionLabel.textAlignment       = NSTextAlignmentLeft;
+        andWinRewardLabel.textAlignment       = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        {
+            achYourMissionLabel.textAlignment       = NSTextAlignmentLeft;
+            andWinRewardLabel.textAlignment       = NSTextAlignmentLeft;
+        }
+        else
+        {
+            achYourMissionLabel.textAlignment       = UITextAlignmentLeft;
+            andWinRewardLabel.textAlignment       = UITextAlignmentLeft;
+        }
+#else
+        achYourMissionLabel.textAlignment       = UITextAlignmentLeft;
+        andWinRewardLabel.textAlignment       = UITextAlignmentLeft;
+#endif
         
         // ----------------- joinnow button
         BButton *joinNowButton = [[BButton alloc] initWithFrame:CGRectMake(viewSize.width -  100 - 10,
@@ -697,11 +881,15 @@
         [_missionNewView addSubview:achievImageView];
         [_missionNewView addSubview:laterButton];
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [achYourMissionLabel release];
         [joinNowButton release];
         [andWinRewardLabel release];
         [achievImageView release];
         [laterButton release];
+#endif
+        
     }
     else{ // No vgood to show, only buttons
         
@@ -734,13 +922,17 @@
         [_missionNewView addSubview:joinNowButton];
         [_missionNewView addSubview:laterButton];
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [joinNowButton release];
         [laterButton release];
+#endif
+       
     }
-    
 }
 
-- (void)dismissMissionView{
+- (void)dismissMissionView
+{
     [Beintoo beintooWillDisappear];
     self.alpha = 0;
 	[self removeViews];
@@ -750,7 +942,8 @@
     }
 }
 
-- (void)missionLaterAction{
+- (void)missionLaterAction
+{
     [Beintoo beintooWillDisappear];
     self.alpha = 0;
 	[self removeViews];
@@ -762,8 +955,8 @@
     //[BeintooMission refuseMission];
 }
 
-- (void)getItRealAction{
-    
+- (void)getItRealAction
+{    
     self.alpha = 0;
 	[self removeViews];
 	[self removeFromSuperview];
@@ -773,14 +966,16 @@
     }
 }
 
-- (void)startBeintooAction{
+- (void)startBeintooAction
+{
     self.alpha = 0;
 	[self removeViews];
 	[self removeFromSuperview];
     [Beintoo launchBeintoo];
 }
 
-- (void)goToAppAction{
+- (void)goToAppAction
+{
     NSArray *sponsoredAchievements   = [[Beintoo getLastRetrievedMission] objectForKey:@"sponsoredAchievements"];    
     NSDictionary *downloadUrls =[[[[sponsoredAchievements objectAtIndex:0] objectForKey:@"achievement"]objectForKey:@"app"] objectForKey:@"download_url"];
     NSString *appURL = [downloadUrls objectForKey:@"IOS"] ? [downloadUrls objectForKey:@"IOS"] : [downloadUrls objectForKey:@"WEB"];
@@ -789,13 +984,15 @@
 }
 
 
-- (void)removeViews {
+- (void)removeViews
+{
 	for (UIView *subview in [self subviews]) {
 		[subview removeFromSuperview];
 	}
 }
 
-- (void)closeMission{
+- (void)closeMission
+{
 	self.alpha = 0;
 	[self removeViews];
 	[self removeFromSuperview];
@@ -804,7 +1001,8 @@
     }
 }
 
-- (void)prepareMissionAlertOrientation:(CGRect)startingFrame{
+- (void)prepareMissionAlertOrientation:(CGRect)startingFrame
+{
 	self.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
 	CGRect windowFrame	 = [[Beintoo getAppWindow] bounds];
     
@@ -865,7 +1063,8 @@
     
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{   
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
 	/*if (firstTouch && (missionType == PRIZE_GOOD)) {
 		[self setBackgroundColor:[UIColor colorWithRed:50.0/255 green:50.0/255 blue:50.0/255 alpha:0.7]];
 		if (missionType == PRIZE_RECOMMENDATION) {
@@ -874,7 +1073,8 @@
 	}*/
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
     /*if (missionType == PRIZE_GOOD) {
         [self setBackgroundColor:[UIColor colorWithRed:0.0/255 green:0.0/255 blue:0.0/255 alpha:0.7]];
         [[self delegate] userDidTapOnThePrize];
@@ -887,8 +1087,11 @@
     }*/
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [super dealloc];
 }
+#endif
 
 @end

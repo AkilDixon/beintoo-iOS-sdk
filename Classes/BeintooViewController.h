@@ -22,7 +22,7 @@
 #import <UIKit/UIKit.h>
 #import "Beintoo.h"
 
-@interface BeintooViewController : UIViewController <BeintooPlayerDelegate, BeintooVgoodDelegate, BeintooMissionDelegate, BeintooMissionDelegate, BeintooUserDelegate, BeintooAchievementsDelegate, BeintooPrizeDelegate, BeintooVgoodDelegate>{
+@interface BeintooViewController : UIViewController <BeintooPlayerDelegate, BeintooVgoodDelegate, BeintooMissionDelegate, BeintooMissionDelegate, BeintooUserDelegate, BeintooAchievementsDelegate, BeintooPrizeDelegate, BeintooVgoodDelegate, BeintooAppDelegate, BeintooAdDelegate>{
 	
     //---> Buttons
     IBOutlet BButton *playerLogin;
@@ -36,14 +36,13 @@
     IBOutlet BButton *milan;
     IBOutlet BButton *sanFrancisco;
     IBOutlet BButton *giveBedollars;
+    IBOutlet BButton *requestAd;
     
-    IBOutlet UIView     *greenLondon;
-    IBOutlet UIView     *greenMilan;
-    IBOutlet UIView     *greenSanFrancisco;
+    IBOutlet UIView     *lightLondon;
+    IBOutlet UIView     *lightSanFrancisco;
+    IBOutlet UIView     *lightMilan;
     
-    IBOutlet UIView     *redLondon;
-    IBOutlet UIView     *redMilan;
-    IBOutlet UIView     *redSanFrancisco;
+    IBOutlet UIScrollView *scroll;
     
     BeintooUser         *_user;
 }

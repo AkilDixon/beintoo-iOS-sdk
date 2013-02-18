@@ -17,10 +17,10 @@
 
 #import <Foundation/Foundation.h>
 #import "Parser.h"
+#import "BeintooDevice.h"
 
 #define ALLIANCE_ACTION_REMOVE  @"removeme"
 #define ALLIANCE_ACTION_ACCEPT  @"ACCEPT"
-
 
 @protocol BeintooAllianceDelegate;
 
@@ -49,7 +49,12 @@
 + (NSString *)userAllianceID;
 + (NSString *)userAllianceName;
 
+#ifdef BEINTOO_ARC_AVAILABLE
+@property(nonatomic, retain) id <BeintooAllianceDelegate> delegate;
+#else
 @property(nonatomic, assign) id <BeintooAllianceDelegate> delegate;
+#endif
+
 @property(nonatomic, retain) Parser *parser;
 
 @end

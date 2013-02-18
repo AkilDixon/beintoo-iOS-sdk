@@ -17,6 +17,7 @@
 #import <Foundation/Foundation.h>
 #import "BeintooMacros.h"
 #import <UIKit/UIKit.h>
+#import "BeintooDevice.h"
 
 @interface BImageCache : NSObject 
 {

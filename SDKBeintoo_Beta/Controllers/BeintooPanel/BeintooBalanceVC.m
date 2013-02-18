@@ -21,7 +21,8 @@
 
 @synthesize elementsTable, elementsArrayList, elementsImages, selectedElement, startingOptions;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.startingOptions	= options;
@@ -29,7 +30,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	self.title		= NSLocalizedStringFromTable(@"balance",@"BeintooLocalizable",@"");
@@ -47,13 +49,18 @@
 	
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];			
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
 	
 	self.elementsTable.delegate		= self;
 	self.elementsTable.rowHeight	= 75.0;	
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -74,15 +81,16 @@
 #pragma mark -
 #pragma mark Delegates
 
-- (void)didGetBalance:(NSMutableArray *)result{
+- (void)didGetBalance:(NSMutableArray *)result
+{
 	[self.elementsArrayList removeAllObjects];
 	[self.elementsImages removeAllObjects];
 	
-	if ([result count]<=0) {
+	if ([result count] <= 0) {
 		[noBalanceLabel setHidden:NO];
 	}
 	
-	for (int i=0; i<[result count]; i++) {
+	for (int i = 0; i < [result count]; i++) {
 		@try {
 			NSMutableDictionary *balanceEntry = [[NSMutableDictionary alloc]init];
 			NSString *appName	 = [[[result objectAtIndex:i] objectForKey:@"app"] objectForKey:@"name"];
@@ -90,7 +98,12 @@
 			NSString *movValue	 = [[result objectAtIndex:i] objectForKey:@"value"];
 			NSString *movDate	 = [[result objectAtIndex:i] objectForKey:@"creationdate"];
 			
-			BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
+#ifdef BEINTOO_ARC_AVAILABLE
+            BImageDownload *download = [[BImageDownload alloc] init];
+#else
+            BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
+#endif
+			
 			download.delegate = self;
 			download.urlString = [[[result objectAtIndex:i] objectForKey:@"app"] objectForKey:@"imageSmallUrl"];
 			
@@ -100,7 +113,12 @@
 			[balanceEntry setObject:movDate forKey:@"movDate"];
 			[self.elementsArrayList addObject:balanceEntry];
 			[self.elementsImages addObject:download];
-			[balanceEntry release];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [balanceEntry release];
+#endif
+			
 		}
 		@catch (NSException * e) {
 			BeintooLOG(@"BeintooException: %@ \n for object: %@",e,[result objectAtIndex:i]);
@@ -113,20 +131,30 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [self.elementsArrayList count];
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
     static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }
 	
 	UILabel *textLabel			= [[UILabel alloc] initWithFrame:CGRectMake(77, 8, 230, 20)];
@@ -161,8 +189,19 @@
 	movValue.textColor			= [UIColor colorWithWhite:0 alpha:0.7];
 	movValue.backgroundColor	= [UIColor clearColor];
 	movValue.autoresizingMask	= UIViewAutoresizingFlexibleWidth;
-	movValue.textAlignment		= UITextAlignmentRight;
-	movValue.autoresizingMask	= UIViewAutoresizingFlexibleLeftMargin;
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    movValue.textAlignment = NSTextAlignmentRight;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        movValue.textAlignment = NSTextAlignmentRight;
+    else
+        movValue.textAlignment = UITextAlignmentRight;
+#else
+    movValue.textAlignment = UITextAlignmentRight;
+#endif
+    
+    movValue.autoresizingMask	= UIViewAutoresizingFlexibleLeftMargin;
 	
 	BImageDownload *download	= [self.elementsImages objectAtIndex:indexPath.row];
 	UIImage *cellImage			= download.image;
@@ -178,39 +217,55 @@
 	[cell addSubview:movValue];
 	[cell addSubview:imageView];
 	
-	[textLabel release];
+#ifdef BEINTOO_ARC_AVAILABLE
+    
+#else
+    [textLabel release];
 	[detailTextLabel release];
 	[imageView release];
 	[detailTextLabel2 release];
 	[movValue release];
-	
+#endif
+    
     return cell;
 }
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	//self.selectedFriend = [self.friendsArrayList objectAtIndex:indexPath.row];
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
 
-- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
     NSUInteger index = [self.elementsImages indexOfObject:download]; 
     NSUInteger indices[] = {0, index};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
     [self.elementsTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    
+#else
     [path release];
+#endif
+    
     download.delegate = nil;
 }
-- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
     BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return NO;
 }
+#endif
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -227,11 +282,15 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     [Beintoo dismissBeintoo];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
     _user.delegate      = nil;
     
     @try {
@@ -241,6 +300,9 @@
 	}
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+
+#else
 - (void)dealloc {
 	[_user release];
 	[_player release];
@@ -248,6 +310,6 @@
 	[self.elementsImages release];
     [super dealloc];
 }
-
+#endif
 
 @end

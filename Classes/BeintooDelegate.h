@@ -17,10 +17,9 @@
 #import <Foundation/Foundation.h>
 #import "BeintooMainDelegate.h"
 
-@interface BeintooDelegate : NSObject <BeintooMainDelegate> {
-
+@interface BeintooDelegate : NSObject <BeintooMainDelegate>
+{
 }
-
 
 - (void)beintooWillAppear;
 - (void)beintooDidAppear;
@@ -42,8 +41,8 @@
 - (void)beintooPrizeAlertWillDisappear;
 - (void)beintooPrizeAlertDidDisappear;
 
-- (void)didBeintooGenerateAVirtualGood:(BVirtualGood *)theVgood;
-- (void)didBeintooFailToGenerateAVirtualGoodWithError:(NSDictionary *)error;
+- (void)didBeintooGenerateAReward:(BVirtualGood *)theReward;
+- (void)didBeintooFailToGenerateARewardWithError:(NSDictionary *)error;
 
 /* -------------------
  * AD

@@ -23,28 +23,32 @@
 #import <Foundation/Foundation.h>
 #import "BeintooPlayer.h"
 #import "Parser.h"
+#import "BVirtualGood.h"
+#import "BeintooDevice.h"
 
-static NSString *GIVE_1_BEDOLLAR = @"GIVE_BEDOLLARS_1";
-static NSString *GIVE_2_BEDOLLAR = @"GIVE_BEDOLLARS_2";
-static NSString *GIVE_5_BEDOLLAR = @"GIVE_BEDOLLARS_5";
+extern NSString *GIVE_1_BEDOLLAR;
+extern NSString *GIVE_2_BEDOLLAR;
+extern NSString *GIVE_5_BEDOLLAR;
 
 @protocol BeintooUserDelegate;
 
 @interface BeintooUser : NSObject <BeintooParserDelegate, BeintooPlayerDelegate> {
 
-	id <BeintooUserDelegate> delegate;
-	Parser      *parser;
+	id <BeintooUserDelegate>    delegate;
+	Parser                      *parser;
 	
-	NSString    *rest_resource;
-    NSString    *app_rest_resource;
+	NSString                    *rest_resource;
+    NSString                    *app_rest_resource;
     
-    NSMutableDictionary  *userParams;
-
+    NSMutableDictionary         *userParams;
+    
+    int                         notificationPosition;
 }
 
 - (NSString *)restResource;
 - (NSString *)appRestResource;
 + (void)setUserDelegate:(id)_caller;
++ (void)setDelegate:(id)_delegate;
 
 - (void)getUser;
 - (void)getUserByM:(NSString *)m andP:(NSString *)p;
@@ -71,10 +75,10 @@ static NSString *GIVE_5_BEDOLLAR = @"GIVE_BEDOLLARS_5";
         GIVE_5_BEDOLLAR
     refer to the static string
 */
-+ (void)giveBedollarsByString:(NSString *)_reason showNotification:(BOOL)_showNotification;
-- (void)giveBedollarsByString:(NSString *)_reason showNotification:(BOOL)_showNotification;
-+ (void)giveBedollars:(float)_amount showNotification:(BOOL)_showNotification;
-- (void)giveBedollars:(float)_amount showNotification:(BOOL)_showNotification;
++ (void)giveBedollarsByString:(NSString *)_reason showNotification:(BOOL)_showNotification __attribute__((deprecated("use '[Beintoo giveBedollars:showNotification:withPosition:]' instead")));
+- (void)giveBedollarsByString:(NSString *)_reason showNotification:(BOOL)_showNotification __attribute__((deprecated("use '[Beintoo giveBedollars:showNotification:withPosition:]' instead")));
++ (void)giveBedollars:(float)_amount showNotification:(BOOL)_showNotification __attribute__((deprecated("use '[Beintoo giveBedollars:showNotification:withPosition:]' instead")));
+- (void)giveBedollars:(float)_amount showNotification:(BOOL)_showNotification __attribute__((deprecated("use '[Beintoo giveBedollars:showNotification:withPosition:]' instead")));
 
 - (void)forgotPassword:(NSString *)email;
 
@@ -99,16 +103,20 @@ static NSString *GIVE_5_BEDOLLAR = @"GIVE_BEDOLLARS_5";
 
 - (void)updateUser:(NSString *)_userExt withNickname:(NSString *)_nick;
 
-
-
-
 - (NSString *)getStatusCode:(int)code;
 
+#ifdef BEINTOO_ARC_AVAILABLE
+@property(nonatomic, retain) id <BeintooUserDelegate> delegate;
+#else
 @property (nonatomic, assign)   id <BeintooUserDelegate> delegate;
+#endif
+
 @property (nonatomic,retain)    Parser *parser;
 @property (nonatomic, assign)   id callingDelegate;
 @property (nonatomic, retain)   NSMutableDictionary *userParams;
 @property (nonatomic, assign)   BOOL showGiveBedollarsNotification;
+@property (nonatomic, retain)   BVirtualGood         *giveBedollarsContent;
+@property (nonatomic, assign)   int notificationPosition;
 
 - (void)playerDidCompleteBackgroundLogin:(NSDictionary *)result;
 - (void)playerDidNotCompleteBackgroundLogin;

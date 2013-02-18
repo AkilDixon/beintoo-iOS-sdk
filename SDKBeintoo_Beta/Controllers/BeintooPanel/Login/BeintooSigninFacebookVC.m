@@ -16,7 +16,7 @@
 
 #import "BeintooSigninFacebookVC.h"
 #import "Beintoo.h"
-
+#import "BeintooDevice.h"
 
 @implementation BeintooSigninFacebookVC
 
@@ -25,7 +25,11 @@
 	
     UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
     
 	self.title		 = NSLocalizedStringFromTable(@"login",@"BeintooLocalizable",@"Login");
 	titleLabel1.text = NSLocalizedStringFromTable(@"loginOn",@"BeintooLocalizable",@"login");
@@ -34,7 +38,7 @@
 	registrationVC = [BeintooSignupVC alloc];// initWithNibName:@"BeintooSignupVC" bundle:[NSBundle mainBundle] urlToOpen:newUserURL];
 	
 	self.navigationItem.hidesBackButton = NO;
-	if ([[Beintoo getLastLoggedPlayers] count]<1) {
+	if ([[Beintoo getLastLoggedPlayers] count] < 1) {
 		self.navigationItem.hidesBackButton = YES;
 	}
 	
@@ -56,7 +60,8 @@
 	[newUserButton setTitle:NSLocalizedStringFromTable(@"newUser",@"BeintooLocalizable",@"New User") forState:UIControlStateNormal];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -64,10 +69,11 @@
     }
 }
 
-- (IBAction)newUserWithFB{	
-	if ([Beintoo getPlayerID]==nil) {
+- (IBAction)newUserWithFB
+{
+	if ([Beintoo getPlayerID] == nil) {
 		NSDictionary *anonymPlayer = [_player blockingLogin:@""];
-		if ([anonymPlayer objectForKey:@"guid"]==nil) {
+		if ([anonymPlayer objectForKey:@"guid"] == nil) {
 			// This is a critical point, if the anonymPlayer is == nil, we're going to register an invalid user
 			// We prevent this checking if we received a valid guid.
 			
@@ -90,12 +96,12 @@
 						[Beintoo getApiKey],
 						[Beintoo getPlayerID]];
 	}
-	[registrationVC initWithNibName:@"BeintooSignupVC" bundle:[NSBundle mainBundle] urlToOpen:newUserURL];
+	registrationVC = [registrationVC initWithNibName:@"BeintooSignupVC" bundle:[NSBundle mainBundle] urlToOpen:newUserURL];
 	[self.navigationController pushViewController:registrationVC animated:YES];
 }
 
-- (IBAction)loginFB{
-	
+- (IBAction)loginFB
+{	
 	if (![BeintooNetwork connectedToNetwork]) {
 		[BeintooNetwork showNoConnectionAlert];
 		return;
@@ -112,11 +118,12 @@
 				   [Beintoo getApiKey]];
 	}
 
-	[registrationVC initWithNibName:@"BeintooSignupVC" bundle:[NSBundle mainBundle] urlToOpen:loginFB];
+	registrationVC = [registrationVC initWithNibName:@"BeintooSignupVC" bundle:[NSBundle mainBundle] urlToOpen:loginFB];
 	[self.navigationController pushViewController:registrationVC animated:YES];		
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -133,34 +140,47 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
+- (void)closeBeintoo
+{    
+    [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationSignupClosed object:self];
     
     if ([BeintooDevice isiPad]){
         [Beintoo dismissIpadLogin];
     }
     else {
-        [self dismissModalViewControllerAnimated:YES];
+
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
+            [self dismissModalViewControllerAnimated:YES];
+#endif
+
     }
 }
 
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return (interfaceOrientation == [Beintoo appOrientation]);
 }
+#endif
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[_player release];
     [super dealloc];
 }
+#endif
 
 @end

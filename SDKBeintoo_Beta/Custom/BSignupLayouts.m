@@ -23,8 +23,13 @@
 
 + (UIView *)getBeintooDashboardSignupViewWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(id)_caller
 {
-   
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    UIView  *signupView         = [[UIView alloc] initWithFrame:_frame];
+#else
     UIView  *signupView         = [[[UIView alloc] initWithFrame:_frame] autorelease];
+#endif
+    
     signupView.backgroundColor  = [UIColor whiteColor];
     
     UILabel *signupLabel        = [[UILabel alloc] initWithFrame:CGRectMake(10, 6, _frame.size.width-20, 50)];
@@ -33,11 +38,21 @@
     signupLabel.numberOfLines   = 3;
     signupLabel.font            = [UIFont systemFontOfSize:13];
     signupLabel.textColor       = [UIColor colorWithWhite:0 alpha:0.8];
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    signupLabel.textAlignment   = NSTextAlignmentCenter;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        signupLabel.textAlignment   = NSTextAlignmentCenter;
+    else
+        signupLabel.textAlignment   = UITextAlignmentCenter;
+#else
     signupLabel.textAlignment   = UITextAlignmentCenter;
-    signupLabel.text            = NSLocalizedStringFromTable(@"dashplayerhometext",@"BeintooLocalizable",@"Select A Friend");
+#endif
+    
+    signupLabel.text            = NSLocalizedStringFromTable(@"dashplayerhometext", @"BeintooLocalizable", @"Select A Friend");
     
     [signupView addSubview:signupLabel];
-    [signupLabel release];
     
     BButton *signupButton       = [[BButton alloc] initWithFrame:CGRectMake(20, 65, 290, 43)];
     signupButton.center         = CGPointMake(_frame.size.width/2, 81);
@@ -52,8 +67,6 @@
     signupButton.layer.cornerRadius = 4;
 
     [signupView addSubview:signupButton];
-    [signupButton release];
-    
   
     UIView  *lowBorder1          = [[UIView alloc] initWithFrame:CGRectMake(0, _frame.size.height-2, _frame.size.width, 1)];
     lowBorder1.backgroundColor   = [UIColor colorWithWhite:0 alpha:0.4];
@@ -61,16 +74,28 @@
     lowBorder2.backgroundColor   = [UIColor colorWithWhite:0 alpha:0.1];
     
     [signupView addSubview:lowBorder1];
-    [lowBorder1 release];
     [signupView addSubview:lowBorder2];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [signupLabel release];
+    [signupButton release];
+    [lowBorder1 release];
     [lowBorder2 release];
+#endif
 
     return signupView;
 }
 
++ (UIView *)getBeintooLeaderboardSignupViewWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(id)_caller
+{
 
-+ (UIView *)getBeintooLeaderboardSignupViewWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(id)_caller{
+#ifdef BEINTOO_ARC_AVAILABLE
+    UIView  *signupView         = [[UIView alloc] initWithFrame:_frame];
+#else
     UIView  *signupView         = [[[UIView alloc] initWithFrame:_frame] autorelease];
+#endif
+    
     signupView.backgroundColor  = [UIColor whiteColor];
     
     UILabel *signupLabel        = [[UILabel alloc] initWithFrame:CGRectMake(10, 6, _frame.size.width-20, 33)];
@@ -79,11 +104,21 @@
     signupLabel.numberOfLines   = 2;
     signupLabel.font            = [UIFont systemFontOfSize:13];
     signupLabel.textColor       = [UIColor colorWithWhite:0 alpha:0.8];
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    signupLabel.textAlignment   = NSTextAlignmentCenter;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        signupLabel.textAlignment   = NSTextAlignmentCenter;
+    else
+        signupLabel.textAlignment   = UITextAlignmentCenter;
+#else
     signupLabel.textAlignment   = UITextAlignmentCenter;
+#endif
+    
     signupLabel.text            = NSLocalizedStringFromTable(@"dashplayerleaderboardtext",@"BeintooLocalizable",@"Select A Friend");
     
     [signupView addSubview:signupLabel];
-    [signupLabel release];
     
     BButton *signupButton       = [[BButton alloc] initWithFrame:CGRectMake(20, 48, 290, 35)];
     signupButton.center         = CGPointMake(_frame.size.width/2, 64);
@@ -96,10 +131,7 @@
     [signupButton addTarget:_caller action:_selector forControlEvents:UIControlEventTouchUpInside];
     [signupButton setButtonTextSize:20];
     signupButton.layer.cornerRadius = 4;
-    
     [signupView addSubview:signupButton];
-    [signupButton release];
-    
     
     UIView  *lowBorder1          = [[UIView alloc] initWithFrame:CGRectMake(0, _frame.size.height-2, _frame.size.width, 1)];
     lowBorder1.backgroundColor   = [UIColor colorWithWhite:0 alpha:0.4];
@@ -107,15 +139,21 @@
     lowBorder2.backgroundColor   = [UIColor colorWithWhite:0 alpha:0.1];
     
     [signupView addSubview:lowBorder1];
-    [lowBorder1 release];
     [signupView addSubview:lowBorder2];
+   
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [signupLabel release];
+    [signupButton release];
+    [lowBorder1 release];
     [lowBorder2 release];
+#endif
     
     return signupView;
 }
 
-+ (UIView *)getBeintooSignupViewForProfileWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(id)_caller{
-    
++ (UIView *)getBeintooSignupViewForProfileWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(id)_caller
+{    
     UIView *signupView          = [[BGradientView alloc] initWithFrame:_frame];
     signupView.backgroundColor  = [UIColor clearColor];
     
@@ -125,11 +163,20 @@
     signupLabel.numberOfLines   = 2;
     signupLabel.font            = [UIFont systemFontOfSize:13];
     signupLabel.textColor       = [UIColor colorWithWhite:0 alpha:0.9];
-    signupLabel.textAlignment   = UITextAlignmentLeft;
-    signupLabel.text            = NSLocalizedStringFromTable(@"dashplayerprofiletext",@"BeintooLocalizable",@"");
     
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    signupLabel.textAlignment   = NSTextAlignmentCenter;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        signupLabel.textAlignment   = NSTextAlignmentCenter;
+    else
+        signupLabel.textAlignment   = UITextAlignmentCenter;
+#else
+    signupLabel.textAlignment   = UITextAlignmentCenter;
+#endif
+    
+    signupLabel.text            = NSLocalizedStringFromTable(@"dashplayerprofiletext",@"BeintooLocalizable",@"");
     [signupView addSubview:signupLabel];
-    [signupLabel release];
     
     BButton *signupButton       = [[BButton alloc] initWithFrame:CGRectMake(20, 48, 200, 30)];
     signupButton.center         = CGPointMake(_frame.size.width/2-5, 64);
@@ -141,17 +188,20 @@
     [signupButton setTitle:[signupString uppercaseString] forState:UIControlStateNormal];
     [signupButton addTarget:_caller action:_selector forControlEvents:UIControlEventTouchUpInside];
     [signupButton setButtonTextSize:16];
-    
     [signupView addSubview:signupButton];
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [signupLabel release];
     [signupButton release];
+#endif
     
     return signupView;
 }
 
 // NOT USED NOW
-+ (UIView *)getBeintooDashboardViewForLockedFeatureWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(UIViewController *)_caller andFeature:(NSDictionary *)_feature{
-    
++ (UIView *)getBeintooDashboardViewForLockedFeatureWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(UIViewController *)_caller andFeature:(NSDictionary *)_feature
+{    
     UIView  *shadowView                 = [[UIView alloc] initWithFrame:_caller.view.bounds];
     shadowView.backgroundColor          = [UIColor colorWithWhite:0 alpha:0.5];
     
@@ -170,7 +220,6 @@
     iconImage.image             = [UIImage imageNamed:[_feature objectForKey:@"featureImg"]];
 
     [featureView addSubview:iconImage];
-    [iconImage release];
     
     // Close Button
     int closeBtnOffset      = 33;
@@ -180,32 +229,26 @@
     [closeBtn setImage:closeBtnImg forState:UIControlStateNormal];
     [closeBtn setFrame:CGRectMake(_frame.size.width - closeBtnOffset, 7 ,
 								  closeBtnImg.size.width, closeBtnImg.size.height)];
-	
     [closeBtn addTarget:_caller action:@selector(dismissFeatureSignupView) forControlEvents:UIControlEventTouchUpInside];
     [featureView addSubview: closeBtn];
 
-    
     UILabel *featureLabel        = [[UILabel alloc] initWithFrame:CGRectMake(80, 15, _frame.size.width-80, 25)];
     featureLabel.backgroundColor = [UIColor clearColor];
     featureLabel.numberOfLines   = 1;
     featureLabel.font            = [UIFont systemFontOfSize:18];
     featureLabel.textColor       = [UIColor colorWithWhite:0 alpha:1];
-    featureLabel.textAlignment   = UITextAlignmentLeft;
     featureLabel.text            = [_feature objectForKey:@"featureName"];
     
     [featureView addSubview:featureLabel];
-    [featureLabel release];
     
     UILabel *featureDesc        = [[UILabel alloc] initWithFrame:CGRectMake(80, 43, _frame.size.width-80, 40)];
     featureDesc.backgroundColor = [UIColor clearColor];
     featureDesc.numberOfLines   = 2;
     featureDesc.font            = [UIFont systemFontOfSize:13];
     featureDesc.textColor       = [UIColor colorWithWhite:0 alpha:0.7];
-    featureDesc.textAlignment   = UITextAlignmentLeft;
     featureDesc.text            = @"Spiegazione 1";
     
     [featureView addSubview:featureDesc];
-    [featureDesc release];
     
     UILabel *commentLabel        = [[UILabel alloc] initWithFrame:CGRectMake(13, 80, _frame.size.width-26, 60)];
     commentLabel.adjustsFontSizeToFitWidth = YES;
@@ -213,14 +256,36 @@
     commentLabel.numberOfLines   = 3;
     commentLabel.font            = [UIFont systemFontOfSize:13];
     commentLabel.textColor       = [UIColor colorWithWhite:0 alpha:0.7];
-    commentLabel.textAlignment   = UITextAlignmentLeft;
     commentLabel.text            = @"Registrati per avere la possibilità di utilizzare tutte le funzioni, tips tante belle cose da fare. E' gratis, prova ora";
     
     [featureView addSubview:commentLabel];
-    [commentLabel release];
     
     [containerView addSubview:featureView];
-    [featureView release];
+    
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    featureLabel.textAlignment   = NSTextAlignmentLeft;
+    featureDesc.textAlignment   = NSTextAlignmentLeft;
+    commentLabel.textAlignment   = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    {
+        featureLabel.textAlignment   = NSTextAlignmentLeft;
+        featureDesc.textAlignment   = NSTextAlignmentLeft;
+        commentLabel.textAlignment   = NSTextAlignmentLeft;
+    }
+    else
+    {
+        featureLabel.textAlignment   = UITextAlignmentLeft;
+        featureDesc.textAlignment   = UITextAlignmentLeft;
+        commentLabel.textAlignment   = UITextAlignmentLeft;
+    }
+#else
+    featureLabel.textAlignment   = UITextAlignmentLeft;
+    featureDesc.textAlignment   = UITextAlignmentLeft;
+    commentLabel.textAlignment   = UITextAlignmentLeft;
+#endif
+    
     // ------------------------------------------------------
     
     // ------------------ SIGNUP VIEW -----------------------
@@ -239,22 +304,32 @@
     [signupButton setButtonTextSize:18];
     
     [signupView addSubview:signupButton];
-    [signupButton release];
     
     [containerView addSubview:signupView];
-    [signupView release];
+    
     // --------------------------------------------------------
     
     [shadowView addSubview:containerView];
+   
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [iconImage release];
+    [featureLabel release];
+    [featureDesc release];
+    [commentLabel release];
+    [featureView release];
+    [signupButton release];
+    [signupView release];
     [containerView release];
+#endif
     
     return shadowView;
 }
 
 #pragma mark - FEATURE LOCKED PROFILE
 
-+ (UIView *)getBeintooDashboardViewForLockedFeatureProfileWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(UIViewController *)_caller{
-    
++ (UIView *)getBeintooDashboardViewForLockedFeatureProfileWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(UIViewController *)_caller
+{    
     UIView  *shadowView                 = [[UIView alloc] initWithFrame:_caller.view.bounds];
     shadowView.backgroundColor          = [UIColor colorWithWhite:0 alpha:0.5];
     
@@ -273,7 +348,6 @@
     iconImage.image             = [UIImage imageNamed:@"beintoo_profile.png"];
     
     [featureView addSubview:iconImage];
-    [iconImage release];
     
     // Close Button
     int closeBtnOffset      = 33;
@@ -283,21 +357,17 @@
     [closeBtn setImage:closeBtnImg forState:UIControlStateNormal];
     [closeBtn setFrame:CGRectMake(_frame.size.width - closeBtnOffset, 7 ,
 								  closeBtnImg.size.width, closeBtnImg.size.height)];
-	
     [closeBtn addTarget:_caller action:@selector(dismissFeatureSignupView) forControlEvents:UIControlEventTouchUpInside];
     [featureView addSubview: closeBtn];
-    
     
     UILabel *featureLabel        = [[UILabel alloc] initWithFrame:CGRectMake(80, 15, _frame.size.width-80, 25)];
     featureLabel.backgroundColor = [UIColor clearColor];
     featureLabel.numberOfLines   = 1;
     featureLabel.font            = [UIFont systemFontOfSize:18];
     featureLabel.textColor       = [UIColor colorWithWhite:0 alpha:1];
-    featureLabel.textAlignment   = UITextAlignmentLeft;
     featureLabel.text            = NSLocalizedStringFromTable(@"profile",@"BeintooLocalizable",@"");
     
     [featureView addSubview:featureLabel];
-    [featureLabel release];
     
     UILabel *featureDesc        = [[UILabel alloc] initWithFrame:CGRectMake(80, 43, _frame.size.width-80, 40)];
     featureDesc.adjustsFontSizeToFitWidth = YES;
@@ -305,11 +375,9 @@
     featureDesc.numberOfLines   = 2;
     featureDesc.font            = [UIFont systemFontOfSize:13];
     featureDesc.textColor       = [UIColor colorWithWhite:0 alpha:0.7];
-    featureDesc.textAlignment   = UITextAlignmentLeft;
     featureDesc.text            = NSLocalizedStringFromTable(@"profileDesc",@"BeintooLocalizable",@"");
     
     [featureView addSubview:featureDesc];
-    [featureDesc release];
     
     UILabel *commentLabel        = [[UILabel alloc] initWithFrame:CGRectMake(13, 80, _frame.size.width-26, 60)];
     commentLabel.adjustsFontSizeToFitWidth = YES;
@@ -317,14 +385,35 @@
     commentLabel.numberOfLines   = 3;
     commentLabel.font            = [UIFont systemFontOfSize:13];
     commentLabel.textColor       = [UIColor colorWithWhite:0 alpha:0.7];
-    commentLabel.textAlignment   = UITextAlignmentLeft;
     commentLabel.text            = NSLocalizedStringFromTable(@"dashplayerprofiletext",@"BeintooLocalizable",@"");
     
     [featureView addSubview:commentLabel];
-    [commentLabel release];
-    
     [containerView addSubview:featureView];
-    [featureView release];
+    
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    featureLabel.textAlignment   = NSTextAlignmentLeft;
+    featureDesc.textAlignment   = NSTextAlignmentLeft;
+    commentLabel.textAlignment   = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    {
+        featureLabel.textAlignment   = NSTextAlignmentLeft;
+        featureDesc.textAlignment   = NSTextAlignmentLeft;
+        commentLabel.textAlignment   = NSTextAlignmentLeft;
+    }
+    else
+    {
+        featureLabel.textAlignment   = UITextAlignmentLeft;
+        featureDesc.textAlignment   = UITextAlignmentLeft;
+        commentLabel.textAlignment   = UITextAlignmentLeft;
+    }
+#else
+    featureLabel.textAlignment   = UITextAlignmentLeft;
+    featureDesc.textAlignment   = UITextAlignmentLeft;
+    commentLabel.textAlignment   = UITextAlignmentLeft;
+#endif
+    
     // ------------------------------------------------------
     
     // ------------------ SIGNUP VIEW -----------------------
@@ -343,22 +432,31 @@
     [signupButton setButtonTextSize:18];
     
     [signupView addSubview:signupButton];
-    [signupButton release];
     
     [containerView addSubview:signupView];
-    [signupView release];
     // --------------------------------------------------------
     
     [shadowView addSubview:containerView];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [iconImage release];
+    [featureLabel release];
+    [featureDesc release];
+    [commentLabel release];
+    [featureView release];
+    [signupButton release];
+    [signupView release];
     [containerView release];
+#endif
     
     return shadowView;
 }
 
 #pragma mark - FEATURE LOCKED MARKETPLACE
 
-+ (UIView *)getBeintooDashboardViewForLockedFeatureMarketplaceWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(UIViewController *)_caller{
-    
++ (UIView *)getBeintooDashboardViewForLockedFeatureMarketplaceWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(UIViewController *)_caller
+{    
     UIView  *shadowView                 = [[UIView alloc] initWithFrame:_caller.view.bounds];
     shadowView.backgroundColor          = [UIColor colorWithWhite:0 alpha:0.5];
     
@@ -377,7 +475,6 @@
     iconImage.image             = [UIImage imageNamed:@"beintoo_marketplace.png"];
     
     [featureView addSubview:iconImage];
-    [iconImage release];
     
     // Close Button
     int closeBtnOffset      = 33;
@@ -387,7 +484,6 @@
     [closeBtn setImage:closeBtnImg forState:UIControlStateNormal];
     [closeBtn setFrame:CGRectMake(_frame.size.width - closeBtnOffset, 7 ,
 								  closeBtnImg.size.width, closeBtnImg.size.height)];
-	
     [closeBtn addTarget:_caller action:@selector(dismissFeatureSignupView) forControlEvents:UIControlEventTouchUpInside];
     [featureView addSubview: closeBtn];
     
@@ -397,11 +493,8 @@
     featureLabel.numberOfLines   = 1;
     featureLabel.font            = [UIFont systemFontOfSize:18];
     featureLabel.textColor       = [UIColor colorWithWhite:0 alpha:1];
-    featureLabel.textAlignment   = UITextAlignmentLeft;
     featureLabel.text            = NSLocalizedStringFromTable(@"MPmarketplaceTitle",@"BeintooLocalizable",@"");
-    
     [featureView addSubview:featureLabel];
-    [featureLabel release];
     
     UILabel *featureDesc        = [[UILabel alloc] initWithFrame:CGRectMake(80, 43, _frame.size.width-80, 40)];
     featureDesc.adjustsFontSizeToFitWidth = YES;
@@ -409,11 +502,8 @@
     featureDesc.numberOfLines   = 2;
     featureDesc.font            = [UIFont systemFontOfSize:13];
     featureDesc.textColor       = [UIColor colorWithWhite:0 alpha:0.7];
-    featureDesc.textAlignment   = UITextAlignmentLeft;
     featureDesc.text            = NSLocalizedStringFromTable(@"MPdescription",@"BeintooLocalizable",@"");
-    
     [featureView addSubview:featureDesc];
-    [featureDesc release];
     
     UILabel *commentLabel        = [[UILabel alloc] initWithFrame:CGRectMake(13, 80, _frame.size.width-26, 60)];
     commentLabel.adjustsFontSizeToFitWidth = YES;
@@ -421,14 +511,35 @@
     commentLabel.numberOfLines   = 3;
     commentLabel.font            = [UIFont systemFontOfSize:13];
     commentLabel.textColor       = [UIColor colorWithWhite:0 alpha:0.7];
-    commentLabel.textAlignment   = UITextAlignmentLeft;
     commentLabel.text            = NSLocalizedStringFromTable(@"MPtextDescriptionLong",@"BeintooLocalizable",@"");
-    
     [featureView addSubview:commentLabel];
-    [commentLabel release];
     
     [containerView addSubview:featureView];
-    [featureView release];
+    
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    featureLabel.textAlignment   = NSTextAlignmentLeft;
+    featureDesc.textAlignment   = NSTextAlignmentLeft;
+    commentLabel.textAlignment   = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    {
+        featureLabel.textAlignment   = NSTextAlignmentLeft;
+        featureDesc.textAlignment   = NSTextAlignmentLeft;
+        commentLabel.textAlignment   = NSTextAlignmentLeft;
+    }
+    else
+    {
+        featureLabel.textAlignment   = UITextAlignmentLeft;
+        featureDesc.textAlignment   = UITextAlignmentLeft;
+        commentLabel.textAlignment   = UITextAlignmentLeft;
+    }
+#else
+    featureLabel.textAlignment   = UITextAlignmentLeft;
+    featureDesc.textAlignment   = UITextAlignmentLeft;
+    commentLabel.textAlignment   = UITextAlignmentLeft;
+#endif
+    
     // ------------------------------------------------------
     
     // ------------------ SIGNUP VIEW -----------------------
@@ -447,22 +558,31 @@
     [signupButton setButtonTextSize:18];
     
     [signupView addSubview:signupButton];
-    [signupButton release];
     
     [containerView addSubview:signupView];
-    [signupView release];
     // --------------------------------------------------------
     
     [shadowView addSubview:containerView];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [iconImage release];
+    [featureLabel release];
+    [featureDesc release];
+    [commentLabel release];
+    [featureView release];
+    [signupButton release];
+    [signupView release];
     [containerView release];
+#endif
     
     return shadowView;
 }
 
 #pragma mark - FEATURE LOCKED CHALLENGES
 
-+ (UIView *)getBeintooDashboardViewForLockedFeatureChallengesWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(UIViewController *)_caller{
-    
++ (UIView *)getBeintooDashboardViewForLockedFeatureChallengesWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(UIViewController *)_caller
+{    
     UIView  *shadowView                 = [[UIView alloc] initWithFrame:_caller.view.bounds];
     shadowView.backgroundColor          = [UIColor colorWithWhite:0 alpha:0.5];
     
@@ -481,7 +601,6 @@
     iconImage.image             = [UIImage imageNamed:@"beintoo_challenges.png"];
     
     [featureView addSubview:iconImage];
-    [iconImage release];
     
     // Close Button
     int closeBtnOffset      = 33;
@@ -491,21 +610,16 @@
     [closeBtn setImage:closeBtnImg forState:UIControlStateNormal];
     [closeBtn setFrame:CGRectMake(_frame.size.width - closeBtnOffset, 7 ,
 								  closeBtnImg.size.width, closeBtnImg.size.height)];
-	
     [closeBtn addTarget:_caller action:@selector(dismissFeatureSignupView) forControlEvents:UIControlEventTouchUpInside];
     [featureView addSubview: closeBtn];
-    
     
     UILabel *featureLabel        = [[UILabel alloc] initWithFrame:CGRectMake(80, 15, _frame.size.width-80, 25)];
     featureLabel.backgroundColor = [UIColor clearColor];
     featureLabel.numberOfLines   = 1;
     featureLabel.font            = [UIFont systemFontOfSize:18];
     featureLabel.textColor       = [UIColor colorWithWhite:0 alpha:1];
-    featureLabel.textAlignment   = UITextAlignmentLeft;
     featureLabel.text            = NSLocalizedStringFromTable(@"challenges",@"BeintooLocalizable",@"");
-    
     [featureView addSubview:featureLabel];
-    [featureLabel release];
     
     UILabel *featureDesc        = [[UILabel alloc] initWithFrame:CGRectMake(80, 43, _frame.size.width-80, 40)];
     featureDesc.adjustsFontSizeToFitWidth = YES;
@@ -513,11 +627,8 @@
     featureDesc.numberOfLines   = 2;
     featureDesc.font            = [UIFont systemFontOfSize:13];
     featureDesc.textColor       = [UIColor colorWithWhite:0 alpha:0.7];
-    featureDesc.textAlignment   = UITextAlignmentLeft;
     featureDesc.text            = NSLocalizedStringFromTable(@"challengesDesc",@"BeintooLocalizable",@"");
-    
     [featureView addSubview:featureDesc];
-    [featureDesc release];
     
     UILabel *commentLabel        = [[UILabel alloc] initWithFrame:CGRectMake(13, 80, _frame.size.width-26, 60)];
     commentLabel.adjustsFontSizeToFitWidth = YES;
@@ -525,14 +636,34 @@
     commentLabel.numberOfLines   = 3;
     commentLabel.font            = [UIFont systemFontOfSize:13];
     commentLabel.textColor       = [UIColor colorWithWhite:0 alpha:0.7];
-    commentLabel.textAlignment   = UITextAlignmentLeft;
     commentLabel.text            = NSLocalizedStringFromTable(@"dashplayerchallengestext",@"BeintooLocalizable",@"");
-    
     [featureView addSubview:commentLabel];
-    [commentLabel release];
     
     [containerView addSubview:featureView];
-    [featureView release];
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    featureLabel.textAlignment   = NSTextAlignmentLeft;
+    featureDesc.textAlignment   = NSTextAlignmentLeft;
+    commentLabel.textAlignment   = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    {
+        featureLabel.textAlignment   = NSTextAlignmentLeft;
+        featureDesc.textAlignment   = NSTextAlignmentLeft;
+        commentLabel.textAlignment   = NSTextAlignmentLeft;
+    }
+    else
+    {
+        featureLabel.textAlignment   = UITextAlignmentLeft;
+        featureDesc.textAlignment   = UITextAlignmentLeft;
+        commentLabel.textAlignment   = UITextAlignmentLeft;
+    }
+#else
+    featureLabel.textAlignment   = UITextAlignmentLeft;
+    featureDesc.textAlignment   = UITextAlignmentLeft;
+    commentLabel.textAlignment   = UITextAlignmentLeft;
+#endif
+    
     // ------------------------------------------------------
     
     // ------------------ SIGNUP VIEW -----------------------
@@ -551,14 +682,23 @@
     [signupButton setButtonTextSize:18];
     
     [signupView addSubview:signupButton];
-    [signupButton release];
     
     [containerView addSubview:signupView];
-    [signupView release];
     // --------------------------------------------------------
     
     [shadowView addSubview:containerView];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [iconImage release];
+    [featureLabel release];
+    [featureDesc release];
+    [commentLabel release];
+    [featureView release];
+    [signupButton release];
+    [signupView release];
     [containerView release];
+#endif
     
     return shadowView;
 }
@@ -566,8 +706,8 @@
 
 #pragma mark - FEATURE LOCKED TIPS&FORUM
 
-+ (UIView *)getBeintooDashboardViewForLockedFeatureTipsAndForumWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(UIViewController *)_caller{
-    
++ (UIView *)getBeintooDashboardViewForLockedFeatureTipsAndForumWithFrame:(CGRect)_frame andButtonActionSelector:(SEL)_selector fromSender:(UIViewController *)_caller
+{    
     UIView  *shadowView                 = [[UIView alloc] initWithFrame:_caller.view.bounds];
     shadowView.backgroundColor          = [UIColor colorWithWhite:0 alpha:0.5];
     
@@ -584,9 +724,7 @@
     
     UIImageView *iconImage      = [[UIImageView alloc] initWithFrame:CGRectMake(13, 20, 56, 56)];
     iconImage.image             = [UIImage imageNamed:@"beintoo_forum.png"];
-    
     [featureView addSubview:iconImage];
-    [iconImage release];
     
     // Close Button
     int closeBtnOffset      = 33;
@@ -596,21 +734,16 @@
     [closeBtn setImage:closeBtnImg forState:UIControlStateNormal];
     [closeBtn setFrame:CGRectMake(_frame.size.width - closeBtnOffset, 7 ,
 								  closeBtnImg.size.width, closeBtnImg.size.height)];
-	
     [closeBtn addTarget:_caller action:@selector(dismissFeatureSignupView) forControlEvents:UIControlEventTouchUpInside];
     [featureView addSubview: closeBtn];
-    
     
     UILabel *featureLabel        = [[UILabel alloc] initWithFrame:CGRectMake(80, 15, _frame.size.width-80, 25)];
     featureLabel.backgroundColor = [UIColor clearColor];
     featureLabel.numberOfLines   = 1;
     featureLabel.font            = [UIFont systemFontOfSize:18];
     featureLabel.textColor       = [UIColor colorWithWhite:0 alpha:1];
-    featureLabel.textAlignment   = UITextAlignmentLeft;
     featureLabel.text            = NSLocalizedStringFromTable(@"tipsandforum",@"BeintooLocalizable",@"");
-    
     [featureView addSubview:featureLabel];
-    [featureLabel release];
     
     UILabel *featureDesc        = [[UILabel alloc] initWithFrame:CGRectMake(80, 43, _frame.size.width-80, 40)];
     featureDesc.adjustsFontSizeToFitWidth = YES;
@@ -618,11 +751,9 @@
     featureDesc.numberOfLines   = 2;
     featureDesc.font            = [UIFont systemFontOfSize:13];
     featureDesc.textColor       = [UIColor colorWithWhite:0 alpha:0.7];
-    featureDesc.textAlignment   = UITextAlignmentLeft;
     featureDesc.text            = NSLocalizedStringFromTable(@"tipsandforumDesc",@"BeintooLocalizable",@"");
-    
     [featureView addSubview:featureDesc];
-    [featureDesc release];
+
     
     UILabel *commentLabel        = [[UILabel alloc] initWithFrame:CGRectMake(13, 80, _frame.size.width-26, 60)];
     commentLabel.backgroundColor = [UIColor clearColor];
@@ -630,14 +761,33 @@
     commentLabel.numberOfLines   = 3;
     commentLabel.font            = [UIFont systemFontOfSize:13];
     commentLabel.textColor       = [UIColor colorWithWhite:0 alpha:0.7];
-    commentLabel.textAlignment   = UITextAlignmentLeft;
     commentLabel.text            = NSLocalizedStringFromTable(@"dashplayerforumtips",@"BeintooLocalizable",@"");
-    
     [featureView addSubview:commentLabel];
-    [commentLabel release];
-    
     [containerView addSubview:featureView];
-    [featureView release];
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    featureLabel.textAlignment   = NSTextAlignmentLeft;
+    featureDesc.textAlignment   = NSTextAlignmentLeft;
+    commentLabel.textAlignment   = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    {
+        featureLabel.textAlignment   = NSTextAlignmentLeft;
+        featureDesc.textAlignment   = NSTextAlignmentLeft;
+        commentLabel.textAlignment   = NSTextAlignmentLeft;
+    }
+    else
+    {
+        featureLabel.textAlignment   = UITextAlignmentLeft;
+        featureDesc.textAlignment   = UITextAlignmentLeft;
+        commentLabel.textAlignment   = UITextAlignmentLeft;
+    }
+#else
+    featureLabel.textAlignment   = UITextAlignmentLeft;
+    featureDesc.textAlignment   = UITextAlignmentLeft;
+    commentLabel.textAlignment   = UITextAlignmentLeft;
+#endif
+    
     // ------------------------------------------------------
     
     // ------------------ SIGNUP VIEW -----------------------
@@ -656,14 +806,22 @@
     [signupButton setButtonTextSize:18];
     
     [signupView addSubview:signupButton];
-    [signupButton release];
-    
     [containerView addSubview:signupView];
-    [signupView release];
     // --------------------------------------------------------
     
     [shadowView addSubview:containerView];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [iconImage release];
+    [featureLabel release];
+    [featureDesc release];
+    [commentLabel release];
+    [featureView release];
+    [signupButton release];
+    [signupView release];
     [containerView release];
+#endif
     
     return shadowView;
 }

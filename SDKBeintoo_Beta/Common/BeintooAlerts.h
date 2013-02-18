@@ -16,6 +16,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "Beintoo.h"
 
 @interface BeintooAlerts : NSObject {
 }

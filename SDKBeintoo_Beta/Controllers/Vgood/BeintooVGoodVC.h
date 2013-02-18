@@ -18,12 +18,14 @@
 #import "Parser.h"
 #import "BPrize.h"
 #import "BeintooVgood.h"
+#import "BeintooDevice.h"
+#import "BNavigationController.h"
 
 @class BeintooVGoodShowVC,BeintooFriendsListVC,BView,BButton,BTableView,BGradientView,BeintooPlayer,BeintooMultipleVgoodVC,BVirtualGood;
 
-@interface BeintooVGoodVC : UIViewController<BeintooVgoodDelegate,UITableViewDelegate> {
-	
-	UINavigationController *recommendationNavigationController;
+@interface BeintooVGoodVC : UIViewController <BeintooVgoodDelegate, UITableViewDelegate>
+{	
+	BNavigationController *recommendationNavigationController;
 	
 	id					 _caller;
 	NSDictionary		 *generatedVGood;
@@ -71,5 +73,3 @@
 @property(nonatomic,retain) BVirtualGood *theVirtualGood;
 
 @end
-
-

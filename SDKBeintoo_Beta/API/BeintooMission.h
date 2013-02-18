@@ -16,6 +16,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Parser.h"
+#import "BeintooDevice.h"
 
 #define HOURS_TO_SHOW_MISSION 24
 
@@ -35,12 +36,17 @@ __attribute__((deprecated))
 
 + (void)getMission;
 + (void)refuseMission;
-
 + (void)setMissionDelegate:(id)_caller;
 
+#ifdef BEINTOO_ARC_AVAILABLE
+@property(nonatomic, retain) id <BeintooMissionDelegate> delegate;
+@property(nonatomic, retain) id callingDelegate;
+#else
 @property(nonatomic, assign) id <BeintooMissionDelegate> delegate;
-@property(nonatomic,retain) Parser *parser;
 @property(nonatomic, assign) id callingDelegate;
+#endif
+
+@property(nonatomic,retain) Parser *parser;
 
 @end
 

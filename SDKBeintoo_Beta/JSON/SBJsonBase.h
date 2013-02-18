@@ -28,6 +28,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "BeintooDevice.h"
 
 extern NSString * SBJSONErrorDomain;
 

@@ -16,6 +16,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "BeintooDevice.h"
 
 #define MISSION_TYPE_NEW					1
 #define MISSION_TYPE_ONGOING                2
@@ -49,12 +50,17 @@
 	id <BeintooMissionViewDelegate> delegate;
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+@property(nonatomic, retain) id <BeintooMissionViewDelegate> delegate;
+#else
+@property(nonatomic, assign) id <BeintooMissionViewDelegate> delegate;
+#endif
+
 @property(nonatomic,retain) UIImageView *beintooLogo;
 @property(nonatomic,retain) UIImageView *prizeThumb;
 @property(nonatomic,retain) UIImageView *prizeImg;
 @property(nonatomic,retain) UILabel *textLabel;
 @property(nonatomic,retain) UILabel *detailedTextLabel;
-@property(nonatomic, assign) id <BeintooMissionViewDelegate> delegate;
 @property(nonatomic) int missionType;
 
 - (void)removeViews;

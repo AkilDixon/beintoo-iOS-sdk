@@ -28,6 +28,7 @@
  */
 
 #import "SBJSON.h"
+#import "BeintooDevice.h"
 
 @implementation SBJSON
 
@@ -42,11 +43,14 @@
     return self;
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [jsonWriter release];
     [jsonParser release];
     [super dealloc];
 }
+#endif
 
 #pragma mark Writer 
 
@@ -56,7 +60,11 @@
     if (repr)
         return repr;
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [errorTrace release];
+#endif
+    
     errorTrace = [[jsonWriter errorTrace] mutableCopy];
     return nil;
 }
@@ -77,7 +85,11 @@
     if (json)
         return json;
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [errorTrace release];
+#endif
+    
     errorTrace = [[jsonWriter errorTrace] mutableCopy];
     
     if (error)
@@ -120,7 +132,11 @@
     if (obj)
         return obj;
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [errorTrace release];
+#endif
+    
     errorTrace = [[jsonParser errorTrace] mutableCopy];
     
     return nil;
@@ -142,7 +158,11 @@
     if (obj)
         return obj;
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [errorTrace release];
+#endif
+    
     errorTrace = [[jsonParser errorTrace] mutableCopy];
 
     if (error)

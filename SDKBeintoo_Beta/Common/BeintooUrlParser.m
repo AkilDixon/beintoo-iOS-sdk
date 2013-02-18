@@ -20,7 +20,8 @@
 
 @synthesize variables;
 
-- (id) initWithURLString:(NSString *)url{
+- (id) initWithURLString:(NSString *)url
+{
     self = [super init];
     if (self != nil) {
         NSString *string = url;
@@ -33,12 +34,18 @@
             [vars addObject:tempString];
         }
         self.variables = vars;
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [vars release];
+#endif
+        
     }
     return self;
 }
 
-- (NSString *)valueForVariable:(NSString *)varName {
+- (NSString *)valueForVariable:(NSString *)varName
+{
     for (NSString *var in self.variables) {
         if ([var length] > [varName length]+1 && [[var substringWithRange:NSMakeRange(0, [varName length]+1)] isEqualToString:[varName stringByAppendingString:@"="]]) {
             NSString *varValue = [var substringFromIndex:[varName length]+1];
@@ -48,9 +55,12 @@
     return nil;
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void) dealloc{
     self.variables = nil;
     [super dealloc];
 }
+#endif
 
 @end

@@ -21,7 +21,8 @@
 
 @synthesize challengesArrayList,selectedChallenge,segControl,titleLabel,showChallengeVC,myImage,challengeImages, isFromNotification;
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	self.title = NSLocalizedStringFromTable(@"challenges",@"BeintooLocalizable",@"Challenges");
@@ -47,8 +48,12 @@
 	
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];		
-		
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
+			
 	[self.titleLabel setHidden:YES];
 	self.challengesArrayList    = [[NSMutableArray alloc] init];
     self.challengeImages        = [[NSMutableArray alloc] init];
@@ -61,7 +66,8 @@
 	_player = [[BeintooPlayer alloc] init];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -90,8 +96,8 @@
 #pragma mark -
 #pragma mark Delegates
 
-- (void)didShowChallengesByStatus:(NSArray *)result{
-    
+- (void)didShowChallengesByStatus:(NSArray *)result
+{    
     [self.challengesArrayList removeAllObjects];
     [self.challengeImages removeAllObjects];
     
@@ -305,27 +311,37 @@
 		@catch (NSException * e) {
 			BeintooLOG(@"BeintooException: %@ \n for object: %@", e, [result objectAtIndex:i]);
 		}
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [downloadPlayerFrom release];
         [downloadPlayerTo release];
         [challengeEntry release];
+#endif
+        
 	}
     
     [challengesTable reloadData];
 	[BLoadingView stopActivity];	
 }
 
-- (IBAction)sendNewChallenge{
-    
+- (IBAction)sendNewChallenge
+{
     NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:@"challenges", @"caller", nil];
     
     BeintooFriendsListVC *friendsListVC = [[BeintooFriendsListVC alloc] initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle] andOptions:options];
     
     [self.navigationController pushViewController:friendsListVC animated:YES];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [friendsListVC release];
+#endif
     
 }
 
-- (IBAction) segmentedControlIndexChanged{
+- (IBAction) segmentedControlIndexChanged
+{
 	switch (self.segControl.selectedSegmentIndex) {
 		case 0:{
 			[BLoadingView stopActivity];
@@ -347,7 +363,6 @@
 		}
 			break;
 			
-			
 		default:
 			break;
 	}
@@ -356,26 +371,36 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [self.challengesArrayList count];
 }
 
--(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     return 65;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     
 	static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || YES) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }
     
    /* UILabel *textLabel              = [[UILabel alloc] initWithFrame:CGRectMake(75, 10, 230, 24)];
@@ -410,49 +435,70 @@
     
     UILabel *contestLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 5, self.view.frame.size.width - 120, 20)];
     contestLabel.backgroundColor = [UIColor clearColor];
-    contestLabel.textAlignment = UITextAlignmentCenter;
     contestLabel.font = [UIFont systemFontOfSize:15];
     contestLabel.adjustsFontSizeToFitWidth = YES;
 	contestLabel.text =  [NSString stringWithFormat:@"%@ %@ %@", [[challengesArrayList objectAtIndex:indexPath.row] objectForKey:@"playerFrom"],
                           NSLocalizedStringFromTable(@"to",@"BeintooLocalizable",@""),
                           [[challengesArrayList objectAtIndex:indexPath.row] objectForKey:@"playerTo"]];
     [cell addSubview:contestLabel];
-    [contestLabel release];
     
     UILabel *detailsLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 25, self.view.frame.size.width - 120, 20)];
     detailsLabel.backgroundColor = [UIColor clearColor];
-    detailsLabel.textAlignment = UITextAlignmentCenter;
     detailsLabel.font = [UIFont systemFontOfSize:12];
     detailsLabel.adjustsFontSizeToFitWidth = YES;
 	detailsLabel.text = [NSString stringWithFormat:@"%@",[[challengesArrayList objectAtIndex:indexPath.row] objectForKey:@"contestName"]];
     
     [cell addSubview:detailsLabel];
-    [detailsLabel release];
-    
 	
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    contestLabel.textAlignment = NSTextAlignmentCenter;
+    detailsLabel.textAlignment = NSTextAlignmentCenter;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    {
+        contestLabel.textAlignment = NSTextAlignmentCenter;
+        detailsLabel.textAlignment = NSTextAlignmentCenter;
+    }
+    else
+    {
+        contestLabel.textAlignment = UITextAlignmentCenter;
+        detailsLabel.textAlignment = UITextAlignmentCenter;
+    }
+#else
+    contestLabel.textAlignment = UITextAlignmentCenter;
+    detailsLabel.textAlignment = UITextAlignmentCenter;
+#endif
+    
     UIImageView *imageViewFrom = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 50, 50)];
     imageViewFrom.contentMode = UIViewContentModeScaleAspectFit;
     BImageDownload  *downloadPlayerFrom = [challengesPlayerFromImagesArray objectAtIndex:indexPath.row];
     downloadPlayerFrom.tag = 1;
 	imageViewFrom.image = downloadPlayerFrom.image;
     [cell addSubview:imageViewFrom];
-    [imageViewFrom release];
-    
+        
     UIImageView *imageViewTo = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 55, 5, 50, 50)];
     imageViewTo.contentMode = UIViewContentModeScaleAspectFit;
     BImageDownload  *downloadPlayerTo = [challengesPlayerToImagesArray objectAtIndex:indexPath.row];
     downloadPlayerFrom.tag = 2;
 	imageViewTo.image = downloadPlayerTo.image;
     [cell addSubview:imageViewTo];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [contestLabel release];
+    [detailsLabel release];
+    [imageViewFrom release];
     [imageViewTo release];
+#endif
     
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	self.selectedChallenge = [self.challengesArrayList objectAtIndex:indexPath.row];
     
-    [self.showChallengeVC initWithNibName:@"BeintooShowChallengeVC" bundle:[NSBundle mainBundle] andChallengeStatus:self.selectedChallenge];
+    self.showChallengeVC = [self.showChallengeVC initWithNibName:@"BeintooShowChallengeVC" bundle:[NSBundle mainBundle] andChallengeStatus:self.selectedChallenge];
 	//NSString *devicePlayer = [[Beintoo getUserIfLogged] objectForKey:@"nickname"];
 	/*if ([[self.selectedChallenge objectForKey:@"status"]isEqualToString:@"TO_BE_ACCEPTED"]) {
 		if (![[self.selectedChallenge objectForKey:@"playerFrom"] isEqualToString:devicePlayer]){
@@ -480,15 +526,22 @@
     NSUInteger indices[] = {0, index};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
     [challengesTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
-    [path release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+     [path release];
+#endif
+   
     download.delegate = nil;
 }
 
-- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
     BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -505,13 +558,25 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     if (isFromNotification){
         if ([BeintooDevice isiPad]){
             [Beintoo dismissIpadNotifications];
         }
         else {
+                        
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
             [self dismissModalViewControllerAnimated:YES];
+#endif
+            
         }
     }
     else
@@ -519,11 +584,16 @@
 }
 
 #pragma mark - UIViewController end methods
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return NO;
 }
+#endif
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
     [super viewWillDisappear:animated];
     
     user.delegate = nil;
@@ -534,6 +604,8 @@
 	}
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [challengesPlayerFromImagesArray     release];
     [challengesPlayerToImagesArray      release];
@@ -544,5 +616,6 @@
 	[_player release];
     [super dealloc];
 }
+#endif
 
 @end

@@ -14,9 +14,9 @@
  * limitations under the License.
  ******************************************************************************/
 
-
 #import <Foundation/Foundation.h>
 #import "Parser.h"
+#import "BeintooDevice.h"
 
 @protocol BeintooMessageDelegate;
 
@@ -37,7 +37,12 @@
 + (void)setUnreadMessages:(NSString *)totalMessages;
 + (void)setTotalMessages:(NSString *)totalMessages;
 
+#ifdef BEINTOO_ARC_AVAILABLE
+@property(nonatomic, retain) id <BeintooMessageDelegate> delegate;
+#else
 @property(nonatomic, assign) id <BeintooMessageDelegate> delegate;
+#endif
+
 @property(nonatomic,retain) Parser *parser;
 
 @end

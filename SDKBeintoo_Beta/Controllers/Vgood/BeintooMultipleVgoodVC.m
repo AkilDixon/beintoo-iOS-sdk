@@ -23,7 +23,8 @@
 @synthesize multipleVgoodTable, vgoodArrayList, vgoodImages, selectedVgood, vGood, startingOptions;
 
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.startingOptions	= options;
@@ -32,7 +33,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	self.title			 	= @"Beintoo";
@@ -58,10 +60,16 @@
 	
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
+	
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
 		
     if ([BeintooDevice isiPad]) {
@@ -70,18 +78,23 @@
 	[self.multipleVgoodTable deselectRowAtIndexPath:[self.multipleVgoodTable indexPathForSelectedRow] animated:YES];
 
 	self.vgoodArrayList = [self.startingOptions objectForKey:@"vgoodArray"];
-
 	
 	[BLoadingView startActivity:self.view];
 	[NSThread detachNewThreadSelector:@selector(loadImages) toTarget:self withObject:nil];	
 }
 
--(void)loadImages{
+-(void)loadImages
+{
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    @autoreleasepool {
+#else
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+#endif
 	
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	@try {
 		int i;
-		for (i=0; i<[self.vgoodArrayList count]; i++) {
+		for (i = 0; i < [self.vgoodArrayList count]; i++) {
 			NSURL *imageURL = [NSURL URLWithString:[[self.vgoodArrayList objectAtIndex:i] objectForKey:@"imageSmallUrl"]];
             NSData *image = [NSData dataWithContentsOfURL:imageURL];
             if ([UIImage imageWithData:image] == nil) {
@@ -95,26 +108,42 @@
 	}
 	[BLoadingView stopActivity];	
 	[self.multipleVgoodTable reloadData];
-	[pool release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+    }
+#else
+    [pool release];
+#endif
+	
 }
 
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [self.vgoodArrayList count];
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
     static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
-        cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+    cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
+    cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }
 	@try {
 		UILabel *textLabel = [[UILabel alloc] initWithFrame:CGRectMake(85, 6, 230, 77)];
@@ -132,24 +161,28 @@
 		[cell addSubview:textLabel];
 		[cell addSubview:imageView];
 		
-		[textLabel release];
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [textLabel release];
 		[imageView release];
+#endif
+		
 	}
 	@catch (NSException * e) {
 	}
 	
     return cell;
 }
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	@try {
 		
 		self.selectedVgood = [self.vgoodArrayList objectAtIndex:indexPath.row];
-		[singleVgoodVC initWithNibName:@"BeintooVGoodVC" bundle:[NSBundle mainBundle]];
+		singleVgoodVC = [singleVgoodVC initWithNibName:@"BeintooVGoodVC" bundle:[NSBundle mainBundle]];
 		[singleVgoodVC.theVirtualGood setVgoodContent:self.selectedVgood];
 		
-		//[BLoadingView startActivity:self.view];
-		
-		UIActionSheet *as =  [[UIActionSheet alloc] initWithTitle:nil 
+		UIActionSheet *as =  [[UIActionSheet alloc] initWithTitle:nil
 														 delegate:self 
 												cancelButtonTitle:NSLocalizedStringFromTable(@"cancel",@"BeintooLocalizable",@"") 
 										   destructiveButtonTitle:nil
@@ -158,7 +191,11 @@
 		as.actionSheetStyle = UIActionSheetStyleDefault;
 		as.tag = indexPath.row;
 		[as showInView:self.view];
-		[as release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [as release];
+#endif
 		
 	}
 	@catch (NSException * e) {
@@ -169,7 +206,8 @@
 #pragma mark -
 #pragma mark UIActionSheetDelegate
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
 	[multipleVgoodTable deselectRowAtIndexPath:[multipleVgoodTable indexPathForSelectedRow] animated:YES];
 	if (buttonIndex == 0) {
 		[self getItReal];
@@ -183,40 +221,53 @@
 	}
 }
 
-- (void)sendAsAGift{
+- (void)sendAsAGift
+{
 	if ([Beintoo getUserID]!=nil){
 		NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[self.selectedVgood objectForKey:@"id"], @"vGoodID",@"sendAsAGift",@"caller",nil];
-		[friendsListVC  initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle] andOptions:options];
+		friendsListVC = [friendsListVC  initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle] andOptions:options];
 		
 		UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"back",@"BeintooLocalizable",@"") style: UIBarButtonItemStyleBordered target:nil action:nil];
 		[[self navigationItem] setBackBarButtonItem: backButton];
-		[backButton release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [backButton release];
+#endif
 		
 		[self.navigationController pushViewController:friendsListVC animated:YES];
-	}else {
+	}
+    else {
 		UIAlertView *av = [[UIAlertView alloc]initWithTitle:nil message:NSLocalizedStringFromTable(@"unableToSendAsAGift",@"BeintooLocalizable",@"Send as a gift") delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+		
 	}
 }
 
-- (void)getItReal{
-	
+- (void)getItReal
+{	
 	NSString *getRealURLWithLocation = [self.selectedVgood objectForKey:@"getRealURL"];
 	NSString *locationParams = [Beintoo getUserLocationForURL];
 	if (locationParams != nil) {
 		getRealURLWithLocation = [[self.selectedVgood objectForKey:@"getRealURL"] stringByAppendingString:locationParams];
 	}
 	
-	[vgoodShowVC initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle] urlToOpen:getRealURLWithLocation];
+	vgoodShowVC = [vgoodShowVC initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle] urlToOpen:getRealURLWithLocation];
 		
 	[self.navigationController pushViewController:vgoodShowVC animated:YES];		
 }
 
-- (void)didAcceptVgood{
+- (void)didAcceptVgood
+{
 }
 
--(void)closeBeintoo{
+-(void)closeBeintoo
+{
 	@synchronized(self){
         /* 
          * If the user close this window without selecting any vgood, we automatically assign the first one
@@ -229,7 +280,8 @@
 	[Beintoo dismissPrize];
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -246,28 +298,31 @@
     return _vi;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return NO;
 }
+#endif
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[self.vGood release];
 	[self.vgoodArrayList release];
-	[self.vgoodImages release];	
+	[self.vgoodImages release];
 	[_player release];
-	[singleVgoodVC release];	
+	[singleVgoodVC release];
 	[self.selectedVgood release];
 	[vgoodShowVC release];
 	[friendsListVC release];
     [super dealloc];
 }
+#endif
 
 @end

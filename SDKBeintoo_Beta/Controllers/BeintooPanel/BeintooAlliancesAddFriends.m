@@ -12,7 +12,8 @@
 @implementation BeintooAlliancesAddFriends
 @synthesize startingOptions, isFromNotification;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSMutableArray *)options{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSMutableArray *)options
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.startingOptions	= options;
@@ -38,7 +39,18 @@
     }
     
     noResultLabel.text	= NSLocalizedStringFromTable(@"noFriendsAlliance", @"BeintooLocalizable", nil);
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    noResultLabel.minimumScaleFactor = 2.0;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        noResultLabel.minimumScaleFactor = 2.0;
+    else
+        noResultLabel.minimumFontSize = 8.0;
+#else
     noResultLabel.minimumFontSize = 8.0;
+#endif
+    
     noResultLabel.numberOfLines   = 0;
     
 	barButton.title     = NSLocalizedStringFromTable(@"done", @"BeintooLocalizable", nil);
@@ -55,7 +67,11 @@
     
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
     
 	elementsTable.delegate		= self;
 	elementsTable.dataSource    = self;
@@ -83,21 +99,16 @@
         [BLoadingView startActivity:self.view];
         [_user getFriendsByExtid];
     }
-
 }
 
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+	return NO;
 }
+#endif
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return NO;
-}
-
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc{
     [elementsArray release];
     [imagesArray release];
@@ -110,12 +121,13 @@
     
     [super dealloc];
 }
+#endif
 
 #pragma mark - 
 #pragma mark User Callbacks
 
-- (void)didGetFriendsByExtid:(NSMutableArray *)result{
-    
+- (void)didGetFriendsByExtid:(NSMutableArray *)result
+{    
     [BLoadingView stopActivity];
     noResultLabel.hidden = YES;    
     
@@ -128,7 +140,12 @@
         BImageDownload *download = [[BImageDownload alloc] init];
         download.urlString = [[result objectAtIndex:i] objectForKey:@"userimg"];
         [imagesArray addObject:download];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        
+#else
         [download release];
+#endif
         
         [elementsArray addObject:[result objectAtIndex:i]];
     }
@@ -140,15 +157,16 @@
     }
 }
 
-- (IBAction)addToAlliance{
-    
+- (IBAction)addToAlliance
+{    
     if ( [selectedFriends count] > 0 ){
         [BLoadingView startActivity:self.view];
         [_alliance allianceAdminInviteFriends:selectedFriends onAlliance:[BeintooAlliance userAllianceID]];
     }
 }
 
-- (void)didInviteFriendsToAllianceWithResult:(NSDictionary *)result{
+- (void)didInviteFriendsToAllianceWithResult:(NSDictionary *)result
+{
     [BLoadingView stopActivity];
     
     NSString *alertMessage;
@@ -160,12 +178,19 @@
 	else
 		alertMessage = NSLocalizedStringFromTable(@"requestNotSent",@"BeintooLocalizable",@"");
     
-	[av initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+	av = [av initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 	[av show];
-	[av release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    
+#else
+   [av release];
+#endif
+	
 }
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
     if (alertView.tag == 321)
         [self.navigationController popViewControllerAnimated:YES];
 
@@ -174,22 +199,30 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [elementsArray count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
     static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }
     
 	@try {
@@ -198,7 +231,18 @@
         UILabel *labelName = [[UILabel alloc] initWithFrame:CGRectMake(45, 9, 250, 20)];
         labelName.text         = [[elementsArray objectAtIndex:indexPath.row] objectForKey:@"nickname"];
         labelName.font         = [UIFont systemFontOfSize:13];
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        labelName.textAlignment = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+            labelName.textAlignment = NSTextAlignmentLeft;
+        else
+            labelName.textAlignment = UITextAlignmentLeft;
+#else
         labelName.textAlignment = UITextAlignmentLeft;
+#endif
+        
         labelName.backgroundColor = [UIColor clearColor];
         [cell addSubview:labelName];
         
@@ -220,8 +264,12 @@
             }
         }
         
+#ifdef BEINTOO_ARC_AVAILABLE
+    
+#else
         [labelName release];
         [imageView release];
+#endif
         
         if ([selectedFriends containsObject:[currentElem objectForKey:@"id"]]) {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
@@ -234,7 +282,8 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
     UITableViewCell *thisCell = [tableView cellForRowAtIndexPath:indexPath];
     
     NSString *selectedUserID = [[elementsArray objectAtIndex:indexPath.row] objectForKey:@"id"]; 
@@ -267,20 +316,29 @@
 
 #pragma mark BImageDownload Delegate Methods
 
-- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
     NSUInteger index = [imagesArray indexOfObject:download]; 
     NSUInteger indices[] = {0, index};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
     [elementsTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    
+#else
     [path release];
+#endif
+    
     download.delegate = nil;
 }
 
-- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
     BeintooLOG(@"BeintooImageError: %@", [error localizedDescription]);
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -297,7 +355,8 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     [Beintoo dismissBeintoo];
 }
 

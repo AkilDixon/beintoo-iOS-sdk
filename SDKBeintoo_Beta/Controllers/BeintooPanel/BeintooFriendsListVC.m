@@ -22,7 +22,8 @@
 
 @synthesize friendsTable, friendsArrayList, friendsImages, selectedFriend, vGood, startingOptions, backFromWebView, caller, isFromNotification;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options {
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.startingOptions = options;
@@ -30,12 +31,17 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
     UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
+	
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
     
 	self.title			 	= NSLocalizedStringFromTable(@"friends",@"BeintooLocalizable",@"Friends");
 	noFriendsLabel.text		= NSLocalizedStringFromTable(@"nofriendslabel",@"BeintooLocalizable",@"");
@@ -73,16 +79,17 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(reloadFriendsList) 
-                                                 name:@"ReloadFriendsList"
+                                                 name:BeintooNotificationReloadFriendsList
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(closePicker)
-                                                 name:@"ChallengesBPickerView"
+                                                 name:BeintooNotificationCloseBPickerView
                                                object:nil];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -92,8 +99,8 @@
 
 }
 
-- (void)reloadFriendsList{
-    
+- (void)reloadFriendsList
+{    
     if (![Beintoo isUserLogged])
 		[self.navigationController popToRootViewControllerAnimated:NO];
 	else {
@@ -103,11 +110,13 @@
 	}
 }
 
-- (void)closePicker{
+- (void)closePicker
+{
     [bPickerView removeFromSuperview];
 }
 
-- (void)didGetFriendsByExtid:(NSMutableArray *)result{
+- (void)didGetFriendsByExtid:(NSMutableArray *)result
+{
 	[friendsArrayList removeAllObjects];
 	[friendsImages removeAllObjects];
 
@@ -124,7 +133,12 @@
 				NSString *userExt	 = [[result objectAtIndex:i] objectForKey:@"id"];
 				NSString *userImgUrl = [[result objectAtIndex:i] objectForKey:@"usersmallimg"];
 				
-				BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
+#ifdef BEINTOO_ARC_AVAILABLE
+                BImageDownload *download = [[BImageDownload alloc] init];
+#else
+                BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
+#endif
+				
 				download.delegate = self;
 				download.urlString = [[result objectAtIndex:i] objectForKey:@"usersmallimg"];
 				
@@ -133,7 +147,12 @@
 				[friendsEntry setObject:userImgUrl forKey:@"userImgUrl"];
 				[friendsArrayList addObject:friendsEntry];
 				[friendsImages addObject:download];
-				[friendsEntry release];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+                [friendsEntry release];
+#endif
+				
 			}
 			@catch (NSException * e) {
 				BeintooLOG(@"BeintooException - FriendList: %@ \n for object: %@",e,[result objectAtIndex:i]);
@@ -153,22 +172,30 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [friendsArrayList count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
     static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif    
+    
     }
 	
 	cell.textLabel.text  = [[self.friendsArrayList objectAtIndex:indexPath.row] objectForKey:@"nickname"];
@@ -181,7 +208,8 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	selectedFriend = [self.friendsArrayList objectAtIndex:indexPath.row];
 	
 	// Act as "Send as a gift"
@@ -201,7 +229,8 @@
 		[self pickaFriendToSendChallenge];
 }
 
-- (void)openSelectedFriendToSendAGift {	
+- (void)openSelectedFriendToSendAGift
+{
 	[self.friendsTable deselectRowAtIndexPath:[self.friendsTable indexPathForSelectedRow] animated:YES];
 	UIActionSheet	*popup = [[UIActionSheet alloc] initWithTitle:NSLocalizedStringFromTable(@"doYouFriend",@"BeintooLocalizable",@"") delegate:self 
 											  cancelButtonTitle:@"No" 
@@ -214,39 +243,45 @@
     
 	popup.actionSheetStyle = UIActionSheetStyleDefault;
 	[popup showInView:[self.view superview]];
-	[popup release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [popup release];
+#endif
+	
 }
 
-- (void)pickaFriendToShowProfile {	
+- (void)pickaFriendToShowProfile
+{
 	[self.friendsTable deselectRowAtIndexPath:[self.friendsTable indexPathForSelectedRow] animated:YES];
 	
 	@try {
 		NSDictionary *profileOptions = [NSDictionary dictionaryWithObjectsAndKeys:@"friendsProfile",@"caller",
 																			[self.selectedFriend objectForKey:@"userExt"],@"friendUserID",
 																			[self.selectedFriend objectForKey:@"nickname"],@"friendNickname",nil];
-		[profileVC initWithNibName:@"BeintooProfileVC" bundle:[NSBundle mainBundle] andOptions:profileOptions];
+		profileVC = [profileVC initWithNibName:@"BeintooProfileVC" bundle:[NSBundle mainBundle] andOptions:profileOptions];
 		[self.navigationController pushViewController:profileVC animated:YES];
 	}
 	@catch (NSException * e) {
 	}
 }
 
-- (void)pickAFriendToSendMessage {	
+- (void)pickAFriendToSendMessage
+{
 	[self.friendsTable deselectRowAtIndexPath:[self.friendsTable indexPathForSelectedRow] animated:YES];
 	
 	@try {
 		if ([[self.startingOptions objectForKey:@"callerVC"] isKindOfClass:[BeintooNewMessageVC class]]){
 			BeintooNewMessageVC *callingViewController = [self.startingOptions objectForKey:@"callerVC"];
 			[callingViewController setSelectedFriend:self.selectedFriend];
-			//[self dismissModalViewControllerAnimated:YES];
-			[self.navigationController popViewControllerAnimated:YES];
+			
+            [self.navigationController popViewControllerAnimated:YES];
 		}
 	}
 	@catch (NSException * e) {
 		
 	}
 }
-
 
 - (void)pickaFriendToSendChallenge 
 {	
@@ -266,13 +301,13 @@
 - (void)removeBPickerViewFromSuperView:(NSNotification *)note
 {
     [bPickerView removeFromSuperview];
-    
 }
 
 #pragma mark -
 #pragma mark actionSheet sendAsAGift
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
 	if (buttonIndex == 0) { // YES
 		if (actionSheet.tag == 222){
             // Send as a gift call
@@ -281,15 +316,21 @@
         }
         else {
             
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [startingOptions release];
+#endif
+            
             [self.navigationController popViewControllerAnimated:NO];
         }
-	}else if (buttonIndex == 1) { // NO
+	}
+    else if (buttonIndex == 1) { // NO
 		
 	}
 }
 
-- (void)didSendVGoodAsGift:(BOOL)result{
+- (void)didSendVGoodAsGift:(BOOL)result
+{
 	[BLoadingView stopActivity];
 	
 	if (result) {
@@ -297,20 +338,31 @@
 													   delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil]; 
 		alert.tag = 1;
 		[alert show];
-		[alert release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [alert release];
+#endif
+		
 	}else {
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil	message:NSLocalizedStringFromTable(@"giftNotSent",@"BeintooLocalizable",@"Friends")
 													   delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil]; 
 		alert.tag = 2;
 		[alert show];
-		[alert release];	
-	}
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [alert release];
+#endif
+    
+    }
 }
 
 #pragma mark -
 #pragma mark UIAlertViewDelegate
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{ 
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
 	if (buttonIndex == 0){
 		if ([[self.startingOptions objectForKey:@"callerVC"] isKindOfClass:[BeintooWalletVC class]]){
 			[self.navigationController popViewControllerAnimated:YES];
@@ -326,23 +378,34 @@
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
 
-- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
     NSUInteger index = [self.friendsImages indexOfObject:download]; 
     NSUInteger indices[] = {0, index};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
     [friendsTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [path release];
+#endif
+    
     download.delegate = nil;
 }
-- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
     BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return (interfaceOrientation == [Beintoo appOrientation]);
 }
+#endif
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -359,20 +422,35 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     if (isFromNotification){
         if ([BeintooDevice isiPad]){
             [Beintoo dismissIpadNotifications];
         }
         else {
+
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
             [self dismissModalViewControllerAnimated:YES];
+#endif
+
         }
     }
     else
         [Beintoo dismissBeintoo];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
     user.delegate	= nil;
 
     @try {
@@ -382,6 +460,8 @@
 	}
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[user release];
 	[vGood release];
@@ -391,6 +471,6 @@
 	[_player release];
     [super dealloc];
 }
-
+#endif
 
 @end

@@ -21,20 +21,23 @@
 
 @synthesize topView,bodyView,footerView,topHeight,bodyHeight,isScrollView;
 
-- (id)initWithFrame:(CGRect)frame{
+- (id)initWithFrame:(CGRect)frame
+{
     if (self = [super initWithFrame:frame]){
     }
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder{
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
     if (self = [super initWithCoder:aDecoder]){
 		[self setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"beintoo_tile.png"]]];
 	}
     return self;
 }
 
-- (void)drawRect:(CGRect)rect {
+- (void)drawRect:(CGRect)rect
+{
 	self.contentMode = UIViewContentModeRedraw;
 	[self removeViews];
 
@@ -62,9 +65,13 @@
 	[self sendSubviewToBack:self.topView];
 	[self sendSubviewToBack:self.footerView];
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [self.topView release];
 	[self.bodyView release];
 	[self.footerView release];
+#endif
+    
 }
 
 - (void) removeViews {
@@ -73,8 +80,12 @@
 	[[self viewWithTag:3] removeFromSuperview];
 }
 
-- (void)dealloc {
-	
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+- (void)dealloc
+{
     [super dealloc];
-}	
+}
+#endif
+	
 @end

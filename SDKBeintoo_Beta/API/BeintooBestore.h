@@ -45,9 +45,13 @@
 - (void)getContentForKind:(NSString *)_kind andCategory:(NSString *)_category andStart:(int)_start andNumberOfRows:(int)_rows andSorting:(NSString *)_sorting;
 - (void)getCategories;
 
+#ifdef BEINTOO_ARC_AVAILABLE
+@property(nonatomic, retain) id <BeintooBestoreDelegate> delegate;
+#else
 @property(nonatomic, assign) id <BeintooBestoreDelegate> delegate;
-@property(nonatomic,retain) Parser *parser;
+#endif
 
+@property(nonatomic,retain) Parser *parser;
     
 @end
 

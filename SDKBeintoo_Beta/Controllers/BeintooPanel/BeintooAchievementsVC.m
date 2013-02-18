@@ -20,9 +20,10 @@
 
 @implementation BeintooAchievementsVC
 
-@synthesize achievementsArrayList, achievementsImages, isFromNotification;
+@synthesize achievementsArrayList, achievementsImages, isFromNotification, popup;
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	self.title = NSLocalizedStringFromTable(@"achievements",@"BeintooLocalizable",@"Wallet");
@@ -41,13 +42,18 @@
 
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
 	
 	self.achievementsArrayList = [[NSMutableArray alloc] init];
-	self.achievementsImages    = [[NSMutableArray alloc]init];
+	self.achievementsImages    = [[NSMutableArray alloc] init];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
 	[super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -70,8 +76,8 @@
 #pragma mark -
 #pragma mark Delegates
 
-- (void)didGetAllUserAchievementsWithResult:(NSArray *)result{
-    
+- (void)didGetAllUserAchievementsWithResult:(NSArray *)result
+{    
 	[self.achievementsArrayList removeAllObjects];
 	[self.achievementsImages removeAllObjects];
 	[noAchievementsLabel setHidden:YES];
@@ -132,8 +138,14 @@
 		@catch (NSException * e) {
 			BeintooLOG(@"BeintooException: %@ \n for object: %@", e, [result objectAtIndex:i]);
 		}
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        
+#else
         [download release];
         [achievementEntry release];
+#endif
+        
 	}
     
     archiveAchievements = [result mutableCopy];
@@ -144,7 +156,8 @@
     [self performSelector:@selector(updateProgress) withObject:nil afterDelay:0.2];
 }
 
-- (void)updateProgress{
+- (void)updateProgress
+{
     for (int i = 0; i < [archiveAchievements count]; i++){
         if ([[archiveAchievements objectAtIndex:i] objectForKey:@"percentage"]){
             NSString *percentage   = [[archiveAchievements objectAtIndex:i] objectForKey:@"percentage"];
@@ -162,7 +175,13 @@
                         [progessView setProgress:[percentage floatValue]/100];
                 }
             }
-            [path release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        
+#else
+        [path release];
+#endif
+        
         }
         else if ([[[archiveAchievements objectAtIndex:i] objectForKey:@"status"] isEqualToString:@"UNLOCKED"]) {
             [[achievementsArrayList objectAtIndex:i] setObject:@"100" forKey:@"percentage"];
@@ -179,7 +198,13 @@
                         [progessView setProgress:1.0];
                 }
             }
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+            
+#else
             [path release];
+#endif
+            
         }
     }
 }
@@ -187,20 +212,30 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [self.achievementsArrayList count];
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
 	static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }	
 	
 	@try {
@@ -224,20 +259,37 @@
 		bedollars.font = [UIFont systemFontOfSize:11];
 		bedollars.textColor = [UIColor colorWithWhite:0 alpha:0.6];
 		bedollars.backgroundColor = [UIColor clearColor];
-		bedollars.textAlignment		= UITextAlignmentRight;
 		bedollars.autoresizingMask	= UIViewAutoresizingFlexibleLeftMargin;
 		bedollars.autoresizingMask	= UIViewAutoresizingFlexibleWidth;
 		
-		NSString *value = [NSString stringWithFormat:@"%@",[[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"bedollarsValue"]]; 
+		NSString *value = [NSString stringWithFormat:@"%@", [[achievementsArrayList objectAtIndex:indexPath.row] objectForKey:@"bedollarsValue"]]; 
 		UILabel *bedollarsValue = [[UILabel alloc] initWithFrame:CGRectMake(240, 18, 70, 50)];
-		bedollarsValue.text = [NSString stringWithFormat:@"+%@",value]; 
+		bedollarsValue.text = [NSString stringWithFormat:@"+%@", value]; 
 		bedollarsValue.font = [UIFont systemFontOfSize:20];
 		bedollarsValue.textColor = [UIColor colorWithWhite:0 alpha:0.6];
 		bedollarsValue.backgroundColor = [UIColor clearColor];
-		bedollarsValue.textAlignment	= UITextAlignmentRight;
-		bedollarsValue.autoresizingMask	= UIViewAutoresizingFlexibleLeftMargin;
+        bedollarsValue.autoresizingMask	= UIViewAutoresizingFlexibleLeftMargin;
 		bedollarsValue.autoresizingMask	= UIViewAutoresizingFlexibleWidth;
 		
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        bedollars.textAlignment = NSTextAlignmentRight;
+        bedollarsValue.textAlignment = NSTextAlignmentRight;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        {
+            bedollars.textAlignment = NSTextAlignmentRight;
+            bedollarsValue.textAlignment = NSTextAlignmentRight;
+        }
+        else
+        {
+            bedollars.textAlignment = UITextAlignmentRight;
+            bedollarsValue.textAlignment = UITextAlignmentRight;
+        }
+#else
+        bedollars.textAlignment = UITextAlignmentRight;
+        bedollarsValue.textAlignment = UITextAlignmentRight;
+#endif
+        
 		if ([value intValue] > 0) {
 			[cell addSubview:bedollars];
 			[cell addSubview:bedollarsValue];
@@ -262,7 +314,11 @@
         }
         
         [cell addSubview: progressBar];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [progressBar release];
+#endif
         
 		BImageDownload *download = [achievementsImages objectAtIndex:indexPath.row];
 		UIImage *cellImage  = download.image;
@@ -276,11 +332,15 @@
 		[cell addSubview:detailTextLabel];
 		[cell addSubview:imageView];
         
-		[textLabel release];
+#ifdef BEINTOO_ARC_AVAILABLE    
+#else
+        [textLabel release];
 		[detailTextLabel release];
 		[imageView release];
 		[bedollars release];
 		[bedollarsValue release];
+#endif
+		
 	}
 	@catch (NSException * e) {
 		//[_player logException:[NSString stringWithFormat:@"STACK: %@\n\nException: %@",[NSThread callStackSymbols],e]];
@@ -288,28 +348,38 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	[achievementsTable deselectRowAtIndexPath:[achievementsTable indexPathForSelectedRow] animated:NO];
-	[BPopup showPopupForAchievement:[achievementsArrayList objectAtIndex:indexPath.row] insideView:self.view];
+    
+    popup = [[BPopup alloc] initWithSuperview:self.view andAchievement:[achievementsArrayList objectAtIndex:indexPath.row]];
 }
 
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
 
-- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
     NSUInteger index = [self.achievementsImages indexOfObject:download]; 
     NSUInteger indices[] = {0, index};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
     [achievementsTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [path release];
+#endif
+    
     download.delegate = nil;
 }
 
-- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
     BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -326,29 +396,39 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     if (isFromNotification){
         if ([BeintooDevice isiPad]){
             [Beintoo dismissIpadNotifications];
         }
         else {
+            
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
             [self dismissModalViewControllerAnimated:YES];
+#endif
+
         }
     }
     else
         [Beintoo dismissBeintoo];
 }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return NO;
 }
+#endif
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -363,13 +443,23 @@
 	}
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    
+    if ([popup retainCount] > 0)
+        [popup release];
+    
 	[self.achievementsArrayList release];
 	[self.achievementsImages	release];
 	[_player release];
 	[_achievements release];
     [archiveAchievements release];
     [super dealloc];
+#endif
+    
 }
 
 @end

@@ -21,18 +21,17 @@
 
 @synthesize theGood,theGoodsList, getItRealURL,vGoodDescription,vGoodImageData,vGoodName,vGoodEndDate,vGoodID,whoAlsoConverted, openInBrowser;
 
--(id)init {
+- (id)init
+{
 	if (self = [super init])
 	{
-		/*theGood      = [[NSDictionary alloc] init];
-		theGoodsList = [[NSArray alloc] init]; */
-         
 	}
     return self;
 }
 
-- (void)setVgoodContent:(NSDictionary *)_vgood{
-	if (_vgood != nil /* && ([_vgood objectForKey:@"getRealURL"]!=nil)*/ ) {
+- (void)setVgoodContent:(NSDictionary *)_vgood
+{
+	if (_vgood != nil) {
 		@try {
 			self.theGood			= _vgood;
 			self.getItRealURL		= [_vgood objectForKey:@"getRealURL"];
@@ -67,25 +66,35 @@
 	}
 }
 
-- (BOOL)isMultiple{
+- (BOOL)isMultiple
+{
 	return isMultipleVgood;
 }
-- (void)setIsMultiple:(BOOL)_isMultiple{
+- (void)setIsMultiple:(BOOL)_isMultiple
+{
 	isMultipleVgood = _isMultiple;
 }
 
-- (BOOL)isRecommendation{
+- (BOOL)isRecommendation
+{
 	return isRecommendation;
 }
 
-- (BOOL)isHTMLRecommendation{
+- (BOOL)isHTMLRecommendation
+{
 	return isHTML;
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 	[theGood release];
 	[theGoodsList release];
     [super dealloc];
+#endif
+    
 }
 
 @end

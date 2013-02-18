@@ -21,7 +21,8 @@
 
 @synthesize elementsTable, elementsArrayList, elementsImages, selectedElement, startingOptions;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.startingOptions	= options;
@@ -29,7 +30,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	self.title		= NSLocalizedStringFromTable(@"alliancemainlist",@"BeintooLocalizable",@"Select A Friend");
@@ -49,7 +51,11 @@
 	
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];	
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
 	
 	friendTextField.delegate           = self;
 	friendTextField.textColor          = [UIColor colorWithWhite:0 alpha:0.7]; 
@@ -63,7 +69,8 @@
     viewAllianceVC              = [BeintooViewAllianceVC alloc];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -84,7 +91,8 @@
 #pragma mark - 
 #pragma mark Alliance delegate
 
-- (void)didGetAlliancesList:(NSArray *)result{
+- (void)didGetAlliancesList:(NSArray *)result
+{
     [BLoadingView stopActivity];
     noResultLabel.hidden = YES;    
     
@@ -103,13 +111,15 @@
 #pragma mark -
 #pragma mark UITextField
 
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
 	textField.font = [UIFont systemFontOfSize:16];
 	
 	return YES;
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
 	[textField resignFirstResponder];
 	@try {
         if ([textField.text length]==0) {
@@ -135,22 +145,30 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [self.elementsArrayList count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
     static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
-        cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+      cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
+       cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }
 	
 	cell.textLabel.text     = [[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"name"];
@@ -160,7 +178,8 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     NSDictionary *currentElem       = [self.elementsArrayList objectAtIndex:indexPath.row];
@@ -168,17 +187,20 @@
     NSString *selectedAllianceAdmin = [currentElem objectForKey:@"admin"];
     
     NSDictionary *optionsToSeeAlliance = [NSDictionary dictionaryWithObjectsAndKeys:selectedAllianceID,@"allianceID",selectedAllianceAdmin,@"allianceAdmin", nil];
-    [viewAllianceVC initWithNibName:@"BeintooViewAllianceVC" bundle:[NSBundle mainBundle] andOptions:optionsToSeeAlliance];
+    viewAllianceVC = [viewAllianceVC initWithNibName:@"BeintooViewAllianceVC" bundle:[NSBundle mainBundle] andOptions:optionsToSeeAlliance];
     
     [self.navigationController pushViewController:viewAllianceVC animated:YES];
 
 }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return NO;
 }
+#endif
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -195,11 +217,13 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     [Beintoo dismissBeintoo];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
     [super viewWillDisappear:animated];
     
     _player.delegate        = nil;
@@ -212,6 +236,8 @@
 	}
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[elementsArrayList release];
 	[elementsImages release];
@@ -220,6 +246,6 @@
     
     [super dealloc];
 }
-
+#endif
 
 @end

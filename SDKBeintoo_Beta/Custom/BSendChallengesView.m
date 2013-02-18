@@ -24,7 +24,8 @@
 
 @synthesize challengeSender, challengeReceiver, selectedContest;
 
--(id)init {
+- (id)init
+{
 	if (self = [super init]){        
 		
 	}
@@ -65,29 +66,43 @@
     elementsTable.userInteractionEnabled = YES;
     
     [shadowView addSubview:elementsTable];
-    [elementsTable release];
-
+    
     [self addSubview:shadowView];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [elementsTable release];
     [shadowView release];
+#endif
     
 }
 
 #pragma mark - TableView Data Source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [elementsArrayList count];
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
     static NSString *CellIdentifier = @"Cell";
    	int _gradientType = GRADIENT_CELL_GRAY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }
 	
     UILabel *titleLabel         = [[UILabel alloc] initWithFrame:CGRectMake(12, 30, 190, 20)];
@@ -99,7 +114,6 @@
     titleLabel.adjustsFontSizeToFitWidth = YES;
     
     [cell addSubview:titleLabel];
-    [titleLabel release];
     
     UILabel *descr1Label         = [[UILabel alloc] initWithFrame:CGRectMake(12, 50, 190, 50)];
     descr1Label.backgroundColor  = [UIColor clearColor];
@@ -111,7 +125,6 @@
     descr1Label.adjustsFontSizeToFitWidth = YES;
     
     [cell addSubview:descr1Label];
-    [descr1Label release];
     
     UIImageView *cellImage       = [[UIImageView alloc] initWithFrame:CGRectMake(self.frame.size.width-130, 15, 110, 93)];
     cellImage.autoresizingMask   = UIViewAutoresizingFlexibleRightMargin;
@@ -119,11 +132,19 @@
     cellImage.contentMode           = UIViewContentModeScaleAspectFit;
     
     [cell addSubview:cellImage];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [titleLabel release];
+    [descr1Label release];
     [cellImage release];
+#endif
     
     return cell;
 }
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     switch (indexPath.row) {
@@ -189,16 +210,23 @@
         default:
             break;
     }
-    
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
 	return 35.0;
 }
 
-- (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-	BGradientView *gradientView = [[[BGradientView alloc] initWithGradientType:GRADIENT_HEADER]autorelease];
-	gradientView.frame = CGRectMake(0, 0, tableView.bounds.size.width, 30);
+- (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+
+#ifdef BEINTOO_ARC_AVAILABLE
+    BGradientView *gradientView = [[BGradientView alloc] initWithGradientType:GRADIENT_HEADER];
+#else
+    BGradientView *gradientView = [[[BGradientView alloc] initWithGradientType:GRADIENT_HEADER]autorelease];
+#endif
+	
+    gradientView.frame = CGRectMake(0, 0, tableView.bounds.size.width, 30);
     
     UILabel *contestNameLbl			= [[UILabel alloc]initWithFrame:CGRectMake(10,7,300,20)];
 	contestNameLbl.backgroundColor	= [UIColor clearColor];
@@ -208,7 +236,10 @@
 	
     [gradientView addSubview:contestNameLbl];
 	
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [contestNameLbl release];
+#endif
     
     /* ----------- CLOSE BUTTON OVER HEADER SECTION ------------- */
     
@@ -226,7 +257,8 @@
 	return gradientView;
 }
 
-- (void)initTableArrayElements{
+- (void)initTableArrayElements
+{
     [elementsArrayList removeAllObjects];
     
     NSDictionary *meVsYouDict       = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -251,13 +283,12 @@
     [elementsArrayList addObject:meVsYouDict];
     [elementsArrayList addObject:friendsChallDict];
     [elementsArrayList addObject:challenge24Dict];
-    
 }
 
 #pragma mark - ViewActions
 
-- (void)closeMainView{
-    
+- (void)closeMainView
+{
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0){
         [UIView animateWithDuration:0.5
                         animations:^(void) {
@@ -276,12 +307,15 @@
     }
 }
 
-- (void)removeViews {
+- (void)removeViews
+{
 	for (UIView *subview in [self subviews]) {
 		[subview removeFromSuperview];
 	}
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [elementsArrayList release];
     [sendChallengeView1 release];
@@ -290,6 +324,7 @@
     
     [super dealloc];
 }
+#endif
 
 @end
 

@@ -23,7 +23,8 @@
 @synthesize homeSender,generatedVGood, theVirtualGood,startingOptions;
 
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		theVirtualGood		= [[BVirtualGood alloc] init];
@@ -31,7 +32,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	self.title = @"Beintoo";
@@ -57,7 +59,11 @@
 
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
 	
 	vgoodTable.delegate		  = self;
 	vgoodTable.rowHeight	  = 45;
@@ -77,7 +83,8 @@
 	[sendAsAGiftButton setButtonTextSize:17];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -89,7 +96,7 @@
 	vgoodDescrTextView.text	= self.theVirtualGood.vGoodDescription;
 	[vgoodImageView setImage:[UIImage imageWithData:self.theVirtualGood.vGoodImageData]];
 	
-	if ([self.theVirtualGood.whoAlsoConverted count]>0) {
+	if ([self.theVirtualGood.whoAlsoConverted count] > 0) {
 		[whoAlsoConvertedTitle setHidden:NO];
 	}
 	
@@ -109,7 +116,8 @@
 	
 }
 
-- (IBAction)getItReal{
+- (IBAction)getItReal
+{
 	isThisVgoodConverted = YES;
 	
 	NSString *getRealURLWithLocation = self.theVirtualGood.getItRealURL;
@@ -117,49 +125,73 @@
 	if (locationParams != nil) {
 		getRealURLWithLocation = [self.theVirtualGood.getItRealURL stringByAppendingString:locationParams];
 	}
-	[registrationVC initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle] urlToOpen:getRealURLWithLocation];
+	registrationVC = [registrationVC initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle] urlToOpen:getRealURLWithLocation];
 
 	UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle: @"Back" style: UIBarButtonItemStyleBordered target:nil action:nil];
 	[[self navigationItem] setBackBarButtonItem: backButton];
-	[backButton release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [backButton release];
+#endif
 	
 	[self.navigationController pushViewController:registrationVC animated:YES];	
 }
 
-- (IBAction)sendAsAGift{
-	if ([Beintoo getUserID]!=nil){
+- (IBAction)sendAsAGift
+{
+	if ([Beintoo getUserID] != nil){
 		NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:self.theVirtualGood.vGoodID, @"vGoodID",@"sendAsAGift",@"caller",nil];
-		[friendsListVC  initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle] andOptions:options];
+		friendsListVC = [friendsListVC  initWithNibName:@"BeintooFriendsListVC" bundle:[NSBundle mainBundle] andOptions:options];
 		
 		UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"back",@"BeintooLocalizable",@"") style: UIBarButtonItemStyleBordered target:nil action:nil];
 		[[self navigationItem] setBackBarButtonItem: backButton];
-		[backButton release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [backButton release];
+#endif
 				
 		[self.navigationController pushViewController:friendsListVC animated:YES];
 	}else {
 		UIAlertView *av = [[UIAlertView alloc]initWithTitle:nil message:NSLocalizedStringFromTable(@"unableToSendAsAGift",@"BeintooLocalizable",@"Send as a gift") delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+		
 	}
 }
 
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [self.theVirtualGood.whoAlsoConverted count];
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
     static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }
 	
 	cell.textLabel.text =  [[self.theVirtualGood.whoAlsoConverted objectAtIndex:indexPath.row] objectForKey:@"nickname"];
@@ -169,11 +201,13 @@
     return cell;
 }
 
-- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	return nil;
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -190,25 +224,25 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
 	[Beintoo dismissPrize];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return NO;
 }
+#endif
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
-- (void)viewDidDisappear:(BOOL)animated{
-}
-
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[theVirtualGood release];
 	[registrationVC release];
@@ -218,6 +252,6 @@
 	[generatedVGood release];
     [super dealloc];
 }
-
+#endif
 
 @end

@@ -17,8 +17,9 @@
 #import <UIKit/UIKit.h>
 #import "BeintooPlayer.h"
 
-#define REWARD  100
-#define AD      101
+#define REWARD          100
+#define AD              101
+#define GIVE_BEDOLLARS  102
 
 @class BeintooFriendsListVC, BeintooMarketplaceVC;
 

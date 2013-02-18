@@ -21,7 +21,8 @@
 
 @synthesize retrievedUsers, userImages, callerIstance, caller;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
 		
     if (self) {
@@ -31,7 +32,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	self.title = @"Accounts";
@@ -65,7 +67,11 @@
 	
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
     
     buttonItem.title = NSLocalizedStringFromTable(@"useAnotherAccount",@"BeintooLocalizable",@"Use another account");
     
@@ -82,18 +88,29 @@
 
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
-	retrievedUsers = [[Beintoo getLastLoggedPlayers] retain];	
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    retrievedUsers = [Beintoo getLastLoggedPlayers];
+#else
+    retrievedUsers = [[Beintoo getLastLoggedPlayers] retain];
+#endif
 	
 	if ([retrievedUsers count] < 1) { // -- no already logged users found. Proceeding to registration.
         registrationVC	 = [[BeintooSigninVC alloc] initWithNibName:@"BeintooSigninVC" bundle:[NSBundle mainBundle]];
         [self.navigationController pushViewController:registrationVC animated:NO];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [registrationVC release];
+#endif
+        
 	}
     else{
 		[userImages removeAllObjects];
@@ -103,9 +120,15 @@
                     BeintooLOG(@"Beintoo ERROR: %@",[(NSDictionary *)self.retrievedUsers objectForKey:@"message"]);
                     return;
                 }
-				NSDictionary *user = [retrievedUsers objectAtIndex:i];	
-				BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
-				download.delegate = self;
+				NSDictionary *user = [retrievedUsers objectAtIndex:i];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+                BImageDownload *download = [[BImageDownload alloc] init];
+#else
+                BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
+#endif
+				
+                download.delegate = self;
 				download.urlString = [user objectForKey:@"usersmallimg"];
 				[userImages addObject:download];
 			}
@@ -120,21 +143,30 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
     return [retrievedUsers count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }
     if ([retrievedUsers isKindOfClass:[NSDictionary class]]) {
         return cell;
@@ -156,8 +188,8 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-		
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{		
 	NSDictionary *user	= [retrievedUsers objectAtIndex:indexPath.row];	
 	NSString *userID	= [user objectForKey:@"id"];
 	
@@ -168,7 +200,8 @@
 #pragma mark -
 #pragma mark GeneratePlayer
 
-- (void)generatePlayerIfNotExists{
+- (void)generatePlayerIfNotExists
+{
 	if ([Beintoo getPlayerID] == nil) {
 		NSDictionary *anonymPlayer = [_player blockingLogin:@""];
         
@@ -185,7 +218,8 @@
 #pragma mark -
 #pragma mark Delegates
 
-- (void)playerDidLogin:(BeintooPlayer *)player{	
+- (void)playerDidLogin:(BeintooPlayer *)player
+{
 	[BLoadingView stopActivity];
     
     if ([player loginError] == LOGIN_NO_ERROR) {
@@ -193,13 +227,24 @@
         
         [Beintoo postNotificationBeintooUserDidLogin];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
+        [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationReloadDashboard object:self];
 
         if ([BeintooDevice isiPad]){
             [Beintoo dismissIpadLogin];
         }
         else {
+            
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
             [self dismissModalViewControllerAnimated:YES];
+#endif
+
         }
     }
 }
@@ -207,29 +252,43 @@
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
 
-- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
     NSUInteger index = [userImages indexOfObject:download]; 
     NSUInteger indices[] = {0, index};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
 	[retrievedPlayersTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [path release];
+#endif
+    
     download.delegate = nil;
 }
 
-- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
     BeintooLOG(@"imagedownloadingerror: %@", [error localizedDescription]);
 }
 
 #pragma mark -
 #pragma mark CommonMethods
 
-- (IBAction)otherPlayer{	
+- (IBAction)otherPlayer
+{
     registrationVC	 = [[BeintooSigninVC alloc] initWithNibName:@"BeintooSigninVC" bundle:[NSBundle mainBundle]];
     [self.navigationController pushViewController:registrationVC animated:YES];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [registrationVC release];
+#endif
+    
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -246,19 +305,31 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
+- (void)closeBeintoo
+{    
+    [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationSignupClosed object:self];
     
     if ([BeintooDevice isiPad]){
         [Beintoo dismissIpadLogin];
     }
     else {
-        [self dismissModalViewControllerAnimated:YES];
+        
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
+            [self dismissModalViewControllerAnimated:YES];
+#endif
+
     }
 }
 
-- (NSString *)translateLevel:(NSNumber *)levelNumber{	
+- (NSString *)translateLevel:(NSNumber *)levelNumber
+{
 	if (levelNumber.intValue==1) {return NSLocalizedStringFromTable(@"novice",@"BeintooLocalizable",@"Novice");}
 	else if(levelNumber.intValue==2){return NSLocalizedStringFromTable(@"learner",@"BeintooLocalizable",@"Learner");}
 	else if(levelNumber.intValue==3){return NSLocalizedStringFromTable(@"passionate",@"BeintooLocalizable",@"Passionate");}
@@ -268,7 +339,8 @@
 		return @"";
 }
 
-- (void)viewWillDisappear:(BOOL)animated{
+- (void)viewWillDisappear:(BOOL)animated
+{
     [super viewWillDisappear:animated];
     
     @try {
@@ -278,10 +350,15 @@
 	}
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return (interfaceOrientation == [Beintoo appOrientation]);
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return (interfaceOrientation == [Beintoo appOrientation]);
 }
+#endif
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     _player.delegate = self;
     
@@ -292,5 +369,6 @@
 	[retrievedUsers release];
     [super dealloc];
 }
+#endif
 
 @end

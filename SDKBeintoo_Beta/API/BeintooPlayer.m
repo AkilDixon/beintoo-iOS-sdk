@@ -16,52 +16,66 @@
 		
 #import "BeintooPlayer.h"
 #import "Beintoo.h"
-	
+
 @implementation BeintooPlayer
 
 @synthesize delegate, parser, callingDelegate;
 
-- (id)init {
+- (id)init
+{
 	if (self = [super init])
-	{	
-		parser = [[Parser alloc] init];
+	{
+        parser = [[Parser alloc] init];
 		parser.delegate = self;
 		
-		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/player/",[Beintoo getRestBaseUrl]]];
-		app_rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/app/",[Beintoo getRestBaseUrl]]];
+		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/player/", [Beintoo getRestBaseUrl]]];
+		app_rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/app/", [Beintoo getRestBaseUrl]]];
 	}
     return self;
 }
 
-- (NSString *)restResource{
+- (NSString *)restResource
+{
 	return rest_resource;
 }
 
-+ (void)setPlayerDelegate:(id)_caller{
++ (void)setPlayerDelegate:(id)_caller
+{
 	BeintooPlayer *playerService = [Beintoo beintooPlayerService];
 	playerService.callingDelegate = _caller;
 }
 
-+ (int)getVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey{
++ (void)setDelegate:(id)_delegate
+{
+	BeintooPlayer *playerService = [Beintoo beintooPlayerService];
+	playerService.callingDelegate = _delegate;
+}
+
++ (int)getVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey
+{
     return [[NSUserDefaults standardUserDefaults] integerForKey:_playerKey];
 }
 
-+ (void)setVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey andScore:(int)_score{
++ (void)setVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey andScore:(int)_score
+{
     [[NSUserDefaults standardUserDefaults] setInteger:_score forKey:_playerKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-+ (void)resetVgoodThresholdScoreForContest:(NSString *)_codeId{
++ (void)resetVgoodThresholdScoreForContest:(NSString *)_codeId
+{
     NSString *playerKey = [NSString stringWithFormat:@"PlayerThresholdScore_%@_%@", [Beintoo getPlayerID], _codeId];
     [self resetVgoodThresholdScoreForPlayerKey:(NSString *)playerKey andScore:0];
 }
 
-+ (void)resetVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey andScore:(int)_score{
++ (void)resetVgoodThresholdScoreForPlayerKey:(NSString *)_playerKey andScore:(int)_score
+{
     [[NSUserDefaults standardUserDefaults] setInteger:_score forKey:_playerKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-+ (int)getThresholdScoreForCurrentPlayerWithContest:(NSString *)codeID{
++ (int)getThresholdScoreForCurrentPlayerWithContest:(NSString *)codeID
+{
     NSString *playerKey = [NSString stringWithFormat:@"PlayerThresholdScore_%@_%@", [Beintoo getPlayerID], codeID];
     int currentScore = [BeintooPlayer getVgoodThresholdScoreForPlayerKey:playerKey];
     return currentScore;
@@ -70,9 +84,15 @@
 #pragma mark -
 #pragma mark SubmitScore Notification
 
-+ (void)showNotificationForSubmitScore{
-	
-	BMessageAnimated *_notification = [[[BMessageAnimated alloc] init] autorelease];
++ (void)showNotificationForSubmitScore
+{
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    BMessageAnimated *_notification = [[BMessageAnimated alloc] init];
+#else
+    BMessageAnimated *_notification = [[[BMessageAnimated alloc] init] autorelease];
+#endif
+    
 	UIWindow *appWindow = [Beintoo getAppWindow];
     
 	[_notification setNotificationContentForSubmitScore:nil WithWindowSize:appWindow.bounds.size];
@@ -80,10 +100,17 @@
     [[Beintoo getNotificationQueue] addNotificationToTheQueue:_notification];
 }
 
-+ (void)showNotificationForLogin{
++ (void)showNotificationForLogin
+{
     // The main delegate is not called: a notification is shown by Beintoo on top of the app window and then automatically hidden
 	// After the -showNotification, an animation is triggered and on complete the view is removed
-	BMessageAnimated *_notification = [[[BMessageAnimated alloc] init] autorelease];
+	
+#ifdef BEINTOO_ARC_AVAILABLE
+    BMessageAnimated *_notification = [[BMessageAnimated alloc] init];
+#else
+    BMessageAnimated *_notification = [[[BMessageAnimated alloc] init] autorelease];
+#endif
+    
 	UIWindow *appWindow = [Beintoo getAppWindow];
     
 	[_notification setNotificationContentForPlayerLogin:nil WithWindowSize:appWindow.bounds.size];
@@ -98,20 +125,20 @@
 // -------------------------------------------------------------------------------------
 // Player Login. 
 // -------------------------------------------------------------------------------------
-+ (void)login{
-    
++ (void)login
+{    
     NSString *currentGuid	= [Beintoo getPlayerID];
 	NSString *userId		= [Beintoo getUserID];
 	[Beintoo updateUserLocation];
-	
-	BeintooPlayer *playerService = [Beintoo beintooPlayerService];
-	
-	NSString *res		    = [NSString stringWithFormat:@"%@login/",[playerService restResource]];
+    
+    BeintooPlayer *playerService = [Beintoo beintooPlayerService];
+    
+    NSString *res		    = [NSString stringWithFormat:@"%@login/", [playerService restResource]];
 	NSDictionary *params;
 	
 	NSString *isoLanguage = [BeintooDevice getISOLanguage];
 	if (isoLanguage != nil) {
-		res = [res stringByAppendingString:[NSString stringWithFormat:@"?language=%@",isoLanguage]];
+		res = [res stringByAppendingString:[NSString stringWithFormat:@"?language=%@", isoLanguage]];
 	}
 	
 	if (currentGuid == nil) {
@@ -190,11 +217,12 @@
                       nil];
         }
 	}
-	[playerService.parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGINwDELEG_CALLER_ID];		
+    
+    [playerService.parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGINwDELEG_CALLER_ID];
 }
 
-+ (void)notifyPlayerLoginSuccessWithResult:(NSDictionary *)result{
-    
++ (void)notifyPlayerLoginSuccessWithResult:(NSDictionary *)result
+{    
     BeintooPlayer *playerService = [Beintoo beintooPlayerService];
 	id _callingDelegate = playerService.callingDelegate;
     
@@ -203,7 +231,8 @@
 	}	
 }	
 
-+ (void)notifyPlayerLoginErrorWithResult:(NSString *)error{
++ (void)notifyPlayerLoginErrorWithResult:(NSString *)error
+{
 	BeintooPlayer *playerService = [Beintoo beintooPlayerService];
 	id _callingDelegate = playerService.callingDelegate;
 	
@@ -215,8 +244,9 @@
 // -------------------------------------------------------------------------------------
 // Player SubmitScore with contest.
 // -------------------------------------------------------------------------------------
-+ (void)submitScore:(int)_score forContest:(NSString *)_contestName{
 
++ (void)submitScore:(int)_score forContest:(NSString *)_contestName
+{
     CLLocation *loc   = [Beintoo getUserLocation];
     
     NSString *guid = [Beintoo getPlayerID];
@@ -235,12 +265,18 @@
 	else	
 		res	= [NSString stringWithFormat:@"%@submitscore/?lastScore=%d&latitude=%f&longitude=%f&radius=%f",[playerService restResource],_score,loc.coordinate.latitude,loc.coordinate.longitude,loc.horizontalAccuracy];	
 	
-	NSDictionary *params;	
+    NSDictionary *params;	
 	if ([_contestName isEqualToString:@""] || _contestName == nil) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",[Beintoo getPlayerID], @"guid", [BeintooDevice getMacAddress], @"macaddress", nil];
-	}else {
+	}
+    else {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",[Beintoo getPlayerID], @"guid",_contestName, @"codeID", [BeintooDevice getMacAddress], @"macaddress", nil];
 	}
+    
+    BeintooLOG(@"res %@ amnd params %@", [playerService restResource], params);
+    
+    
+	
 			
 	// Check for internet connection: if available proceed with the submitScore, otherwise save the score locally
 	if ([BeintooNetwork connectedToNetwork]) {
@@ -262,7 +298,9 @@
 // -------------------------------------------------------------------------------------
 // Player SubmitScore no contest. 
 // -------------------------------------------------------------------------------------
-+ (void)submitScore:(int)_score{
+
++ (void)submitScore:(int)_score
+{
 	CLLocation *loc = [Beintoo getUserLocation];
 	NSString *res;
     
@@ -301,10 +339,54 @@
 }
 
 // -------------------------------------------------------------------------------------
+// Player - Submit Score and Get Reward
+// -------------------------------------------------------------------------------------
+
++ (void)submitScoreAndGetRewardForScore:(int)_score andContest:(NSString *)_contestName withThreshold:(int)_threshold
+{
+    NSString *guid = [Beintoo getPlayerID];
+    
+    if (guid == nil) {
+        BeintooLOG(@"Beintoo: unable to submit a score. No player found. Use the Player Login first");
+        return;
+    }
+    
+    NSString *contestName = (_contestName != nil) ? _contestName : @"default";
+    
+    int validThreshold = _threshold;
+    if ([[[Beintoo getAppVgoodThresholds] objectForKey:contestName] intValue] > 0) {
+        validThreshold = [[[Beintoo getAppVgoodThresholds] objectForKey:contestName] intValue];
+    }
+    
+    NSString *playerKey;
+    playerKey = [NSString stringWithFormat:@"PlayerThresholdScore_%@_%@", [Beintoo getPlayerID],contestName];
+    
+    int currentTempScore = [BeintooPlayer getVgoodThresholdScoreForPlayerKey:playerKey];
+    currentTempScore = currentTempScore + _score;
+    
+    if (currentTempScore >= validThreshold) { // THE USER REACHED THE DEVELOPER TRESHOLD, WE SEND VGOOD AND SAVE THE REST
+        // Updating current player threshold
+        [BeintooPlayer setVgoodThresholdScoreForPlayerKey:playerKey andScore:(currentTempScore - validThreshold)];
+        
+        // Submitting the score
+        [BeintooPlayer submitScore:_score forContest:contestName];
+        
+        [BeintooReward getReward];
+    }
+    else
+    {
+        // Updating current player threshold and submit the score, no vgood.
+        [BeintooPlayer setVgoodThresholdScoreForPlayerKey:playerKey andScore:(currentTempScore)];
+        [BeintooPlayer submitScore:_score forContest:contestName];
+    }
+}
+
+// -------------------------------------------------------------------------------------
 // Player SubmitScore withVgood check
 // -------------------------------------------------------------------------------------
-+ (void)submitScoreAndGetVgoodForScore:(int)_score andContest:(NSString *)_contestName withThreshold:(int)_threshold andVgoodMultiple:(BOOL)_isMultiple{
-    
+
++ (void)submitScoreAndGetVgoodForScore:(int)_score andContest:(NSString *)_contestName withThreshold:(int)_threshold andVgoodMultiple:(BOOL)_isMultiple
+{    
     NSString *guid = [Beintoo getPlayerID];
     
     if (guid == nil) {
@@ -345,7 +427,8 @@
     }
 }
 
-+ (void)notifySubmitScoreSuccessWithResult:(NSString *)result{
++ (void)notifySubmitScoreSuccessWithResult:(NSString *)result
+{
 	BeintooPlayer *playerService = [Beintoo beintooPlayerService];
 	id _callingDelegate = playerService.callingDelegate;
 	
@@ -354,7 +437,8 @@
 	}	
 }
 
-+ (void)notifySubmitScoreErrorWithResult:(NSString *)error{
++ (void)notifySubmitScoreErrorWithResult:(NSString *)error
+{
 	BeintooPlayer *playerService = [Beintoo beintooPlayerService];
 	id _callingDelegate = playerService.callingDelegate;
 	
@@ -367,8 +451,8 @@
 // Player GetScore. 
 // -------------------------------------------------------------------------------------
 
-+ (void)getScore{
-    
++ (void)getScore
+{    
     NSString *guid = [Beintoo getPlayerID];
     if (guid == nil) {
         BeintooLOG(@"Beintoo: unable to retrieve a score. No user logged. Use the PlayerLogin first");
@@ -382,7 +466,8 @@
 	[playerService.parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_GSCOREFORCONT_CALLER_ID];
 }
 
-+ (void)notifyPlayerGetScoreSuccessWithResult:(NSDictionary *)result{
++ (void)notifyPlayerGetScoreSuccessWithResult:(NSDictionary *)result
+{
 	BeintooPlayer *playerService = [Beintoo beintooPlayerService];
 	id _callingDelegate = playerService.callingDelegate;
 	
@@ -391,7 +476,8 @@
 	}	
 }	
 
-+ (void)notifyPlayerGetScoreErrorWithResult:(NSString *)error{
++ (void)notifyPlayerGetScoreErrorWithResult:(NSString *)error
+{
 	BeintooPlayer *playerService = [Beintoo beintooPlayerService];
 	id _callingDelegate = playerService.callingDelegate;
 	
@@ -404,7 +490,8 @@
 // Player SetBalance. The response will be sent to a custom delegate
 // -------------------------------------------------------------------------------------
 
-+ (void)setBalance:(int)_playerBalance forContest:(NSString *)_contest{
++ (void)setBalance:(int)_playerBalance forContest:(NSString *)_contest
+{
 	BeintooPlayer *playerService = [Beintoo beintooPlayerService];
 	
 	if (_playerBalance < 0) { // A balance should always be positive, or not?!?
@@ -416,13 +503,16 @@
 	
 	if ([_contest isEqualToString:@""]|| _contest == nil) {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",[Beintoo getPlayerID], @"guid", nil];
-	}else {
+	}
+    else {
 		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",[Beintoo getPlayerID], @"guid",_contest, @"codeID", nil];
 	}
+    
 	[playerService.parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_SETBALANCE_CALLER_ID];
 }
 
-+ (void)notifyPlayerSetBalanceSuccessWithResult:(NSString *)result{
++ (void)notifyPlayerSetBalanceSuccessWithResult:(NSString *)result
+{
 	BeintooPlayer *playerService = [Beintoo beintooPlayerService];
 	id _callingDelegate = playerService.callingDelegate;
 	
@@ -430,7 +520,9 @@
 		[_callingDelegate playerDidSetBalanceWithResult:result];
 	}		
 }
-+ (void)notifyPlayerSetBalanceErrorWithResult:(NSString *)error{
+
++ (void)notifyPlayerSetBalanceErrorWithResult:(NSString *)error
+{
 	BeintooPlayer *playerService = [Beintoo beintooPlayerService];
 	id _callingDelegate = playerService.callingDelegate;
 	
@@ -439,13 +531,11 @@
 	}
 }
 
-
-
 #pragma mark -
 #pragma mark Internal API
 
-- (void)login{
-	
+- (void)login
+{
 	NSString *currentGuid	= [Beintoo getPlayerID];
 	NSString *userId		= [Beintoo getUserID];
 	[Beintoo updateUserLocation];
@@ -538,8 +628,8 @@
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGIN_CALLER_ID];		
 }
 
--(void)login:(NSString *)userid{	
-	
+-(void)login:(NSString *)userid
+{	
 	NSString *res		  = [NSString stringWithFormat:@"%@login/",rest_resource];
 	NSString *currentGuid = [Beintoo getPlayerID]; 
 	[Beintoo updateUserLocation];
@@ -630,8 +720,8 @@
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_LOGIN_CALLER_ID];
 }
 
-- (void)backgroundLogin:(NSString *)userid{	
-	
+- (void)backgroundLogin:(NSString *)userid
+{	
 	NSString *res		  = [NSString stringWithFormat:@"%@login/",rest_resource];
 	[Beintoo updateUserLocation];
 	NSDictionary *params;
@@ -695,8 +785,8 @@
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_BACKGROUND_LOGIN_CALLER_ID];
 }
 
-- (NSDictionary *)blockingLogin:(NSString *)userid{	
-	
+- (NSDictionary *)blockingLogin:(NSString *)userid
+{
 	NSString *res = [NSString stringWithFormat:@"%@login/",rest_resource];
 	NSDictionary *params;
 	
@@ -760,25 +850,27 @@
 	
 	loginError = LOGIN_NO_ERROR;
 	[Beintoo setBeintooPlayer:result];
-	//[[self delegate]playerDidLogin:self];
 	
     return result;
 }
 
-- (void)getAllScores{
+- (void)getAllScores
+{
 	NSString *res		 = [NSString stringWithFormat:@"%@byguid/%@",rest_resource,[Beintoo getPlayerID]];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
 	
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_GALLSCORES_CALLER_ID];
 }
 
-- (void)getPlayerByGUID:(NSString *)guid{
+- (void)getPlayerByGUID:(NSString *)guid
+{
 	NSString *res		 = [NSString stringWithFormat:@"%@byguid/%@",rest_resource,guid];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_GPLAYERBYGUID_CALLER_ID];
 }
 
-- (void)getPlayerByUserID:(NSString *)userID{
+- (void)getPlayerByUserID:(NSString *)userID
+{
 	NSString *res		 = [NSString stringWithFormat:@"%@byuser/%@",rest_resource,userID];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:PLAYER_GPLAYERBYUSER_CALLER_ID];	
@@ -787,7 +879,8 @@
 #pragma mark -
 #pragma mark /APP API
 
-- (void)topScoreFrom:(int)start andRows:(int)rows forUser:(NSString *)userExt andContest:(NSString *)codeId{
+- (void)topScoreFrom:(int)start andRows:(int)rows forUser:(NSString *)userExt andContest:(NSString *)codeId
+{
 	NSString *res;
     NSDictionary *params;
 
@@ -810,7 +903,8 @@
 
 }
 
-- (void)topScoreFrom:(int)start andRows:(int)rows closeToUser:(NSString *)userExt andContest:(NSString *)codeId{
+- (void)topScoreFrom:(int)start andRows:(int)rows closeToUser:(NSString *)userExt andContest:(NSString *)codeId
+{
     NSString *res		 = [NSString stringWithFormat:@"%@leaderboard/?start=%d&rows=%d&kind=CLOSEST",app_rest_resource,start,rows];
 	
 	NSDictionary *params;
@@ -825,13 +919,15 @@
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:APP_GTOPSCORES_CALLER_ID];	
 }
 
-- (void)showContestList{
+- (void)showContestList
+{
 	NSString *res		 = [NSString stringWithFormat:@"%@contest/show/?onlyPublic=true",app_rest_resource];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:APP_GCONTESTFORAPP_CALLER_ID];
 }
 
-- (void)logException:(NSString *)exception{
+- (void)logException:(NSString *)exception
+{
 	NSString *res		 = [NSString stringWithFormat:@"%@logging",app_rest_resource];
 	NSString *httpBody   = [NSString stringWithFormat:@"sdk=ios&text=%@",exception];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
@@ -841,10 +937,12 @@
 #pragma mark -
 #pragma mark parser delegate
 
-- (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID{	
+- (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID
+{
 	switch (callerID){
 		case PLAYER_LOGINwDELEG_CALLER_ID:{  // ------------------------------- PLAYER LOGIN WITH DELEGATE
-			if (![[result objectForKey:@"kind"] isEqualToString:@"error"]) {
+            
+            if (![[result objectForKey:@"kind"] isEqualToString:@"error"]) {
 				if ([result objectForKey:@"guid"]!=nil) {
 					
 					NSString *playerGUID	= [result objectForKey:@"guid"];
@@ -1067,20 +1165,25 @@
 #pragma mark -
 #pragma mark LocallySavedScores Handler
 
-+ (void)addScoreToLocallySavedScores:(NSString *)scoreValue forContest:(NSString *)codeID{
-		
++ (void)addScoreToLocallySavedScores:(NSString *)scoreValue forContest:(NSString *)codeID
+{		
 	@try {
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 		NSMutableArray *currentArrayOfScores = [NSMutableArray arrayWithArray:[defaults objectForKey:@"locallySavedScores"]];
 		
 		if (currentArrayOfScores!=nil) {
-			NSMutableDictionary *currentElem = [[NSMutableDictionary alloc]init];
+			NSMutableDictionary *currentElem = [[NSMutableDictionary alloc] init];
 			[currentElem setObject:scoreValue forKey:@"lastScore"];
 			if (codeID!=nil)
 				[currentElem setObject:codeID forKey:@"codeID"];
 			[currentArrayOfScores addObject:currentElem];
-			[currentElem release];
-			[[NSUserDefaults standardUserDefaults] setObject:currentArrayOfScores forKey:@"locallySavedScores"];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [currentElem release];
+#endif
+			
+            [[NSUserDefaults standardUserDefaults] setObject:currentArrayOfScores forKey:@"locallySavedScores"];
 			//BeintooLOG(@"currentArray %@ - size: %d",currentArrayOfScores,[currentArrayOfScores count]);
 		}
 	}
@@ -1089,7 +1192,8 @@
 	}
 }
 
-+ (void)flushLocallySavedScore{
++ (void)flushLocallySavedScore
+{
 	if ([BeintooNetwork connectedToNetwork]) {
 		@try {
 			
@@ -1108,7 +1212,8 @@
 	}
 }
 
-+ (void)submitScoreForOfflineScores:(NSString *)scores{
++ (void)submitScoreForOfflineScores:(NSString *)scores
+{
 	BeintooPlayer *playerService = [Beintoo beintooPlayerService];
 	
 	NSString *res		 = [NSString stringWithFormat:@"%@submitscore/",[playerService restResource]];
@@ -1121,15 +1226,22 @@
 #pragma mark -
 #pragma mark Getter methods
 
-- (int)loginError{return loginError;}
+- (int)loginError
+{
+    return loginError;
+}
 
 - (void)dealloc {
     parser.delegate = nil;
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 	[parser release];
 	[app_rest_resource release];
 	[rest_resource release];
 	[super dealloc];
+#endif
+    
 }
 
 @end

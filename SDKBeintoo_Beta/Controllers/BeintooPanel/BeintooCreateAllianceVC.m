@@ -21,7 +21,8 @@
 
 @synthesize elementsTable, elementsArrayList, elementsImages, selectedElement, startingOptions;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.startingOptions	= options;
@@ -29,7 +30,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	self.title		= NSLocalizedStringFromTable(@"alliancemaincreate",@"BeintooLocalizable",@"");
@@ -51,8 +53,12 @@
 	
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];	
-	
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
+		
 	allianceTextField.delegate	= self;
 	allianceTextField.textColor	= [UIColor colorWithWhite:0 alpha:0.7]; 
 	allianceTextField.font		= [UIFont systemFontOfSize:12];
@@ -72,7 +78,8 @@
 	[createAllianceButton setButtonTextSize:15];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -96,25 +103,33 @@
 #pragma mark -
 #pragma mark IBActions
 
-- (IBAction)createAlliance{
+- (IBAction)createAlliance
+{
     NSString *allianceName = allianceTextField.text;
     
-    if ([[allianceName stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] >= 3) {
+    if ([[allianceName stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] >= 3)
+    {
         [BLoadingView startActivity:self.view];
         [_alliance createAllianceWithName:[allianceName stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" "]] andCreatorId:[Beintoo getUserID]];
     }
-    else{
+    else
+    {
         UIAlertView *av = [[UIAlertView alloc] initWithTitle:nil message:NSLocalizedStringFromTable(@"alliancenametooshort",@"BeintooLocalizable",@"") delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
         [av show];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [av release];
+#endif
+        
     }
 }
 
 #pragma mark - 
 #pragma mark Alliance delegate
 
-- (void)didCreateAlliance:(NSDictionary *)result{    
-    
+- (void)didCreateAlliance:(NSDictionary *)result
+{    
     NSString *justCreatedAllianceID = [result objectForKey:@"id"];
     if ( ([selectedFriendsArray count] > 0) && (justCreatedAllianceID != nil) ) {
         [_alliance allianceAdminInviteFriends:selectedFriendsArray onAlliance:justCreatedAllianceID];
@@ -127,20 +142,31 @@
         
         alertMessage = NSLocalizedStringFromTable(@"requestSent",@"BeintooLocalizable",@"");
         av.tag = 321;
-        [av initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        av = [av initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
         [av show];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [av release];
+#endif
+       
     }
     else {
         [BLoadingView stopActivity];
         NSString *alertMessage = NSLocalizedStringFromTable(@"requestNotSent",@"BeintooLocalizable",@"");
         UIAlertView *av = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
         [av show];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [av release];
+#endif
+        
     }
 }
 
-- (void)didInviteFriendsToAllianceWithResult:(NSDictionary *)result{
+- (void)didInviteFriendsToAllianceWithResult:(NSDictionary *)result
+{
     [BLoadingView stopActivity];
     
     NSString *alertMessage;
@@ -151,15 +177,21 @@
     }
 	else
 		alertMessage = NSLocalizedStringFromTable(@"requestNotSent",@"BeintooLocalizable",@"");
-	[av initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+	av = [av initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 	[av show];
-	[av release];
+	
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [av release];
+#endif
+    
 }
 
 #pragma mark -
 #pragma mark UIAlertView
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{ 
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
     if (alertView.tag == 321) {
         [self.navigationController popViewControllerAnimated:YES];
     }
@@ -169,7 +201,8 @@
 #pragma mark - 
 #pragma mark UserDelegate
 
-- (void)didGetFriendsByExtid:(NSMutableArray *)result{
+- (void)didGetFriendsByExtid:(NSMutableArray *)result
+{
     [BLoadingView stopActivity];
     noResultLabel.hidden = YES;  
     
@@ -187,14 +220,16 @@
 #pragma mark -
 #pragma mark UITextField
 
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
 	textField.font = [UIFont systemFontOfSize:14];
     textField.text = @"";
 	
 	return YES;
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
 	[textField resignFirstResponder];
 
 	return YES;
@@ -203,20 +238,30 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [self.elementsArrayList count];
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
     static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }
 	
     NSDictionary *currentElem = [self.elementsArrayList objectAtIndex:indexPath.row];
@@ -231,7 +276,9 @@
     
     return cell;
 }
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
     UITableViewCell *thisCell = [tableView cellForRowAtIndexPath:indexPath];
     
     NSString *selectedUserID = [[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"id"]; 
@@ -251,11 +298,15 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return NO;
 }
+#endif
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -272,11 +323,14 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     [Beintoo dismissBeintoo];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
     
     _alliance.delegate      = nil;
     _user.delegate          = nil;
@@ -288,6 +342,8 @@
 	}
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[elementsArrayList release];
 	[elementsImages release];
@@ -296,6 +352,6 @@
     [_alliance release];
     [super dealloc];
 }
-
+#endif
 
 @end

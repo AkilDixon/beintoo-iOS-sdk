@@ -26,23 +26,25 @@
 @synthesize popOverController,loginPopoverController;
 #endif
 
-- (id)init {
+- (id)init
+{
 	if (self != nil) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(signupClosed) name:@"SignupClosed" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadBeintoo) name:@"ReloadDashboard" object:nil];
-	}
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(signupClosed) name:BeintooNotificationSignupClosed object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadBeintoo) name:BeintooNotificationReloadDashboard object:nil];
+    }
 	return self;
 }
 
 #pragma mark -
 #pragma mark BeintooInitialization
 
-- (void)setBeintooFeatures:(NSArray *)_featuresArray{
+- (void)setBeintooFeatures:(NSArray *)_featuresArray
+{
 	// initial clean
 	[self.featuresArray removeAllObjects];
 	
 	for (NSString *elem in _featuresArray) {
-		NSMutableDictionary *panelElement = [[NSMutableDictionary alloc]init];
+		NSMutableDictionary *panelElement = [[NSMutableDictionary alloc] init];
         [panelElement setObject:elem forKey:@"featureKey"];
 		@try {
 			if ([elem isEqualToString:@"Profile"]){
@@ -94,11 +96,17 @@
             BeintooLOG(@"Beintoo Error: Check your Beintoo feature settings, %@",e);
         }
 		[self.featuresArray addObject:panelElement];
-		[panelElement release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [panelElement release];
+#endif
+		
 	}
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -115,14 +123,16 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     [Beintoo dismissBeintoo];
 }
 
 #pragma mark -
 #pragma mark UIViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
 	[super viewDidLoad];
     
     // ----------- User service initialization ---------------
@@ -139,14 +149,22 @@
                                                               initWithTarget:self action:@selector(handleNotificationSingleTap:)];
         singleTapGestureRecognizer.numberOfTapsRequired = 1;
         [notificationView addGestureRecognizer:singleTapGestureRecognizer];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [singleTapGestureRecognizer release];
+#endif
         
         UITapGestureRecognizer *singleTapGestureRecognizerLand = [[UITapGestureRecognizer alloc]
                                                                   initWithTarget:self action:@selector(handleNotificationSingleTap:)];
         singleTapGestureRecognizerLand.numberOfTapsRequired = 1;
         [notificationViewLandscape addGestureRecognizer:singleTapGestureRecognizerLand];
-        [singleTapGestureRecognizerLand release];
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [singleTapGestureRecognizerLand release];
+#endif
+
     }
 	// ----------- ViewControllers initialization ------------
 	self.loginVC            = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
@@ -166,7 +184,7 @@
 	homeNavController = [Beintoo getMainNavigationController];
 	
 	UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
-	self.loginNavController = [[UINavigationController alloc] initWithRootViewController:self.loginVC];
+	self.loginNavController = [[BNavigationController alloc] initWithRootViewController:self.loginVC];
 	[[self.loginNavController navigationBar] setTintColor:barColor];
     
 	UIImageView *logo;
@@ -179,7 +197,11 @@
 	}
     
 	self.navigationItem.titleView = logo;
-	[logo release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [logo release];
+#endif
 		
 	[homeView setTopHeight:33.0f];
 	[homeView setBodyHeight:444.0f];	
@@ -232,7 +254,11 @@
         
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
     
     // Notifications
     notificationMainLabel.text = NSLocalizedStringFromTable(@"notifications", @"BeintooLocalizable", nil);
@@ -243,7 +269,6 @@
     if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
                                     [Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft)) {
         
-        
         notificationButtonItem.width = [UIScreen mainScreen].bounds.size.height;
         
         self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, [UIScreen mainScreen].bounds.size.height, self.view.frame.size.width - 32);
@@ -253,7 +278,6 @@
         
     }
     else {
-        
         
         self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
         
@@ -275,11 +299,22 @@
     
     if (signupViewForPlayers != nil) {
         signupViewForPlayers = nil;
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [signupViewForPlayers release];
+#endif
+        
     }
     
     [[self.view viewWithTag:1111] removeFromSuperview];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    signupViewForPlayers = [BSignupLayouts getBeintooDashboardSignupViewWithFrame:CGRectMake(0, 0 , self.view.bounds.size.width, 110) andButtonActionSelector:@selector(tryBeintoo) fromSender:self];
+#else
     signupViewForPlayers = [[BSignupLayouts getBeintooDashboardSignupViewWithFrame:CGRectMake(0, 0 , self.view.bounds.size.width, 110) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
+#endif
+    
     signupViewForPlayers.tag = 1111;
     [self.view addSubview:signupViewForPlayers];
     
@@ -360,7 +395,8 @@
 	}
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -382,29 +418,42 @@
 
 #pragma mark - Taps Gesture 
 
-- (void)handleNotificationSingleTap:(UITapGestureRecognizer *)sender{
-    
+- (void)handleNotificationSingleTap:(UITapGestureRecognizer *)sender
+{    
     if ([BeintooDevice isiPad]) {
         [Beintoo launchIpadNotifications];
     }
     else {
         BeintooNotificationListVC *beintooNotificationVC   = [[BeintooNotificationListVC alloc] init];
-        UINavigationController *notificationNavigationController = [[UINavigationController alloc] initWithRootViewController:beintooNotificationVC];
+        BNavigationController *notificationNavigationController = [[BNavigationController alloc] initWithRootViewController:beintooNotificationVC];
         
         UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
         [[notificationNavigationController navigationBar] setTintColor:barColor];
         
         isNotificationCenterOpen    = YES;
         
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+        [self presentViewController:notificationNavigationController animated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+            [self presentViewController:notificationNavigationController animated:YES completion:nil];
+        else
+            [self presentModalViewController:notificationNavigationController animated:YES];
+#else
         [self presentModalViewController:notificationNavigationController animated:YES];
+#endif
         
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [beintooNotificationVC release];
         [notificationNavigationController release];
+#endif
+        
     }
 }
 
-- (void)reloadBeintoo{
-
+- (void)reloadBeintoo
+{
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
@@ -415,14 +464,25 @@
     
     if (signupViewForPlayers != nil) {
         signupViewForPlayers = nil;
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [signupViewForPlayers release];
+#endif
+        
     }
     
     _user.delegate = self;	
     beintooPlayer.delegate = self;	
     
     [[self.view viewWithTag:1111] removeFromSuperview];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    signupViewForPlayers = [BSignupLayouts getBeintooDashboardSignupViewWithFrame:CGRectMake(0, 0 , homeTable.frame.size.width, 110) andButtonActionSelector:@selector(tryBeintoo) fromSender:self];
+#else
     signupViewForPlayers = [[BSignupLayouts getBeintooDashboardSignupViewWithFrame:CGRectMake(0, 0 , homeTable.frame.size.width, 110) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
+#endif
+    
     signupViewForPlayers.tag = 1111;
     [self.view addSubview:signupViewForPlayers];
     
@@ -440,7 +500,11 @@
     }
     
     self.navigationItem.titleView = logo;
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [logo release];
+#endif
     
     if ([[Beintoo getPlayer] objectForKey:@"unreadNotification"] != nil) {
         notificationNumbersLabel.text = [NSString stringWithFormat:@"%@", [[Beintoo getPlayer] objectForKey:@"unreadNotification"]];
@@ -452,8 +516,6 @@
     }
     
     if ((![Beintoo isUserLogged] && [Beintoo isRegistrationForced]) || ![Beintoo getPlayerID] /*|| (![Beintoo isUserLogged] && [Beintoo isTryBeintooForced])*/) {
-        
-       
         
         [toolBar setHidden:YES];
         [bedollars setHidden:YES];
@@ -527,36 +589,49 @@
         toolBar.hidden = YES;
 }
 
-- (void)signupClosed{
-    
-     if ([Beintoo getPlayerID] == nil || forceSignup){
+- (void)signupClosed
+{
+    if ([Beintoo getPlayerID] == nil || forceSignup){
         if (![BeintooDevice isiPad])
             [self closeBeintoo];
-        else {
+        else
+        {
             [self performSelector:@selector(closeBeintoo) withObject:nil afterDelay:0.01];
         }
     }
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:BeintooNotificationSignupClosed object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:BeintooNotificationReloadDashboard object:nil];
 }
 
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
     return [self.featuresArray count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	NSString *CellIdentifier = [NSString stringWithFormat:@"Cell%d",indexPath.row];
 
 	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }
     
     float alphaValueForCell = 1.0;
@@ -587,7 +662,8 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
     if (![Beintoo isUserLogged]) {
         
         /*
@@ -597,19 +673,43 @@
         
         NSString *featureName = [[self.featuresArray objectAtIndex:indexPath.row] objectForKey:@"featureKey"];
         if([featureName isEqualToString:@"TipsAndForum"]){
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+            UIView *featureView = [BSignupLayouts getBeintooDashboardViewForLockedFeatureTipsAndForumWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self];
+#else
             UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureTipsAndForumWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
+#endif
+            
             featureView.tag = 3333;
             [self.view addSubview:featureView];
             [self.view bringSubviewToFront:featureView];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [featureView release];
+            
+#endif
+            
             [homeTable deselectRowAtIndexPath:[homeTable indexPathForSelectedRow] animated:YES];
         }
         else if([featureName isEqualToString:@"Challenges"]){
-            UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureChallengesWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+            UIView *featureView = [BSignupLayouts getBeintooDashboardViewForLockedFeatureTipsAndForumWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self];
+#else
+            UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureTipsAndForumWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
+#endif
+            
             featureView.tag = 3333;
             [self.view addSubview:featureView];
             [self.view bringSubviewToFront:featureView];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [featureView release];
+            
+#endif
+            
             [homeTable deselectRowAtIndexPath:[homeTable indexPathForSelectedRow] animated:YES];
 
         }
@@ -627,8 +727,8 @@
 #pragma mark -
 #pragma mark IBActions
 
-- (IBAction)tryBeintoo{	
-    
+- (IBAction)tryBeintoo
+{    
         @try {
             if ([BeintooNetwork connectedToNetwork]) {
                 [BLoadingView startActivity:homeView];
@@ -643,10 +743,15 @@
 #pragma mark -
 #pragma mark player delegate
 
-- (void)didGetUserByUDID:(NSMutableArray *)result{
+- (void)didGetUserByUDID:(NSMutableArray *)result
+{
 	@synchronized(self){
         
+#ifdef BEINTOO_ARC_AVAILABLE
+        [Beintoo setLastLoggedPlayers:(NSArray *)result];
+#else
         [Beintoo setLastLoggedPlayers:[(NSArray *)result retain]];
+#endif
         
         [BLoadingView stopActivity]; 
         
@@ -657,23 +762,32 @@
             BeintooLoginVC *signinVC            = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
             
             UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
-            UINavigationController *signinNavController = [[UINavigationController alloc] initWithRootViewController:signinVC];
+            BNavigationController *signinNavController = [[BNavigationController alloc] initWithRootViewController:signinVC];
             [[signinNavController navigationBar] setTintColor:barColor];
-            
+  
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self presentViewController:signinNavController animated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self presentViewController:signinNavController animated:YES completion:nil];
+            else  [self presentModalViewController:signinNavController animated:YES];
+#else
             [self presentModalViewController:signinNavController animated:YES];
-            
+#endif
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [signinVC release];
             [signinNavController release];
-            
-            
+#endif
         }
-       // [Beintoo _launchPrivateSignup];
-    }	
+     }
 }
 
-- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result{
+- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result
+{
 	@try {
-        if ([result objectForKey:@"user"]!=nil) {
+        if ([result objectForKey:@"user"] != nil) {
 			[Beintoo setBeintooPlayer:result];
 			userNick.text  = [[Beintoo getUserIfLogged]objectForKey:@"nickname"];
 			bedollars.text = [NSString stringWithFormat:@"%.2f Bedollars",[[[Beintoo getUserIfLogged] objectForKey:@"bedollars"] floatValue]];
@@ -706,7 +820,8 @@
     [Beintoo setBeintooUserFriends:(NSArray *)result];
 }
 
-- (void)dismissFeatureSignupView{
+- (void)dismissFeatureSignupView
+{
     UIView *featureView = [self.view viewWithTag:3333];
     [featureView removeFromSuperview];
 }
@@ -717,13 +832,13 @@
 }
 #endif*/
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
     [super viewWillDisappear:animated];
-    
-    
 }
 
-- (void)viewDidDisappear:(BOOL)animated{
+- (void)viewDidDisappear:(BOOL)animated
+{
     [super viewDidDisappear:animated];
     
     _user.delegate         = nil;  
@@ -749,17 +864,24 @@
 	}
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return (interfaceOrientation == [Beintoo appOrientation]);
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return (interfaceOrientation == [Beintoo appOrientation]);
 }
+#endif
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"SignupClosed" object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"ReloadDashboard" object:nil];
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:BeintooNotificationSignupClosed object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:BeintooNotificationReloadDashboard object:nil];
     
     _user.delegate = nil;
     beintooPlayer.delegate = nil;
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     if ([beintooPlayer retainCount] > 0)
         [beintooPlayer release];
     
@@ -779,6 +901,8 @@
     [beintooBestoreVC release];
     
     [super dealloc];
+#endif
+    
 }
 
 @end

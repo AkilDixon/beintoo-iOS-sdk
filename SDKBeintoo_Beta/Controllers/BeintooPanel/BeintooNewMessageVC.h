@@ -17,6 +17,7 @@
 #import <UIKit/UIKit.h>
 #import "BeintooMessage.h"
 #import "BeintooPlayer.h"
+#import "Beintoo.h"
 
 #define	KEYBOARD_OFFSET 60
 

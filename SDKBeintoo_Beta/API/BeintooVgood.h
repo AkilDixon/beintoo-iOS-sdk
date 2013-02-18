@@ -28,8 +28,8 @@
 
 @protocol BeintooVgoodDelegate;
 
-@interface BeintooVgood : NSObject <BeintooParserDelegate>{
-	
+@interface BeintooVgood : NSObject <BeintooParserDelegate>
+{	
 	Parser                  *parser;
 	BeintooPlayer           *_player;
 	id <BeintooVgoodDelegate> delegate;
@@ -45,18 +45,18 @@
     BVirtualGood            *adContent;
 }
 
-+ (void)getSingleVirtualGood;
-+ (void)getMultipleVirtualGood;
-+ (void)getSingleVirtualGoodWithContest:(NSString *)contestID;
-+ (void)getMultipleVirtualGoodWithContest:(NSString *)contestID;
-+ (void)getSingleVirtualGoodWithDelegate:(id)_delegate;
-+ (void)getMultipleVirtualGoodWithDelegate:(id)_delegate;
++ (void)getSingleVirtualGood __attribute__((deprecated("use '[Beintoo getReward]' instead")));
++ (void)getMultipleVirtualGood __attribute__((deprecated("use '[Beintoo getReward]' instead")));
++ (void)getSingleVirtualGoodWithContest:(NSString *)contestID __attribute__((deprecated("use '[Beintoo getRewardWithContest:]' instead")));
++ (void)getMultipleVirtualGoodWithContest:(NSString *)contestID __attribute__((deprecated("use '[Beintoo getRewardWithContest:]' instead")));
++ (void)getSingleVirtualGoodWithDelegate:(id)_delegate __attribute__((deprecated("use '[Beintoo getRewardWithDelegate:]' instead")));
++ (void)getMultipleVirtualGoodWithDelegate:(id)_delegate __attribute__((deprecated("use '[Beintoo getRewardWithDelegate:]' instead")));
 
-+ (void)requestAndDisplayAdWithDeveloperUserGuid:(NSString *)_developerUserGuid;
-+ (void)requestAdWithDeveloperUserGuid:(NSString *)_developerUserGuid;
++ (void)requestAndDisplayAdWithDeveloperUserGuid:(NSString *)_developerUserGuid __attribute__((deprecated("use '[Beintoo requestAndDisplayAdWithDeveloperUserGuid:]' instead")));
++ (void)requestAdWithDeveloperUserGuid:(NSString *)_developerUserGuid __attribute__((deprecated("use '[Beintoo requestAdWithDeveloperUserGuid:]' instead")));
 
-+ (void)checkRewardsCoverage;
-+ (void)isEligibleForReward;
++ (void)checkRewardsCoverage __attribute__((deprecated("use '[Beintoo checkRewardsCoverage]' instead")));
++ (void)isEligibleForReward __attribute__((deprecated("use '[Beintoo isEligibleForReward]' instead")));
 
 // Private vgoods
 + (void)getPlayerPrivateVgoods;
@@ -70,9 +70,12 @@
 
 + (void)showNotificationForNothingToDispatch;
 
+// Init methods
+- (id)initWithDelegate:(id)_delegate;
 - (NSString *)restResource;
 - (NSString *)getDisplayRestResource;
 + (void)setVgoodDelegate:(id)_caller;
++ (void)setDelegate:(id)_delegate;
 
 /* --- VGOODS ---- */
 - (void)showGoodsByUserForState:(int)state;
@@ -92,8 +95,14 @@
 - (void)buyGoodFromUser:(NSString *)vGood_Id;
 - (void)buyGoodFeatured:(NSString *)vGood_Id;
 
+#ifdef BEINTOO_ARC_AVAILABLE
+@property(nonatomic, retain) id <BeintooVgoodDelegate> delegate;
+@property(nonatomic, retain) id  callingDelegate;
+#else
 @property(nonatomic, assign) id <BeintooVgoodDelegate> delegate;
 @property(nonatomic, assign) id  callingDelegate;
+#endif
+
 @property(nonatomic,retain) NSDictionary    *generatedVGood;
 @property(nonatomic,retain) Parser          *parser;
 @property(nonatomic,retain) BVirtualGood    *vgood;
@@ -105,7 +114,9 @@
 @protocol BeintooVgoodDelegate <NSObject>
 
 @optional
-- (void)didGenerateVgood:(BOOL)isVgoodGenerated withResult:(BeintooVgood *)theVgood;
+- (void)didGenerateVgood:(BOOL)isVgoodGenerated withResult:(BeintooVgood *)theVgood __attribute__((deprecated("use 'didGenerateAReward:' instead")));
+- (void)didGenerateAReward:(BeintooVgood *)theVgood;
+
 - (void)didGetAllvGoods:(NSArray *)vGoodList;
 
 - (void)didBeintooGenerateAnAd:(BVirtualGood *)theAd;

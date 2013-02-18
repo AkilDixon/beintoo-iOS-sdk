@@ -23,15 +23,16 @@
 
 @synthesize challengeSender, challengeReceiver, challengeType, selectedContest;
 
--(id)init {
+-(id)init
+{
 	if (self = [super init]){        
 		
 	}
     return self;
 }
 
-- (void)drawSendChallengeView{
-    
+- (void)drawSendChallengeView
+{    
     elementsArrayList           = [[NSMutableArray alloc] init];
     imagesArray                 = [[NSMutableArray alloc] init];
     
@@ -101,8 +102,11 @@
         singleTapGestureRecognizer.enabled = NO;
 
     [elementsTable addGestureRecognizer:singleTapGestureRecognizer];
-    [singleTapGestureRecognizer release];
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [singleTapGestureRecognizer release];
+#endif
     
     elementsTable.layer.borderColor     = [UIColor lightGrayColor].CGColor;
     elementsTable.layer.cornerRadius    = 3.0;
@@ -141,7 +145,9 @@
 }
 
 #pragma mark - User Delegate
-- (void)didGetChallangePrerequisites:(NSDictionary *)result{
+
+- (void)didGetChallangePrerequisites:(NSDictionary *)result
+{
     challengeSenderDef      = [[[result objectForKey:@"playerFrom"] objectForKey:@"user"] copy];
     challengeReceiverDef    = [[[result objectForKey:@"playerTo"] objectForKey:@"user"] copy];
     challengeContest        = [[result objectForKey:@"contest"] copy];
@@ -154,33 +160,46 @@
     [BLoadingView stopActivity];
 }
 
-- (void)challengeRequestFinishedWithResult:(NSDictionary *)result{
-    
+- (void)challengeRequestFinishedWithResult:(NSDictionary *)result
+{    
     [BLoadingView stopActivity];
     
 	if ([result objectForKey:@"messageID"] != nil) {
-        
-       
 		
 		if ([[result objectForKey:@"messageID"] intValue] == -15) { // CHALLENGE ONGOING
 			UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"challengeOngoing",@"BeintooLocalizable",@"")
 														delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 			[av show];
-			[av release];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [av release];
+#endif
+			
 			return;
 		}
         if([[result objectForKey:@"messageID"] intValue] == -12){ // NOT ENOUGH BEDOLLARS
             UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"noBedollarsForChall",@"BeintooLocalizable",@"")
 														delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 			[av show];
-			[av release];
+			
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [av release];
+#endif
+            
 			return;
         }
         
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"errorMessage",@"BeintooLocalizable",@"")
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];
+		
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+        
 		return;
 		
 	}
@@ -188,28 +207,47 @@
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"challengeAccepted",@"BeintooLocalizable",@"")
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];
-	}else if ([[result objectForKey:@"status"] isEqualToString:@"TO_BE_ACCEPTED"]) {
+		
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+        
+	}
+    else if ([[result objectForKey:@"status"] isEqualToString:@"TO_BE_ACCEPTED"]) {
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"challengeSent",@"BeintooLocalizable",@"")
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];
-	} else{
+		
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+        
+	}
+    else{
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" message:NSLocalizedStringFromTable(@"challengeRefused",@"BeintooLocalizable",@"")
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];
+		
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+        
 	}
 }
 
 
 #pragma mark - TableView Data Source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     CGFloat cellHeight;
     
     switch (indexPath.row) {
@@ -236,11 +274,14 @@
     }
     return cellHeight;
 }
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return 3;
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     static NSString *CellIdentifier = @"Cell";
    	int _gradientType = GRADIENT_CELL_GRAY;
     if (indexPath.row == 1) {
@@ -249,7 +290,13 @@
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }
 	
     @try {
@@ -270,7 +317,6 @@
                 titleLabel.adjustsFontSizeToFitWidth = YES;
                 
                 [cell addSubview:titleLabel];
-                [titleLabel release];
                 
                 UILabel *descr1Label         = [[UILabel alloc] initWithFrame:CGRectMake(12, 50, 200, 50)];
                 descr1Label.backgroundColor  = [UIColor clearColor];
@@ -283,11 +329,9 @@
                 else 
                     descr1Label.text         = @"";
 
-                
                 descr1Label.adjustsFontSizeToFitWidth = YES;
                 
                 [cell addSubview:descr1Label];
-                [descr1Label release];
                 
                 UIImageView *cellImage       = [[UIImageView alloc] initWithFrame:CGRectMake(self.frame.size.width-135, 20, 90, 80)];
                 cellImage.autoresizingMask   = UIViewAutoresizingFlexibleRightMargin;
@@ -295,7 +339,14 @@
                 cellImage.contentMode           = UIViewContentModeScaleAspectFit;
                 
                 [cell addSubview:cellImage];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+                [titleLabel release];
+                [descr1Label release];
                 [cellImage release];
+#endif
+                
             }
                 break;
                 
@@ -315,8 +366,11 @@
                 senderNick.adjustsFontSizeToFitWidth = YES;
                 
                 [cell addSubview:senderNick];
-                [senderNick release];
                 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+                [senderNick release];
+#endif
                 
                 // ----------- MaxAmount Sender -------------
                 UILabel *maxAmoutSender         = [[UILabel alloc] initWithFrame:CGRectMake(12, 26, 280, 20)];
@@ -333,7 +387,11 @@
                 maxAmoutSender.adjustsFontSizeToFitWidth = YES;
                 
                 [cell addSubview:maxAmoutSender];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
                 [maxAmoutSender release];
+#endif
                 
                 // ----------- VersusImage -------------
                 UIImage     *vsImage            = [UIImage imageNamed:@"beintoo_challenges_vert.png"];
@@ -344,17 +402,31 @@
                 
                 UILabel     *vsLabel            = [[UILabel alloc] initWithFrame:CGRectMake(8, 37 ,28, 25)];
                 vsLabel.backgroundColor         = [UIColor clearColor];
-                vsLabel.textAlignment           = UITextAlignmentCenter;
+                
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+                vsLabel.textAlignment = NSTextAlignmentCenter;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+                if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+                    vsLabel.textAlignment = NSTextAlignmentCenter;
+                else
+                vsLabel.textAlignment = UITextAlignmentCenter;
+#else
+                vsLabel.textAlignment = UITextAlignmentCenter;
+#endif
+                
                 vsLabel.font                    = [UIFont systemFontOfSize:16];
                 vsLabel.textColor               = [UIColor whiteColor];
                 vsLabel.text                    = @"VS";
                 
                 [versusImageView addSubview:vsLabel];
-                [vsLabel release];
                 
                 [cell addSubview:versusImageView];
+              
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+                [vsLabel release];
                 [versusImageView release];
-                
+#endif
                 
                 // ----------- HowMuchBedollars  -------------
                 UILabel *howMuchBedollars         = [[UILabel alloc] initWithFrame:CGRectMake(60, 56, 245, 18)];
@@ -366,7 +438,11 @@
                 howMuchBedollars.adjustsFontSizeToFitWidth = YES;
                 
                 [cell addSubview:howMuchBedollars];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
                 [howMuchBedollars release];
+#endif
                 
                 bedollarsTextField                      = [[UITextField alloc] initWithFrame:CGRectMake(60, 76, 100, 28)];
                 bedollarsTextField.tag                  = 1;
@@ -374,7 +450,18 @@
                 bedollarsTextField.keyboardType         = UIKeyboardTypeNumberPad;
                 bedollarsTextField.placeholder          = NSLocalizedStringFromTable(@"clickhere",@"BeintooLocalizable",@"");
                 bedollarsTextField.font                 = [UIFont systemFontOfSize:14];
-                bedollarsTextField.textAlignment        = UITextAlignmentLeft;
+                
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+                bedollarsTextField.textAlignment = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+                if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+                    bedollarsTextField.textAlignment = NSTextAlignmentLeft;
+                else
+                    bedollarsTextField.textAlignment = UITextAlignmentLeft;
+#else
+                bedollarsTextField.textAlignment = UITextAlignmentLeft;
+#endif
+                
                 bedollarsTextField.adjustsFontSizeToFitWidth = YES;
                 bedollarsTextField.textColor            = [UIColor blackColor];
                 bedollarsTextField.backgroundColor      = [UIColor colorWithRed:220.0/255 green:220.0/255 blue:220.0/255 alpha:1];
@@ -382,7 +469,11 @@
                 bedollarsTextField.borderStyle          = UITextBorderStyleBezel;
                 
                 [cell addSubview:bedollarsTextField];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
                 [bedollarsTextField release];
+#endif
                 
                 UILabel *bedollarsLabel         = [[UILabel alloc] initWithFrame:CGRectMake(170, 80, 100, 18)];
                 bedollarsLabel.backgroundColor  = [UIColor clearColor];
@@ -393,7 +484,11 @@
                 bedollarsLabel.adjustsFontSizeToFitWidth = YES;
                 
                 [cell addSubview:bedollarsLabel];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
                 [bedollarsLabel release];
+#endif
 
                 if (challengeType == SENDCHALLENGE_TYPE_BET_ME || challengeType == SENDCHALLENGE_TYPE_BET_OTHER ) {
                     // ----------- HowManyPoints  -------------
@@ -420,15 +515,30 @@
                     howMuchPoints.adjustsFontSizeToFitWidth = YES;
                     
                     [cell addSubview:howMuchPoints];
-                    [howMuchPoints release];
                     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+                    [howMuchPoints release];
+#endif
+                   
                     pointsTextField                      = [[UITextField alloc] initWithFrame:CGRectMake(60, 132, 100, 28)];
                     pointsTextField.tag                  = 2;
                     pointsTextField.keyboardType         = UIKeyboardTypeNumberPad;
                     pointsTextField.delegate             = self;
                     pointsTextField.placeholder          = NSLocalizedStringFromTable(@"clickhere",@"BeintooLocalizable",@"");
                     pointsTextField.font                 = [UIFont systemFontOfSize:14];
-                    pointsTextField.textAlignment        = UITextAlignmentLeft;
+                    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+                    pointsTextField.textAlignment = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+                    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+                        pointsTextField.textAlignment = NSTextAlignmentLeft;
+                    else
+                        pointsTextField.textAlignment = UITextAlignmentLeft;
+#else
+                    pointsTextField.textAlignment = UITextAlignmentLeft;
+#endif
+                    
                     pointsTextField.adjustsFontSizeToFitWidth = YES;
                     pointsTextField.textColor            = [UIColor blackColor];
                     pointsTextField.backgroundColor      = [UIColor colorWithRed:220.0/255 green:220.0/255 blue:220.0/255 alpha:1];
@@ -436,7 +546,6 @@
                     pointsTextField.borderStyle          = UITextBorderStyleBezel;
                     
                     [cell addSubview:pointsTextField];
-                    [pointsTextField release];
                     
                     UILabel *pointsLabel            = [[UILabel alloc] initWithFrame:CGRectMake(170, 136, 120, 18)];
                     pointsLabel.backgroundColor     = [UIColor clearColor];
@@ -452,7 +561,13 @@
                     pointsLabel.adjustsFontSizeToFitWidth = YES;
                     
                     [cell addSubview:pointsLabel];
+                    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+                    [pointsTextField release];
                     [pointsLabel release];
+#endif
+                    
                 }
                 
                 // ----------- Receiver Nick ----------------
@@ -469,8 +584,11 @@
                 receiverNick.adjustsFontSizeToFitWidth = YES;
                 
                 [cell addSubview:receiverNick];
-                [receiverNick release];
                 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+                [receiverNick release];
+#endif
                 
                 // ----------- MaxAmount Sender -------------
                 UILabel *maxAmoutReceiver         = [[UILabel alloc] initWithFrame:CGRectMake(12, 192, 280, 20)];
@@ -487,8 +605,12 @@
                 maxAmoutReceiver.adjustsFontSizeToFitWidth = YES;
                 
                 [cell addSubview:maxAmoutReceiver];
-                [maxAmoutReceiver release]; 
-
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+                [maxAmoutReceiver release];
+#endif
+                
             }
                 break;
                 
@@ -518,7 +640,11 @@
                 imageViewSender.contentMode         = UIViewContentModeScaleAspectFit;
                 imageViewSender.backgroundColor     = [UIColor clearColor];
                 [cell addSubview:imageViewSender];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
                 [imageViewSender release];
+#endif
                 
                 // ----------- Versus -------------
                 UIImage     *vsImage            = [UIImage imageNamed:@"beintoo_challenges_horiz.png"];
@@ -529,16 +655,31 @@
                 
                 UILabel     *vsLabel            = [[UILabel alloc] initWithFrame:CGRectMake(14, 6 ,28, 25)];
                 vsLabel.backgroundColor         = [UIColor clearColor];
-                vsLabel.textAlignment           = UITextAlignmentCenter;
+                
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+                vsLabel.textAlignment = NSTextAlignmentCenter;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+                if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+                    vsLabel.textAlignment = NSTextAlignmentCenter;
+                else
+                    vsLabel.textAlignment = UITextAlignmentCenter;
+#else
+                vsLabel.textAlignment = UITextAlignmentCenter;
+#endif
+                
                 vsLabel.font                    = [UIFont systemFontOfSize:16];
                 vsLabel.textColor               = [UIColor whiteColor];
                 vsLabel.text                    = @"VS";
                 
                 [versusImageView addSubview:vsLabel];
-                [vsLabel release];
                 
                 [cell addSubview:versusImageView];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+                [vsLabel release];
                 [versusImageView release];
+#endif
                 
                 // ----------- Image Receiver -------------
                 UIImageView *imageViewReceiver      = [[UIImageView alloc]initWithFrame:CGRectMake(111+(offset*2), 12, 45, 45)];
@@ -557,17 +698,26 @@
                 imageViewReceiver.contentMode       = UIViewContentModeScaleAspectFit;
                 imageViewReceiver.backgroundColor   = [UIColor clearColor];
                 [cell addSubview:imageViewReceiver];
-                [imageViewReceiver release];
                 
                 // ----------- Equal sign -------------
                 UILabel     *equalLabel             = [[UILabel alloc] initWithFrame:CGRectMake(160+(offset*3), 20, 25, 25)];
                 equalLabel.backgroundColor          = [UIColor clearColor];
-                equalLabel.textAlignment            = UITextAlignmentCenter;
+                
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+                equalLabel.textAlignment = NSTextAlignmentCenter;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+                if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+                    equalLabel.textAlignment = NSTextAlignmentCenter;
+                else
+                    equalLabel.textAlignment = UITextAlignmentCenter;
+#else
+                equalLabel.textAlignment = UITextAlignmentCenter;
+#endif
+                
                 equalLabel.font                     = [UIFont boldSystemFontOfSize:27];
                 equalLabel.textColor                = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1];
                 equalLabel.text                     = @"=";
                 [cell addSubview:equalLabel];
-                [equalLabel release];
                 
                 // ---------------- Button -----------------
                 BButton *sentBtn = [[BButton alloc] initWithFrame:CGRectMake(190+(offset*4), 18, 86, 35)];
@@ -580,7 +730,13 @@
                 [sentBtn setButtonTextSize:13];
                 
                 [cell addSubview:sentBtn];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+                [imageViewReceiver release];
+                [equalLabel release];
                 [sentBtn release];
+#endif
                 
             }
                 break;
@@ -597,7 +753,8 @@
     return cell;
 }
 
-- (void)initTableArrayElements{
+- (void)initTableArrayElements
+{
     [elementsArrayList removeAllObjects];
     
     NSDictionary *meVsYouDict       = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -626,8 +783,8 @@
 }
 
 #pragma mark - ViewActions
-- (void)closeMainView{
-    
+- (void)closeMainView
+{    
      if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0){
         [UIView animateWithDuration:0.5
                          animations:^(void) {
@@ -647,8 +804,8 @@
 }
 
 // Called when the user touch the send-challenge button
-- (void)handleButtonPressed:(UITapGestureRecognizer *)sender{
-    
+- (void)handleButtonPressed:(UITapGestureRecognizer *)sender
+{    
     switch (challengeType) {
         case 1:{
             if ([pointsTextField.text intValue]>0 && [bedollarsTextField.text intValue]>0) {
@@ -665,7 +822,12 @@
                                                             delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
                 [av setTag:10]; // To recognise this one and do close the view
                 [av show];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
                 [av release];
+#endif
+                
             }
         }
             break;
@@ -684,7 +846,12 @@
                                                             delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
                 [av setTag:10]; // To recognise this one and do close the view
                 [av show];
+               
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
                 [av release];
+#endif
+                
             }
         }
             break;
@@ -704,7 +871,12 @@
                                                             delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
                 [av setTag:10]; // To recognise this one and do close the view
                 [av show];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
                 [av release];
+#endif
+                
             }
 
         }
@@ -715,24 +887,26 @@
     }    
 }
 
-- (void)sendChallengeAction{
+- (void)sendChallengeAction
+{
     // Nothing to do here
 }
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{ 
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
     // AlertView.tag == 10 if there was an error and we do not want to close the view
     if (alertView.tag != 10) {
         BSendChallengesView *parentView = (BSendChallengesView *)self.superview ;
         [parentView closeMainView];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"ChallengeSent" object:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationChallengeSent object:nil];
     }
 }
 
 #pragma mark - UITextFieldDelegate and methods
 
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
-    
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{    
     if (!([BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown))){
         [UIView beginAnimations:@"keyboardUp" context:nil];
         [UIView setAnimationDelay:0];
@@ -750,8 +924,8 @@
 
 // This won't work on simulator, it will not be directly called, use the keyboardDidHide: delegate to call it
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField{
-    
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{    
    // if ( !([Beintoo appOrientation] == UIInterfaceOrientationPortrait || [Beintoo appOrientation] == UIInterfaceOrientationPortraitUpsideDown)){
         [UIView beginAnimations:@"keyboardDown" context:nil];
         [UIView setAnimationDelay:0];
@@ -769,9 +943,8 @@
 	return YES;
 }
 
-- (void)keyboardDidHide:(NSNotification *)aNotification{
-    
-   
+- (void)keyboardDidHide:(NSNotification *)aNotification
+{
     [UIView beginAnimations:@"keyboardDown" context:nil];
     [UIView setAnimationDelay:0];
     [UIView setAnimationDuration:0.2];
@@ -791,8 +964,8 @@
     [self checkTextFieldInputs];
 }
 
-- (void)keyboardWillHide:(NSNotification *)aNotification{
-    
+- (void)keyboardWillHide:(NSNotification *)aNotification
+{    
     if (![BeintooDevice isiPad])
     {
         [UIView beginAnimations:@"keyboardDown" context:nil];
@@ -815,7 +988,8 @@
     }
 }
 
-- (void)checkTextFieldInputs{
+- (void)checkTextFieldInputs
+{
     NSString *bedollarsBet  = bedollarsTextField.text;
     NSString *pointsBet     = pointsTextField.text;
     
@@ -845,7 +1019,8 @@
     }
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
     [UIView beginAnimations:@"keyboardDown" context:nil];
     [UIView setAnimationDelay:0];
     [UIView setAnimationDuration:0.2];
@@ -864,7 +1039,8 @@
 }
 
 //********** VIEW TAPPED **********
--(void) handleSingleTap:(UITapGestureRecognizer *)sender{
+- (void) handleSingleTap:(UITapGestureRecognizer *)sender
+{
     [UIView beginAnimations:@"keyboardDown" context:nil];
     [UIView setAnimationDelay:0];
     [UIView setAnimationDuration:0.2];
@@ -885,19 +1061,23 @@
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
  
-- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
     NSIndexPath *rowToReload    = [NSIndexPath indexPathForRow:2 inSection:0];
     NSArray *rowsToReload       = [NSArray arrayWithObjects:rowToReload, nil];  
     
     [elementsTable reloadRowsAtIndexPaths:rowsToReload withRowAnimation:UITableViewRowAnimationNone];
     download.delegate = nil;
 }
-- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
     BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
 
-- (void)removeViews {
+- (void)removeViews
+{
     _user.delegate = nil;
     
     imageToDownload1.delegate = nil;
@@ -908,6 +1088,8 @@
 	}
 }   
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     imageToDownload1.delegate = nil;
     imageToDownload2.delegate = nil;
@@ -926,7 +1108,7 @@
     
     [super dealloc];
 }
-
+#endif
 
 @end
 

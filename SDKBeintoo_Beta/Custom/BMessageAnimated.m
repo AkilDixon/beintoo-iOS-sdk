@@ -21,7 +21,8 @@
 @implementation BMessageAnimated
 @synthesize delegate;
 
-- (id)init {
+- (id)init
+{
 	if (self = [super init])
 	{
        
@@ -29,8 +30,8 @@
     return self;
 }
 
-- (void)showNotification{
-    
+- (void)showNotification
+{    
     if ([[self delegate] respondsToSelector:@selector(messageDidAppear)])
         [[self delegate] messageDidAppear];
 	
@@ -51,9 +52,9 @@
 	self.alpha = 1;
 }
 
-- (void)closeNotification{
-	
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"OrientationChanged" object:nil];
+- (void)closeNotification
+{	
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:BeintooNotificationOrientationChanged object:nil];
     
 	self.alpha = 0;
 	CATransition *popupExitAnimation = [CATransition animation];
@@ -66,8 +67,8 @@
 	[[self layer] addAnimation:popupExitAnimation forKey:nil];
 }
 
-- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag{
-    
+- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag
+{    
     float notificationTimeOnScreen;
     switch (notificationType) {
 		case NOTIFICATION_TYPE_ACHIEV:
@@ -111,9 +112,9 @@
 	}
 }
 
-- (void)prepareNotificationOrientation:(CGRect)startingFrame{
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged) name:@"OrientationChanged" object:nil];
+- (void)prepareNotificationOrientation:(CGRect)startingFrame
+{    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged) name:BeintooNotificationOrientationChanged object:nil];
     
 	self.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
 	CGRect windowFrame	 = [[Beintoo getAppWindow] bounds];
@@ -254,13 +255,15 @@
 	}	
 }
 
-- (void)removeViews {
+- (void)removeViews
+{
 	for (UIView *subview in [self subviews]) {
 		[subview removeFromSuperview];
 	}
 }
 
-- (void)closeAchievement{
+- (void)closeAchievement
+{
 	self.alpha = 0;
 	[self removeFromSuperview];
 }
@@ -268,10 +271,16 @@
 #pragma mark -
 #pragma mark Achievement
 
-- (void)setNotificationContentForAchievement:(NSDictionary *)_theAchievement WithWindowSize:(CGSize)windowSize{
+- (void)setNotificationContentForAchievement:(NSDictionary *)_theAchievement WithWindowSize:(CGSize)windowSize
+{
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    current_achievement = _theAchievement;
+#else
+    current_achievement = [_theAchievement retain];
+#endif
 	
-	current_achievement = [_theAchievement retain];
-	notificationType = NOTIFICATION_TYPE_ACHIEV;
+    notificationType = NOTIFICATION_TYPE_ACHIEV;
 
 	CGSize callerFrameSize = windowSize;
 	
@@ -284,11 +293,18 @@
     [self prepareNotificationOrientation:notification_frame];
 }
 
-- (void)setNotificationContentForAchievement:(NSDictionary *)_theAchievement andMissionAchievement:(NSDictionary *)_missionAchievem WithWindowSize:(CGSize)windowSize{
-
+- (void)setNotificationContentForAchievement:(NSDictionary *)_theAchievement andMissionAchievement:(NSDictionary *)_missionAchievem WithWindowSize:(CGSize)windowSize
+{
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    current_achievement             = _theAchievement;
+    achievement_to_complete_mission = _missionAchievem;
+#else
     current_achievement             = [_theAchievement retain];
     achievement_to_complete_mission = [_missionAchievem retain];
-	notificationType = NOTIFICATION_TYPE_ACHIEV_MSN;
+#endif
+    
+    notificationType = NOTIFICATION_TYPE_ACHIEV_MSN;
     
 	CGSize callerFrameSize = windowSize;
 	
@@ -301,7 +317,8 @@
     [self prepareNotificationOrientation:notification_frame];
 }
 
-- (void)drawAchievement{
+- (void)drawAchievement
+{
 	[self removeViews];
 	
 	NSString *msg = NSLocalizedStringFromTable(@"unlockAchievMsg",@"BeintooLocalizable",@"");
@@ -311,33 +328,58 @@
 	captionLabel.backgroundColor = [UIColor clearColor];
 	captionLabel.textColor = [UIColor whiteColor];
 	captionLabel.font = [UIFont fontWithName:@"MarkerFelt-Wide" size:17];
-	captionLabel.textAlignment = UITextAlignmentLeft;
-	captionLabel.text = achievementName;
+    captionLabel.text = achievementName;
 	[self addSubview:captionLabel];
 	
 	achievNameLabel	= [[UILabel alloc] initWithFrame:CGRectMake(11, 28, [self bounds].size.width-50, 20)];
 	achievNameLabel.backgroundColor = [UIColor clearColor];
 	achievNameLabel.textColor = [UIColor whiteColor];
 	achievNameLabel.font = [UIFont fontWithName:@"MarkerFelt-Thin" size:15];
-	achievNameLabel.textAlignment = UITextAlignmentLeft;
 	achievNameLabel.text = msg;	
 	[self addSubview:achievNameLabel];
     
     percentageLabel = [[UILabel alloc] initWithFrame:CGRectMake([self bounds].size.width-55, 5, 50, 25)];
 	percentageLabel.backgroundColor = [UIColor clearColor];
 	percentageLabel.textColor = [UIColor colorWithRed:171.0/255 green:194.0/255 blue:54.0/255 alpha:1.0];
-	percentageLabel.font = [UIFont fontWithName:@"MarkerFelt-Wide" size:17];
-	percentageLabel.textAlignment = UITextAlignmentLeft;
+	percentageLabel.font = [UIFont fontWithName:@"MarkerFelt-Wide" size:17];    
 	percentageLabel.text = @"100%";
 	[self addSubview:percentageLabel];
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    captionLabel.textAlignment = NSTextAlignmentLeft;
+    achievNameLabel.textAlignment = NSTextAlignmentLeft;
+    percentageLabel.textAlignment = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    {
+        captionLabel.textAlignment = NSTextAlignmentLeft;
+        achievNameLabel.textAlignment = NSTextAlignmentLeft;
+        percentageLabel.textAlignment = NSTextAlignmentLeft;
+    }
+    else
+    {
+        captionLabel.textAlignment = UITextAlignmentLeft;
+        achievNameLabel.textAlignment = UITextAlignmentLeft;
+        percentageLabel.textAlignment = UITextAlignmentLeft;
+    }
+#else
+    captionLabel.textAlignment = UITextAlignmentLeft;
+    achievNameLabel.textAlignment = UITextAlignmentLeft;
+    percentageLabel.textAlignment = UITextAlignmentLeft;
+#endif
 
-	[captionLabel release];
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [captionLabel release];
 	[beintooLogo release];
 	[achievNameLabel release];
     [percentageLabel release];
+#endif
+	
 }	
 
-- (void)drawAchievementWithMission{
+- (void)drawAchievementWithMission
+{
     NSString *achievementName = [current_achievement objectForKey:@"name"];
     NSString *msg             = NSLocalizedStringFromTable(@"unlockAchievMsg",@"BeintooLocalizable",@"");
     NSString *missionText     = NSLocalizedStringFromTable(@"missiontoachieve", @"BeintooLocalizable", @"");
@@ -348,24 +390,21 @@
 	captionLabel.backgroundColor = [UIColor clearColor];
 	captionLabel.textColor = [UIColor whiteColor];
 	captionLabel.font = [UIFont fontWithName:@"MarkerFelt-Wide" size:17];
-	captionLabel.textAlignment = UITextAlignmentLeft;
-	captionLabel.text = achievementName;
+    captionLabel.text = achievementName;
 	[self addSubview:captionLabel];
 	
 	achievNameLabel	= [[UILabel alloc] initWithFrame:CGRectMake(11, 28, [self bounds].size.width-30, 20)];
 	achievNameLabel.backgroundColor = [UIColor clearColor];
 	achievNameLabel.textColor = [UIColor colorWithRed:171.0/255 green:194.0/255 blue:54.0/255 alpha:1.0];
 	achievNameLabel.font = [UIFont fontWithName:@"MarkerFelt-Thin" size:15];
-	achievNameLabel.textAlignment = UITextAlignmentLeft;
-	achievNameLabel.text = msg;	
+    achievNameLabel.text = msg;	
 	[self addSubview:achievNameLabel];
     
     percentageLabel                 = [[UILabel alloc] initWithFrame:CGRectMake([self bounds].size.width-55, 5, 50, 25)];
 	percentageLabel.backgroundColor = [UIColor clearColor];
 	percentageLabel.textColor       = [UIColor colorWithRed:171.0/255 green:194.0/255 blue:54.0/255 alpha:1.0];
 	percentageLabel.font            = [UIFont fontWithName:@"MarkerFelt-Wide" size:17];
-	percentageLabel.textAlignment   = UITextAlignmentLeft;
-	percentageLabel.text            = @"100%";
+    percentageLabel.text            = @"100%";
 	[self addSubview:percentageLabel];
     
     missionLabel                    = [[UILabel alloc] initWithFrame:CGRectMake(11, 48, [self bounds].size.width-20, 40)];
@@ -373,22 +412,54 @@
 	missionLabel.textColor          = [UIColor whiteColor];
     missionLabel.numberOfLines      = 2;
 	missionLabel.font               = [UIFont fontWithName:@"MarkerFelt-Thin" size:15];
-	missionLabel.textAlignment      = UITextAlignmentLeft;
-	missionLabel.text               = missionText;	
+    missionLabel.text               = missionText;	
     missionLabel.adjustsFontSizeToFitWidth = YES;
 	[self addSubview:missionLabel];
 
-	[captionLabel release];
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    captionLabel.textAlignment = NSTextAlignmentLeft;
+    achievNameLabel.textAlignment = NSTextAlignmentLeft;
+    percentageLabel.textAlignment = NSTextAlignmentLeft;
+    missionLabel.textAlignment = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    {
+        captionLabel.textAlignment = NSTextAlignmentLeft;
+        achievNameLabel.textAlignment = NSTextAlignmentLeft;
+        percentageLabel.textAlignment = NSTextAlignmentLeft;
+        missionLabel.textAlignment = NSTextAlignmentLeft;
+    }
+    else
+    {
+        captionLabel.textAlignment = UITextAlignmentLeft;
+        achievNameLabel.textAlignment = UITextAlignmentLeft;
+        percentageLabel.textAlignment = UITextAlignmentLeft;
+        missionLabel.textAlignment = UITextAlignmentLeft;
+    }
+#else
+    captionLabel.textAlignment = UITextAlignmentLeft;
+    achievNameLabel.textAlignment = UITextAlignmentLeft;
+    percentageLabel.textAlignment = UITextAlignmentLeft;
+    missionLabel.textAlignment = UITextAlignmentLeft;
+#endif
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [captionLabel release];
 	[beintooLogo release];
 	[achievNameLabel release];
     [percentageLabel release];
+#endif
+	
 }
 
 
 #pragma mark -
 #pragma mark Submit_Score & Login
 
-- (void)setNotificationContentForPlayerLogin:(NSDictionary *)_theScore WithWindowSize:(CGSize)windowSize{
+- (void)setNotificationContentForPlayerLogin:(NSDictionary *)_theScore WithWindowSize:(CGSize)windowSize
+{
     notificationType = NOTIFICATION_TYPE_PLOGIN;
     
 	CGSize callerFrameSize = windowSize;
@@ -405,8 +476,8 @@
 	[self prepareNotificationOrientation:notification_frame];
 }
 
-- (void)setNotificationContentForSubmitScore:(NSDictionary *)_theScore WithWindowSize:(CGSize)windowSize{
-	
+- (void)setNotificationContentForSubmitScore:(NSDictionary *)_theScore WithWindowSize:(CGSize)windowSize
+{	
 	notificationType = NOTIFICATION_TYPE_SSCORE;
 
 	CGSize callerFrameSize = windowSize;
@@ -449,8 +520,8 @@
 	[self prepareNotificationOrientation:notification_frame];
 }
 
-- (void)setNotificationContentForGiveBedollars:(NSDictionary *)_theScore WithWindowSize:(CGSize)windowSize{
-	
+- (void)setNotificationContentForGiveBedollars:(NSDictionary *)_theScore WithWindowSize:(CGSize)windowSize
+{	
 	notificationType = NOTIFICATION_TYPE_GIVE_BEDOLLARS;
     
 	CGSize callerFrameSize = windowSize;
@@ -470,8 +541,8 @@
 	[self prepareNotificationOrientation:notification_frame];
 }
 
-
-- (void)drawPlayerLogin{
+- (void)drawPlayerLogin
+{
     [self removeViews];
 	
 	NSString *loggedUser = [[Beintoo getUserIfLogged] objectForKey:@"nickname"];
@@ -484,9 +555,20 @@
 	captionLabel                    = [[UILabel alloc] initWithFrame:CGRectMake(45, 0, [self bounds].size.width-50, 40)];
 	captionLabel.backgroundColor    = [UIColor clearColor];
 	captionLabel.textColor          = [UIColor whiteColor];
-	captionLabel.font               = [UIFont fontWithName:@"TrebuchetMS-Bold" size:13.0];//[UIFont systemFontOfSize:13];
-	captionLabel.textAlignment      = UITextAlignmentLeft;
-	captionLabel.text               = msg;
+	captionLabel.font               = [UIFont fontWithName:@"TrebuchetMS-Bold" size:13.0];
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    captionLabel.textAlignment = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        captionLabel.textAlignment = NSTextAlignmentLeft;
+    else
+         captionLabel.textAlignment = UITextAlignmentLeft;
+#else
+     captionLabel.textAlignment = UITextAlignmentLeft;
+#endif
+    
+    captionLabel.text               = msg;
 	[self addSubview:captionLabel];
     
     int unreadNotifications         = [[[Beintoo getPlayer] objectForKey:@"unreadNotification"] intValue];
@@ -497,7 +579,17 @@
         unreadNotificationLabel.backgroundColor    = [UIColor clearColor];
         unreadNotificationLabel.textColor          = [UIColor whiteColor];
         unreadNotificationLabel.font               = [UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0];
-        unreadNotificationLabel.textAlignment      = UITextAlignmentLeft;
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        unreadNotificationLabel.textAlignment = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+            unreadNotificationLabel.textAlignment = NSTextAlignmentLeft;
+        else
+            unreadNotificationLabel.textAlignment = UITextAlignmentLeft;
+#else
+        unreadNotificationLabel.textAlignment = UITextAlignmentLeft;
+#endif
         
         if(unreadNotifications == 1){
             unreadNotificationLabel.text        = [NSString stringWithFormat:NSLocalizedStringFromTable(@"messagenotification",@"BeintooLocalizable",@"Try beintoo"),1];								   
@@ -507,14 +599,24 @@
         }
         
         [self addSubview:unreadNotificationLabel];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [unreadNotificationLabel release];
+#endif
+        
     }
-
-	[captionLabel release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [captionLabel release];
 	[beintooLogo release];
+#endif
+	
 }
 
-- (void)drawSubmitScore{
+- (void)drawSubmitScore
+{
 	[self removeViews];
 	
 	NSString *lastSubmittedScore = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastSubmittedScore"];
@@ -542,7 +644,18 @@
 	captionLabel                    = [[UILabel alloc] initWithFrame:CGRectMake(45, 5, [self bounds].size.width-50, 20)];
 	captionLabel.backgroundColor    = [UIColor clearColor];
 	captionLabel.textColor          = [UIColor whiteColor];
-    captionLabel.textAlignment      = UITextAlignmentLeft;
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    captionLabel.textAlignment = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        captionLabel.textAlignment = NSTextAlignmentLeft;
+    else
+        captionLabel.textAlignment = UITextAlignmentLeft;
+#else
+    captionLabel.textAlignment = UITextAlignmentLeft;
+#endif
+    
     captionLabel.font               = [UIFont fontWithName:@"TrebuchetMS-Bold" size:13.0];
     captionLabel.adjustsFontSizeToFitWidth = YES;
     
@@ -563,7 +676,19 @@
             else 
                 msg = [NSString stringWithFormat:@"%@ %@",[NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsg",@"BeintooLocalizable",@""),lastSubmittedScore], [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMarketplaceMsg", @"BeintooLocalizable", nil), [Beintoo getVirtualCurrencyBalance], [Beintoo getVirtualCurrencyName]]];
             
-            CGSize expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:UILineBreakModeWordWrap];
+            CGSize expectedSize;
+            
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+            expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:NSLineBreakByWordWrapping];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+                expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:NSLineBreakByWordWrapping];
+            else
+                expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:UILineBreakModeWordWrap];
+#else
+            expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:UILineBreakModeWordWrap];
+#endif
+            
             captionLabel.frame              = CGRectMake(45, 2, [self bounds].size.width-50, expectedSize.height);
             captionLabel.numberOfLines      = 0;
             captionLabel.font               = [UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0];
@@ -577,8 +702,19 @@
                 else 
                     msg = [NSString stringWithFormat:@"%@ %@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsg",@"BeintooLocalizable",@""),lastSubmittedScore], NSLocalizedStringFromTable(@"submitScoreMarketplacePlayer", @"BeintooLocalizable", nil)];
                 
+                CGSize expectedSize;
                 
-                CGSize expectedSize = [msg sizeWithFont:captionLabel.font constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:UILineBreakModeWordWrap];
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+                expectedSize = [msg sizeWithFont:captionLabel.font constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:NSLineBreakByWordWrapping];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+                if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+                    expectedSize = [msg sizeWithFont:captionLabel.font constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:NSLineBreakByWordWrapping];
+                else
+                    expectedSize = [msg sizeWithFont:captionLabel.font constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:UILineBreakModeWordWrap];
+#else
+                expectedSize = [msg sizeWithFont:captionLabel.font constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:UILineBreakModeWordWrap];
+#endif
+                
                 captionLabel.frame          = CGRectMake(45, 3, [self bounds].size.width-50, expectedSize.height);
                 captionLabel.numberOfLines  = 0;
             }
@@ -588,7 +724,19 @@
                 else 
                     msg = [NSString stringWithFormat:@"%@ %@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsg",@"BeintooLocalizable",@""),lastSubmittedScore], [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMarketplaceMsg", @"BeintooLocalizable", nil), [[[Beintoo getUserIfLogged] objectForKey:@"bedollars"] floatValue], NSLocalizedStringFromTable(@"bedollars", @"BeintooLocalizable", nil)]];
                 
-                CGSize expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:UILineBreakModeWordWrap];
+                CGSize expectedSize;
+                
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+                expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:NSLineBreakByWordWrapping];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+                if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+                    expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:NSLineBreakByWordWrapping];
+                else
+                    expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:UILineBreakModeWordWrap];
+#else
+                expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:UILineBreakModeWordWrap];
+#endif
+                
                 captionLabel.frame          = CGRectMake(45, 2, [self bounds].size.width-50, expectedSize.height);
                 captionLabel.numberOfLines  = 0;
                 captionLabel.font           = [UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0];
@@ -597,16 +745,22 @@
         [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"submitScoreCount"];
         [[NSUserDefaults standardUserDefaults] synchronize];
 	}
-	captionLabel.text               = msg;
+    
+    captionLabel.text   = msg;
     
     [self addSubview:captionLabel];
     [self addSubview:beintooLogo];
     
-	[captionLabel release];
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [captionLabel release];
 	[beintooLogo release];
+#endif
+	
 }
 
-- (void)drawGiveBedollars{
+- (void)drawGiveBedollars
+{
 	[self removeViews];
 	
 	NSString *msg;
@@ -634,10 +788,30 @@
     captionLabel                    = [[UILabel alloc] initWithFrame:CGRectMake(45, 0, [self bounds].size.width - 55, NOTIFICATION_HEIGHT_GIVE_BEDOLLARS)];
 	captionLabel.backgroundColor    = [UIColor clearColor];
 	captionLabel.textColor          = [UIColor whiteColor];
-    captionLabel.textAlignment      = UITextAlignmentLeft;
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    captionLabel.textAlignment       = NSTextAlignmentLeft;
+    captionLabel.minimumScaleFactor = 2.0;
+
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    {
+        captionLabel.textAlignment       = NSTextAlignmentLeft;
+        captionLabel.minimumScaleFactor = 2.0;
+
+    }
+    else
+    {
+        captionLabel.textAlignment       = UITextAlignmentLeft;
+        captionLabel.minimumFontSize = 10.0;
+    }
+#else
+    captionLabel.textAlignment       = UITextAlignmentLeft;
+    captionLabel.minimumFontSize = 10.0;
+#endif
+    
     captionLabel.font               = [UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0];
     captionLabel.adjustsFontSizeToFitWidth = YES;
-    captionLabel.minimumFontSize = 10.0;
     captionLabel.numberOfLines = 0;
     
 	captionLabel.text               = msg;
@@ -645,14 +819,19 @@
     [self addSubview:captionLabel];
     [self addSubview:beintooLogo];
     
-	[captionLabel release];
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [captionLabel release];
 	[beintooLogo release];
+#endif
+    
 }
 
 #pragma mark -
 #pragma mark Nothing To Dispatch
 
-- (void)setNotificationContentForNothingToDispatchWithWindowSize:(CGSize)windowSize{
+- (void)setNotificationContentForNothingToDispatchWithWindowSize:(CGSize)windowSize
+{
     notificationType = NOTIFICATION_TYPE_NTDISPATCH;
     
 	CGSize callerFrameSize = windowSize;
@@ -669,7 +848,8 @@
 	[self prepareNotificationOrientation:notification_frame];
 }
 
-- (void)drawNothingToDispatch{
+- (void)drawNothingToDispatch
+{
 	[self removeViews];
 	
 	NSString *msg = NSLocalizedStringFromTable(@"nothingToDispatchMsg",@"BeintooLocalizable",@"");
@@ -681,20 +861,36 @@
 	captionLabel = [[UILabel alloc] initWithFrame:CGRectMake(45, 3, [self bounds].size.width-50, 40)];
 	captionLabel.backgroundColor = [UIColor clearColor];
 	captionLabel.textColor = [UIColor whiteColor];
-	captionLabel.font = [UIFont fontWithName:@"TrebuchetMS-Bold" size:13.0];//[UIFont systemFontOfSize:13];
-	captionLabel.textAlignment = UITextAlignmentLeft;
+	captionLabel.font = [UIFont fontWithName:@"TrebuchetMS-Bold" size:13.0];
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    captionLabel.textAlignment       = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        captionLabel.textAlignment       = NSTextAlignmentLeft;
+    else
+        captionLabel.textAlignment       = UITextAlignmentLeft;
+#else
+    captionLabel.textAlignment       = UITextAlignmentLeft;
+#endif
+	
     captionLabel.numberOfLines = 2;
 	captionLabel.text = msg;
 	[self addSubview:captionLabel];
     
-	[captionLabel release];
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [captionLabel release];
 	[beintooLogo release];
+#endif
+    
 }
 
 // --------------- OLD -------------------->
 
-+ (NSString *)getMessageFromCode:(int)code{
-	if (code==WELCOME_MESSAGE) {
++ (NSString *)getMessageFromCode:(int)code
+{
+	if (code == WELCOME_MESSAGE) {
 		NSString *playerNick = [[Beintoo getUserIfLogged] objectForKey:@"nickname"];
 		if (playerNick!=nil) {
 			return [NSString stringWithFormat:@"Welcome back %@",playerNick];
@@ -714,8 +910,8 @@
 		return @"NO_MESSAGE";
 }
 
-- (void)orientationChanged{
-    
+- (void)orientationChanged
+{    
     [UIView beginAnimations:nil context:nil];
     
     self.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
@@ -833,10 +1029,13 @@
     [UIView commitAnimations];
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[current_achievement release];
     [achievement_to_complete_mission release];
     [super dealloc];
 }
+#endif
 
 @end

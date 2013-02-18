@@ -28,9 +28,13 @@
 
 - (void)beintooDidDisappear;
 
-- (void)didBeintooGenerateAVirtualGood:(BVirtualGood *)theVgood;
+- (void)didBeintooGenerateAVirtualGood:(BVirtualGood *)theVgood __attribute__((deprecated("use 'didBeintooGenerateAReward:' instead")));
 
-- (void)didBeintooFailToGenerateAVirtualGoodWithError:(NSDictionary *)error;
+- (void)didBeintooFailToGenerateAVirtualGoodWithError:(NSDictionary *)error __attribute__((deprecated("use 'didBeintooFailToGenerateARewardWithError:' instead")));
+
+- (void)didBeintooGenerateAReward:(BVirtualGood *)theReward;
+
+- (void)didBeintooFailToGenerateARewardWithError:(NSDictionary *)error;
 
 /* ---------------------------------------------------------------------
  * Prize
@@ -87,5 +91,25 @@
 - (void)userDidLogin;
 
 - (void)userDidSignup;
+
+/* ---------------------------------------------------------------------
+ * Give Bedollars
+ * --------------------------------------------------------------------- */
+
+- (void)beintooGiveBedollarsWillAppear;
+
+- (void)beintooGiveBedollarsDidAppear;
+
+- (void)beintooGiveBedollarsWillDisappear;
+
+- (void)beintooGiveBedollarsDidDisappear;
+
+- (void)beintooGiveBedollarsControllerWillAppear;
+
+- (void)beintooGiveBedollarsControllerDidAppear;
+
+- (void)beintooGiveBedollarsControllerWillDisappear;
+
+- (void)beintooGiveBedollarsControllerDidDisappear;
 
 @end

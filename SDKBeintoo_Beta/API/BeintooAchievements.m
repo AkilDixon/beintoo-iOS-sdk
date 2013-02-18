@@ -21,7 +21,8 @@
 
 @synthesize delegate,parser,callingDelegate,currentAchievementID,currentPercentage,currentScore, showNotification, achievementQueue;
 
--(id)init {
+- (id)init
+{
 	if (self = [super init])
 	{
         parser = [[Parser alloc] init];
@@ -29,33 +30,44 @@
 		
 		currentAchievementID = [[NSString alloc] init];
 		
-		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/achievement/",[Beintoo getRestBaseUrl]]];
+		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/achievement/", [Beintoo getRestBaseUrl]]];
         
         achievementQueue = [[NSMutableArray alloc] init];
 	}
     return self;
 }
 
-- (NSString *)restResource{
+- (NSString *)restResource
+{
 	return rest_resource;
 }
 
-+ (void)setAchievementDelegate:(id)_caller{
++ (void)setAchievementsDelegate:(id)_caller
+{
 	BeintooAchievements *achievementsService    = [Beintoo beintooAchievementService];
 	achievementsService.callingDelegate         = _caller;
 }
 
++ (void)setDelegate:(id)delegate
+{
+	BeintooAchievements *achievementsService    = [Beintoo beintooAchievementService];
+	achievementsService.callingDelegate         = delegate;
+}
+
 #pragma mark -
 #pragma mark Achievement Notification
-
-// [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"locallySavedAchievements"];
 
 + (void)showNotificationForUnlockedAchievement:(NSDictionary *)_achievement{
     
 	// The main delegate is not called: a notification is shown and hidden by Beintoo on top of the app window
 	// After the -showAchievementNotification, an animation is triggered and on complete the view is removed
 	
+#ifdef BEINTOO_ARC_AVAILABLE
+    BMessageAnimated *_notification = [[BMessageAnimated alloc] init];
+#else
     BMessageAnimated *_notification = [[[BMessageAnimated alloc] init] autorelease];
+#endif
+    
     UIWindow *appWindow             = [Beintoo getAppWindow];
     [_notification setNotificationContentForAchievement:_achievement WithWindowSize:appWindow.bounds.size];
     
@@ -66,9 +78,15 @@
     [[Beintoo getNotificationQueue] addNotificationToTheQueue:_notification];
 }
 
-+ (void)showNotificationForUnlockedAchievement:(NSDictionary *)_achievement withMissionAchievement:(NSDictionary *)_missionAchiev{
++ (void)showNotificationForUnlockedAchievement:(NSDictionary *)_achievement withMissionAchievement:(NSDictionary *)_missionAchiev
+{
     
+#ifdef BEINTOO_ARC_AVAILABLE
+    BMessageAnimated *_notification = [[BMessageAnimated alloc] init];
+#else
     BMessageAnimated *_notification = [[[BMessageAnimated alloc] init] autorelease];
+#endif
+    
     UIWindow *appWindow             = [Beintoo getAppWindow];
     
     [_notification setNotificationContentForAchievement:_achievement andMissionAchievement:_missionAchiev WithWindowSize:appWindow.bounds.size];
@@ -80,16 +98,18 @@
 #pragma mark -
 #pragma mark API
 
-+ (void)unlockAchievement:(NSString *)_achievementID{
++ (void)unlockAchievement:(NSString *)_achievementID
+{
     [BeintooAchievements setAchievement:_achievementID withPercentage:100];
 }
 
-+ (void)unlockAchievement:(NSString *)_achievementID showNotification:(BOOL)showNotification{
++ (void)unlockAchievement:(NSString *)_achievementID showNotification:(BOOL)showNotification
+{
     [BeintooAchievements setAchievement:_achievementID withPercentage:100 showNotification:showNotification];
 }
 
-+ (void)setAchievement:(NSString *)_achievementID withPercentage:(int)_percentageFromZeroTo100{
-	
++ (void)setAchievement:(NSString *)_achievementID withPercentage:(int)_percentageFromZeroTo100
+{
 	NSString *playerID	 = [Beintoo getPlayerID];
 	BeintooAchievements *achievementsService = [Beintoo beintooAchievementService];
 	
@@ -115,8 +135,8 @@
 	[achievementsService.parser parsePageAtUrl:res withHeaders:params fromCaller:ACHIEVEMENTS_GETSUBMITPERCENT_CALLER_ID];
 }
 
-+ (void)setAchievement:(NSString *)_achievementID withPercentage:(int)_percentageFromZeroTo100 showNotification:(BOOL)showNotification{
-	
++ (void)setAchievement:(NSString *)_achievementID withPercentage:(int)_percentageFromZeroTo100 showNotification:(BOOL)showNotification
+{
 	NSString *playerID	 = [Beintoo getPlayerID];
 	BeintooAchievements *achievementsService = [Beintoo beintooAchievementService];
 	
@@ -143,12 +163,13 @@
 	[achievementsService.parser parsePageAtUrl:res withHeaders:params fromCaller:ACHIEVEMENTS_GETSUBMITPERCENT_CUSTOM_NOTIFICATION_CALLER_ID];
 }
 
-+ (void)unlockAchievementByObjectID:(NSString *)_objectID showNotification:(BOOL)showNotification{
++ (void)unlockAchievementByObjectID:(NSString *)_objectID showNotification:(BOOL)showNotification
+{
     [BeintooAchievements setAchievementByObjectID:_objectID withPercentage:100 showNotification:showNotification];
 }
 
-+ (void)setAchievementByObjectID:(NSString *)_objectID withPercentage:(int)_percentageFromZeroTo100 showNotification:(BOOL)showNotification{
-	
++ (void)setAchievementByObjectID:(NSString *)_objectID withPercentage:(int)_percentageFromZeroTo100 showNotification:(BOOL)showNotification
+{
 	NSString *playerID	 = [Beintoo getPlayerID];
 	BeintooAchievements *achievementsService = [Beintoo beintooAchievementService];
 	
@@ -175,8 +196,8 @@
 	[achievementsService.parser parsePageAtUrl:res withHeaders:params fromCaller:ACHIEVEMENTS_GET_SUBMIT_BY_OBJECTID_ID];
 }
 
-+ (void)unlockAchievementsInBackground:(NSArray *)achievementArray{
-    
++ (void)unlockAchievementsInBackground:(NSArray *)achievementArray
+{
     NSString *playerID	 = [Beintoo getPlayerID];
 	BeintooAchievements *achievementsService = [Beintoo beintooAchievementService];
 	
@@ -206,8 +227,8 @@
     }
 }
 
-+ (void)unlockAchievementsByObjectIDInBackground:(NSArray *)achievementArray{
-    
++ (void)unlockAchievementsByObjectIDInBackground:(NSArray *)achievementArray
+{
     NSString *playerID	 = [Beintoo getPlayerID];
 	BeintooAchievements *achievementsService = [Beintoo beintooAchievementService];
 	
@@ -237,8 +258,8 @@
     }
 }
 
-+ (void)setAchievement:(NSString *)_achievementID withScore:(int)_score{
-	
++ (void)setAchievement:(NSString *)_achievementID withScore:(int)_score
+{
 	NSString *playerID	 = [Beintoo getPlayerID];
 	BeintooAchievements *achievementsService = [Beintoo beintooAchievementService];
 	
@@ -264,7 +285,8 @@
 	[achievementsService.parser parsePageAtUrl:res withHeaders:params fromCaller:ACHIEVEMENTS_GETSUBMITSCORE_CALLER_ID];
 }
 
-+ (void)incrementAchievement:(NSString *)_achievementID withScore:(int)_score{
++ (void)incrementAchievement:(NSString *)_achievementID withScore:(int)_score
+{
 	NSString *playerID	 = [Beintoo getPlayerID];
 	BeintooAchievements *achievementsService = [Beintoo beintooAchievementService];
     
@@ -290,13 +312,15 @@
 	[achievementsService.parser parsePageAtUrl:res withHeaders:params fromCaller:ACHIEVEMENTS_GETINCREMENTSCORE_CALLER_ID];
 }
 
-+ (void)getAchievementStatusAndPercentage:(NSString *)_achievementId{
++ (void)getAchievementStatusAndPercentage:(NSString *)_achievementId
+{
     currentGlobalAchievementId = [[NSString alloc] init];
     currentGlobalAchievementId = [_achievementId copy];
     [self getAchievementsForCurrentPlayer];
 }
 
-+ (void)getAchievementsForCurrentPlayer{
++ (void)getAchievementsForCurrentPlayer
+{
 	NSString *playerID	 = [Beintoo getPlayerID];
 	BeintooAchievements *achievementsService = [Beintoo beintooAchievementService];
     
@@ -305,7 +329,8 @@
 	[achievementsService.parser parsePageAtUrl:res withHeaders:params fromCaller:ACHIEVEMENTS_GET_PRIVATE_CALLER_ID];
 }
 
-+ (void)notifyAchievementSubmitSuccessWithResult:(NSDictionary *)result{
++ (void)notifyAchievementSubmitSuccessWithResult:(NSDictionary *)result
+{
 	BeintooAchievements *achievementsService = [Beintoo beintooAchievementService];
 	id _callingDelegate = achievementsService.callingDelegate;
 	
@@ -314,7 +339,8 @@
 	}
 }
 
-+ (void)notifyAchievementSubmitErrorWithResult:(NSString *)error{
++ (void)notifyAchievementSubmitErrorWithResult:(NSString *)error
+{
 	BeintooAchievements *achievementsService = [Beintoo beintooAchievementService];
 	id _callingDelegate = achievementsService.callingDelegate;
 	
@@ -326,7 +352,8 @@
 #pragma mark -
 #pragma mark internal API
 
-- (void)getAchievementsForCurrentUser{
+- (void)getAchievementsForCurrentUser
+{
 	NSString *playerID	 = [Beintoo getPlayerID];
 	
 	NSString *res		 = [NSString stringWithFormat:@"%@",rest_resource];
@@ -337,7 +364,8 @@
 #pragma mark -
 #pragma mark Locally Saved Achievements
 
-+ (void)saveUnlockedAchievementLocally:(NSDictionary *)_theAchievement{
++ (void)saveUnlockedAchievementLocally:(NSDictionary *)_theAchievement
+{
 	NSMutableArray *currentAchievemList = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"locallySavedAchievements"]];
 	
 	if (![BeintooAchievements checkIfAchievementIsSavedLocally:[[_theAchievement objectForKey:@"achievement"] objectForKey:@"id"]]) {
@@ -345,18 +373,24 @@
         dict = [_theAchievement mutableCopy];
         [[dict objectForKey:@"achievement"] setObject:[Beintoo getPlayerID] forKey:@"guid"];
 		[currentAchievemList addObject:dict];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [dict release];
+#endif
         
 	}
 	[[NSUserDefaults standardUserDefaults] setObject:currentAchievemList forKey:@"locallySavedAchievements"];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-+ (NSMutableArray *)getAllLocalAchievements{
++ (NSMutableArray *)getAllLocalAchievements
+{
 	return [[NSUserDefaults standardUserDefaults] objectForKey:@"locallySavedAchievements"];
 }
 
-+ (BOOL)checkIfAchievementIsSavedLocally:(NSString *)_achievementID{
++ (BOOL)checkIfAchievementIsSavedLocally:(NSString *)_achievementID
+{
 	NSMutableArray *currentAchievemList = [[NSUserDefaults standardUserDefaults] objectForKey:@"locallySavedAchievements"];
     
 	for (NSDictionary *achievement in currentAchievemList) {
@@ -367,7 +401,8 @@
 	return NO;
 }
 
-+ (void)saveUnlockedAchievementLocallyByObjectID:(NSDictionary *)_theAchievement{
++ (void)saveUnlockedAchievementLocallyByObjectID:(NSDictionary *)_theAchievement
+{
 	NSMutableArray *currentAchievemList = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"locallySavedAchievements"]];
 	
 	if (![BeintooAchievements checkIfAchievementIsSavedLocally:[[_theAchievement objectForKey:@"achievement"] objectForKey:@"objectID"]]) {
@@ -375,14 +410,20 @@
         dict = [_theAchievement mutableCopy];
         [[dict objectForKey:@"achievement"] setObject:[Beintoo getPlayerID] forKey:@"guid"];
 		[currentAchievemList addObject:dict];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [dict release];
+#endif
         
 	}
+    
 	[[NSUserDefaults standardUserDefaults] setObject:currentAchievemList forKey:@"locallySavedAchievements"];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-+ (BOOL)checkIfAchievementIsSavedLocallyByObjectID:(NSString *)_achievementObjectID{
++ (BOOL)checkIfAchievementIsSavedLocallyByObjectID:(NSString *)_achievementObjectID
+{
 	NSMutableArray *currentAchievemList = [[NSUserDefaults standardUserDefaults] objectForKey:@"locallySavedAchievements"];
     
 	for (NSDictionary *achievement in currentAchievemList) {
@@ -393,16 +434,17 @@
 	return NO;
 }
 
-+ (void)resetAllLocallyAchievementsUnlocked{
++ (void)resetAllLocallyAchievementsUnlocked
+{
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"locallySavedAchievements"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-
 #pragma mark -
 #pragma mark Parser Delegate
 
-- (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID{
+- (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID
+{
 	BeintooAchievements *achievementsService = [Beintoo beintooAchievementService];
     
     switch (callerID){
@@ -1149,7 +1191,12 @@
                     }
                 }
             }
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [currentGlobalAchievementId release];
+#endif
+            
         }
             break;
             
@@ -1170,11 +1217,15 @@
 
 - (void)dealloc {
     parser.delegate = nil;
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 	[parser release];
 	[rest_resource release];
 	[currentAchievementID release];
     [achievementQueue release];
 	[super dealloc];
+#endif
 }
 
 @end

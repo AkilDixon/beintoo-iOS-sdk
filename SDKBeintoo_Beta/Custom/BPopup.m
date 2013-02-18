@@ -23,6 +23,7 @@
 #import "BScrollView.h"
 #import "BButton.h"
 #import "BeintooGraphic.h"
+
 #define kShadeViewTag 1000
 
 @interface BPopup(Private)
@@ -30,7 +31,6 @@
 @end
 
 @implementation BPopup
-
 
 #pragma mark -
 #pragma mark Achievement popup
@@ -40,19 +40,31 @@
  * @param NSDictionary* _achievementInfo provide a dictionary with the info about the achievement to load, or a URL to load a web page
  * @param UIView* view provide a UIViewController's view here
  */
-+ (void)showPopupForAchievement:(NSDictionary *)_achievementInfo insideView:(UIView *)view{
-	[[BPopup alloc] initWithSuperview:view andAchievement:_achievementInfo];
-}
+
+/*+ (void)showPopupForAchievement:(NSDictionary *)_achievementInfo insideView:(UIView *)view
+{
+    [[BPopup alloc] initWithSuperview:view andAchievement:_achievementInfo];
+}*/
+
 // ---- ACHIEVEMENT INIT
-- (id)initWithSuperview:(UIView *)sview andAchievement:(NSDictionary *)_achievement{
+- (id)initWithSuperview:(UIView *)sview andAchievement:(NSDictionary *)_achievement
+{
     self = [super init];
     if (self) {
         // Initialization code here.
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        bgView = [[UIView alloc] initWithFrame: sview.bounds];
+#else
         bgView = [[[UIView alloc] initWithFrame: sview.bounds] autorelease];
+#endif
+        
         [sview addSubview: bgView];
 		
 		achievementOpenAppURL = [[NSString alloc] init];
+        
         // proceed with animation after the bgView was added
+        
         [self performSelector:@selector(doTransitionForAchievementWithContentFile:) withObject:_achievement afterDelay:0.1];
     }
     
@@ -64,8 +76,8 @@
  * and load the UIWebView
  */
 
--(void)doTransitionForAchievementWithContentFile:(NSDictionary *)_achievement{
-	
+- (void)doTransitionForAchievementWithContentFile:(NSDictionary *)_achievement
+{
 	NSArray *blockedByList	= [_achievement objectForKey:@"blockedBy"];
 	BOOL isBlockedByOthers = FALSE;
 	if (blockedByList != nil) {
@@ -75,7 +87,12 @@
     float viewHeight = [bgView bounds].size.height;
     float viewWidth = [bgView bounds].size.width;
 
-	bigPanelView = [[[BScrollView alloc] initWithFrame:CGRectMake(0, 0, bgView.frame.size.width-(viewWidth*0.1), bgView.frame.size.height-(viewHeight*0.4))] autorelease];
+#ifdef BEINTOO_ARC_AVAILABLE
+    bigPanelView = [[BScrollView alloc] initWithFrame:CGRectMake(0, 0, bgView.frame.size.width-(viewWidth*0.1), bgView.frame.size.height-(viewHeight*0.4))];
+#else
+    bigPanelView = [[[BScrollView alloc] initWithFrame:CGRectMake(0, 0, bgView.frame.size.width-(viewWidth*0.1), bgView.frame.size.height-(viewHeight*0.4))] autorelease];
+#endif
+	
 	[bigPanelView setGradientType:GRADIENT_BODY];
 	bigPanelView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
 	bigPanelView.alpha  = 1;
@@ -131,7 +148,7 @@
 		[bigPanelView addSubview:blockedByText];
 	}
 
-	for (int i = 0; i<[blockedByList count]; i++) {
+	for (int i = 0; i < [blockedByList count]; i++) {
 		NSDictionary *blockingAchievement = [blockedByList objectAtIndex:i];
 
 		NSDictionary *otherAppAchievement = [blockingAchievement objectForKey:@"app"];
@@ -183,9 +200,21 @@
 		[openAppButton setButtonTextSize:13];
 
 		// We set the URL to be opened
-		achievementOpenAppURL = [[[otherAppAchievement objectForKey:@"download_url"] objectForKey:@"IOS"] retain];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        achievementOpenAppURL = [[otherAppAchievement objectForKey:@"download_url"] objectForKey:@"IOS"];
+#else
+        achievementOpenAppURL = [[[otherAppAchievement objectForKey:@"download_url"] objectForKey:@"IOS"] retain];
+#endif
+        
 		if (achievementOpenAppURL == nil) {
-			achievementOpenAppURL = [[[otherAppAchievement objectForKey:@"download_url"] objectForKey:@"WEB"] retain];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+            achievementOpenAppURL = [[otherAppAchievement objectForKey:@"download_url"] objectForKey:@"WEB"];
+#else
+            achievementOpenAppURL = [[[otherAppAchievement objectForKey:@"download_url"] objectForKey:@"WEB"] retain];
+#endif
+			
 		}
 		
 		[bigPanelView addSubview:imageView];
@@ -198,18 +227,25 @@
 			}
 			[bigPanelView addSubview:onApp];
 		}
-				
-		[imageView release];
+		
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [imageView release];
 		[achievemName release];
 		[onApp release];
 		[openAppButton release];
+#endif
+		
 	}
 	
-	[textLabel release];
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [textLabel release];
 	[detailTextLabel release];
 	[imageView release];
 	[blockedByText release];
-    	
+#endif
+    
 	// -----------------------------------------------------------------------------
 
 	// Close Button
@@ -217,8 +253,9 @@
     UIImage* closeBtnImg = [UIImage imageNamed:@"popupCloseBtn.png"];
     UIButton* closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [closeBtn setImage:closeBtnImg forState:UIControlStateNormal];
-    [closeBtn setFrame:CGRectMake(bigPanelView.frame.size.width - closeBtnOffset-5, 10 ,
-								  closeBtnImg.size.width, closeBtnImg.size.height)];
+    [closeBtn setImage:closeBtnImg forState:UIControlStateHighlighted];
+    [closeBtn setImage:closeBtnImg forState:UIControlStateSelected];
+    [closeBtn setFrame:CGRectMake(bigPanelView.frame.size.width - closeBtnOffset - 5, 10, closeBtnImg.size.width, closeBtnImg.size.height)];
 	
     [closeBtn addTarget:self action:@selector(closePopupWindow) forControlEvents:UIControlEventTouchUpInside];
     [bigPanelView addSubview: closeBtn];
@@ -235,16 +272,18 @@
 	[[bgView layer] addAnimation:popupEnterAnimation forKey:nil];
 }
 
-- (void)openAppURL{
+- (void)openAppURL
+{
 	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:achievementOpenAppURL]];
 }
 
 /**
  * Removes the window background and calls the animation of the window
  */
--(void)closePopupWindow{
-	
-	bgView.alpha = 0;
+
+- (void)closePopupWindow
+{
+    bgView.alpha = 0;
 	CATransition *popupExitAnimation = [CATransition animation];
 	[popupExitAnimation setDuration:0.05f];
 	[popupExitAnimation setValue:@"exitAnimation" forKey:@"name"];
@@ -255,7 +294,8 @@
 	[[bgView layer] addAnimation:popupExitAnimation forKey:nil];
 }
 
-- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag{
+- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag
+{
 	if ([[animation valueForKey:@"name"] isEqualToString:@"exitAnimation"]) {
 		
 		for (UIView* child in bigPanelView.subviews) {
@@ -265,12 +305,21 @@
 			[child removeFromSuperview];
 		}
 		[bgView removeFromSuperview];
-		[self release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [self release];
+#endif
+		
 	}
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[achievementOpenAppURL release];
 	[super dealloc];
 }
+#endif
+
 @end

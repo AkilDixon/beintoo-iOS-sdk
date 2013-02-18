@@ -22,7 +22,8 @@
 
 @synthesize currentMessage, isFromNotification;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options
+{
 	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.currentMessage	= options;
@@ -42,7 +43,11 @@
 	
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];			
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
 	
 	[replyButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
 	[replyButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
@@ -62,7 +67,8 @@
 	[messageView setGradientType:GRADIENT_HEADER];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -95,8 +101,15 @@
 	}
 }
 
-- (void)loadImage{
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+- (void)loadImage
+{
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    @autoreleasepool {
+#else
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+#endif
+	
 	@try{
 		NSURL *imageURL = [NSURL URLWithString:[self.currentMessage  objectForKey:@"fromImgURL"]];
 		UIImage *userImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:imageURL]];
@@ -104,14 +117,21 @@
 	}
 	@catch (NSException * e) {
 	}
-	[BLoadingView stopActivity];	
-	[pool release];
+	[BLoadingView stopActivity];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+    }
+#else
+    [pool release];
+#endif
+	
 }
 
 #pragma mark -
 #pragma mark Message delegates
 
-- (void)didDeleteMessageWithResult:(BOOL)messageDeleted{
+- (void)didDeleteMessageWithResult:(BOOL)messageDeleted
+{
 	if (messageDeleted) {
 
 		// * Update total message count */
@@ -124,21 +144,29 @@
 		UIAlertView *av = [[UIAlertView alloc] initWithTitle:nil message:NSLocalizedStringFromTable(@"messageNotDeleted",@"BeintooLocalizable",@"") 
 													delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 		[av show];
-		[av release];		
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [av release];
+#endif
+		
 	}
 }
 
-- (void)didUserReadAMessage:(BOOL)messareRead{
+- (void)didUserReadAMessage:(BOOL)messareRead
+{
 	int unreadMsg = [BeintooMessage unreadMessagesCount];
-	[BeintooMessage setUnreadMessages:[NSString stringWithFormat:@"%d",(unreadMsg-1)]];
+	[BeintooMessage setUnreadMessages:[NSString stringWithFormat:@"%d", (unreadMsg - 1)]];
 }
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{ 
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
 	if (buttonIndex == 0 && alertView.tag == 123)
 		[self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result{
+- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result
+{
 	@try {
 		if ([result objectForKey:@"user"]!=nil) {
 			NSString *totalMessages  = [[result objectForKey:@"user"] objectForKey:@"messages"];
@@ -151,7 +179,12 @@
 														delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 			av.tag = 123;
 			[av show];
-			[av release];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [av release];
+#endif
+        
 		}
 	}
 	@catch (NSException * e) {
@@ -162,21 +195,27 @@
 #pragma mark -
 #pragma mark IBActions
 
-- (IBAction)deleteMessage{
+- (IBAction)deleteMessage
+{
 	[_message deleteMessageWithID:[self.currentMessage objectForKey:@"id"]];
 }
 
-- (IBAction)replyToMessage{
+- (IBAction)replyToMessage
+{
 	NSDictionary *replyOptions = [NSDictionary dictionaryWithObjectsAndKeys:self.currentMessage,@"replyOptions",nil];
-	[newMessageVC initWithNibName:@"BeintooNewMessageVC" bundle:[NSBundle mainBundle] andOptions:replyOptions];
+	newMessageVC = [newMessageVC initWithNibName:@"BeintooNewMessageVC" bundle:[NSBundle mainBundle] andOptions:replyOptions];
 	[self.navigationController pushViewController:newMessageVC animated:YES];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return NO;
 }
+#endif
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -193,20 +232,33 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     if (isFromNotification){
         if ([BeintooDevice isiPad]){
             [Beintoo dismissIpadNotifications];
         }
         else {
+
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
             [self dismissModalViewControllerAnimated:YES];
+#endif
+
         }
     }
     else
         [Beintoo dismissBeintoo];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
     [super viewWillDisappear:animated];
 
     _message.delegate = nil;
@@ -219,12 +271,14 @@
     }
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[newMessageVC release];
 	[_player release];
 	[_message release];
     [super dealloc];
 }
-
+#endif
 
 @end

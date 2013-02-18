@@ -19,8 +19,8 @@
 
 @implementation BTableViewCell
 
-
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier andGradientType:(int)gradientType {
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier andGradientType:(int)gradientType
+{
     if (self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier]) {
         CGRect cellFrame = CGRectMake(0.0, 0.0, self.contentView.bounds.size.width,
 									 self.contentView.bounds.size.height);
@@ -39,14 +39,18 @@
     return self;
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {	
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated
+{
     [super setSelected:selected animated:animated];
     self.textLabel.textColor = [UIColor blackColor];
     self.detailTextLabel.textColor = [UIColor colorWithRed:113.0/255 green:116.0/255 blue:121.0/255 alpha:1];	
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [super dealloc];
 }
+#endif
 
 @end

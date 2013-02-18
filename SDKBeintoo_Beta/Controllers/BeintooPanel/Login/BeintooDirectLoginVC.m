@@ -22,7 +22,8 @@
 
 @synthesize retrievedUsers, userImages, caller, isFromDirectLaunch;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     
     if (self) {
@@ -31,7 +32,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	int appOrientation = [Beintoo appOrientation];
@@ -44,7 +46,11 @@
         logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bar_logo.png"]];
     
     self.navigationItem.titleView = logo;
-	[logo release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [logo release];
+#endif
     
 	[loginView setTopHeight:53.0];
 	[loginView setBodyHeight:375.0];
@@ -79,8 +85,12 @@
 	
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
+	
     buttonItem.title = NSLocalizedStringFromTable(@"useAnotherAccount",@"BeintooLocalizable",@"Use another account");
     
     if (![BeintooDevice isiPad] && ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight || 
@@ -92,7 +102,8 @@
     }
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -103,7 +114,8 @@
     [BLoadingView startActivity:loginView];
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -120,38 +132,56 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"SignupClosed" object:self];
-    
-    /*BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
-    [Beintoo dismissBeintoo:navController.type];*/
+- (void)closeBeintoo
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationSignupClosed object:self];
     
     if ([BeintooDevice isiPad]){
         [Beintoo dismissIpadLogin];
     }
     else {
-        [self dismissModalViewControllerAnimated:YES];
+        
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
+            [self dismissModalViewControllerAnimated:YES];
+#endif
+
     }
 }
 
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
     return [retrievedUsers count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }
     if ([retrievedUsers isKindOfClass:[NSDictionary class]]) {
         return cell;
@@ -173,8 +203,8 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{    
 	NSDictionary *user	= [retrievedUsers objectAtIndex:indexPath.row];	
 	NSString *userID	= [user objectForKey:@"id"];
 	
@@ -185,7 +215,8 @@
 #pragma mark -
 #pragma mark GeneratePlayer
 
-- (void)generatePlayerIfNotExists{
+- (void)generatePlayerIfNotExists
+{
 	if ([Beintoo getPlayerID] == nil) {
 		NSDictionary *anonymPlayer = [_player blockingLogin:@""];
 		if ([anonymPlayer objectForKey:@"guid"] == nil) {			
@@ -198,8 +229,8 @@
 	}
 }
 
-- (void)didGetUserByUDID:(NSMutableArray *)result{
-    
+- (void)didGetUserByUDID:(NSMutableArray *)result
+{    
     [BLoadingView stopActivity];
     
     [Beintoo setLastLoggedPlayers:(NSArray *)result];
@@ -211,7 +242,12 @@
         if (isFromDirectLaunch)
            registrationVC.isFromDirectLaunch = YES;
         [self.navigationController pushViewController:registrationVC animated:NO];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [registrationVC release];
+#endif
+        
     }
     else{
         [userImages removeAllObjects];
@@ -232,7 +268,12 @@
             @catch (NSException * e) {
                 BeintooLOG(@"BeintooException: %@ \n for object: %@", e, [retrievedUsers objectAtIndex:i]);
             }
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [download release];
+#endif
+            
         }
         [retrievedPlayersTable reloadData];		
     }
@@ -247,14 +288,15 @@
 #pragma mark -
 #pragma mark Delegates
 
-- (void)playerDidLogin:(BeintooPlayer *)player{	
+- (void)playerDidLogin:(BeintooPlayer *)player
+{
 	[BLoadingView stopActivity];
 	if ([player loginError] == LOGIN_NO_ERROR) {
 		[retrievedPlayersTable deselectRowAtIndexPath:[retrievedPlayersTable indexPathForSelectedRow] animated:YES];
 		
         [Beintoo postNotificationBeintooUserDidLogin];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadDashboard" object:self];
+        [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationReloadDashboard object:self];
         
         /*BeintooNavigationController *navController = (BeintooNavigationController *)self.navigationController;
         [Beintoo dismissBeintoo:navController.type];*/
@@ -262,7 +304,18 @@
             [Beintoo dismissIpadLogin];
         }
         else {
+            
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
             [self dismissModalViewControllerAnimated:YES];
+#endif
+
         }
     }
 }
@@ -270,32 +323,44 @@
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
 
-- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
     NSUInteger index = [userImages indexOfObject:download]; 
     NSUInteger indices[] = {0, index};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
 	[retrievedPlayersTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [path release];
+#endif
+    
     download.delegate = nil;
 }
 
-- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
     BeintooLOG(@"imagedownloadingerror: %@", [error localizedDescription]);
 }
 
 #pragma mark -
 #pragma mark CommonMethods
 
-- (IBAction)otherPlayer{	
-    
+- (IBAction)otherPlayer
+{    
     registrationVC	 = [[BeintooSigninVC alloc] initWithNibName:@"BeintooSigninVC" bundle:[NSBundle mainBundle]];
     
     [self.navigationController pushViewController:registrationVC animated:YES];
-    [registrationVC release];
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [registrationVC release];
+#endif
+   
 }
 
-- (NSString *)translateLevel:(NSNumber *)levelNumber{	
+- (NSString *)translateLevel:(NSNumber *)levelNumber
+{
 	if (levelNumber.intValue==1) {return NSLocalizedStringFromTable(@"novice",@"BeintooLocalizable",@"Novice");}
 	else if(levelNumber.intValue==2){return NSLocalizedStringFromTable(@"learner",@"BeintooLocalizable",@"Learner");}
 	else if(levelNumber.intValue==3){return NSLocalizedStringFromTable(@"passionate",@"BeintooLocalizable",@"Passionate");}
@@ -305,7 +370,10 @@
 		return @"";
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
     @try {
 		[BLoadingView stopActivity];
 	}
@@ -313,10 +381,15 @@
 	}
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return (interfaceOrientation == [Beintoo appOrientation]);
 }
+#endif
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [_user release];
     [userImages release];
@@ -324,5 +397,6 @@
 	//[retrievedUsers release];
     [super dealloc];
 }
+#endif
 
 @end

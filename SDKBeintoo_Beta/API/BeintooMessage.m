@@ -17,18 +17,18 @@
 #import "BeintooMessage.h"
 #import "Beintoo.h"
 
-
 @implementation BeintooMessage
 
 @synthesize delegate,parser;
 
--(id)init {
+-(id)init
+{
 	if (self = [super init])
 	{
         parser = [[Parser alloc] init];
 		parser.delegate = self;
 		
-		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/message/",[Beintoo getRestBaseUrl]]];
+		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/message/", [Beintoo getRestBaseUrl]]];
 
 	}
     return self;
@@ -37,21 +37,25 @@
 #pragma mark -
 #pragma mark API
 
-- (void)showMessagesFrom:(int)start andRows:(int)rows{
+- (void)showMessagesFrom:(int)start andRows:(int)rows
+{
 	NSString *userID	 = [Beintoo getUserID];
 	NSString *res		 = [NSString stringWithFormat:@"%@?start=%d&rows=%d",rest_resource,start,rows];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey],@"apikey",userID,@"to",nil];
 	[parser parsePageAtUrl:res withHeaders:params fromCaller:MESSAGE_SHOW_CALLER_ID];	
 }
 
-- (void)sendMessageTo:(NSString *)userID withText:(NSString *)text{
+- (void)sendMessageTo:(NSString *)userID withText:(NSString *)text
+{
 	NSString *thisUserID = [Beintoo getUserID];
 	NSString *res		 = [NSString stringWithFormat:@"%@",rest_resource];
 	NSString *httpBody   = [NSString stringWithFormat:@"from=%@&to=%@&text=%@",thisUserID,userID,text];
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", nil];
 	[parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:MESSAGE_SEND_CALLER_ID];
 }
-- (void)setToReadMessageWithID:(NSString *)messageid{
+
+- (void)setToReadMessageWithID:(NSString *)messageid
+{
 	NSString *thisUserID = [Beintoo getUserID];
 	NSString *res		 = [NSString stringWithFormat:@"%@%@",rest_resource,messageid];
 	NSString *httpBody   = [NSString stringWithFormat:@"status=READ"];
@@ -59,7 +63,8 @@
 	[parser parsePageAtUrlWithPOST:res withHeaders:params withHTTPBody:httpBody fromCaller:MESSAGE_SET_READ_CALLER_ID];
 }
 
-- (void)deleteMessageWithID:(NSString *)messageid{
+- (void)deleteMessageWithID:(NSString *)messageid
+{
 	NSString *thisUserID = [Beintoo getUserID];
 	NSString *res		 = [NSString stringWithFormat:@"%@%@",rest_resource,messageid];
 	NSString *httpBody   = [NSString stringWithFormat:@"status=ARCHIVED"];
@@ -71,7 +76,8 @@
 #pragma mark -
 #pragma mark Parser Delegate
 
-- (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID{	
+- (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID
+{
 	switch (callerID){
 		case MESSAGE_SHOW_CALLER_ID:{
 			if ([[self delegate] respondsToSelector:@selector(didFinishToLoadMessagesWithResult:)])
@@ -118,28 +124,39 @@
 #pragma mark -
 #pragma mark Class Methods
 
-+ (int)unreadMessagesCount{
++ (int)unreadMessagesCount
+{
 	NSString *unread = [[NSUserDefaults standardUserDefaults] objectForKey:@"unreadMessages"];
 	return [unread intValue];
 }
-+ (int)totalMessagesCount{
+
++ (int)totalMessagesCount
+{
 	NSString *total = [[NSUserDefaults standardUserDefaults] objectForKey:@"totalMessages"];
 	return [total intValue];	
 }
-+ (void)setUnreadMessages:(NSString *)totalMessages{
+
++ (void)setUnreadMessages:(NSString *)totalMessages
+{
 	[[NSUserDefaults standardUserDefaults] setObject:totalMessages forKey:@"unreadMessages"];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }
-+ (void)setTotalMessages:(NSString *)totalMessages{
+
++ (void)setTotalMessages:(NSString *)totalMessages
+{
 	[[NSUserDefaults standardUserDefaults] setObject:totalMessages forKey:@"totalMessages"];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)dealloc {
     parser.delegate = nil;
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 	[parser release];
 	[rest_resource release];
     [super dealloc];
+#endif
 }
 
 @end

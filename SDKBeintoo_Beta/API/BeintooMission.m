@@ -17,12 +17,12 @@
 #import "BeintooMission.h"
 #import "Beintoo.h"
 
-
 @implementation BeintooMission
 
-@synthesize delegate,parser,callingDelegate;
+@synthesize delegate, parser, callingDelegate;
 
--(id)init {
+-(id)init
+{
 	if (self = [super init])
 	{
         parser = [[Parser alloc] init];
@@ -34,16 +34,16 @@
 }
 
 
-- (NSString *)restResource{
+- (NSString *)restResource
+{
 	return rest_resource;
 }
-
 
 #pragma mark -
 #pragma mark Public API
 
-+ (void)getMission{
-    
++ (void)getMission
+{
     NSString *lastMissionTimestamp = [Beintoo getMissionTimestamp];
     NSInteger hoursFromLastTs      = [BeintooDevice elapsedHoursSinceTimestamp:lastMissionTimestamp];
 
@@ -71,7 +71,8 @@
     [missionService.parser parsePageAtUrl:res withHeaders:params fromCaller:MISSION_GET_CALLER_ID];*/
 }
 
-+ (void)refuseMission{
++ (void)refuseMission
+{
     /*BeintooMission *missionService = [Beintoo beintooMissionService];
     NSString *res = [NSString stringWithFormat:@"%@/refuse/",[missionService restResource]];
 
@@ -82,11 +83,11 @@
     [missionService.parser parsePageAtUrl:res withHeaders:params fromCaller:MISSION_REFUSE_CALLER_ID]*/;
 }
 
-
 #pragma mark -
 #pragma mark Parser Delegate
 
-- (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID{	
+- (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID
+{
 	switch (callerID){
 		case MISSION_GET_CALLER_ID:{
             
@@ -123,15 +124,22 @@
 #pragma mark -
 #pragma mark Class Methods
 
-+ (void)setMissionDelegate:(id)_caller{
++ (void)setMissionDelegate:(id)_caller
+{
 	/*BeintooMission *missionService = [Beintoo beintooMissionService];
 	missionService.callingDelegate = _caller;*/
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 	[parser release];
 	[rest_resource release];
     [super dealloc];
+#endif
+    
 }
 
 @end

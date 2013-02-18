@@ -34,9 +34,15 @@
 - (void)setNotificationReadWithNotificationID:(NSString *)_notificationID;
 - (void)setAllNotificationReadUpToNotification:(NSString *)_notificationID;
 
+#ifdef BEINTOO_ARC_AVAILABLE
+@property(nonatomic, retain) id <BeintooNotificationDelegate> delegate;
+@property(nonatomic, retain) id callingDelegate;
+#else
 @property(nonatomic, assign) id <BeintooNotificationDelegate> delegate;
-@property(nonatomic,retain) Parser *parser;
 @property(nonatomic, assign) id callingDelegate;
+#endif
+
+@property(nonatomic,retain) Parser *parser;
 
 @end
 

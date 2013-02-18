@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright 2011 Beintoo - author fmessina@beintoo.com
- * 
+ * Copyright 2012 Beintoo
+ * Author Giuseppe Piazzese (gpiazzese@beintoo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,17 +20,17 @@
 
 @implementation Beintoo
 
-NSString *BNSDefIsUserLogged;
+#pragma mark - Init Beintoo
 
 + (void)initWithApiKey:(NSString *)_apikey andApiSecret:(NSString *)_apisecret 
 										   andBeintooSettings:(NSDictionary *)_settings 
-										   andMainDelegate:(id<BeintooMainDelegate>)beintooMainDelegate{
-	
+										   andMainDelegate:(id<BeintooMainDelegate>)beintooMainDelegate
+{
 	if ([Beintoo sharedInstance]) { 
 		return; // -- Beintoo already initialized -- //
 	}
-	
-	[Beintoo createSharedBeintoo];
+    
+    [Beintoo createSharedBeintoo];
 	Beintoo *beintooInstance = [Beintoo sharedInstance];
 	
 	beintooInstance->mainDelegate = beintooMainDelegate;
@@ -46,14 +47,14 @@ NSString *BNSDefIsUserLogged;
 	[Beintoo initVgoodService];
 	[Beintoo initAchievementsService];
     [Beintoo initBestoreService];
+    [Beintoo initAppService];
+    [Beintoo initAdService];
+    [Beintoo initRewardService];
 	
 	// Settings initialization
 	[Beintoo initBeintooSettings:_settings];
 
-	// Beintoo main controllers initialization
-	//[Beintoo initMainNavigationController];
-	
-    [Beintoo initMainController];
+	[Beintoo initMainController];
 	[Beintoo initVgoodNavigationController];
 	[Beintoo initiPadController];
 	
@@ -62,6 +63,175 @@ NSString *BNSDefIsUserLogged;
         [Beintoo initPopoversForiPad];
     }
 }
+
+#pragma mark - Player methods
+
++ (void)login
+{
+    [BeintooPlayer login];
+}
+
++ (void)submitScore:(int)score
+{
+    [BeintooPlayer submitScore:score];
+}
+
++ (void)submitScore:(int)score forContest:(NSString *)contestID
+{
+    [BeintooPlayer submitScore:score forContest:contestID];
+}
+
++ (void)submitScore:(int)score forContest:(NSString *)contestID withThreshold:(int)threshold
+{
+    [BeintooPlayer submitScoreAndGetRewardForScore:score andContest:contestID withThreshold:threshold];
+}
+
++ (void)submitScoreAndGetRewardForScore:(int)score andContest:(NSString *)codeID withThreshold:(int)threshold
+{
+    [BeintooPlayer submitScoreAndGetRewardForScore:score andContest:codeID withThreshold:threshold];
+}
+
++ (int)getThresholdScoreForCurrentPlayerWithContest:(NSString *)codeID
+{
+    return [BeintooPlayer getThresholdScoreForCurrentPlayerWithContest:codeID];
+}
+
++ (void)getScore
+{
+    [BeintooPlayer getScore];
+}
+
+#pragma mark - Give Bedollars methods
+
++ (void)giveBedollars:(float)amount showNotification:(BOOL)showNotification withPosition:(int)position
+{
+    [BeintooApp giveBedollars:amount showNotification:showNotification withPosition:position];
+}
+
+#pragma mark - Rewards methods
+
++ (void)getReward
+{
+    [BeintooReward getReward];
+}
+
++ (void)getRewardWithDelegate:(id)_delegate
+{
+    [BeintooReward getRewardWithDelegate:_delegate];
+}
+
++ (void)getRewardWithContest:(NSString *)contestID
+{
+    [BeintooReward getRewardWithContest:contestID];
+}
+
+#pragma mark - Request AD methods
+
++ (void)requestAndDisplayAdWithDeveloperUserGuid:(NSString *)_developerUserGuid
+{
+    [BeintooAd requestAndDisplayAdWithDeveloperUserGuid:nil];
+}
+
++ (void)requestAdWithDeveloperUserGuid:(NSString *)_developerUserGuid
+{
+    [BeintooAd requestAdWithDeveloperUserGuid:nil];
+}
+
+#pragma mark - Achievements methods
+
++ (void)unlockAchievement:(NSString *)achievementID
+{
+    [BeintooAchievements unlockAchievement:achievementID];
+}
+
++ (void)unlockAchievement:(NSString *)achievementID showNotification:(BOOL)showNotification
+{
+    [Beintoo unlockAchievement:achievementID showNotification:showNotification];
+}
+
++ (void)setAchievement:(NSString *)achievementID withPercentage:(int)percentage {
+    [Beintoo setAchievement:achievementID withPercentage:percentage];
+}
+
++ (void)setAchievement:(NSString *)achievementID withPercentage:(int)percentage showNotification:(BOOL)showNotification{
+    [Beintoo setAchievement:achievementID withPercentage:percentage showNotification:showNotification];
+}
+
++ (void)setAchievement:(NSString *)achievementID withScore:(int)score
+{
+    [BeintooAchievements setAchievement:achievementID withScore:score];
+}
+
++ (void)incrementAchievement:(NSString *)achievementID withScore:(int)score
+{
+    [BeintooAchievements incrementAchievement:achievementID withScore:score];
+}
+
++ (void)getAchievementStatusAndPercentage:(NSString *)achievementID
+{
+    [BeintooAchievements getAchievementStatusAndPercentage:achievementID];
+}
+
+// BY OBJECT ID
+
++ (void)unlockAchievementByObjectID:(NSString *)objectID showNotification:(BOOL)showNotification
+{
+    [BeintooAchievements unlockAchievementByObjectID:objectID showNotification:showNotification];
+}
+
++ (void)setAchievementByObjectID:(NSString *)objectID withPercentage:(int)percentage showNotification:(BOOL)showNotification
+{
+    [BeintooAchievements setAchievementByObjectID:objectID withPercentage:percentage showNotification:showNotification];
+}
+
++ (void)unlockAchievementsInBackground:(NSArray *)achievementArray
+{
+    [BeintooAchievements unlockAchievementsInBackground:achievementArray];
+}
+
++ (void)unlockAchievementsByObjectIDInBackground:(NSArray *)achievementArray
+{
+    [BeintooAchievements unlockAchievementsByObjectIDInBackground:achievementArray];
+}
+
+#pragma mark - Set Delegates methods
+
++ (void)setPlayerDelegate:(id)delegate
+{
+    [BeintooPlayer setDelegate:delegate];
+}
+
++ (void)setUserDelegate:(id)delegate
+{
+    [BeintooUser setDelegate:delegate];
+}
+
++ (void)setAchievementsDelegate:(id)delegate
+{
+    [BeintooAchievements setDelegate:delegate];
+}
+
++ (void)setRewardDelegate:(id)delegate
+{
+    [BeintooReward setDelegate:delegate];
+}
+
++ (void)setVgoodDelegate:(id)delegate
+{
+    [BeintooVgood setDelegate:delegate];
+}
+
++ (void)setAppDelegate:(id)delegate
+{
+    [BeintooApp setDelegate:delegate];
+}
+
++ (void)setAdDelegate:(id)delegate
+{
+    [BeintooAd setDelegate:delegate];
+}
+
+#pragma mark - Launch and Dismiss methods
 
 + (void)launchBeintoo{
 	[Beintoo _launchBeintooOnApp];
@@ -115,6 +285,14 @@ NSString *BNSDefIsUserLogged;
     [Beintoo _launchPrizeOnAppWithDelegate:_beintooPrizeDelegate];
 }
 
++ (void)launchGiveBedollarsWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate position:(int)position{
+    [Beintoo _launchGiveBedollarsWithDelegate:_beintooPrizeDelegate position:position];
+}
+
++ (void)dismissGiveBedollarsController{
+	[Beintoo _dismissGiveBedollarsController];
+}
+
 + (void)displayAd{
 	[Beintoo _launchAd];
 }
@@ -163,118 +341,42 @@ NSString *BNSDefIsUserLogged;
 	[Beintoo _launchPrivateNotificationsOnApp];
 }
 
-+ (NSString *)getApiKey{
+#pragma mark - Global Services
 
-	return [Beintoo sharedInstance]->apiKey;
-}
-
-+ (NSArray *)getFeatureList{
-	return [Beintoo sharedInstance]->featuresArray;
++ (BeintooVgood *)beintooVgoodService{
+	return [Beintoo sharedInstance]->beintooVgoodService;
 }
 
-+ (NSArray *)getLastLoggedPlayers{
-	Beintoo *beintooInstance = [Beintoo sharedInstance];
-	return [beintooInstance->lastLoggedPlayers retain];	
++ (BeintooPlayer *)beintooPlayerService{
+	return [Beintoo sharedInstance]->beintooPlayerService;
 }
 
-+ (NSDictionary *)getLastRetrievedMission{
-    return [Beintoo sharedInstance]->lastRetrievedMission;
++ (BeintooUser *)beintooUserService{
+	return [Beintoo sharedInstance]->beintooUserService;
 }
 
-+ (void)setLastRetrievedMission:(NSDictionary *)_mission{
-    [Beintoo sharedInstance]->lastRetrievedMission = [_mission retain];
-}
-								
-+ (NSString *)currentVersion{
-	return @"2.9.1beta-ios";
++ (BeintooAchievements *)beintooAchievementService{
+	return [Beintoo sharedInstance]->beintooAchievementsService;
 }
 
-+ (NSInteger)notificationPosition{
-    return [Beintoo sharedInstance]->notificationPosition;
++ (BeintooBestore *)beintooBestoreService{
+    return [Beintoo sharedInstance]->beintooBestoreService;
 }
 
-+ (BOOL)isUserLogged{
-	return [[NSUserDefaults standardUserDefaults] boolForKey:BNSDefIsUserLogged];
++ (BeintooApp *)beintooAppService{
+    return [Beintoo sharedInstance]->beintooAppService;
 }
 
-+ (BOOL)isRegistrationForced{
-	return [Beintoo sharedInstance]->forceRegistration;
-}
-+ (BOOL)showAchievementNotification{
-    return [Beintoo sharedInstance]->showAchievementNotification;
-}
-+ (BOOL)showLoginNotification{
-    return [Beintoo sharedInstance]->showLoginNotification;
-}
-+ (BOOL)showScoreNotification{
-    return [Beintoo sharedInstance]->showScoreNotification;
-}
-+ (BOOL)showNoRewardNotification{
-    return [Beintoo sharedInstance]->showNoRewardNotification;
-}
-+ (BOOL)dismissBeintooOnRegistrationEnd{
-    return [Beintoo sharedInstance]->dismissBeintooAfterRegistration;
-}
-+ (BOOL)isStatusBarHiddenOnApp{
-    return [Beintoo sharedInstance]->statusBarHiddenOnApp;
++ (BeintooAd *)beintooAdService{
+    return [Beintoo sharedInstance]->beintooAdService;
 }
 
-+ (BOOL)isTryBeintooForced{
-    return [Beintoo sharedInstance]->forceTryBeintoo;
-}
-+ (BOOL)isOnSandbox{
-	if ([Beintoo sharedInstance]) {
-		return [Beintoo sharedInstance]->isOnSandbox;
-	}
-	return NO;
-}
-+ (BOOL)isTryBeintooImageTypeReward{
-    return [Beintoo sharedInstance]->tryBeintooImageTypeReward;
++ (BeintooReward *)beintooRewardService
+{
+    return [Beintoo sharedInstance]->beintooRewardService;
 }
 
-+ (BOOL)isOnPrivateSandbox{
-	if ([Beintoo sharedInstance]) {
-		return [Beintoo sharedInstance]->isOnPrivateSandbox;
-	}
-	return NO;
-}
-
-+ (void)_setUserLocation:(CLLocation *)_location{
-	[Beintoo sharedInstance]->userLocation = _location;
-}
-
-+ (BOOL)userHasAllowedLocationServices{
-	
-    CLLocationManager *_locationManager = [Beintoo sharedInstance]->locationManager;
-	BOOL isLocationServicesEnabled;
-    
-    if ([CLLocationManager respondsToSelector:@selector(locationServicesEnabled)]) {
-		isLocationServicesEnabled = [CLLocationManager locationServicesEnabled];	
-	}
-#if __IPHONE_OS_VERSION_MIN_ALLOWED < BEINTOO_IOS_4_0
-    else {
-		isLocationServicesEnabled = _locationManager.locationServicesEnabled;
-	}
-#endif
-    
-	return isLocationServicesEnabled;
-}
-
-+ (void)setUserLogged:(BOOL)isLoggedValue{
-	[[NSUserDefaults standardUserDefaults] setBool:isLoggedValue forKey:BNSDefIsUserLogged];
-	if (!isLoggedValue) {
-		[Beintoo _playerLogout];
-	}
-}
-
-+ (NSString *)getMissionTimestamp{
-    return [[NSUserDefaults standardUserDefaults] objectForKey:@"LastSeenMissionTimestamp"];
-}
-
-+ (void)setMissionTimestamp:(NSString *)_timestamp{
-    [[NSUserDefaults standardUserDefaults] setObject:_timestamp forKey:@"LastSeenMissionTimestamp"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
+#pragma mark - Global Controllers
 
 + (UIViewController *)getMainController{
 	return [Beintoo sharedInstance]->mainController;
@@ -329,9 +431,145 @@ NSString *BNSDefIsUserLogged;
 	return [Beintoo sharedInstance]->beintooNotificationsVC;
 }
 
-// -----------------------------------
-// Beintoo Player
-// -----------------------------------
+#pragma mark - Private Methods
+
++ (dispatch_queue_t)beintooDispatchQueue{
+    return [Beintoo sharedInstance]->beintooDispatchQueue;
+}
+
+
++ (NSString *)getApiKey{
+
+	return [Beintoo sharedInstance]->apiKey;
+}
+
++ (NSArray *)getFeatureList{
+	return [Beintoo sharedInstance]->featuresArray;
+}
+
++ (NSArray *)getLastLoggedPlayers{
+	Beintoo *beintooInstance = [Beintoo sharedInstance];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    return beintooInstance->lastLoggedPlayers;
+#else
+	return [beintooInstance->lastLoggedPlayers retain];
+#endif
+}
+
++ (NSDictionary *)getLastRetrievedMission{
+    return [Beintoo sharedInstance]->lastRetrievedMission;
+}
+
++ (void)setLastRetrievedMission:(NSDictionary *)_mission
+{
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    [Beintoo sharedInstance]->lastRetrievedMission = _mission;
+#else
+	[Beintoo sharedInstance]->lastRetrievedMission = [_mission retain];
+#endif
+    
+}
+								
++ (NSString *)currentVersion{
+	return BeintooSdkVersion;
+}
+
++ (NSInteger)notificationPosition{
+    return [Beintoo sharedInstance]->notificationPosition;
+}
+
++ (BOOL)isUserLogged{
+	return [[NSUserDefaults standardUserDefaults] boolForKey:BNSDefIsUserLogged];
+}
+
++ (BOOL)isRegistrationForced{
+	return [Beintoo sharedInstance]->forceRegistration;
+}
++ (BOOL)showAchievementNotification{
+    return [Beintoo sharedInstance]->showAchievementNotification;
+}
++ (BOOL)showLoginNotification{
+    return [Beintoo sharedInstance]->showLoginNotification;
+}
++ (BOOL)showScoreNotification{
+    return [Beintoo sharedInstance]->showScoreNotification;
+}
++ (BOOL)showNoRewardNotification{
+    return [Beintoo sharedInstance]->showNoRewardNotification;
+}
++ (BOOL)dismissBeintooOnRegistrationEnd{
+    return [Beintoo sharedInstance]->dismissBeintooAfterRegistration;
+}
++ (BOOL)isStatusBarHiddenOnApp{
+    return [Beintoo sharedInstance]->statusBarHiddenOnApp;
+}
+
++ (BOOL)isTryBeintooForced{
+    return [Beintoo sharedInstance]->forceTryBeintoo;
+}
++ (BOOL)isOnSandbox{
+	if ([Beintoo sharedInstance]) {
+		return [Beintoo sharedInstance]->isOnSandbox;
+	}
+	return NO;
+}
++ (BOOL)isTryBeintooImageTypeReward{
+    return [Beintoo sharedInstance]->tryBeintooImageTypeReward;
+}
+
++ (BOOL)isOnPrivateSandbox{
+	if ([Beintoo sharedInstance]) {
+		return [Beintoo sharedInstance]->isOnPrivateSandbox;
+	}
+	return NO;
+}
+
++ (void)_privateSandbox
+{
+	[Beintoo privateSandbox];
+}
+
++ (void)_setUserLocation:(CLLocation *)_location{
+	[Beintoo sharedInstance]->userLocation = _location;
+}
+
++ (BOOL)userHasAllowedLocationServices{
+	
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_4_0
+    CLLocationManager *_locationManager = [Beintoo sharedInstance]->locationManager;
+#endif
+	BOOL isLocationServicesEnabled;
+    
+    if ([CLLocationManager respondsToSelector:@selector(locationServicesEnabled)]) {
+		isLocationServicesEnabled = [CLLocationManager locationServicesEnabled];	
+	}
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_4_0
+    else {
+		isLocationServicesEnabled = _locationManager.locationServicesEnabled;
+	}
+#endif
+    
+	return isLocationServicesEnabled;
+}
+
++ (void)setUserLogged:(BOOL)isLoggedValue{
+	[[NSUserDefaults standardUserDefaults] setBool:isLoggedValue forKey:BNSDefIsUserLogged];
+	if (!isLoggedValue) {
+		[Beintoo _playerLogout];
+	}
+}
+
++ (NSString *)getMissionTimestamp{
+    return [[NSUserDefaults standardUserDefaults] objectForKey:@"LastSeenMissionTimestamp"];
+}
+
++ (void)setMissionTimestamp:(NSString *)_timestamp{
+    [[NSUserDefaults standardUserDefaults] setObject:_timestamp forKey:@"LastSeenMissionTimestamp"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 + (NSDictionary *)getPlayer{
 	return [[NSUserDefaults standardUserDefaults]objectForKey:BNSDefLoggedPlayer];
 }
@@ -343,10 +581,6 @@ NSString *BNSDefIsUserLogged;
 + (void)playerLogout{
 	[self _playerLogout];
 }
-
-// -----------------------------------
-// Beintoo User
-// -----------------------------------
 
 + (NSDictionary *)getUserIfLogged
 {
@@ -373,19 +607,25 @@ NSString *BNSDefIsUserLogged;
     return [Beintoo _isAFriendOfMine:_friendID];
 }
 
-// -----------------------------------
-// Virtual Good
-// -----------------------------------
-
 + (BVirtualGood *)getLastGeneratedVGood{
 	@synchronized(self){
-		return [[Beintoo sharedInstance]->lastGeneratedGood retain];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+        return [Beintoo sharedInstance]->lastGeneratedGood;
+#else
+        return [[Beintoo sharedInstance]->lastGeneratedGood retain];
+#endif
+        
 	}
 }
 
 + (BVirtualGood *)getLastGeneratedAd{
 	@synchronized(self){
-		return [[Beintoo sharedInstance]->lastGeneratedAd retain];
+#ifdef BEINTOO_ARC_AVAILABLE
+        return [Beintoo sharedInstance]->lastGeneratedAd;
+#else
+        return [[Beintoo sharedInstance]->lastGeneratedAd retain];
+#endif
 	}
 }
 
@@ -396,35 +636,27 @@ NSString *BNSDefIsUserLogged;
         return NO;
 }
 
-#pragma mark - Thresholds
++ (BVirtualGood *)getLastGeneratedGiveBedollars{
+	@synchronized(self){
+#ifdef BEINTOO_ARC_AVAILABLE
+        return [Beintoo sharedInstance]->lastGeneratedGiveBedollars;
+#else
+        return [[Beintoo sharedInstance]->lastGeneratedGiveBedollars retain];
+#endif
+	}
+}
+
++ (void)setLastGeneratedGiveBedollars:(BVirtualGood *)_content{
+	@synchronized(self){
+		[self _setLastGiveBedollars:_content];
+	}
+}
 
 + (NSDictionary *)getAppVgoodThresholds{
     return [[Beintoo getPlayer] objectForKey:@"vgoodThreshold"];
 }
 
-+ (BeintooVgood *)beintooVgoodService{
-	return [Beintoo sharedInstance]->beintooVgoodService;
-}
-
-+ (BeintooPlayer *)beintooPlayerService{
-	return [Beintoo sharedInstance]->beintooPlayerService;
-}
-
-+ (BeintooUser *)beintooUserService{
-	return [Beintoo sharedInstance]->beintooUserService;
-}
-
-+ (BeintooAchievements *)beintooAchievementService{
-	return [Beintoo sharedInstance]->beintooAchievementsService;
-}
-
-+ (BeintooBestore *)beintooBestoreService{
-    return [Beintoo sharedInstance]->beintooBestoreService;
-}
-
-// -----------------------------------
-// Devolper's Custom Virtual Currency
-// -----------------------------------
+#pragma mark - Virtual Currency Methods
 
 + (void)setVirtualCurrencyName:(NSString *)_name{
     [Beintoo _setDeveloperCurrencyName:_name];
@@ -468,6 +700,8 @@ NSString *BNSDefIsUserLogged;
 + (BOOL)isVirtualCurrencyStored{
     return [Beintoo _isCurrencyStored];
 }
+
+#pragma mark - Common methods
 
 + (void)setLastGeneratedVgood:(BVirtualGood *)_theVGood{
 	@synchronized(self){
@@ -525,58 +759,9 @@ NSString *BNSDefIsUserLogged;
 	return nil;	
 }
 
-+ (void)postNotificationBeintooUserDidLogin{
-	[Beintoo _beintooUserDidLogin];		
-}
-
-+ (void)postNotificationBeintooUserDidSignup{
-	[Beintoo _beintooUserDidSignup];		
-}
-
 + (void)switchBeintooToSandbox{
 	[Beintoo switchToSandbox];
 	BeintooLOG(@"------------------------------------- Beintoo Sandbox ON -------------------------------------");
-}
-
-#pragma mark - Dispatch Queue
-
-+ (dispatch_queue_t)beintooDispatchQueue{
-    return [Beintoo sharedInstance]->beintooDispatchQueue;
-}
-
-#pragma mark -
-#pragma mark DelegateNotifications
-
-+ (void)notifyVGoodGenerationOnMainDelegate{
-	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	
-	if ([_mainDelegate respondsToSelector:@selector(didBeintooGenerateAVirtualGood:)]) {
-		[_mainDelegate didBeintooGenerateAVirtualGood:[Beintoo sharedInstance]->lastGeneratedGood];
-	}	
-}
-
-+ (void)notifyVGoodGenerationErrorOnMainDelegate:(NSDictionary *)_error{
-	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	
-	if ([_mainDelegate respondsToSelector:@selector(didBeintooFailToGenerateAVirtualGoodWithError:)]) {
-		[_mainDelegate didBeintooFailToGenerateAVirtualGoodWithError:_error];
-	}	
-}
-
-+ (void)notifyAdGenerationOnMainDelegate{
-	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	
-	if ([_mainDelegate respondsToSelector:@selector(didBeintooGenerateAnAd:)]) {
-		[_mainDelegate didBeintooGenerateAnAd:[Beintoo sharedInstance]->lastGeneratedAd];
-	}
-}
-
-+ (void)notifyAdGenerationErrorOnMainDelegate:(NSDictionary *)_error{
-	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	
-	if ([_mainDelegate respondsToSelector:@selector(didBeintooFailToGenerateAnAdWithError:)]) {
-		[_mainDelegate didBeintooFailToGenerateAnAdWithError:_error];
-	}
 }
 
 + (NSString *)getUserLocationForURL{
@@ -618,6 +803,40 @@ NSString *BNSDefIsUserLogged;
 
 + (void)setLastLoggedPlayers:(NSArray *)_players{
 	[Beintoo _setLastLoggedPlayers:_players];
+}
+
+#pragma mark - Notifications
+
++ (void)notifyVGoodGenerationOnMainDelegate{
+	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+	
+	if ([_mainDelegate respondsToSelector:@selector(didBeintooGenerateAReward:)]) {
+		[_mainDelegate didBeintooGenerateAReward:[Beintoo sharedInstance]->lastGeneratedGood];
+	}
+}
+
++ (void)notifyVGoodGenerationErrorOnMainDelegate:(NSDictionary *)_error{
+	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+	
+	if ([_mainDelegate respondsToSelector:@selector(didBeintooFailToGenerateARewardWithError:)]) {
+		[_mainDelegate didBeintooFailToGenerateARewardWithError:_error];
+	}
+}
+
++ (void)notifyAdGenerationOnMainDelegate{
+	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+	
+	if ([_mainDelegate respondsToSelector:@selector(didBeintooGenerateAnAd:)]) {
+		[_mainDelegate didBeintooGenerateAnAd:[Beintoo sharedInstance]->lastGeneratedAd];
+	}
+}
+
++ (void)notifyAdGenerationErrorOnMainDelegate:(NSDictionary *)_error{
+	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+	
+	if ([_mainDelegate respondsToSelector:@selector(didBeintooFailToGenerateAnAdWithError:)]) {
+		[_mainDelegate didBeintooFailToGenerateAnAdWithError:_error];
+	}
 }
 
 + (void)dismissBeintoo{
@@ -680,6 +899,26 @@ NSString *BNSDefIsUserLogged;
 	[Beintoo _adControllerDidDisappear];
 }
 
++ (void)giveBedollarsControllerDidAppear{
+	[Beintoo _giveBedollarsControllerDidAppear];
+}
+
++ (void)giveBedollarsControllerDidDisappear{
+	[Beintoo _giveBedollarsControllerDidDisappear];
+}
+
+#pragma mark - Post Notifications
+
++ (void)postNotificationBeintooUserDidLogin{
+	[Beintoo _beintooUserDidLogin];
+}
+
++ (void)postNotificationBeintooUserDidSignup{
+	[Beintoo _beintooUserDidSignup];
+}
+
+#pragma mark - Shutdown and release
+
 + (void)shutdownBeintoo{
 	
 	Beintoo *beintooInstance = [Beintoo sharedInstance];
@@ -687,7 +926,10 @@ NSString *BNSDefIsUserLogged;
 	if (beintooInstance == nil){
 		return;
 	}
-	/* --------------------------------------------- */
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    /* --------------------------------------------- */
 	[beintooInstance->apiKey release];
 	beintooInstance->apiKey = nil;
 	/* --------------------------------------------- */
@@ -768,13 +1010,20 @@ NSString *BNSDefIsUserLogged;
     /* --------------------------------------------- */
 	
 	[beintooInstance release];
-	beintooInstance = nil;
+#endif
+    
+    beintooInstance = nil;
 }
 
-
-- (void)dealloc{	
+- (void)dealloc
+{
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 	[super dealloc];
-}
 
+#endif
+
+}
 
 @end

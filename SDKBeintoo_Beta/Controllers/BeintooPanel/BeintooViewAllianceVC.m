@@ -29,7 +29,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	if (isMineAlliance)
@@ -50,8 +51,12 @@
     
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];
+#endif
+	    
 	elementsTable.delegate		= self;
 	elementsTable.rowHeight	= 30.0;	
     
@@ -80,10 +85,10 @@
         toolbar.frame = CGRectMake(toolbar.frame.origin.x, toolbar.frame.origin.y, toolbar.frame.size.width, 44);
         elementsTable.frame = CGRectMake(elementsTable.frame.origin.x, elementsTable.frame.origin.y, elementsTable.frame.size.width, elementsTable.frame.size.height);
     }
-    
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     if ([BeintooDevice isiPad]) {
@@ -164,7 +169,8 @@
 #pragma mark -
 #pragma mark Alliance Delegates
 
-- (void)didGetAlliance:(NSDictionary *)result{
+- (void)didGetAlliance:(NSDictionary *)result
+{
     [BLoadingView stopActivity];
     
    /* allianceAdminUserID          = [[[result objectForKey:@"admin"]objectForKey:@"id"] retain];
@@ -187,8 +193,13 @@
     
     [BLoadingView stopActivity];
     
+#ifdef BEINTOO_ARC_AVAILABLE
+    allianceAdminUserID          = [[result objectForKey:@"admin"]objectForKey:@"id"];
+    allianceId                   = [result objectForKey:@"id"];
+#else
     allianceAdminUserID          = [[[result objectForKey:@"admin"]objectForKey:@"id"] retain];
     allianceId                   = [[result objectForKey:@"id"] retain];
+#endif
     
     if ([[Beintoo getUserID] isEqualToString:allianceAdminUserID]) {
         [BeintooAlliance setUserWithAlliance:YES];
@@ -216,7 +227,10 @@
             download.urlString = [[self.elementsArrayList objectAtIndex:i] objectForKey:@"usersmallimg"];
             [elementsArrayImages addObject:download];
             
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [download release];
+#endif
             
             if ([[Beintoo getUserID] isEqualToString:[[self.elementsArrayList objectAtIndex:i] objectForKey:@"id"]]) {
                 needLeaveAlliance = YES;
@@ -231,12 +245,17 @@
     [self updateToolbar];
 }
 
-- (void)didGetAlliancesAdminList:(NSDictionary *)result{
-    
+- (void)didGetAlliancesAdminList:(NSDictionary *)result
+{    
     [BLoadingView stopActivity];
     
+#ifdef BEINTOO_ARC_AVAILABLE
+    allianceAdminUserID          = [[result objectForKey:@"admin"]objectForKey:@"id"];
+    allianceId                   = [result objectForKey:@"id"];
+#else
     allianceAdminUserID          = [[[result objectForKey:@"admin"]objectForKey:@"id"] retain];
     allianceId                   = [[result objectForKey:@"id"] retain];
+#endif
     
     if ([[Beintoo getUserID] isEqualToString:allianceAdminUserID]) {
         
@@ -264,8 +283,10 @@
             download.urlString = [[self.elementsArrayList objectAtIndex:i] objectForKey:@"usersmallimg"];
             [elementsArrayImages addObject:download];
             
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [download release];
-            
+#endif
             if ([[Beintoo getUserID] isEqualToString:[[self.elementsArrayList objectAtIndex:i] objectForKey:@"id"]]) {
                 needLeaveAlliance = YES;
             }
@@ -276,8 +297,8 @@
     
 }
 
-- (void)didAllianceAdminPerformedRequest:(NSDictionary *)result{
-    
+- (void)didAllianceAdminPerformedRequest:(NSDictionary *)result
+{    
     [BLoadingView stopActivity];
     
     globalResult = result;
@@ -291,11 +312,16 @@
 		alertMessage = NSLocalizedStringFromTable(@"requestNotSent",@"BeintooLocalizable",@"");
 	UIAlertView *av = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 	[av show];
-	[av release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [av release];
+#endif
+	
 }
 
-- (void)updateToolbar{
-    
+- (void)updateToolbar
+{    
     UIBarButtonItem *joinButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"alliancesendreq", @"BeintooLocalizable", nil) style:UIBarButtonItemStyleBordered target:self action:@selector(joinAlliance)];
     
     UIBarButtonItem *addToAllianceButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"add_alliance.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(addFriendsToAlliance)];
@@ -376,13 +402,6 @@
     
     [toolbar setItems:buttonsArray];
     
-    [pendingButtonItem release];
-    [addToAllianceButtonItem release];
-    [joinButtonItem release];
-    [leaveButtonItem release];
-    [fixedSpace release];
-    [flexibleSpace release];
-    
     if ([buttonsArray count] >= 3){
         [UIView beginAnimations:@"" context:nil];
         [UIView setAnimationDuration:0.5];
@@ -396,13 +415,24 @@
         [UIView commitAnimations];        
     }
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [pendingButtonItem release];
+    [addToAllianceButtonItem release];
+    [joinButtonItem release];
+    [leaveButtonItem release];
+    [fixedSpace release];
+    [flexibleSpace release];
     [buttonsArray release];
+#endif
+    
 }
 
 #pragma mark -
 #pragma mark AlertView
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex { 
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
     if (alertView.tag == 1){
         [BeintooAlliance setUserWithAlliance:NO];
         [BeintooAlliance setUserAllianceAdmin:NO];
@@ -413,13 +443,18 @@
 #pragma mark - 
 #pragma mark IBActions
 
-- (IBAction)leaveAlliance{
-    
+- (IBAction)leaveAlliance
+{    
     UIActionSheet *as = [[UIActionSheet alloc] initWithTitle:NSLocalizedStringFromTable(@"allianceleaveareyousure",@"BeintooLocalizable",@"") delegate:self cancelButtonTitle:@"No" destructiveButtonTitle:@"Yes" otherButtonTitles:nil];
     as.actionSheetStyle = UIActionSheetStyleDefault;
     as.tag = 1;
     [as showInView:[self.view superview]];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [as release];
+#endif
+    
 }
 
 - (IBAction)joinAlliance{
@@ -427,11 +462,16 @@
     as.actionSheetStyle = UIActionSheetStyleDefault;
     as.tag = 2;
     [as showInView:[self.view superview]];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [as release];
+#endif
+    
 }
 
-- (IBAction)getPendingRequests{
-    
+- (IBAction)getPendingRequests
+{    
     NSDictionary *pendingOptions = [NSDictionary dictionaryWithObjectsAndKeys:allianceId,@"allianceID",allianceAdminUserID,@"allianceAdminID", nil];
     
     
@@ -439,23 +479,33 @@
     if (isFromNotification)
         pendingRequestsVC.isFromNotification = YES;
     [self.navigationController pushViewController:pendingRequestsVC animated:YES];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [pendingRequestsVC release];
+#endif
+    
 }
 
-- (IBAction)addFriendsToAlliance{
-    
+- (IBAction)addFriendsToAlliance
+{    
     allianceAddFriends = [[BeintooAlliancesAddFriends alloc] initWithNibName:@"BeintooAlliancesAddFriends" bundle:[NSBundle mainBundle] andOptions:self.elementsArrayList];
     if (isFromNotification)
         allianceAddFriends.isFromNotification = YES;
     [self.navigationController pushViewController:allianceAddFriends animated:YES];
-    [allianceAddFriends release];    
+
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [pendingRequestsVC release];
+#endif
+
 }
 
 #pragma mark -
 #pragma mark ActionSheet
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{    
     if (actionSheet.tag == 1) {  // LEAVE
         if (buttonIndex == 0) { 
             requestType = ALLIANCE_REQUEST_LEAVE;
@@ -482,20 +532,30 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [self.elementsArrayList count];
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
     static NSString *CellIdentifier = @"Cell";
    	int _gradientType = GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+        
     }
 	
     /*cell.textLabel.text         = [[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"nickname"];
@@ -512,7 +572,6 @@
     cell.imageView.image        = [UIImage imageNamed:@"beintoo_user_icon.png"];
     cell.imageView.alpha        = 0.0;
     
-    
     BImageDownload  *download   = [elementsArrayImages objectAtIndex:indexPath.row];
     
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(7.5, 0, 28, 28)];
@@ -520,19 +579,28 @@
     
     [cell addSubview:imageView];
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [imageView release];
+#endif
     
     if ([Beintoo isAFriendOfMine:[[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"id"]]){
         UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 30, 20)];
         imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"beintoo_yourfriends.png"]];
         cell.accessoryView = imageView;
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [imageView release];
+#endif
+        
     }
     
     return cell;
 }
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{    
     if ([[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"id"]){
         if (![[[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"id"] isEqualToString:[Beintoo getUserID]]){
             
@@ -569,7 +637,11 @@
             if (isFromNotification)
                 profileVC.isFromNotification = YES;
             [self.navigationController pushViewController:profileVC animated:YES];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [profileVC release];
+#endif
             
             return;
         }
@@ -578,9 +650,16 @@
     [elementsTable deselectRowAtIndexPath:indexPath animated:YES];
 }
 
-- (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-	BGradientView *gradientView = [[[BGradientView alloc] initWithGradientType:GRADIENT_HEADER]autorelease];
-	gradientView.frame = CGRectMake(0, 0, tableView.bounds.size.width, 35);
+- (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    BGradientView *gradientView = [[BGradientView alloc] initWithGradientType:GRADIENT_HEADER];
+#else
+    BGradientView *gradientView = [[[BGradientView alloc] initWithGradientType:GRADIENT_HEADER]autorelease];
+#endif
+	
+    gradientView.frame = CGRectMake(0, 0, tableView.bounds.size.width, 35);
     
 	UILabel *allianceMembers        = [[UILabel alloc]initWithFrame:CGRectMake(45,7,300,20)];
 	allianceMembers.backgroundColor	= [UIColor clearColor];
@@ -593,18 +672,24 @@
     userImage.image = [UIImage imageNamed:@"beintoo_user_icon.png"];
     
     [gradientView addSubview:userImage];
-    [userImage release];
-
 	[gradientView addSubview:allianceMembers];
-	[allianceMembers release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [userImage release];
+    [allianceMembers release];
+#endif
 	
     return gradientView;
 }
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
 	return 35.0;
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -621,13 +706,25 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     if (isFromNotification){
         if ([BeintooDevice isiPad]){
             [Beintoo dismissIpadNotifications];
         }
         else {
+            
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
             [self dismissModalViewControllerAnimated:YES];
+#endif
+
         }
     }
     else
@@ -637,24 +734,37 @@
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
 
-- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
     NSUInteger index = [elementsArrayImages indexOfObject:download]; 
     NSUInteger indices[] = {0, index};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
     [elementsTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [path release];
+#endif
+    
     download.delegate = nil;
 }
 
-- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
     BeintooLOG(@"BeintooImageError: %@", [error localizedDescription]);
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return NO;
 }
+#endif
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
     _alliance.delegate  = nil;
     _user.delegate       = nil;
     
@@ -665,15 +775,12 @@
 	}
 }
 
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
-}
-
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[_player release];
     [_alliance release];
@@ -686,6 +793,6 @@
     
     [super dealloc];
 }
-
+#endif
 
 @end

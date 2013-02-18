@@ -16,6 +16,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "BeintooDevice.h"
 
 // PLAYER:from 1 to 29
 #define PLAYER_LOGIN_CALLER_ID                  1
@@ -49,7 +50,7 @@
 #define	USER_NICKUPDATE_CALLER_ID               42
 #define USER_CHALLENGEPREREQ_CALLER_ID          43
 #define USER_BACKGROUND_REGISTER_CALLER_ID      44
-#define USER_GIVE_BEDOLLARS_CALLER_ID           45
+#define USER_GIVE_BEDOLLARS_CALLER_ID           45 // deprecated
 #define USER_FORGOT_PASSWORD_CALLER_ID          46
 #define	USER_SEND_UNFRIENDSHIP_CALLER_ID        47
 
@@ -112,7 +113,7 @@
 #define MARKETPLACE_GET_CATEGORY_CONTENT_CALLER_ID      151
 #define MARKETPLACE_GET_CATEGORIES_CALLER_ID            152
 
-// ACHIEVEMENTS:from 200 to 220
+// ACHIEVEMENTS:from 200 to 229
 #define ACHIEVEMENTS_GET_CALLER_ID                                  200
 #define ACHIEVEMENTS_SUBMIT_PERCENT_ID                              201
 #define ACHIEVEMENTS_SUBMIT_SCORE_ID                                202
@@ -129,10 +130,17 @@
 #define ACHIEVEMENTS_GET_SUBMIT_BY_OBJECTID_ID                      213
 #define ACHIEVEMENTS_SUBMIT_BY_OBJECTID_ID                          214
 
+// APPS: from 230 to 249
+#define APPS_GIVE_BEDOLLARS_CALLER_ID                               230
+
+// APPS: from 250 to 270
+#define ADS_REQUEST                                                 250
+#define ADS_REQUEST_AND_DISPLAY                                     251
+
 @protocol BeintooParserDelegate;
 
-@interface Parser : NSObject {
-	
+@interface Parser : NSObject
+{	
     NSMutableData	*responseData;
 	NSInteger       callerID;
 	id              result;
@@ -147,8 +155,14 @@
 - (void)retrievedWebPage:(NSMutableURLRequest *)_request;
 - (void)parsingEnd:(NSDictionary *)theResult;
 
+#ifdef BEINTOO_ARC_AVAILABLE
+@property(nonatomic, strong) id <BeintooParserDelegate> delegate;
+@property(nonatomic, strong) id result;
+#else
 @property(nonatomic, assign) id <BeintooParserDelegate> delegate;
 @property(nonatomic, assign) id result;
+#endif
+
 @property(nonatomic, assign) NSInteger callerID;
 @property(nonatomic, retain) NSString *webpage;
 

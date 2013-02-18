@@ -16,6 +16,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "Beintoo.h"
 
 #define GRADIENT_BODY			1
 #define GRADIENT_HEADER			2

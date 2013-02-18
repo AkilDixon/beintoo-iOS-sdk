@@ -18,16 +18,15 @@
 #import "BeintooPlayer.h"
 #import "BeintooUser.h"
 #import "BeintooAlliance.h"
-#import "Beintoo.h"
-#import "BeintooAlliancesAddFriends.h"
+#import "BImageDownload.h"
 
 #define ALLIANCE_REQUEST_JOIN   123
 #define ALLIANCE_REQUEST_LEAVE  124
 
-@class BView, BButton, BTableView, BeintooUser, BeintooPlayer, BeintooAlliance, BeintooWebViewVC,BeintooAlliancePendingVC;
+@class BView, BButton, BTableView, BeintooUser, BeintooPlayer, BeintooAlliance, BeintooWebViewVC, BeintooAlliancePendingVC, BeintooAlliancesAddFriends, BeintooProfileVC;
 
-@interface BeintooViewAllianceVC : UIViewController <UITableViewDelegate, BeintooAllianceDelegate, UIActionSheetDelegate, BImageDownloadDelegate, BeintooUserDelegate> {
-	
+@interface BeintooViewAllianceVC : UIViewController <UITableViewDelegate, BeintooAllianceDelegate, UIActionSheetDelegate, BImageDownloadDelegate, BeintooUserDelegate>
+{	
 	IBOutlet BView			*alliancesActionView;
 	IBOutlet BTableView		*elementsTable;
     IBOutlet UIScrollView   *scrollView;

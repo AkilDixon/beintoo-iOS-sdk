@@ -20,7 +20,8 @@
 @implementation BeintooNavigationController
 @synthesize type, isSignupDirectLaunch;
 
-- (void)show{
+- (void)show
+{
 	self.view.alpha = 1;
 	
 	// Ipad functions here not used (this class is not used on ipad)
@@ -43,7 +44,8 @@
 	[[self.view layer] addAnimation:applicationLoadViewIn forKey:@"Show"];
 }
 
-- (void)hide{
+- (void)hide
+{
 	CATransition *applicationUnloadViewIn = [CATransition animation];
 	[applicationUnloadViewIn setDuration:0.5f];
     
@@ -59,11 +61,13 @@
 	self.view.alpha = 0;
 }
 
-- (void)hideNotAnimated{
+- (void)hideNotAnimated
+{
     self.view.alpha = 0;
 }
 
-- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag{
+- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag
+{
 	if ([[animation valueForKey:@"name"] isEqualToString:@"unload"]) {
 		[self.view removeFromSuperview];
 		[Beintoo beintooDidDisappear];
@@ -73,10 +77,10 @@
 	}
 }
 
-- (void)prepareBeintooPanelOrientation{
+- (void)prepareBeintooPanelOrientation
+{
     if ([BeintooDevice isiPad]){
         if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
-            
             self.view.frame  = CGRectMake(0, 0, 320, 550);
             self.view.bounds = CGRectMake(0, 0, 550, 320);
             self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(-90));
@@ -105,7 +109,6 @@
     }
     else {
         if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
-
             self.view.frame  = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
             self.view.bounds = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.height, [UIScreen mainScreen].bounds.size.width); 
             self.view.transform = CGAffineTransformMakeRotation(DegreesToRadians(-90));
@@ -134,13 +137,32 @@
     }
 }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return (interfaceOrientation == [Beintoo appOrientation]);
+    return (interfaceOrientation == [Beintoo appOrientation]);
+}
+#endif
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotate
+{
+    return NO;
 }
 
+- (NSUInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskAll;
+}
+#endif
+
 - (void)dealloc {
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 	[ipadView release];
     [super dealloc];
+#endif
+    
 }
 
 @end

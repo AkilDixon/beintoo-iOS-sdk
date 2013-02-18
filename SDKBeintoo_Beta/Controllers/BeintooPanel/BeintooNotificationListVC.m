@@ -22,7 +22,8 @@
 
 @synthesize notificationTable, notificationArrayList, notificationImages, selectedNotification, startingOptions, isFromNotification;
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
 	self.title      = NSLocalizedStringFromTable(@"notifications", @"BeintooLocalizable", nil);
@@ -41,14 +42,18 @@
 	self.notificationTable.delegate     = self;
     self.notificationTable.dataSource   = self;
 	self.notificationTable.rowHeight	= 90.0;
-    notificationTable.backgroundColor = [UIColor clearColor];
+    notificationTable.backgroundColor   = [UIColor clearColor];
 	
     notificationArrayList = [[NSMutableArray alloc] init];
 	notificationImages    = [[NSMutableArray alloc] init];
     
     UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];	
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];	
+#endif
     
     _notification           = [[BeintooNotification alloc] init];
     _notification.delegate  = self;
@@ -67,22 +72,45 @@
     noNotificationLabel                 = [[UILabel alloc] initWithFrame:CGRectMake(20, 60, self.view.frame.size.width - 40, 60)];
     noNotificationLabel.backgroundColor = [UIColor clearColor];
 	noNotificationLabel.text            = [NSString stringWithFormat:NSLocalizedStringFromTable(@"noNotifications", @"BeintooLocalizable", @"")];
-    noNotificationLabel.textAlignment   = UITextAlignmentCenter;
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    noNotificationLabel.textAlignment = NSTextAlignmentCenter;
+    noNotificationLabel.minimumScaleFactor = 2.0;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    {
+        noNotificationLabel.textAlignment = NSTextAlignmentCenter;
+        noNotificationLabel.minimumScaleFactor = 2.0;
+    }
+    else
+    {
+        noNotificationLabel.textAlignment = UITextAlignmentCenter;
+        noNotificationLabel.minimumFontSize = 8.0;
+    }
+#else
+    noNotificationLabel.textAlignment = UITextAlignmentCenter;
+    noNotificationLabel.minimumFontSize = 8.0;
+#endif
+    
     noNotificationLabel.autoresizingMask= UIViewAutoresizingFlexibleWidth;
     noNotificationLabel.font            = [UIFont boldSystemFontOfSize:14];
-    noNotificationLabel.minimumFontSize = 8.0;
+    
     noNotificationLabel.numberOfLines   = 0;
     noNotificationLabel.textColor       = [UIColor colorWithWhite:0 alpha:0.8];
         
     [mainView addSubview:notificationTable];
     [mainView addSubview:noNotificationLabel];
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [notificationTable release];
     [noNotificationLabel release];
-    
+#endif
+
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     
     [noNotificationLabel setHidden:YES];
@@ -92,11 +120,10 @@
     
     [BLoadingView startActivity:self.view];
     [_notification getNotificationListWithStart:0 andRows:50];
-    
 }
 
-- (void)didGetNotificationListWithResult:(NSArray *)result{
-    	
+- (void)didGetNotificationListWithResult:(NSArray *)result
+{
     [notificationArrayList removeAllObjects];
 	[notificationImages removeAllObjects];
 
@@ -147,14 +174,17 @@
 				BeintooLOG(@"Beintoo Exception in Notifications: %@ \n for object: %@", e, [result objectAtIndex:i]);
 			}
             
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [download release];
             [notificationEntry release];
+#endif
+            
 		}
 	}
     
     [notificationTable reloadData];
-    [BLoadingView stopActivity];
-
+    
     if ([self.notificationArrayList count] > 0) {
         NSDictionary *lastNotification = [self.notificationArrayList objectAtIndex:0];
         if ([[lastNotification objectForKey:@"status"] isEqualToString:@"UNREAD"]) {
@@ -162,20 +192,24 @@
             [_notification setAllNotificationReadUpToNotification:notificationID];
         }
     }
+    
+    [BLoadingView stopActivity];
 }
 
-- (void)didSetNotificationReadWithResult:(NSArray *)result{
+- (void)didSetNotificationReadWithResult:(NSArray *)result
+{
 }
 
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     NSString *textToMeasure = [[self.notificationArrayList objectAtIndex:indexPath.row] objectForKey:@"localizedMessage"];
     
     CGSize maximumLabelSize;
@@ -184,9 +218,19 @@
     else 
         maximumLabelSize = CGSizeMake(220, 9999);
     
-        
-    CGSize expectedLabelSize = [textToMeasure sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
-
+    CGSize expectedLabelSize;
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    expectedLabelSize = [textToMeasure sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:maximumLabelSize lineBreakMode:NSLineBreakByWordWrapping];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        expectedLabelSize = [textToMeasure sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:maximumLabelSize lineBreakMode:NSLineBreakByWordWrapping];
+    else
+        expectedLabelSize = [textToMeasure sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap]; 
+#else
+    expectedLabelSize = [textToMeasure sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
+#endif
+    
     if (expectedLabelSize.height < 30) {
         expectedLabelSize.height = 32;
     }
@@ -194,19 +238,26 @@
     return expectedLabelSize.height + 42;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return [notificationArrayList count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{    
     static NSString *CellIdentifier = @"Cell";
     NSString *notificationStatus    = [[self.notificationArrayList objectAtIndex:indexPath.row]objectForKey:@"status"];
    	int _gradientType = ([notificationStatus isEqualToString:@"UNREAD"]) ? GRADIENT_NOTIF_UNDREAD_CELL : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
+#endif
+    
     }
     
     NSString *textToMeasure     = [[self.notificationArrayList objectAtIndex:indexPath.row] objectForKey:@"localizedMessage"];
@@ -217,7 +268,18 @@
     else 
         maximumLabelSize = CGSizeMake(220, 9999);
     
-    CGSize expectedLabelSize    = [textToMeasure sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
+    CGSize expectedLabelSize;
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    expectedLabelSize = [textToMeasure sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:maximumLabelSize lineBreakMode:NSLineBreakByWordWrapping];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        expectedLabelSize = [textToMeasure sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:maximumLabelSize lineBreakMode:NSLineBreakByWordWrapping];
+    else
+        expectedLabelSize = [textToMeasure sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
+#else
+    expectedLabelSize = [textToMeasure sizeWithFont:[UIFont systemFontOfSize:13] constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
+#endif
     
     UIImageView *imageView      = [[UIImageView alloc] initWithFrame:CGRectMake(10, 12, 50, 50)];
 	
@@ -226,8 +288,12 @@
 	imageView.image             = cellImage;
     
     [cell addSubview:imageView];
-    [imageView release];
     
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [imageView release];
+#endif
+        
     UILabel *messageLabel           = [[UILabel alloc] initWithFrame:CGRectMake(70, 10, expectedLabelSize.width, expectedLabelSize.height)];
 	messageLabel.text               = [[self.notificationArrayList objectAtIndex:indexPath.row] objectForKey:@"localizedMessage"];
 	messageLabel.font               = [UIFont systemFontOfSize:13];
@@ -264,7 +330,12 @@
         [[unreadView layer] setCornerRadius:5.0f];
         
         [cell addSubview:unreadView];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [unreadView release];
+#endif
+
     }
     
     messageLabel.numberOfLines      = 0;
@@ -272,7 +343,6 @@
     messageLabel.backgroundColor    = [UIColor clearColor];
     
     [cell addSubview:messageLabel];
-    [messageLabel release];
     
     UILabel *notificationDate           = [[UILabel alloc] initWithFrame:CGRectMake(70, expectedLabelSize.height+11, 200, 15)];
 	notificationDate.text               = [[self.notificationArrayList objectAtIndex:indexPath.row] objectForKey:@"creationDate"];
@@ -281,12 +351,18 @@
     notificationDate.autoresizingMask   = UIViewAutoresizingFlexibleWidth;
     
     [cell addSubview:notificationDate];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [messageLabel release];
     [notificationDate release];
+#endif
 
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
     self.selectedNotification = [self.notificationArrayList objectAtIndex:indexPath.row];
 	[self.notificationTable deselectRowAtIndexPath:[self.notificationTable indexPathForSelectedRow] animated:YES];	
     
@@ -323,7 +399,7 @@
         // User alliance has to confirm new members
         NSDictionary *pendingOptions = [NSDictionary dictionaryWithObjectsAndKeys:[BeintooAlliance userAllianceID],@"allianceID",[Beintoo getUserID],@"allianceAdminID", nil];
         
-        [pendigAllianceReqVC initWithNibName:@"BeintooAlliancePendingVC" bundle:[NSBundle mainBundle] andOptions:pendingOptions];
+        pendigAllianceReqVC = [pendigAllianceReqVC initWithNibName:@"BeintooAlliancePendingVC" bundle:[NSBundle mainBundle] andOptions:pendingOptions];
         pendigAllianceReqVC.isFromNotification = YES;
         [self.navigationController pushViewController:pendigAllianceReqVC animated:YES];
     }
@@ -337,20 +413,26 @@
         // --------------- forum&tips
         NSString *tipsUrl = [NSString stringWithFormat:@"http://appsforum.beintoo.com/?apikey=%@&userExt=%@#main",
                              [Beintoo getApiKey],[Beintoo getUserID]];
-        [tipsAndForumVC initWithNibName:@"BeintooBrowserVC" bundle:[NSBundle mainBundle] urlToOpen:nil];
+        tipsAndForumVC = [tipsAndForumVC initWithNibName:@"BeintooBrowserVC" bundle:[NSBundle mainBundle] urlToOpen:nil];
         [tipsAndForumVC setUrlToOpen:tipsUrl];
         tipsAndForumVC.isFromNotification = YES;
         
         [self.navigationController pushViewController:tipsAndForumVC animated:YES];
     }
     else if ([notificationType isEqualToString:@"ACHIEVEMENT_UNLOCKED"]) {
+        achievementVC.isFromNotification = YES;
         [self.navigationController pushViewController:achievementVC animated:YES];
     }
     else if ([notificationType isEqualToString:@"PUSH_REQUEST_MARKETPLACE"]){
         BeintooBestoreVC *bestoreVC = [[BeintooBestoreVC alloc] initWithNibName:@"BeintooBestoreVC" bundle:[NSBundle mainBundle]];
         bestoreVC.isFromNotification = YES;
         [self.navigationController pushViewController:bestoreVC animated:YES];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
         [bestoreVC release];
+#endif
+        
     }
     else if ([notificationType isEqualToString:@"BEINTOO_PROMOTIONAL"] || [notificationType isEqualToString:@"RECOMMEND_APP"]){
         if([self.selectedNotification objectForKey:@"url"] != nil){
@@ -358,7 +440,12 @@
             BeintooVGoodShowVC *showUrl = [[BeintooVGoodShowVC alloc] initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle] urlToOpen:theUrl];
             showUrl.isFromNotification = YES;
             [self.navigationController pushViewController:showUrl animated:YES];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [showUrl release];
+#endif
+           
         }
     }
     else{
@@ -369,7 +456,12 @@
             BeintooWebViewVC *webView = [[BeintooWebViewVC alloc] initWithNibName:@"BeintooWebViewVC" bundle:[NSBundle mainBundle] urlToOpen:tipsUrl];
             webView.isFromNotification = YES;
             [self.navigationController pushViewController:webView animated:YES];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
             [webView release];
+#endif
+            
         }
     }
 
@@ -384,31 +476,51 @@
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
 
-- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
     NSUInteger index = [self.notificationImages indexOfObject:download]; 
     NSUInteger indices[] = {0, index};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
     [notificationTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [path release];
+#endif
+    
     download.delegate = nil;
 }
 
-- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
     BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
 #pragma mark - Close Notification
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
 	if ([BeintooDevice isiPad]){
         [Beintoo dismissIpadNotifications];
     }
     else {
-        [self dismissModalViewControllerAnimated:YES];
+        
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
+            [self dismissModalViewControllerAnimated:YES];
+#endif
+
     }
 }
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -425,12 +537,17 @@
     return _vi;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return (interfaceOrientation == [Beintoo appOrientation]);
 }
+#endif
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated
+{
     [super viewWillDisappear:animated];
+    
     @try {
 		[BLoadingView stopActivity];
 	}
@@ -438,6 +555,8 @@
 	}
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [pendigAllianceReqVC release];
     [viewAllianceVC release];
@@ -453,5 +572,6 @@
     [noNotificationLabel release];
 	[super dealloc];
 }
+#endif
 
 @end

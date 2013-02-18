@@ -21,7 +21,8 @@
 
 @synthesize elementsTable, elementsArrayList, elementsImages, selectedMessage, startingOptions, isFromNotification;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andOptions:(NSDictionary *)options
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
 		self.startingOptions	= options;
@@ -30,7 +31,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
 	self.title			 	= NSLocalizedStringFromTable(@"inbox",@"BeintooLocalizable",@"Select A Friend");
@@ -52,7 +54,11 @@
 	
 	UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
 	[self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
-	[barCloseBtn release];			
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [barCloseBtn release];	
+#endif
 	
 	self.elementsArrayList = [[NSMutableArray alloc] init];
 	self.elementsImages    = [[NSMutableArray alloc] init];
@@ -60,10 +66,10 @@
     [toolBar setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
 	
 	[newMessageButton setTitle:NSLocalizedStringFromTable(@"newMessage", @"BeintooLocalizable", nil)];
-	
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
 	[super viewWillAppear:animated];
     
     [noMessagesLabel setHidden:YES];
@@ -85,7 +91,8 @@
 	}
 }
 
-- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result{
+- (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result
+{
 	if (result != nil) {
 		[BeintooMessage setTotalMessages:[[result objectForKey:@"user"] objectForKey:@"messages"]];
 		[BeintooMessage setUnreadMessages:[[result objectForKey:@"user"]objectForKey:@"unreadMessages"]];
@@ -104,14 +111,16 @@
 #pragma mark -
 #pragma mark IBActions
 
-- (void)loadmoreMessages{
+- (void)loadmoreMessages
+{
 	loadMoreCount = loadMoreCount + 1;
 	[BLoadingView startActivity:self.view];
-	[_message showMessagesFrom:MSGFORPAGE*loadMoreCount andRows:MSGFORPAGE];
+	[_message showMessagesFrom:MSGFORPAGE * loadMoreCount andRows:MSGFORPAGE];
 }
 
-- (IBAction)newMessage{
-	[newMessageVC initWithNibName:@"BeintooNewMessageVC" bundle:[NSBundle mainBundle] andOptions:nil];
+- (IBAction)newMessage
+{
+	newMessageVC = [newMessageVC initWithNibName:@"BeintooNewMessageVC" bundle:[NSBundle mainBundle] andOptions:nil];
     if (isFromNotification)
         newMessageVC.isFromNotification = YES;
 	[self.navigationController pushViewController:newMessageVC animated:YES];
@@ -120,7 +129,8 @@
 #pragma mark -
 #pragma mark MessageDelegate
 
-- (void)didFinishToLoadMessagesWithResult:(NSArray *)result{
+- (void)didFinishToLoadMessagesWithResult:(NSArray *)result
+{
 	@try {
 		if ([result count] <= 0) {
 			[noMessagesLabel setHidden:NO];
@@ -147,8 +157,14 @@
 			NSString *messageID		= [[result objectAtIndex:i] objectForKey:@"id"];
 			NSString *fromImgURL	= [[[result objectAtIndex:i] objectForKey:@"userFrom"] objectForKey:@"userimg"];
 			
-			BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
-			download.delegate = self;
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+            BImageDownload *download = [[BImageDownload alloc] init];
+#else
+            BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
+#endif
+			
+            download.delegate = self;
 			download.urlString = [[[result objectAtIndex:i] objectForKey:@"userFrom"] objectForKey:@"usersmallimg"]; 
 						
 			[messageEntry setObject:messageID forKey:@"id"];
@@ -160,7 +176,12 @@
 			[messageEntry setObject:status forKey:@"status"];
 			[self.elementsArrayList addObject:messageEntry];
 			[self.elementsImages addObject:download];
-			[messageEntry release];
+            
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [messageEntry release];
+#endif
+			
 		}
 		@catch (NSException * e) {
 			BeintooLOG(@"exception %@",e);
@@ -178,21 +199,31 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     return 1;
 }
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
 	return cellsToLoad;
 }
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     static NSString *CellIdentifier = @"Cell";
    	int _gradientType = (indexPath.row % 2) ? GRADIENT_CELL_HEAD : GRADIENT_CELL_BODY;
 	
 	BTableViewCell *cell = (BTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil || TRUE) {
+
+#ifdef BEINTOO_ARC_AVAILABLE
+        cell = [[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType];
+#else
         cell = [[[BTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier andGradientType:_gradientType] autorelease];
-    }	
+#endif
+    
+    }
 	@try {
 		if (indexPath.row == [self.elementsArrayList count]) {
 			
@@ -239,7 +270,12 @@
                 [[unreadView layer] setCornerRadius:5.0f];
                 
                 [cell addSubview:unreadView];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
                 [unreadView release];
+#endif
+                
 			}
 			
 			/* --- FROM --- */
@@ -290,10 +326,14 @@
 			[cell addSubview:textLabel];
 			[cell addSubview:imageView];
 			
-			[fromLabel release];
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+            [fromLabel release];
 			[creationDateLabel release];
 			[textLabel release];
 			[imageView release];
+#endif
+			
 		}
 	}
 	@catch (NSException * e) {
@@ -302,10 +342,11 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	@try {
 		self.selectedMessage = [self.elementsArrayList objectAtIndex:indexPath.row];
-		[beintooMessageShowVC initWithNibName:@"BeintooMessagesShowVC" bundle:[NSBundle mainBundle] andOptions:self.selectedMessage];
+		beintooMessageShowVC = [beintooMessageShowVC initWithNibName:@"BeintooMessagesShowVC" bundle:[NSBundle mainBundle] andOptions:self.selectedMessage];
         if (isFromNotification)
             beintooMessageShowVC.isFromNotification = YES;
 		[self.navigationController pushViewController:beintooMessageShowVC animated:YES];
@@ -316,9 +357,10 @@
 
 #pragma mark TableViewLoadEndedDelegate
 
-- (void)didEndLoadingTableData{
+- (void)didEndLoadingTableData
+{
 	@try {
-		NSIndexPath *indPath = [NSIndexPath indexPathForRow:(MSGFORPAGE*loadMoreCount) inSection:0];
+		NSIndexPath *indPath = [NSIndexPath indexPathForRow:(MSGFORPAGE * loadMoreCount) inSection:0];
 		[self.elementsTable scrollToRowAtIndexPath:indPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 	}
 	@catch (NSException * e) {
@@ -329,23 +371,34 @@
 #pragma mark -
 #pragma mark BImageDownload Delegate Methods
 
-- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download{
+- (void)bImageDownloadDidFinishDownloading:(BImageDownload *)download
+{
     NSUInteger index = [self.elementsImages indexOfObject:download]; 
     NSUInteger indices[] = {0, index};
     NSIndexPath *path = [[NSIndexPath alloc] initWithIndexes:indices length:2];
     [self.elementsTable reloadRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationNone];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [path release];
+#endif
+    
     download.delegate = nil;
 }
-- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error{
+- (void)bImageDownload:(BImageDownload *)download didFailWithError:(NSError *)error
+{
     BeintooLOG(@"Beintoo - Image Loading Error: %@", [error localizedDescription]);
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return NO;
 }
+#endif
 
-- (UIView *)closeButton{
+- (UIView *)closeButton
+{
     UIView *_vi = [[UIView alloc] initWithFrame:CGRectMake(-25, 5, 35, 35)];
     
     UIImageView *_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 15, 15)];
@@ -362,20 +415,33 @@
     return _vi;
 }
 
-- (void)closeBeintoo{
+- (void)closeBeintoo
+{
     if (isFromNotification){
         if ([BeintooDevice isiPad]){
             [Beintoo dismissIpadNotifications];
         }
         else {
+            
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+            [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                [self dismissViewControllerAnimated:YES completion:nil];
+            else
+                [self dismissModalViewControllerAnimated:YES];
+#else
             [self dismissModalViewControllerAnimated:YES];
+#endif
+
         }
     }
     else
         [Beintoo dismissBeintoo];
 }
 
-- (void)viewWillDisappear:(BOOL)animated{
+- (void)viewWillDisappear:(BOOL)animated
+{
     [super viewWillDisappear:animated];
     
     _message.delegate		= nil;
@@ -389,7 +455,10 @@
 	}
 }
 
-- (void)dealloc {
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+- (void)dealloc
+{
     _user.delegate = nil;
     _message.delegate = nil;
     _player.delegate = nil;
@@ -403,6 +472,6 @@
 	[newMessageVC release];
     [super dealloc];
 }
-
+#endif
 
 @end

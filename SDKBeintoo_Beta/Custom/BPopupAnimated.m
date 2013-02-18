@@ -22,7 +22,8 @@
 
 // ----------------- NEW -------------------------->
 
--(id)init {
+-(id)init
+{
 	if (self = [super init])
 	{
 		current_element                 = [[NSDictionary alloc] init];
@@ -31,8 +32,8 @@
 }
 
 // ---- This is the last method called, when the notification for the achievement is ready and well oriented
-- (void)showNotification{
-	
+- (void)showNotification
+{	
 	notificationCurrentlyOnScreen = YES;
 	
 	self.alpha = 0;
@@ -50,8 +51,8 @@
 	self.alpha = 1;
 }
 
-- (void)closeNotification{
-	
+- (void)closeNotification
+{	
 	self.alpha = 0;
 	CATransition *popupExitAnimation = [CATransition animation];
 	[popupExitAnimation setDuration:0.5f];
@@ -63,8 +64,8 @@
 	[[self layer] addAnimation:popupExitAnimation forKey:nil];
 }
 
-- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag{
-    
+- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag
+{    
     float notificationTimeOnScreen;
     switch (notificationType) {
 		case NOTIFICATION_TYPE_ACHIEV:
@@ -90,7 +91,8 @@
 	}
 }
 
-- (void)prepareNotificationOrientation:(CGRect)startingFrame{
+- (void)prepareNotificationOrientation:(CGRect)startingFrame
+{
 	self.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
 	CGRect windowFrame	 = [[Beintoo getAppWindow] bounds];
     
@@ -146,13 +148,15 @@
 	}	
 }
 
-- (void)removeViews {
+- (void)removeViews
+{
 	for (UIView *subview in [self subviews]) {
 		[subview removeFromSuperview];
 	}
 }
 
-- (void)closeAchievement{
+- (void)closeAchievement
+{
 	self.alpha = 0;
 	[self removeFromSuperview];
 }
@@ -160,8 +164,8 @@
 #pragma mark -
 #pragma mark Achievement
 
-- (void)setNotificationContentForAchievement:(NSDictionary *)_theAchievement WithWindowSize:(CGSize)windowSize{
-	
+- (void)setNotificationContentForAchievement:(NSDictionary *)_theAchievement WithWindowSize:(CGSize)windowSize
+{	
 	current_element = _theAchievement;
 	notificationType = NOTIFICATION_TYPE_ACHIEV;
 
@@ -180,7 +184,8 @@
 }
 
 
-- (void)drawAchievement{
+- (void)drawAchievement
+{
 	[self removeViews];
 	
 	NSString *msg = NSLocalizedStringFromTable(@"unlockAchievMsg",@"BeintooLocalizable",@"");
@@ -190,36 +195,67 @@
 	captionLabel.backgroundColor = [UIColor clearColor];
 	captionLabel.textColor = [UIColor whiteColor];
 	captionLabel.font = [UIFont fontWithName:@"MarkerFelt-Wide" size:17];
-	captionLabel.textAlignment = UITextAlignmentLeft;
-	captionLabel.text = achievementName;
+    captionLabel.text = achievementName;
 	[self addSubview:captionLabel];
 	
 	achievNameLabel	= [[UILabel alloc] initWithFrame:CGRectMake(11, 28, [self bounds].size.width-50, 20)];
 	achievNameLabel.backgroundColor = [UIColor clearColor];
 	achievNameLabel.textColor = [UIColor whiteColor];
 	achievNameLabel.font = [UIFont fontWithName:@"MarkerFelt-Thin" size:15];
-	achievNameLabel.textAlignment = UITextAlignmentLeft;
-	achievNameLabel.text = msg;	
+    achievNameLabel.text = msg;	
 	[self addSubview:achievNameLabel];
     
     percentageLabel = [[UILabel alloc] initWithFrame:CGRectMake([self bounds].size.width-55, 5, 50, 25)];
 	percentageLabel.backgroundColor = [UIColor clearColor];
 	percentageLabel.textColor = [UIColor colorWithRed:171.0/255 green:194.0/255 blue:54.0/255 alpha:1.0];
 	percentageLabel.font = [UIFont fontWithName:@"MarkerFelt-Wide" size:17];
-	percentageLabel.textAlignment = UITextAlignmentLeft;
-	percentageLabel.text = @"100%";
+    percentageLabel.text = @"100%";
 	[self addSubview:percentageLabel];
 
-	[captionLabel release];
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+    captionLabel.textAlignment = NSTextAlignmentLeft;
+    achievNameLabel.textAlignment = NSTextAlignmentLeft;
+    percentageLabel.textAlignment = NSTextAlignmentLeft;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+    {
+        captionLabel.textAlignment = NSTextAlignmentLeft;
+        achievNameLabel.textAlignment = NSTextAlignmentLeft;
+        percentageLabel.textAlignment = NSTextAlignmentLeft;
+    }
+    else
+    {
+        captionLabel.textAlignment = UITextAlignmentLeft;
+        achievNameLabel.textAlignment = UITextAlignmentLeft;
+        percentageLabel.textAlignment = UITextAlignmentLeft;
+    }
+#else
+    captionLabel.textAlignment = UITextAlignmentLeft;
+    achievNameLabel.textAlignment = UITextAlignmentLeft;
+    percentageLabel.textAlignment = UITextAlignmentLeft;
+#endif
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [captionLabel release];
 	[beintooLogo release];
 	[achievNameLabel release];
     [percentageLabel release];
+#endif
+	
 }	
 
-
-- (void)dealloc {
-	[current_element release];
+- (void)dealloc
+{
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [current_element release];
     [super dealloc];
+
+#endif
+
 }
 
 @end

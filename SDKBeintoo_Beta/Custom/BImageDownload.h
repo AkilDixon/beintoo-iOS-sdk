@@ -17,6 +17,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "BImageCache.h"
+#import "BeintooDevice.h"
 
 #define BeintooDownloadErrorDomain      @"Beintoo Download Error Domain"
 
@@ -26,7 +27,6 @@ enum
 
 @class BImageDownload;
 @protocol BImageDownloadDelegate;
-
 
 @interface BImageDownload : NSObject {  
 	
@@ -43,7 +43,13 @@ enum
 @property (nonatomic, retain) NSString *urlString;
 @property (nonatomic, retain) UIImage *image;
 @property (nonatomic, readonly) NSString *filename;
+
+#ifdef BEINTOO_ARC_AVAILABLE
+@property(nonatomic, retain) id <NSObject, BImageDownloadDelegate> delegate;
+#else
 @property (nonatomic, assign) id <NSObject, BImageDownloadDelegate> delegate;
+#endif
+
 @property (nonatomic, assign) int tag;
 
 @end

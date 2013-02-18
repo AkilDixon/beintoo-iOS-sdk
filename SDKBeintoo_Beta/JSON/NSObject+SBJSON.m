@@ -37,7 +37,12 @@
     NSString *json = [jsonWriter stringWithFragment:self];    
     if (!json)
         NSLog(@"-JSONFragment failed. Error trace is: %@", [jsonWriter errorTrace]);
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [jsonWriter release];
+#endif
+    
     return json;
 }
 
@@ -46,7 +51,12 @@
     NSString *json = [jsonWriter stringWithObject:self];
     if (!json)
         NSLog(@"-JSONRepresentation failed. Error trace is: %@", [jsonWriter errorTrace]);
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
     [jsonWriter release];
+#endif
+    
     return json;
 }
 

@@ -15,6 +15,7 @@
  ******************************************************************************/
 
 #import <UIKit/UIKit.h>
+#import "BNavigationController.h"
 
 @class BeintooVGoodVC,BeintooMultipleVgoodVC,BeintooVGoodShowVC,BeintooLoginVC, BeintooNotificationListVC;
 
@@ -38,7 +39,7 @@
     UIPopoverController *achievementsPopoverController;
 #endif
     
-	UINavigationController	*loginNavController;
+	BNavigationController	*loginNavController;
 	CGRect startingRect;
 	
 	BeintooLoginVC *loginVC;
@@ -49,7 +50,7 @@
 	NSString *transitionEnterSubtype;
 	NSString *transitionExitSubtype;
 	
-    UINavigationController *beintooPrivateNotificationController;
+    BNavigationController *beintooPrivateNotificationController;
     BeintooNotificationListVC *notificationVC;
 }
 

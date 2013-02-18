@@ -15,8 +15,7 @@
  ******************************************************************************/
 
 #import "BLoadingView.h"
-#import <QuartzCore/QuartzCore.h>
-
+#import "Beintoo.h"
 
 @implementation BLoadingView
 
@@ -43,8 +42,8 @@ static BLoadingView *loading;
     return self;
 }
 
-+ (void)startActivity:(UIView *)callingView{
-	
++ (void)startActivity:(UIView *)callingView
+{	
 	loading = [[BLoadingView alloc] initWithFrame:CGRectMake((callingView.frame.size.width/2)-30, (callingView.frame.size.height/2)-30, 100, 100)];
 	loading.alpha = 0.0;
     loading.autoresizesSubviews = NO;
@@ -113,8 +112,8 @@ static BLoadingView *loading;
     return self;
 }
 
-+ (void)startFullScreenActivity:(UIView *)callingView{
-	
++ (void)startFullScreenActivity:(UIView *)callingView
+{	
 	loading = [[BLoadingView alloc] initWithFrame:CGRectMake(callingView.frame.origin.x, callingView.frame.origin.y, callingView.frame.size.width, callingView.frame.size.height) andCallingView:callingView];
     
 	loading.alpha = 0.0;
@@ -125,11 +124,10 @@ static BLoadingView *loading;
 	[UIView setAnimationDelay:0.0];
     loading.alpha = 1.0;
 	[UIView commitAnimations];
-    
 }
 
-+ (void)startFullScreenHiddenActivity:(UIView *)callingView{
-	
++ (void)startFullScreenHiddenActivity:(UIView *)callingView
+{	
     loading = [[BLoadingView alloc] initWithHiddenFrame:CGRectMake(callingView.frame.origin.x, callingView.frame.origin.y, callingView.frame.size.width, callingView.frame.size.height) andCallingView:callingView];
     loading.layer.cornerRadius = 0.0;
     [callingView addSubview:loading];
@@ -146,15 +144,24 @@ static BLoadingView *loading;
 	if (loading!=nil) {
 		[loading setHidden:YES];
         [loading removeFromSuperview];
-		[loading release];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [loading release];
+#endif
+		
 		loading = nil;
 	}
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
 	[hudView release];
 	[activityIndicatorView release];
+    
 	[super dealloc];
 }
+#endif
 
 @end

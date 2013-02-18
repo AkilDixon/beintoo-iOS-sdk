@@ -15,27 +15,37 @@
  ******************************************************************************/
 
 #import "BeintooAlerts.h"
+#import "BeintooDevice.h"
 
 @implementation BeintooAlerts
 
-- (id)init {
+- (id)init
+{
 	if (self = [super init])
 	{
 	}
     return self;
 }
 
-+ (void)showNoUserAlert{
++ (void)showNoUserAlert
+{
 	UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Beintoo" 
 												 message:NSLocalizedStringFromTable(@"noUserMessage",@"BeintooLocalizable",@"")
 												delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 	[av show];
-	[av release];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+    [av release];
+#endif
+	
 }
 
-
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [super dealloc];
 }
+#endif
 
 @end

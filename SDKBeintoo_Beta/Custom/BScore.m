@@ -40,8 +40,11 @@
 	return [self.bestScore intValue];
 }
 
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
 - (void)dealloc {
     [super dealloc];
 }
+#endif
 
 @end

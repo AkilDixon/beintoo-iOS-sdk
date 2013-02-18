@@ -46,7 +46,8 @@
     return self;
 }
 
-- (void)reloadData{	
+- (void)reloadData
+{
     [super reloadData];
 	
 	if ([self numberOfRowsInSection:0]>0) {
@@ -56,7 +57,8 @@
 	
 }
 
-- (id<BeintooTableViewDelegate>) customDelegate {
+- (id<BeintooTableViewDelegate>) customDelegate
+{
 	if ([[self delegate] conformsToProtocol:@protocol(BeintooTableViewDelegate)]) {
 		return (id<BeintooTableViewDelegate>)[self delegate];
 	}

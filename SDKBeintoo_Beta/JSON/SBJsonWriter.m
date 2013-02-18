@@ -28,6 +28,7 @@
  */
 
 #import "SBJsonWriter.h"
+#import "BeintooDevice.h"
 
 @interface SBJsonWriter ()
 
@@ -45,8 +46,14 @@
 static NSMutableCharacterSet *kEscapeChars;
 
 + (void)initialize {
-	kEscapeChars = [[NSMutableCharacterSet characterSetWithRange: NSMakeRange(0,32)] retain];
-	[kEscapeChars addCharactersInString: @"\"\\"];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    kEscapeChars = [NSMutableCharacterSet characterSetWithRange: NSMakeRange(0,32)];
+#else
+    kEscapeChars = [[NSMutableCharacterSet characterSetWithRange: NSMakeRange(0,32)] retain];
+#endif
+	
+    [kEscapeChars addCharactersInString: @"\"\\"];
 }
 
 
@@ -221,7 +228,12 @@ static NSMutableCharacterSet *kEscapeChars;
                     if (uc < 0x20) {
                         [json appendFormat:@"\\u%04x", uc];
                     } else {
+#ifdef BEINTOO_ARC_AVAILABLE
+                        CFStringAppendCharacters((__bridge CFMutableStringRef)json, &uc, 1);
+#else
                         CFStringAppendCharacters((CFMutableStringRef)json, &uc, 1);
+#endif
+                        
                     }
                     break;
                     
