@@ -1,0 +1,426 @@
+// Global
+"score"					= "Очки";
+"points"				= "очков";
+"back"					= "Назад";
+"novice"				= "Новичок";
+"learner"				= "Учащийся";
+"passionate"			= "Заядлый";
+"winner"				= "Победитель";
+"master"				= "Мастер";
+"endDate"				= "Дата истечения срока:";
+"date"					= "Дата:";
+"from:"					= "От:";
+"to:"					= "До:";
+"yes"					= "Да";
+"login"					= "Вход";
+"loginError"			= "Ошибка";
+"loginErrorMsg"			= "Неверное имя пользователя или пароль. Пожалуйста, попробуйте снова.";
+"loginSuccess"			= "Добро пожаловать снова!";
+"loginSuccessMsg"		= "Теперь Вы вошли!";
+"cancel"				= "Отмена";
+"show"					= "Показать";
+"details"				= "Детали";
+"connectionError"		= "Ошибка в связи. Пожалуйста проверьте Вашу интернет связь.";
+"done"					= "Сделано";
+"best"					= "Лучшее: %@";
+"last"					= "Последнее: %@";
+"nickname"				= "Кличка:";
+"lederboardNoResult"    = "Заведите новых друзей и бейте их на лидерской доске!";
+"accountTitle"          = "Профили";
+
+// Give Bedollars
+"giveBedollarMsg"               = "Вы заработали %i Бидолларов! Используйте свои Бидоллары для приобретения предложений Beintoo";
+"giveBedollarsMsg"              = "Вы заработали %i Бидолларов! Используйте свои Бидоллары для приобретения предложений Beintoo";
+"giveBedollarFloatMsg"          = "Вы заработали %.1f Бидолларов! Используйте свои Бидоллары для приобретения предложений Beintoo";
+"giveBedollarsFloatMsg"         = "Вы заработали %.1f Бидолларов! Используйте свои Бидоллары для приобретения предложений Beintoo";
+
+// Post Signup Tutorial
+"tutorialFirstSentenceBold"     = "ИГРАТЬ";
+"tutorialFirstSentence"         = "/ Взаимодействие с любимыми приложениями в сети Beintoo";
+"tutorialSecondSentenceBold"    = "ЗАРАБОТАТЬ";
+"tutorialSecondSentence"        = "/ Собирайте Бидоллары играя";
+"tutorialThirdSentenceBold"     = "ПОКУПАТЬ";
+"tutorialThirdSentence"         = "/ Приобретайте реальные предложения в магазине Beintoo";
+
+"tutorialProceedButton"         = "Начните сейчас!";
+
+"signupMainSentence1"           = "Присоединиться";
+"signupMainSentence2"           = " к обществу";
+"signupMainSentence3"           = "зарабатывайте";
+"signupMainSentence4"           = "бидоллары и ";
+"signupMainSentence5"           = "приобретайте";
+"signupMainSentence6"           = "в полцены от стоимости реальных предложений";
+
+"signupOrLabel"                 = "или";
+
+"new_login_title"               = "Продолжайте зарабатывать Бидоллары и приобретать предложения!";
+
+"signupTextFieldPlaceholder"    = "Зарегистрируйтесь, используя Ваш имейл";
+
+"loginEmailPlaceholder"         = "Имейл";
+"loginPasswordPlaceholder"      = "Пароль";
+
+"successfullyUnfrined"          = "%@ успешно удален из списка друзей";
+"friendshipRequestSent"         = "Запрос о включении в список друзей успешно отправлен к %@";
+"noFriendsAlliance"             = "Заведите новых друзей и пригласите их в Ваш новый союз!";
+"noAlliancesInContest"          = "В этом соперничестве все еще нет новых союзов!";
+"noNotifications"               = "На этот момент, у Вас нет новых уведомлений!";
+
+"connectWithFacebook"           = "Свяжитесь с помощью Facebook";
+
+"noAlliances"                   = "Нет";
+
+"no"                            = "Нет";
+
+"settingsLabel"                 = "Настройки";
+
+"forgotPasswordButton"          = "Забыли пароль?";
+"forgotPasswordTitle"           = "Для востановления пароля, пожалуйста, введите адрес электронной почты";
+"forgotPasswordSendEmail"       = "Отправка нового пароля";
+"forgotPasswordAlertTitle"      = "Отправлена успешно!";
+"forgotPasswordAlertSuccess"    = "Новый пароль отправлен на Ваш аккаунт";
+"forgotPasswordAlertTitleError"	= "Ошибка";
+"forgotPasswordAlertError"      = "Введенный адрес электронной почты не соответствует ни одному профилю";
+
+// Dashboard
+"profileDesc"			= "Просмотрите свою статистику";
+"leaderboardDesc"		= "Посмотрите мировые результаты";
+"walletDesc"			= "Соберите сюда свои предложения";
+"challengesDesc"		= "Управляйте своими вызовами";
+"achievementsDesc"		= "Разблокировать свои достижения";
+"tipsandforumDesc"      = "Поделитесь своими советами!";
+"newMessages"			= "Новые сообщения";
+"tryBeintooMessage"		= "Зарегистрируйтесь в Beintoo что бы получить невероятные предложениями со скидками с ваших дневных приложений.";
+"playHardMessage"       = "Играйте твердо, заработайте Бидоллары и покупайте от Ваших предложений!";
+
+// DashboardPlayer
+"dashplayerhometext"            = "Развлекайтесь побольше, знакомьтесь с другими игроками и сделайте ваши заработки реальными! Добро пожаловать в сеть Beintoo!";
+"dashplayerleaderboardtext"     = "Поднимитесь на Лидерскую доску и сравните результаты!";
+"dashplayerchallengestext"      = "Пригласите своих друзей заработать больше Бидолларов!";
+"dashplayerprofiletext"         = "Создайте профиль и управляйте приложениями вместе с друзьями!";
+"dashplayerforumtips"           = "Поделитесь советами";
+"dashplayersignupnow"           = "Регистрация";
+
+// Notifications
+"submitScoreMsgSinglePoint"		= "Вы заработали %@ очков.";
+"submitScoreMsg"                = "Вы заработали %@ очков.";
+"playerLoginMsg"                = "Добро пожаловать, %@";
+"unlockAchievMsg"               = "Достижение отомкнуто!";
+
+// Notifications
+"notifications"                 = "Уведомления";
+"messagenotificationp"          = "Вы имеете %d уведомлений";
+"messagenotification"           = "Вы имеете %d уведомлений";
+"unmissionstatus"               = "Статус Вашей миссии";
+
+//Marketplace
+"bedollars"                     = "Бидоллары";
+"MPmarketplaceTitle"            = "Купить";
+"MPtextDescriptionLong"         = "Закупить Ваш купон и выслать его как подарок";
+"MPdescription"                 = "Используйте Ваши Бидоллары для покупки предложения";
+"MPcredits"                     = "Ваши кредиты:";
+"MPmainSegmentedIndexTitle0"    = "Популярные";
+"MPmainSegmentedIndexTitle1"    = "Национальные";
+"MPmainSegmentedIndexTitle2"    = "Около меня";
+"MPchildSegmentedIndexTitle0"   = "Топ";
+"MPchildSegmentedIndexTitle1"   = "Категории";
+"MPsendAsAGift"                 = "Отправить подарок";
+"MPbuy"                         = "Купить";
+"MPnoMoneyToGetCoupon"          = "У Вас нет достаточно кредитов что бы взять это предложение, Вы теряете %.2f %@, Вам нужно играть, что бы выиграть их сейчас";
+"MPnoAvailableCoupons"          = "В этой категории нет купонов";
+"MPdistance"                    = "Расстояние";
+"MPbuyItNow"                    = "Купить сейчас";
+"MPyouAreGoingToBuy"            = "Вы покупаете:";
+
+"MPsendRate"                    = "Отправить Оценку";
+"MPwarning"                     = "Внимание!";
+"MPnoStarsSelected"             = "Выберите хотя бы одну звезду, что бы отправить оценку.";
+"ok"                            = "OК";
+"error"                         = "Ошибка!";
+"MPemptyCommentError"           = "Редактируйте текст что бы отправить Ваш комментарий.";
+"MPratingSent"                  = "Оценка отправлена!";
+"MPsend"                        = "Отправить";
+"MPsentComment"                 = "Комментарий отправлен! Через несколько минут от будет видимым.";
+"MPnoAvailableComments"         = "Никаких комментариев на счет этого купона";
+"MPaddress"                     = "Адрес";
+"releaseToRefresh"              = "Освободить, чтобы обновить...";
+"lastUpdate"                    = "Последнее обновление";
+"neverUpdated"                  = "Никогда не обновлено";
+"pullDownToRefresh"             = "Тяните вниз, чтобы обновить...";
+"loading"                       = "Загрузка...";
+"upToDate"                      = "Обновление.";
+"MPwriteNewComment"             = "Написать комментарий";
+"MPorderByPrice"                = "Заказать по цене";
+"submitScoreMarketplaceMsg"     = "Сейчас Вы получили %.0f %@, не теряйте их! Используйте их для того, чтобы закупить Ваши премиальные предложения!";
+"submitScoreMarketplacePlayer"  = "";
+
+//Try Beintoo
+"tryBeintooHeader"              = "Присоединитесь к обществу и возьмите скидку как награду вашим достижениям в этом приложении!";
+"tryBeintooTitle"               = "Развлекайтесь и зарабатывайте";
+"tryBeintooDescCurrency"        = "Используйте монеты, заработанные в этом приложении для закупки разнообразных предложений вашего выбора";
+"tryBeintooDescNoCurrency"      = "Заработайте Бидоллары с помощью этого приложения и выберите персонализированное предложение, которое лучше подходит для Вас!";
+"tryBeintooAcceptButton"        = "Присоединитесь к обществу";
+"tryBeintooRefuseButton"        = "Нет, я не хочу играть и зарабатывать";
+
+"tryBeintooTitleGamefy"         = "Любите играть с приложениями?";
+"tryBeintooDescGamefy"          = "Наслаждайтесь Вашими любимыми играми и воспользуйтесь игровыми возможностями заработать доллары от скидок и решите как их потратить на Рынке!";
+
+// Start Beintoo
+"enteremail"			= "Введите Ваш адрес электронной почты:";
+"registrationComplete"  = "Регистрация завершена!";
+"confirmNickname"		= "Подтвердите Ваш ник:";
+"startBtn"				= "Начните игру!";
+"confirmNickBtn"		= "Подтвердите ник";
+"registrationDisclaim"	= "Зарегистрировавшись, Вы соглашаетесь с правилами и условиями конфиденциальности Beintoo.";
+"regEmailErrorMessage"	= "Недействительный имейл.";
+"loginExistingBtn"		= "Уже зарегистрированы? Вход! »";
+"tryBeintooBtn"         = "Зарегистрируйтесь сейчас";
+"noThanks"              = "Напомните мне позже";
+"useAnotherAccount"     = "Используйте другой профиль";
+"newUser"               = "Новый потребительский профиль";
+
+// Leaderboard
+"leaderboard"			= "Список лидеров";
+"all"					= "Все";
+"friends"				= "Друзья";
+"tobeat"                = "Обыграть";
+"pickacontest"			= "Выбрать ко3нкурс, чтобы увидеть результаты";
+"people"                = "Люди";
+"leadSendChall"         = "Отправить Вызов";
+"leadViewProfile"       = "Посмотреть профиль";
+"leadAddFriend"         = "Добавить в список друзей";
+
+// Achievements
+"achievements"			= "Достижения";
+"blockedby"				= "Заблокировано последующими достижениями";
+
+// Profile
+"profile"				= "Профиль";
+"level"					= "Уровень:";
+"pointsOn"				= "Очков";
+"pointsOnThisApp"		= "Очков в этом приложении:";
+"totalScore"			= "Общий Результат:";
+"bestScore"				= "Лучший Результат:";
+"lastScore"				= "Последний Результат:";
+"detachFromDevice"		= "Вы действительно уверены что хотите удалить Ваш профиль от этого устройства?";
+"logout"				= "Вы действительно уверены что хотите выйти из Beintoo?";
+"friendList"			= "Список друзей";
+"friendRequest"			= "Запросы о дружбе";
+"sendMessage"			= "Отправить Сообщение";
+"messages"				= "Сообщения";
+"logoutBtn"				= "Выйти";
+"detach"                = "Удалить";
+
+
+// Friends
+"findFriends"			= "Найти Друзей";
+"yourFriends"			= "Ваши Друзья";
+"friendRequests"		= "Заявки в Друзья";
+"recommendToAFriend"	= "посоветовать другу";
+"findFriendsDesc"		= "найти людей в обществе";
+"yourFriendsDesc"		= "просмотр Ваших Beintoo друзей";
+"friendRequestsDesc"	= "управлять Вашими запросами друзей";
+"recommendToAFriendDesc"= "посоветуйте это приложение друзьям";
+"addFriend"				= "Отправить %@ запрос о дружбе?";
+"addAsFriend"			= "Отправить запрос";
+"nofriendslabel"		= "Заведите новых друзей и просмотрите их здесь!";
+"hereAreYourFriends"	= "Ваши Друзья";
+"searchForTitle"		= "Найти по никнейму, имени или по электронной почте";
+"noResult"				= "К сожалению, результаты не найдены!";
+"noFriendshipReq"		= "У Вас нет запросов о дружбе";
+"friendReqTitle"		= "Нажмите на имя для принятия";
+"friendRequestFrom"		= "Вы принимаете запрос о дружбе?";
+"noRequest"				= "У Вас нет запросов о дружбе в ожидании.";
+"alreadyFriends"        = "Вы уже друзья!";
+
+// Wallet
+"wallet"				= "Мои Предложения";
+"tobeconverted"			= "Предстоит закупить";
+"converted"				= "Уже закуплено";
+
+// Tips and forum
+"tipsandforum"          = "Советы и Форум";
+
+// Balance
+"balance"				= "Баланс";
+"balanceTitle"			= "Балланс";
+"nobalancelabel"		= "У Вас пока нет бидолларов. Играйте, чтобы зарабатывать и приобретать предложения!";
+"BADGE_WIN"				= "Заработан Значок";
+"CHALLENGE_ACCEPT"		= "Вызов Принят";
+"CHALLENGE_INVITE"		= "Брошен Вызов";
+"CHALLENGE_WIN"			= "Вызов Выигран";
+"COMMENT"				= "Комментарий";
+"CONTEST_WIN"			= "Конкурс Выигран";
+"CREATE_USER"			= "Зарегистрировать пользователя";
+"FRIEND_ADDED"			= "Добавлен Друг";
+"FRIEND_INVITE"			= "Друг Приглашен";
+"LEADERBOARD_IMPROVE"	= "Улучшение позиции в списке лидеров";
+"MARKETPLACE_BUY"		= "Погашение";
+"MARKETPLACE_SELL"		= "Распродажа";
+"SEND_BEDOLLAR_METHOD"	= "Взято с Приложения";
+"SHARE"					= "Поделится";
+"SUBMIT_SCORE"			= "Новый результат";
+"VGOOD_CONVERSION"		= "Погашение";
+"WEEKLY_PAYMENT"		= "Недельный доход";
+"ACHIEVEMENT_UNLOCKED"  = "Достижение разблокировано!";
+"VOTE"                  = "Проголосовть";
+
+// Challenges
+
+"challenges"			= "Вызовы";
+"challenge"				= "Вызов";
+"pending"				= "В ожидании";
+"ended"					= "Окончено";
+"end"					= "Окончено";
+"ongoing"				= "В действие";
+"from"					= "От";
+"to"					= "к";
+"status"				= "Статус:";
+"startDate"				= "Начальная дата:";
+"endChallengeDate"		= "Дата окончания"
+"prize"					= "Приз"
+"challengeWinner"		= "Победитель";
+"costToAccept"			= "Взнос:";
+
+// New Challenges
+
+"challmevsyou"          = "Бьюсь об заклад, что Вы не можете набрать столько очков за 48 часов";
+"challmevsyoutitle"     = "Вы не можете набрать...";
+"challFriends"          = "Бьюсь об заклад, что я могу набрать столько очков за 48 часов";
+"challFriendstitle"     = "Я могунабрать...";
+"chall48"               = "Бьюсь об заклад, что я могу набрать больше, чем Вы, за последующие 48 часов?";
+"chall48title"          = "Кто лучший?";
+"chall48subtitle"       = "Я могу набрать больше очков чем Вы";
+"challhowmuchbet"       = "Бьюсь об заклад";
+"challhowmanypoint"     = "Я могу набрать...";
+"challhowmanypointyou"  = "%@ не может набрать";
+"challerror"            = "Пожалуйста, проверьте входящие параметры";
+"challFromTo"           = "От Вас к ";
+"challFrom"             = "От ";
+"challYou"              = " к Вам";
+"challFromUser"         = "вызывает Вас";
+"challBet"              = "Пари";
+"challCanWin"           = "Вы можете выиграть";
+"challPointsTarget"     = "Набрать очков";
+"challPoints"           = "Очков";
+"clickhere"             = "нажмите здесь";
+"started"				= "В действие";
+"to be accepted"		= "В ожидании";
+
+//vGood
+"friends"				= "Друзья";
+"whoAlsoConverted"		= "Который так же погашен:";
+"selectFriend"			= "Выберите друга";
+"doYouFriend"			= "Вы в правду хотите отправить этот купон как подарок?";
+"unableToSendAsAGift"	= "Пожалуйста войдите в систему чтобы отправить это предложение другу.";
+"giftSent"				= "Подарок отправлен!";
+"giftNotSent"			= "Невозможно отправить подарок.";
+"vgoodMessageBanner"	= "Вы заработали предложение за Ваш результат! Нажмите сюда и погасите его!";
+"vgoodMessageAd"        = "Спонсором Вашего матча был";
+"multipleVgoodsLabel"	= "Поздравляем! Выберите предложение.";
+"nothingToDispatchMsg"  = "К сожалению, в вашей зоне все еще нет актуальных предложений.";
+"acceptBtn"             = "Принять";
+"refuseBtn"             = "Отказать";
+"getCoupon"             = "Взять Купон";
+"sendAsGift"             = "Отправить подарок";
+
+// Alliances
+
+"alliance"                  = "Aльянс";
+"alliances"                 = "Aльянсы";
+"alliance_create"           = "Создать альянс";
+"alliance_createDesc"       = "Создать альянс";
+"alliance_your"             = "Ваш альянс";
+"alliance_yourDesc"         = "Просмотр статистики и деталей Вашего альянса";
+"alliance_list"             = "Список альянсов";
+"alliance_listDesc"         = "Просмотр всех альянсов";
+"alliancemaintextfooter"    = "Альянсы- это игроки которые решили собраться вместе в команду и сотрудничают между собой против остальных альянсов с целью заработать больше Бидолларов и побольше предложений.";
+"alliancemembers"           = "Члены";
+"allianceadmin"             = "Администратор";
+"allianceviewmembers"       = "Члены альянса";
+"allianceleave"             = "Покинуть альянс";
+"allianceviewpending"       = "Запросы в ожидании";
+"allianceSearchFor"         = "Найти название альянса";
+"addToAlliance"             = "Добавить в альянс";
+"alliancependindialog"      = "Вы желаете принять %@ в Ваш альянс?";
+"alliancecreateeditext"     = "Введите название Вашего альянса";
+"alliancemaincreate"        = "Создать альянс";
+"alliancemainlist"          = "Список альянсов";
+"alliancesendreq"           = "Присоединится к альянсу";
+"alliancerequestdialog"     = "Вы хотите отправить запрос о присоединении к этому альянсу?";
+"allianceleaveareyousure"   = "Вы действительно хотите покинуть этот альянс?";
+"allianceaddfriends"        = "Добавить друзей к Вашему альянсу";
+"alliancenametooshort"      = "Название Вашего альянса должно состоять, минимум, из трех символов";
+"allianceNoResult"        = "У Вас нет запросов о дружбе в ожидании.";
+
+// Labels
+"wehavefound"			= "Какой профиль Вы хотите использовать?";
+"selectwhich"			= "Выберите профиль или создайте новый в Beintoo.";
+"orcreate"				= "";
+"hereare"				= "Здесь Ваши вызовы";
+"itstimeto"				= "пришло время побеждать";
+"congratulations"		= "Поздравляем, Вы заслужили эксклюзивное предложение!";
+"hereiswallet"			= "Соберите сюда свои предложения";
+"noscoreLabel"			= "Вы еще не играли! Начните играть и смотрите свои результаты здесь.";
+"noscoreLabelOtherUser" = "Нет очков в этом приложении:";
+"nochallenges"			= "У Вас не вызовов на данный момент, вызовите своих друзей";
+"noChallengesCompleted" = "Вы не закончили ни один вызов!";
+"startChallenge"		= "Хотите отправить вызов? Ставьте 10 Бидолларов чтобы выиграть 25.";
+"loginOn"				= "Вход";
+"no_fb_login1"			= "Вход в Beintoo, создать новый";
+"no_fb_login2"			= "потребитель или войдите посредством Вашего Facebook потребительского профиля";
+"orCreateAccount"		= "Или создайте новый потребительский профиль";
+"nogoodslabel"			= "Вы не собрали ни одного предложения!";
+"nogoodsnolocation"		= "Пожалуйста, разрешите определение местоположения, чтобы получать предложения.";
+"signup"				= "Регистрация";
+"noAchievementsLabel"	= "Нет достижений для того, чтобы отомкнуть это приложение!";
+
+// Messages
+"inbox"					= "Входящие";
+"yourMessages"			= "Здесь Ваши сообщения";
+"loadmoreButton"		= "Загрузить еще";
+"newMessage"			= "Новое сообщение";
+"reply"					= "Ответить";
+"delete"				= "Удалить";
+"sendmessage"			= "Выберите друга и напишите сообщение";
+"message:"				= "Сообщение:";
+"sendButton"			= "Отправить";
+"sendMessageTitle"		= "Отправить сообщение";
+"addressee"				= "Кому";
+"noMessages"			= "У Вас нет сообщений.";
+
+// Missions
+"missiontoachieve"      = "Для прохождения Вашей миссии и для получения предложения играйте сейчас ";
+"missionwelcometo"      = "Добро пожаловать в Ваш";
+"missionstatusof"        = "Статус Вашей";
+"missionoftheweek"      = "МИССИЯ НЕДЕЛИ!";
+"missionachieveyour"    = "ПРОЙДИТЕ ВАШУ МИССИЮ И";
+"missionandwinreward"   = "ЗАРАБОТАЙТЕ ОТЛИЧНОЕ ПРЕДЛОЖЕНИЕ";
+"missionaccomplished"   = "Миссия выполнена!";
+"missiongetrewardnow"   = "ВОЗЬМИТЕ СВОЕ ПРЕДЛОЖЕНИЕ СЕЙЧАС";
+"missionredeem"         = "Закупить";
+"missiongetbedollars"   = "Beintoo Бидоллары!";
+"missionjoinnow"        = "Присоединиться Сейчас";
+"missionlater"          = "Позже";
+"missiondownloadnow"    = "Скачать";
+
+// AlertMessages
+"useralreadyregistered" = "Этот адрес электронной почты уже зарегистрирован.";
+"errorMessage"			= "Произошла ошибка, пожалуйста попробуйте сначала.";
+"challengeSent"			= "Вызов отправлен!";
+"challengeAccepted"		= "Вызов принят";
+"challengeRefused"		= "Вызов отказан.";
+"challengeOngoing"		= "Вызов всегда постоянен.";
+"noBedollarsForChall"   = "У Вас недостаточно Бидолларов чтобы отправить Вызов. \n Нужно10 Бидолларов";
+"shortMessageError"		= "Сообщение слишком коротко. \nПожалуйста, напишите снова.";
+"messageSent"			= "Сообщение отправлено!";
+"messageNotSent"		= "Невозможно отправить сообщение. \n Пожалуйста, попробуйте снова.";
+"noFriendSelected"		= "Выберите друга для отправки Вашего сообщения";
+"messageDeleted"		= "Сообщение удалено.";
+"messageNotDeleted"		= "Случилась ошибка, сообщение не удалено. Пожалуйста, попробуйте снова.";
+"requestSent"			= "Запрос отправлен.";
+"requestNotSent"		= "Случилась ошибка, запрос не отправлен. Пожалуйста, попробуйте снова.";
+"requestAccepted"		= "Запрос принят";
+"requestRefused"		= "Запрос отказан";
+"pendingFriendRequest"  = "У Вас уже имеется запрос в ожидании к этому пользователю.";
+"noUserMessage"			= "Потребитель не . Пожалуйста войдите сначала.";

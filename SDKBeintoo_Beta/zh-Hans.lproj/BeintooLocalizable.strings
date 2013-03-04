@@ -25,6 +25,7 @@
 "best"                              = "最佳： ";
 "last"                              = "姓： ";
 "nickname"                          = "昵称：";
+"accountTitle"                      = "Accounts";
 
 // Give Bedollars
 "giveBedollarMsg"      = "You just earned %i Bedollar! Use your Bedollars to redeem great offers on Beintoo";

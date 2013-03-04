@@ -17,8 +17,8 @@
 #import <UIKit/UIKit.h>
 
 
-@interface BeintooWebViewVC : UIViewController <UIWebViewDelegate,UINavigationBarDelegate>{
-
+@interface BeintooWebViewVC : UIViewController <UIWebViewDelegate,UINavigationBarDelegate>
+{
 	IBOutlet UIWebView		*_webView;
 	NSString				*urlToOpen;
     BOOL                    allowCloseWebViewAndDismissBeintoo;
@@ -28,7 +28,7 @@
 - (void)setAllowCloseWebView:(BOOL)_value;
 - (UIButton *)closeButton;
 
-@property(nonatomic,retain) NSString *urlToOpen;
-@property(nonatomic,assign) BOOL            isFromNotification;
+@property(nonatomic,retain) NSString    *urlToOpen;
+@property(nonatomic,assign) BOOL        isFromNotification;
 
 @end

@@ -50,20 +50,10 @@ static BLoadingView *loading;
 	[callingView addSubview:loading];
 	
     [UIView beginAnimations:nil context:nil];
-	[UIView setAnimationDuration:0.5];
+	[UIView setAnimationDuration:0.2];
 	[UIView setAnimationDelay:0.0];
     loading.alpha = 1.0;
 	[UIView commitAnimations];
-
-    
-    /*[UIView animateWithDuration:0.5
-						  delay: 0.0
-						options: UIViewAnimationOptionCurveEaseIn
-					 animations:^{
-						 loading.alpha = 1.0;
-					 }
-					 completion:nil];
-     */
 }
 
 - (id)initWithFrame:(CGRect)frame andCallingView:(UIView *)_view
@@ -141,7 +131,7 @@ static BLoadingView *loading;
 }
 
 + (void)stopActivity{
-	if (loading!=nil) {
+	if (loading != nil) {
 		[loading setHidden:YES];
         [loading removeFromSuperview];
         

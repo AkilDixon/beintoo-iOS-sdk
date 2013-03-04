@@ -26,6 +26,7 @@
 "last"					= "Ultimo:";
 "nickname"				= "Nick:";
 "lederboardNoResult"    = "Trova nuovi amici e sfidali in classifica!";
+"accountTitle"          = "Lista Account";
 
 // Give Bedollars
 "giveBedollarMsg"      = "Hai appena guadagnato %i Bedollar! Usa i tuoi Bedollar per ottenere esclusive offerte su Beintoo";

@@ -639,6 +639,7 @@
 		F141E97C16AE89820060E9DD /* BAnimatedNotificationQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAnimatedNotificationQueue.m; sourceTree = "<group>"; };
 		F141E9C316AEE7770060E9DD /* BTemplateGiveBedollars.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTemplateGiveBedollars.m; sourceTree = "<group>"; };
 		F141E9C416AEE7770060E9DD /* BTemplateGiveBedollars.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTemplateGiveBedollars.h; sourceTree = "<group>"; };
+		F17C3CBE16D791B4007E3C35 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/BeintooLocalizable.strings; sourceTree = "<group>"; };
 		F184564116CBA5160097D861 /* BeintooAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooAd.h; sourceTree = "<group>"; };
 		F184564216CBA5170097D861 /* BeintooAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeintooAd.m; sourceTree = "<group>"; };
 		F184564416CBCBD00097D861 /* BeintooReward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooReward.h; sourceTree = "<group>"; };
@@ -1259,6 +1260,7 @@
 				es,
 				"zh-Hans",
 				ko,
+				ru,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
@@ -1556,6 +1558,7 @@
 				701B91151418CAFD006FAF02 /* es */,
 				701D354E143EF4BD00DD8133 /* zh-Hans */,
 				5C1ADD511611EAD300035B23 /* ko */,
+				F17C3CBE16D791B4007E3C35 /* ru */,
 			);
 			name = BeintooLocalizable.strings;
 			sourceTree = "<group>";
@@ -1571,7 +1574,7 @@
 				BEINTOO_DEBUG = 1;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1583,6 +1586,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME) ";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1595,7 +1599,7 @@
 				BEINTOO_DEBUG = 1;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Beintoo_Prefix.pch;
@@ -1605,6 +1609,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME) ";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};

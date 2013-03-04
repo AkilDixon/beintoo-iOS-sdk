@@ -182,6 +182,7 @@
 	cell.textLabel.font				= [UIFont systemFontOfSize:16];
 	cell.detailTextLabel.text		= NSLocalizedStringFromTable(choicheDesc,@"BeintooLocalizable",@"");;
 	cell.detailTextLabel.font		= [UIFont systemFontOfSize:14];
+    cell.detailTextLabel.numberOfLines = 0;
 
 	cell.imageView.image	= [UIImage imageNamed:[NSString stringWithFormat:@"beintoo_%@.png", choicheCode]];
     return cell;

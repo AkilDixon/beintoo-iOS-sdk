@@ -939,7 +939,7 @@
 
 - (void)didFinishToParsewithResult:(NSDictionary *)result forCaller:(NSInteger)callerID
 {
-	switch (callerID){
+    switch (callerID){
 		case PLAYER_LOGINwDELEG_CALLER_ID:{  // ------------------------------- PLAYER LOGIN WITH DELEGATE
             
             if (![[result objectForKey:@"kind"] isEqualToString:@"error"]) {

@@ -413,23 +413,17 @@
         BImageDownload *download = [[[BImageDownload alloc] init] autorelease];
 #endif
     
-        download.delegate = self;
         if (!currentUser) {
-            
-            download.urlString = @"beintoo_profile.png";
-            /*userImg.contentMode = UIViewContentModeCenter;
-            userImg.image       = [UIImage imageNamed:@"beintoo_profile.png"];*/
+            userImg.contentMode = UIViewContentModeCenter;
+            userImg.image       = [UIImage imageNamed:@"beintoo_profile.png"];
         }
         else{
-            /*NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[currentUser objectForKey:@"userimg"]]];
-            [userImg setImage:[UIImage imageWithData:imgData]];*/
-            
+            download.delegate = self;
             download.urlString = [currentUser objectForKey:@"userimg"];
+            userImg.image = download.image;
         }
         
-        userImg.image = download.image;
-        
-		nickname.text  = [currentUser objectForKey:@"nickname"];
+        nickname.text  = [currentUser objectForKey:@"nickname"];
 		level.text	   = [self translateLevel:[currentUser objectForKey:@"level"]];
 		beDollars.text = [NSString stringWithFormat:@"%.2f", [[currentUser objectForKey:@"bedollars"]floatValue]];
 		
@@ -486,8 +480,6 @@
 		}
 		
 		NSDictionary *currentUser = [result objectForKey:@"user"];	
-		/*NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[currentUser objectForKey:@"userimg"]]];
-		[userImg setImage:[UIImage imageWithData:imgData]];*/
         
 #ifdef BEINTOO_ARC_AVAILABLE
         BImageDownload *download = [[BImageDownload alloc] init];

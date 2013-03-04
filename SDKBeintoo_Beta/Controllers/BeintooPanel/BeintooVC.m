@@ -57,8 +57,7 @@
 				[panelElement setObject:NSLocalizedStringFromTable(@"MPmarketplaceTitle",@"BeintooLocalizable", nil) forKey:@"featureName"];
 				[panelElement setObject:NSLocalizedStringFromTable(@"MPdescription",@"BeintooLocalizable", nil) forKey:@"featureDesc"];
 				[panelElement setObject:@"beintoo_marketplace.png" forKey:@"featureImg"];
-				//[panelElement setObject:marketplaceVC forKey:@"featureVC"];
-                [panelElement setObject:beintooBestoreVC forKey:@"featureVC"];
+				[panelElement setObject:beintooBestoreVC forKey:@"featureVC"];
 			}
 			if ([elem isEqualToString:@"Leaderboard"]){
 				[panelElement setObject:NSLocalizedStringFromTable(@"leaderboard",@"BeintooLocalizable",@"") forKey:@"featureName"];
@@ -125,6 +124,20 @@
 
 - (void)closeBeintoo
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:BeintooNotificationSignupClosed object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:BeintooNotificationReloadDashboard object:nil];
+    
+    @try {
+        [BLoadingView stopActivity];
+        for (UIView *view in [self.view subviews]) {
+            if([view isKindOfClass:[BLoadingView class]]){
+                [view removeFromSuperview];
+            }
+        }
+	}
+	@catch (NSException * e) {
+	}
+    
     [Beintoo dismissBeintoo];
 }
 
@@ -169,7 +182,7 @@
 	// ----------- ViewControllers initialization ------------
 	self.loginVC            = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
 	beintooProfileVC        = [[BeintooProfileVC alloc]initWithNibName:@"BeintooProfileVC" bundle:[NSBundle mainBundle]];
-    beintooBestoreVC = [[BeintooBestoreVC alloc] initWithNibName:@"BeintooBestoreVC" bundle:[NSBundle mainBundle]];
+    beintooBestoreVC        = [[BeintooBestoreVC alloc] initWithNibName:@"BeintooBestoreVC" bundle:[NSBundle mainBundle]];
     beintooLeaderboardVC    = [[BeintooLeaderboardVC alloc]initWithNibName:@"BeintooLeaderboardVC" bundle:[NSBundle mainBundle]];
 	beintooWalletVC         = [[BeintooWalletVC alloc]initWithNibName:@"BeintooWalletVC" bundle:[NSBundle mainBundle]];
 	beintooChallengesVC     = [[BeintooChallengesVC alloc]initWithNibName:@"BeintooChallengesVC" bundle:[NSBundle mainBundle]];
@@ -275,10 +288,8 @@
         
         toolBar.frame = CGRectMake(toolBar.frame.origin.x, toolBar.frame.origin.y + 12, toolBar.frame.size.width, 32);
         homeTable.frame = CGRectMake(homeTable.frame.origin.x, homeTable.frame.origin.y, homeTable.frame.size.width, homeTable.frame.size.height + 12);
-        
     }
     else {
-        
         self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
         
         toolBar.frame = CGRectMake(toolBar.frame.origin.x, toolBar.frame.origin.y, toolBar.frame.size.width, 44);
@@ -289,13 +300,6 @@
     
     isNotificationCenterOpen = NO;
     isAlreadyLogging         = NO;
-    
-    // --------------- forum&tips url
-    if ([Beintoo isUserLogged]) {
-        NSString *tipsUrl = [NSString stringWithFormat:@"http://appsforum.beintoo.com/?apikey=%@&userExt=%@#main",
-                             [Beintoo getApiKey],[Beintoo getUserID]];
-        [tipsAndForumVC setUrlToOpen:tipsUrl];
-    }
     
     if (signupViewForPlayers != nil) {
         signupViewForPlayers = nil;
@@ -695,9 +699,9 @@
         else if([featureName isEqualToString:@"Challenges"]){
             
 #ifdef BEINTOO_ARC_AVAILABLE
-            UIView *featureView = [BSignupLayouts getBeintooDashboardViewForLockedFeatureTipsAndForumWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self];
+            UIView *featureView = [BSignupLayouts getBeintooDashboardViewForLockedFeatureChallengesWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self];
 #else
-            UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureTipsAndForumWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
+            UIView *featureView = [[BSignupLayouts getBeintooDashboardViewForLockedFeatureChallengesWithFrame:CGRectMake(30, 70, 290, 220) andButtonActionSelector:@selector(tryBeintoo) fromSender:self] retain];
 #endif
             
             featureView.tag = 3333;
@@ -713,12 +717,14 @@
             [homeTable deselectRowAtIndexPath:[homeTable indexPathForSelectedRow] animated:YES];
 
         }
-        else{
+        else
+        {
             [self.navigationController pushViewController:[[self.featuresArray objectAtIndex:indexPath.row] objectForKey:@"featureVC"] animated:YES];
         }
     }
-    else{
-        [self.navigationController pushViewController:[[self.featuresArray objectAtIndex:indexPath.row] objectForKey:@"featureVC"] animated:YES];   
+    else
+    {
+        [self.navigationController pushViewController:[[self.featuresArray objectAtIndex:indexPath.row] objectForKey:@"featureVC"] animated:YES];
     }
     
     [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
@@ -745,7 +751,7 @@
 
 - (void)didGetUserByUDID:(NSMutableArray *)result
 {
-	@synchronized(self){
+    @synchronized(self){
         
 #ifdef BEINTOO_ARC_AVAILABLE
         [Beintoo setLastLoggedPlayers:(NSArray *)result];
@@ -786,7 +792,7 @@
 
 - (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result
 {
-	@try {
+    @try {
         if ([result objectForKey:@"user"] != nil) {
 			[Beintoo setBeintooPlayer:result];
 			userNick.text  = [[Beintoo getUserIfLogged]objectForKey:@"nickname"];
@@ -826,12 +832,6 @@
     [featureView removeFromSuperview];
 }
 
-/*#ifdef UI_USER_INTERFACE_IDIOM
-- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
-	[Beintoo dismissBeintoo];
-}
-#endif*/
-
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
@@ -851,17 +851,6 @@
 	}
 	@catch (NSException * e) {
     }
-    
-    @try {
-        [BLoadingView stopActivity];
-        for (UIView *view in [self.view subviews]) {
-            if([view isKindOfClass:[BLoadingView class]]){
-                [view removeFromSuperview];
-            }
-        }
-	}
-	@catch (NSException * e) {
-	}
 }
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0

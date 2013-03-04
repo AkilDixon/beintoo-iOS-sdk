@@ -77,10 +77,6 @@
     
     kindOfDelegateNotification = 0;
     
-    if ([Beintoo isUserLogged]){
-        [Beintoo playerLogout];
-    }
-
     NSHTTPCookie *cookie;
 	NSHTTPCookieStorage *storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
 	
@@ -93,8 +89,9 @@
     
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlToOpen]];
 	[request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    
-    [self.registrationWebView loadRequest:request];	
+
+    [registrationWebView setDelegate:self];
+    [self.registrationWebView loadRequest:request];
 }
 
 #pragma mark -

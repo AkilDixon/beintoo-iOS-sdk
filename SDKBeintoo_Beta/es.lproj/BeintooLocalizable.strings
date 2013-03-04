@@ -28,6 +28,7 @@
 "noResult"				= "Lo sentimos, no hay resultados!";
 "noRequest"				= "No tienes solicitudes de amistad pendientes en estos momentos.";
 "lederboardNoResult"    = "Haz nuevos amigos y desafiarlos en la tabla de clasificaciòn!";
+"accountTitle"          = "Accounts";
 
 // Give Bedollars
 "giveBedollarMsg"      = "Acabas de ganar %i Bedollar! Úsa tus Bedollars para disfrutar de grandes ofertas en Beintoo";

@@ -17,14 +17,13 @@
 #import <UIKit/UIKit.h>
 #import "Beintoo.h"
 
-@interface BeintooBestoreVC : UIViewController <UIWebViewDelegate, BeintooPlayerDelegate> {
-
+@interface BeintooBestoreVC : UIViewController <UIWebViewDelegate, BeintooPlayerDelegate>
+{
     IBOutlet UIWebView      *webView;
-    
-    BeintooPlayer *beintooPlayer;
-
+    BeintooPlayer           *beintooPlayer;
 }
 
-@property(nonatomic,assign) BOOL            isFromNotification;
+@property(nonatomic,assign) BOOL    isFromNotification;
+@property(nonatomic, retain) IBOutlet UIWebView *webView;
 
 @end

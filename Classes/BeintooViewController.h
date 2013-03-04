@@ -14,11 +14,6 @@
  * limitations under the License.
  ******************************************************************************/
 
-#define BEINTOO_IOS_4_0  40000
-#define BEINTOO_IOS_5_0  50000
-#define BEINTOO_IOS_5_1  50100
-#define BEINTOO_IOS_6_0  60000
-
 #import <UIKit/UIKit.h>
 #import "Beintoo.h"
 

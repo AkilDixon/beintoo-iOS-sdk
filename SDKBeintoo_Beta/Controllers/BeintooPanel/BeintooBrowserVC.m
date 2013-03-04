@@ -48,7 +48,6 @@
 	_webView.delegate = self;
 	_webView.scalesPageToFit = YES;
     
-    
     UIBarButtonItem *barCloseBtn = [[UIBarButtonItem alloc] initWithCustomView:[self closeButton]];
     [self.navigationItem setRightBarButtonItem:barCloseBtn animated:YES];
     
@@ -68,12 +67,15 @@
     if ([BeintooDevice isiPad]) {
         [self setContentSizeForViewInPopover:CGSizeMake(320, 529)];
     }
-	    
-	if (![Beintoo isUserLogged])
+    
+    if (![Beintoo isUserLogged])
 		[self.navigationController popToRootViewControllerAnimated:NO];
-	else {
+	else
+    {
+        NSString *url = [NSString stringWithFormat:@"http://appsforum.beintoo.com/?apikey=%@&userExt=%@#main",
+                             [Beintoo getApiKey], [Beintoo getUserID]];
         loadingIndicator.center = CGPointMake((self.view.bounds.size.width/2)-5, (self.view.bounds.size.height/2)-30);
-        [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlToOpen]]];
+        [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
     }
 }
 

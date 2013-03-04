@@ -32,34 +32,38 @@
 
 - (void)parsePageAtUrl:(NSString *)URL withHeaders:(NSDictionary *)headers fromCaller:(int)caller
 {
+    if (![BeintooNetwork connectedToNetwork]) {
+        if (caller == PLAYER_SSCORE_NOCONT_CALLER_ID || caller == PLAYER_SSCORE_CONT_CALLER_ID ||
+            caller == PLAYER_GSCOREFORCONT_CALLER_ID || caller == PLAYER_LOGIN_CALLER_ID ||
+            caller == PLAYER_SETBALANCE_CALLER_ID    ||
+            caller == PLAYER_LOGINwDELEG_CALLER_ID   ||
+            caller == ACHIEVEMENTS_GETSUBMITPERCENT_CALLER_ID || caller == ACHIEVEMENTS_GETSUBMITSCORE_CALLER_ID ||
+            caller == ACHIEVEMENTS_GETINCREMENTSCORE_CALLER_ID ||
+            caller == MISSION_GET_CALLER_ID || caller == MISSION_REFUSE_CALLER_ID ||
+            caller == VGOOD_SINGLE_CALLER_ID || caller == VGOOD_SINGLEwDELEG_CALLER_ID ||
+            caller == VGOOD_MULTIPLE_CALLER_ID || caller == VGOOD_MULTIPLEwDELEG_CALLER_ID || caller == VGOOD_CHECK_COVERAGE_CALLER_ID || caller == VGOOD_IS_ELIGIBLE_FOR_REWARD_CALLER_ID || caller == USER_GIVE_BEDOLLARS_CALLER_ID || caller ==  REWARD_GET_AD_CALLER_ID || caller ==  REWARD_GET_AND_DISPLAY_AD_CALLER_ID || callerID == ADS_REQUEST_AND_DISPLAY || callerID == ADS_REQUEST) {
+            BeintooLOG(@"Beintoo - no connection available, check the last action performed!");
+            
+            self.callerID = caller;
+            [self parsingEnd:nil];
+            
+            return;
+        }
+        
+        [BeintooNetwork showNoConnectionAlert];
+        
+        self.callerID = caller;
+        [self parsingEnd:nil];
+        
+        return;
+    }
+    
     // Dispatching asynchronously a task for the request on the main FIFO queue
     dispatch_async([Beintoo beintooDispatchQueue], ^{
         BeintooLOG(@"resource called %@ with parameters %@ on GET", URL, headers);
         @synchronized(self){		
             self.callerID = caller;
-            if (![BeintooNetwork connectedToNetwork]) {
-                if (caller == PLAYER_SSCORE_NOCONT_CALLER_ID || caller == PLAYER_SSCORE_CONT_CALLER_ID || 
-                    caller == PLAYER_GSCOREFORCONT_CALLER_ID || caller == PLAYER_LOGIN_CALLER_ID ||
-                    caller == PLAYER_SETBALANCE_CALLER_ID    ||
-                    caller == PLAYER_LOGINwDELEG_CALLER_ID   ||
-                    caller == ACHIEVEMENTS_GETSUBMITPERCENT_CALLER_ID || caller == ACHIEVEMENTS_GETSUBMITSCORE_CALLER_ID ||
-                    caller == ACHIEVEMENTS_GETINCREMENTSCORE_CALLER_ID ||
-                    caller == MISSION_GET_CALLER_ID || caller == MISSION_REFUSE_CALLER_ID ||
-                    caller == VGOOD_SINGLE_CALLER_ID || caller == VGOOD_SINGLEwDELEG_CALLER_ID ||
-                    caller == VGOOD_MULTIPLE_CALLER_ID || caller == VGOOD_MULTIPLEwDELEG_CALLER_ID || caller == VGOOD_CHECK_COVERAGE_CALLER_ID || caller == VGOOD_IS_ELIGIBLE_FOR_REWARD_CALLER_ID || caller == USER_GIVE_BEDOLLARS_CALLER_ID || caller ==  REWARD_GET_AD_CALLER_ID || caller ==  REWARD_GET_AND_DISPLAY_AD_CALLER_ID || callerID == ADS_REQUEST_AND_DISPLAY || callerID == ADS_REQUEST) {
-                    BeintooLOG(@"Beintoo - no connection available, check the last action performed!");
-                    
-                    [self parsingEnd:nil];
-                    
-                    return;
-                }
-                
-                [BeintooNetwork showNoConnectionAlert];
-                
-                [self parsingEnd:nil];
-                
-                return;
-            }
+            
             NSURL *serviceURL = [NSURL URLWithString:URL];
             
             NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:serviceURL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
@@ -88,15 +92,20 @@
 
 - (void)parsePageAtUrlWithPOST:(NSString *)URL withHeaders:(NSDictionary *)headers fromCaller:(int)caller
 {
+    if (![BeintooNetwork connectedToNetwork]) {
+        [BeintooNetwork showNoConnectionAlert];
+        
+        self.callerID = caller;
+        [self parsingEnd:nil];
+
+        return;
+    }
+    
     // Dispatching asynchronously a task for the request on the main FIFO queue
     dispatch_async([Beintoo beintooDispatchQueue], ^{
         BeintooLOG(@"resource called %@ with parameters %@ on POST",URL,headers);
         
         self.callerID = caller;
-        if (![BeintooNetwork connectedToNetwork]) {
-            [BeintooNetwork showNoConnectionAlert];
-            return;
-        }
         
         NSURL *serviceURL = [NSURL URLWithString:URL];
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:serviceURL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
@@ -117,6 +126,22 @@
 
 - (void)parsePageAtUrlWithPOST:(NSString *)URL withHeaders:(NSDictionary *)headers withHTTPBody:(NSString *)httpBody fromCaller:(int)caller
 {
+    if (![BeintooNetwork connectedToNetwork]) {
+        if (caller == MESSAGE_SET_READ_CALLER_ID     || caller == PLAYER_SSCORE_OFFLINE_CALLER_ID ||
+            caller == ACHIEVEMENTS_SUBMIT_PERCENT_ID || caller == ACHIEVEMENTS_SUBMIT_SCORE_ID ) {
+            
+            self.callerID = caller;
+            [self parsingEnd:nil];
+            return;
+        }
+        [BeintooNetwork showNoConnectionAlert];
+        
+        self.callerID = caller;
+        [self parsingEnd:nil];
+        
+        return;
+    }
+    
     dispatch_async([Beintoo beintooDispatchQueue], ^{
         BeintooLOG(@"resource called %@ with parameters %@ and httpBody %@ on POST",URL,headers,httpBody);
         
@@ -124,18 +149,6 @@
         
         // Dispatching asynchronously a task for the request on the main FIFO queue
         
-        if (![BeintooNetwork connectedToNetwork]) {
-            if (caller == MESSAGE_SET_READ_CALLER_ID     || caller == PLAYER_SSCORE_OFFLINE_CALLER_ID ||
-                caller == ACHIEVEMENTS_SUBMIT_PERCENT_ID || caller == ACHIEVEMENTS_SUBMIT_SCORE_ID ) {
-                
-                [self parsingEnd:nil];
-                return;
-            }
-            [BeintooNetwork showNoConnectionAlert];
-            
-            [self parsingEnd:nil];
-            return;
-        }
         NSURL *serviceURL = [NSURL URLWithString:URL];
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:serviceURL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
         [request setHTTPMethod:@"POST"];
@@ -195,6 +208,7 @@
 		else {
 			// Data correctly received, then converted from byte to string
 			webpage = [[NSString alloc] initWithData:urlData encoding:NSUTF8StringEncoding];
+            NSLog(@"web %@", webpage);
 		}
 	}
     @catch (NSException *e) {

@@ -36,7 +36,7 @@
 {
     [super viewDidLoad];
 	
-	self.title = @"Accounts";
+	self.title = NSLocalizedStringFromTable(@"accountsTitle", @"BeintooLocalizable", nil);
 	
 	[loginView setTopHeight:53.0];
 	[loginView setBodyHeight:375.0];

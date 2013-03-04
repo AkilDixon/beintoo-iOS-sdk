@@ -26,6 +26,7 @@
 "last"					= "Last: %@";
 "nickname"				= "Nick:";
 "lederboardNoResult"    = "Make some new friends and beat them on the leaderboard!";
+"accountTitle"          = "Accounts";
 
 // Give Bedollars
 "giveBedollarMsg"               = "You just earned %i Bedollar! Use your Bedollars to redeem great offers on Beintoo";
@@ -402,6 +403,7 @@
 "missiondownloadnow"    = "Download now";
 
 // AlertMessages
+
 "useralreadyregistered" = "This email address has been previously registered.";
 "errorMessage"			= "An error has occurred, please try again.";
 "challengeSent"			= "Challenge sent!";

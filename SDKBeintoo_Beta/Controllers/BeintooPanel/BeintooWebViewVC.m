@@ -39,7 +39,7 @@
 {
     [super viewDidLoad];
 	
-	self.title = @"Beintoo";
+    self.title = @"Beintoo";
 		
 	_webView.delegate = self;
 	_webView.scalesPageToFit = YES;
@@ -85,7 +85,7 @@
 	
     NSURL *url = request.URL;
 	NSString *urlString = [url absoluteString];
-	
+    
     if ([urlString isEqualToString:@"http://www.beintoo.com/m/sdkandroid/dismisssmartwebui"]) {
 		[self.navigationController popViewControllerAnimated:YES];
 		return YES;

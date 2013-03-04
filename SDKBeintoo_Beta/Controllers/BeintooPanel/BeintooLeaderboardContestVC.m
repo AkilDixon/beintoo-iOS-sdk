@@ -304,10 +304,29 @@
 	
 	if (indexPath.row == [leaderboardEntries count]) {
 		
-		UILabel *loadMoreLabel			= [[UILabel alloc] initWithFrame:CGRectMake(110, 20, 110, 14)];
+		UILabel *loadMoreLabel			= [[UILabel alloc] initWithFrame:CGRectMake(20, 17, 280, 20)];
 		loadMoreLabel.autoresizingMask	= UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
 		loadMoreLabel.backgroundColor	= [UIColor clearColor];
-		loadMoreLabel.font				= [UIFont systemFontOfSize:17];		
+        
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
+        loadMoreLabel.textAlignment     = NSTextAlignmentCenter;
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+        {
+            loadMoreLabel.textAlignment     = NSTextAlignmentCenter;
+            
+        }
+        else
+        {
+            loadMoreLabel.textAlignment     = UITextAlignmentCenter;
+            
+        }
+#else
+        loadMoreLabel.textAlignment     = UITextAlignmentCenter;
+		
+#endif
+
+        loadMoreLabel.font				= [UIFont systemFontOfSize:17];		
 		loadMoreLabel.text				= NSLocalizedStringFromTable(@"loadmoreButton", @"BeintooLocalizable", nil);
 		
 		[cell addSubview:loadMoreLabel];

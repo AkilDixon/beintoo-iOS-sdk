@@ -18,7 +18,7 @@
 #import "BeintooDevice.h"
 
 @implementation BeintooBestoreVC
-@synthesize isFromNotification;
+@synthesize isFromNotification, webView;
 
 - (void)viewDidLoad
 {
@@ -68,7 +68,6 @@
         [BLoadingView stopActivity];
         
         [BeintooNetwork showNoConnectionAlert];
-        
     }
     else {
         
@@ -102,7 +101,8 @@
         NSURL *url = [NSURL URLWithString:urlAddress];
         
         //URL Requst Object
-        NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
+        NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:url];
+        [requestObj setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
         
         webView.delegate = self;
         
@@ -152,64 +152,7 @@
     return _vi;
 }
 
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
-{    
-    NSMutableURLRequest *_request = (NSMutableURLRequest *)request;
-	
-    NSURL *url = _request.URL;
-	NSString *urlString = [url path];
-	
-    NSURL *urlToGetParams = _request.URL;
-	NSString *urlStringToGet = [urlToGetParams absoluteString];
-    
-    if ([urlString isEqualToString:@"/m/set_app_and_redirect.html"]) {
-        
-        BeintooUrlParser *urlParser = [[BeintooUrlParser alloc] initWithURLString:urlStringToGet];
-        
-        if ([urlParser valueForVariable:@"guid"])
-            [beintooPlayer getPlayerByGUID:[urlParser valueForVariable:@"guid"]];
-        
-#ifdef BEINTOO_ARC_AVAILABLE
-#else
-        [urlParser release];
-#endif
-		return YES;
-	}
-
-    // Check if we are going to open a content on the App Store or Itunes
-    
-    if (![url.scheme isEqual:@"http"] && ![url.scheme isEqual:@"https"]) {
-        if ([[UIApplication sharedApplication] canOpenURL:url]) {
-			[[UIApplication sharedApplication] openURL:url];
-			
-            if (isFromNotification){
-                if ([BeintooDevice isiPad]){
-                    [Beintoo dismissIpadNotifications];
-                }
-                else {
-                    
-#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
-            [self dismissViewControllerAnimated:YES completion:nil];
-#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
-            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
-                [self dismissViewControllerAnimated:YES completion:nil];
-            else
-                [self dismissModalViewControllerAnimated:YES];
-#else
-            [self dismissModalViewControllerAnimated:YES];
-#endif
-                }
-            }
-            else
-                [Beintoo dismissBeintoo];
-            
-        }
-			
-        return NO;
-	}
-	
-    return YES;
-}
+#pragma mark - Get Player By Guid
 
 - (void)player:(BeintooPlayer *)player getPlayerByGUID:(NSDictionary *)result
 {
@@ -259,6 +202,12 @@
         [Beintoo dismissBeintoo];
 }
 
+#pragma mark - UIWebView delegates
+
+- (void)webViewDidStartLoad:(UIWebView *)webView
+{
+}
+
 - (void)webViewDidFinishLoad:(UIWebView *)_webView
 {
     [BLoadingView stopActivity];
@@ -267,6 +216,64 @@
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
 {
    [BLoadingView stopActivity];
+}
+
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+{
+    NSMutableURLRequest *_request = (NSMutableURLRequest *)request;
+	
+    NSURL *url = _request.URL;
+	NSString *urlString = [url path];
+	
+    NSURL *urlToGetParams = _request.URL;
+	NSString *urlStringToGet = [urlToGetParams absoluteString];
+    
+    if ([urlString isEqualToString:@"/m/set_app_and_redirect.html"]) {
+        
+        BeintooUrlParser *urlParser = [[BeintooUrlParser alloc] initWithURLString:urlStringToGet];
+        
+        if ([urlParser valueForVariable:@"guid"])
+            [beintooPlayer getPlayerByGUID:[urlParser valueForVariable:@"guid"]];
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+        [urlParser release];
+#endif
+		return YES;
+	}
+    
+    // Check if we are going to open a content on the App Store or Itunes
+    
+    if (![url.scheme isEqual:@"http"] && ![url.scheme isEqual:@"https"]) {
+        if ([[UIApplication sharedApplication] canOpenURL:url]) {
+			[[UIApplication sharedApplication] openURL:url];
+			
+            if (isFromNotification){
+                if ([BeintooDevice isiPad]){
+                    [Beintoo dismissIpadNotifications];
+                }
+                else {
+                    
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+                    [self dismissViewControllerAnimated:YES completion:nil];
+#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
+                    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+                        [self dismissViewControllerAnimated:YES completion:nil];
+                    else
+                        [self dismissModalViewControllerAnimated:YES];
+#else
+                    [self dismissModalViewControllerAnimated:YES];
+#endif
+                }
+            }
+            else
+                [Beintoo dismissBeintoo];
+        }
+        
+        return NO;
+	}
+	
+    return YES;
 }
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0

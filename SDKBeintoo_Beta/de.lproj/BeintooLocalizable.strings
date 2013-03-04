@@ -26,6 +26,7 @@
 "last"					= "Letzte: ";
 "nickname"				= "Spitzname:";
 "lederboardNoResult"    = "Mach neue Freunde und schlag ihre Highscore!";
+"accountTitle"          = "Accounts";
 
 // Home
 "profileDesc"			= "";

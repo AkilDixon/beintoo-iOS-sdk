@@ -157,7 +157,7 @@
     UIView *signupView          = [[BGradientView alloc] initWithFrame:_frame];
     signupView.backgroundColor  = [UIColor clearColor];
     
-    UILabel *signupLabel        = [[UILabel alloc] initWithFrame:CGRectMake(5, 8, _frame.size.width-10, 33)];
+    UILabel *signupLabel        = [[UILabel alloc] initWithFrame:CGRectMake(0, 8, _frame.size.width-5, 33)];
     signupLabel.adjustsFontSizeToFitWidth = YES;
     signupLabel.backgroundColor = [UIColor clearColor];
     signupLabel.numberOfLines   = 2;
