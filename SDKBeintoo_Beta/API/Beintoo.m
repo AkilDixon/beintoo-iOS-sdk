@@ -723,15 +723,25 @@
 	if ([Beintoo isBeintooInitialized]) {
 		[Beintoo setAppOrientation:_orientation];
        
-        BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
-        if (_prizeView.alpha == 1){
-            [_prizeView preparePrizeAlertOrientation:_prizeView.frame];
-        }
+        /*
+        ** Need to alert Reward or other container about the changes of the orientation with a delay,
+        ** elsewhere the - (void)eventuallyUpdateDisplayedContent; method will be performed faster than the [Beintoo setAppOrientation:_orientation];
+        */
         
-        BPrize	*_adView = [Beintoo sharedInstance]->adView;
-        if (_adView.alpha == 1){
-            [_adView preparePrizeAlertOrientation:_adView.frame];
-        }
+        [self performSelector:@selector(eventuallyUpdateDisplayedContent) withObject:nil afterDelay:0.1];
+    }
+}
+
++ (void)eventuallyUpdateDisplayedContent
+{
+    BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
+    if (_prizeView.alpha == 1){
+        [_prizeView preparePrizeAlertOrientation:_prizeView.frame];
+    }
+    
+    BPrize	*_adView = [Beintoo sharedInstance]->adView;
+    if (_adView.alpha == 1){
+        [_adView preparePrizeAlertOrientation:_adView.frame];
     }
 }
 

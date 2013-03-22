@@ -26,7 +26,8 @@
 "last"					= "Last: %@";
 "nickname"				= "Nick:";
 "lederboardNoResult"    = "Make some new friends and beat them on the leaderboard!";
-"accountTitle"          = "Accounts";
+"accountsTitle"          = "Accounts";
+"You have no friends to invite" = "You have no friends to invite";
 
 // Give Bedollars
 "giveBedollarMsg"               = "You just earned %i Bedollar! Use your Bedollars to redeem great offers on Beintoo";

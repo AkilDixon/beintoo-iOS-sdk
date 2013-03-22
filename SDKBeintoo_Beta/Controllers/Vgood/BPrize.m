@@ -45,7 +45,11 @@
 	
     windowSizeRect = windowSize;
     
-	CGRect vgoodFrame = CGRectMake(0, 0, windowSize.width, windowSize.height);
+    int statusBarOffset = 0;
+    if ([Beintoo isStatusBarHiddenOnApp] == NO && [[UIApplication sharedApplication] isStatusBarHidden] == NO)
+        statusBarOffset = 20;
+    
+	CGRect vgoodFrame = CGRectMake(0, statusBarOffset, windowSize.width, windowSize.height - statusBarOffset);
     
 	prizeType = PRIZE_RECOMMENDATION_HTML;
 	
@@ -121,10 +125,14 @@
     
     [self removeViews];
 	
-    recommWebView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
+    int statusBarOffset = 0;
+    if ([Beintoo isStatusBarHiddenOnApp] == NO && [[UIApplication sharedApplication] isStatusBarHidden] == NO)
+        statusBarOffset = 20;
+    
+    recommWebView.frame = CGRectMake(0, statusBarOffset, self.frame.size.width, self.frame.size.height - statusBarOffset);
     
     if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight)
-        recommWebView.frame = CGRectMake(0, 0, windowSizeRect.height, windowSizeRect.width);
+        recommWebView.frame = CGRectMake(0, statusBarOffset, windowSizeRect.height, windowSizeRect.width - statusBarOffset);
     
     NSString *vgoodUrl = [[lastVgood theGood] objectForKey:@"content"];
     NSString *content = [NSString stringWithFormat:@"%@", vgoodUrl];
@@ -236,7 +244,8 @@
 }
 
 - (void)preparePrizeAlertOrientation:(CGRect)startingFrame
-{    
+{
+    NSLog(@"changed app or %i", [Beintoo appOrientation]);
     self.alpha = 0;
     self.transform = CGAffineTransformMakeRotation(DegreesToRadians(0));
 	

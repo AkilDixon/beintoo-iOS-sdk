@@ -142,10 +142,14 @@ NSString *signinProtocol                = @"/m/set_app_and_redirect.html";
     
     [self removeViews];
 	
-    recommWebView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
+    int statusBarOffset = 0;
+    if ([[UIApplication sharedApplication] isStatusBarHidden] == NO)
+        statusBarOffset = 20;
+    
+    recommWebView.frame = CGRectMake(0, statusBarOffset, self.frame.size.width, self.frame.size.height - statusBarOffset);
     
     if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft || [Beintoo appOrientation] == UIInterfaceOrientationLandscapeRight)
-        recommWebView.frame = CGRectMake(0, 0, self.frame.size.height, self.frame.size.width);
+        recommWebView.frame = CGRectMake(0, statusBarOffset, windowSizeRect.height, windowSizeRect.width - statusBarOffset);
     
     NSString *vgoodUrl = [[lastVgood theGood] objectForKey:@"content"];
     NSString *content = [NSString stringWithFormat:@"%@", vgoodUrl];
@@ -262,6 +266,10 @@ NSString *signinProtocol                = @"/m/set_app_and_redirect.html";
 
 - (void)setViewSize
 {
+    int statusBarOffset = 0;
+    if ([[UIApplication sharedApplication] isStatusBarHidden] == NO)
+        statusBarOffset = 20;
+    
     if ([Beintoo appOrientation] == UIInterfaceOrientationLandscapeLeft) {
         CGRect vgoodFrame = CGRectMake(0, 0, windowSizeRect.width, windowSizeRect.height);
         [self setFrame:vgoodFrame];
@@ -337,7 +345,7 @@ NSString *signinProtocol                = @"/m/set_app_and_redirect.html";
             transitionExitSubtype  = kCATransitionFromLeft;
         }
         else if(notificationPosition == BeintooNotificationPositionTop){
-            self.center = CGPointMake(width/2, windowSizeRect.height/2);
+            self.center = CGPointMake(width/2 + statusBarOffset, windowSizeRect.height/2);
             transitionEnterSubtype = kCATransitionFromLeft;
             transitionExitSubtype  = kCATransitionFromRight;
         }
@@ -354,7 +362,7 @@ NSString *signinProtocol                = @"/m/set_app_and_redirect.html";
             transitionExitSubtype  = kCATransitionFromRight;
         }
         else if(notificationPosition == BeintooNotificationPositionTop){
-            self.center = CGPointMake(windowSizeRect.width - width/2, windowSizeRect.height/2);
+            self.center = CGPointMake(windowSizeRect.width - width/2 - statusBarOffest, windowSizeRect.height/2);
             transitionEnterSubtype = kCATransitionFromRight;
             transitionExitSubtype  = kCATransitionFromLeft;
         }
@@ -369,7 +377,7 @@ NSString *signinProtocol                = @"/m/set_app_and_redirect.html";
             transitionExitSubtype  = kCATransitionFromBottom;
         }
         else if(notificationPosition == BeintooNotificationPositionTop){
-            self.frame = CGRectMake(0, 0, width, height);
+            self.frame = CGRectMake(0, statusBarOffest, width, height);
             transitionEnterSubtype = kCATransitionFromBottom;
             transitionExitSubtype  = kCATransitionFromTop;
         }
@@ -384,7 +392,7 @@ NSString *signinProtocol                = @"/m/set_app_and_redirect.html";
             transitionExitSubtype  = kCATransitionFromTop;
         }
         else if(notificationPosition == BeintooNotificationPositionTop){
-            self.frame = CGRectMake(0, windowSizeRect.height - height, width, height);
+            self.frame = CGRectMake(0, windowSizeRect.height - height - statusBarOffset, width, height);
             transitionEnterSubtype = kCATransitionFromTop;
             transitionExitSubtype  = kCATransitionFromBottom;
         }
@@ -489,14 +497,14 @@ NSString *signinProtocol                = @"/m/set_app_and_redirect.html";
             
         }
         else if(notificationPosition == BeintooNotificationPositionTop){
-            self.frame = CGRectMake(0, 0, width, height);
+            self.frame = CGRectMake(0, offset, width, height);
            
         }
     }
     else if (appOrientation == UIInterfaceOrientationPortraitUpsideDown) {
         
         if (notificationPosition == BeintooNotificationPositionBottom) {
-            self.frame = CGRectMake(0, 0, width, height);
+            self.frame = CGRectMake(0, offset, width, height);
                       
         }
         else if(notificationPosition == BeintooNotificationPositionTop){

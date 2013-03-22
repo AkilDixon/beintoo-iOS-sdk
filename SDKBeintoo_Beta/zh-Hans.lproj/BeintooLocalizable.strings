@@ -25,7 +25,8 @@
 "best"                              = "最佳： ";
 "last"                              = "姓： ";
 "nickname"                          = "昵称：";
-"accountTitle"                      = "Accounts";
+"accountsTitle"                      = "Accounts";
+"You have no friends to invite" = "You have no friends to invite";
 
 // Give Bedollars
 "giveBedollarMsg"      = "You just earned %i Bedollar! Use your Bedollars to redeem great offers on Beintoo";

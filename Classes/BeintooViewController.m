@@ -128,7 +128,7 @@
     */
     
     [Beintoo setAppDelegate:self];
-    [Beintoo giveBedollars:1.0 showNotification:YES withPosition:BeintooNotificationPositionBottom];
+    [Beintoo giveBedollars:1.0 showNotification:YES withPosition:BeintooNotificationPositionTop];
 }
 
 - (IBAction)requestAd

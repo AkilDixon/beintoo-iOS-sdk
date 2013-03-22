@@ -208,7 +208,6 @@
 		else {
 			// Data correctly received, then converted from byte to string
 			webpage = [[NSString alloc] initWithData:urlData encoding:NSUTF8StringEncoding];
-            NSLog(@"web %@", webpage);
 		}
 	}
     @catch (NSException *e) {

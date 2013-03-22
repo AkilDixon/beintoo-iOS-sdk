@@ -26,7 +26,8 @@
 "last"					= "Letzte: ";
 "nickname"				= "Spitzname:";
 "lederboardNoResult"    = "Mach neue Freunde und schlag ihre Highscore!";
-"accountTitle"          = "Accounts";
+"accountsTitle"          = "Accounts";
+"You have no friends to invite" = "You have no friends to invite";
 
 // Home
 "profileDesc"			= "";

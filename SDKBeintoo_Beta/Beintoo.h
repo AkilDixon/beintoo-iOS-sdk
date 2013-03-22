@@ -377,6 +377,7 @@ extern NSString *BNSDefIsUserLogged;
 
 + (void)updateUserLocation;
 + (void)changeBeintooOrientation:(int)_orientation;
++ (void)eventuallyUpdateDisplayedContent;
 
 + (BVirtualGood *)getLastGeneratedVGood;
 + (BVirtualGood *)getLastGeneratedAd;

@@ -52,7 +52,7 @@ NSString *BNSDefDeveloperCurrencyValue      = @"beintooDeveloperCurrencyValue";
 NSString *BNSDefDeveloperLoggedUserId       = @"beintooDeveloperLoggedUserId";
 NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 
-NSString *BeintooSdkVersion                 = @"2.9.2beta-ios";
+NSString *BeintooSdkVersion                 = @"2.9.3beta-ios";
 
 NSString *BeintooNotificationSignupClosed           = @"BeintooSignupClosed";
 NSString *BeintooNotificationOrientationChanged     = @"BeintooOrientationChanged";
@@ -467,10 +467,14 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
 #pragma mark - Private methods
 
 + (void)setAppOrientation:(int)_appOrientation{
-    [Beintoo sharedInstance]->appOrientation = _appOrientation;
-	BeintooLOG(@"Beintoo: new App orientation set: %d",[Beintoo sharedInstance]->appOrientation);
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationOrientationChanged object:self];
+    if ([Beintoo sharedInstance]->appOrientation != _appOrientation)
+    {
+        [Beintoo sharedInstance]->appOrientation = _appOrientation;
+        BeintooLOG(@"Beintoo: new App orientation set: %d", [Beintoo sharedInstance]->appOrientation);
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:BeintooNotificationOrientationChanged object:self];
+    }
 }
      
 + (void)setApplicationWindow:(UIWindow *)_window

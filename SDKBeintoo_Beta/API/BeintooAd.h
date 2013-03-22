@@ -61,6 +61,8 @@
 
 @protocol BeintooAdDelegate <NSObject>
 
+@optional
+
 - (void)didBeintooGenerateAnAd:(BVirtualGood *)theAd;
 - (void)didBeintooFailToGenerateAnAdWithError:(NSDictionary *)error;
 

@@ -71,6 +71,8 @@
     mainLabel.textColor = [UIColor colorWithRed:46.0/255.0 green:68.0/255.0 blue:103.0/255.0 alpha:1.0];
     mainLabelLand.textColor = [UIColor colorWithRed:46.0/255.0 green:68.0/255.0 blue:103.0/255.0 alpha:1.0];
     
+    mainLabel.font = [UIFont boldSystemFontOfSize:14];
+    
 	[loginButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
 	[loginButton setMediumHighColor:[UIColor colorWithRed:116.0/255 green:135.0/255 blue:159.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
 	[loginButton setMediumLowColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];

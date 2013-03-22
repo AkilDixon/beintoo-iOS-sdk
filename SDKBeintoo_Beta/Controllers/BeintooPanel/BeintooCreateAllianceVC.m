@@ -67,7 +67,8 @@
 	allianceTextField.placeholder	= NSLocalizedStringFromTable(@"alliancecreateeditext",@"BeintooLocalizable",@"");
     titleLabel.text                 = NSLocalizedStringFromTable(@"allianceaddfriends",@"BeintooLocalizable",@"");
     titleLabel.textColor            = [UIColor colorWithWhite:0 alpha:0.6];
-	noResultLabel.text              = @"You have no friends to invite";
+	noResultLabel.text              = NSLocalizedStringFromTable(@"You have no friends to invite", @"BeintooLocalizable", nil);
+    noResultLabel.numberOfLines     = 0;
 	[noResultLabel setHidden:YES];
     
     [createAllianceButton setHighColor:[UIColor colorWithRed:156.0/255 green:168.0/255 blue:184.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];

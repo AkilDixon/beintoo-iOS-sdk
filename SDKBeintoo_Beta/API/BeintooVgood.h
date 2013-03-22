@@ -114,8 +114,9 @@
 @protocol BeintooVgoodDelegate <NSObject>
 
 @optional
-- (void)didGenerateVgood:(BOOL)isVgoodGenerated withResult:(BeintooVgood *)theVgood __attribute__((deprecated("use 'didGenerateAReward:' instead")));
-- (void)didGenerateAReward:(BeintooVgood *)theVgood;
+- (void)didBeintooGenerateAReward:(BVirtualGood *)theReward;
+- (void)didGenerateVgood:(BOOL)isVgoodGenerated withResult:(BVirtualGood *)theVgood __attribute__((deprecated("use 'didGenerateAReward:' instead")));
+
 
 - (void)didGetAllvGoods:(NSArray *)vGoodList;
 

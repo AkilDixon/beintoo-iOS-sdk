@@ -26,12 +26,13 @@
 "last"					= "Последнее: %@";
 "nickname"				= "Кличка:";
 "lederboardNoResult"    = "Заведите новых друзей и бейте их на лидерской доске!";
-"accountTitle"          = "Профили";
+"accountsTitle"          = "Профили";
+"You have no friends to invite" = "У Вас ещё нету друзей \n для отправки приглашения";
 
 // Give Bedollars
-"giveBedollarMsg"               = "Вы заработали %i Бидолларов! Используйте свои Бидоллары для приобретения предложений Beintoo";
+"giveBedollarMsg"               = "Вы заработали %i Бидоллар! Используйте свои Бидоллары для приобретения предложений Beintoo";
 "giveBedollarsMsg"              = "Вы заработали %i Бидолларов! Используйте свои Бидоллары для приобретения предложений Beintoo";
-"giveBedollarFloatMsg"          = "Вы заработали %.1f Бидолларов! Используйте свои Бидоллары для приобретения предложений Beintoo";
+"giveBedollarFloatMsg"          = "Вы заработали %.1f Бидоллар! Используйте свои Бидоллары для приобретения предложений Beintoo";
 "giveBedollarsFloatMsg"         = "Вы заработали %.1f Бидолларов! Используйте свои Бидоллары для приобретения предложений Beintoo";
 
 // Post Signup Tutorial
@@ -46,16 +47,16 @@
 
 "signupMainSentence1"           = "Присоединиться";
 "signupMainSentence2"           = " к обществу";
-"signupMainSentence3"           = "зарабатывайте";
+"signupMainSentence3"           = "соберайте";
 "signupMainSentence4"           = "бидоллары и ";
 "signupMainSentence5"           = "приобретайте";
-"signupMainSentence6"           = "в полцены от стоимости реальных предложений";
+"signupMainSentence6"           = "предложения";
 
 "signupOrLabel"                 = "или";
 
 "new_login_title"               = "Продолжайте зарабатывать Бидоллары и приобретать предложения!";
 
-"signupTextFieldPlaceholder"    = "Зарегистрируйтесь, используя Ваш имейл";
+"signupTextFieldPlaceholder"    = "используя Ваш имейл";
 
 "loginEmailPlaceholder"         = "Имейл";
 "loginPasswordPlaceholder"      = "Пароль";
@@ -66,7 +67,7 @@
 "noAlliancesInContest"          = "В этом соперничестве все еще нет новых союзов!";
 "noNotifications"               = "На этот момент, у Вас нет новых уведомлений!";
 
-"connectWithFacebook"           = "Свяжитесь с помощью Facebook";
+"connectWithFacebook"           = "Регестация c Facebook";
 
 "noAlliances"                   = "Нет";
 
@@ -75,7 +76,7 @@
 "settingsLabel"                 = "Настройки";
 
 "forgotPasswordButton"          = "Забыли пароль?";
-"forgotPasswordTitle"           = "Для востановления пароля, пожалуйста, введите адрес электронной почты";
+"forgotPasswordTitle"           = "Для востановления пароля, пожалуйста, введите имейл";
 "forgotPasswordSendEmail"       = "Отправка нового пароля";
 "forgotPasswordAlertTitle"      = "Отправлена успешно!";
 "forgotPasswordAlertSuccess"    = "Новый пароль отправлен на Ваш аккаунт";
@@ -94,15 +95,15 @@
 "playHardMessage"       = "Играйте твердо, заработайте Бидоллары и покупайте от Ваших предложений!";
 
 // DashboardPlayer
-"dashplayerhometext"            = "Развлекайтесь побольше, знакомьтесь с другими игроками и сделайте ваши заработки реальными! Добро пожаловать в сеть Beintoo!";
-"dashplayerleaderboardtext"     = "Поднимитесь на Лидерскую доску и сравните результаты!";
+"dashplayerhometext"            = "Развлекайтесь побольше, знакомьтесь с другими игроками и сделайте Ваши заработки реальными! Добро пожаловать в сеть Beintoo!";
+"dashplayerleaderboardtext"     = "Поднимитесь в списке лидеров и сравните результаты!";
 "dashplayerchallengestext"      = "Пригласите своих друзей заработать больше Бидолларов!";
 "dashplayerprofiletext"         = "Создайте профиль и управляйте приложениями вместе с друзьями!";
 "dashplayerforumtips"           = "Поделитесь советами";
 "dashplayersignupnow"           = "Регистрация";
 
 // Notifications
-"submitScoreMsgSinglePoint"		= "Вы заработали %@ очков.";
+"submitScoreMsgSinglePoint"		= "Вы заработали %@ очко.";
 "submitScoreMsg"                = "Вы заработали %@ очков.";
 "playerLoginMsg"                = "Добро пожаловать, %@";
 "unlockAchievMsg"               = "Достижение отомкнуто!";
@@ -151,7 +152,7 @@
 "upToDate"                      = "Обновление.";
 "MPwriteNewComment"             = "Написать комментарий";
 "MPorderByPrice"                = "Заказать по цене";
-"submitScoreMarketplaceMsg"     = "Сейчас Вы получили %.0f %@, не теряйте их! Используйте их для того, чтобы закупить Ваши премиальные предложения!";
+"submitScoreMarketplaceMsg"     = "Сейчас Вы получили %.0f %@, не теряйте их! Используйте их для премиальных предложений!";
 "submitScoreMarketplacePlayer"  = "";
 
 //Try Beintoo
@@ -216,7 +217,7 @@
 "findFriends"			= "Найти Друзей";
 "yourFriends"			= "Ваши Друзья";
 "friendRequests"		= "Заявки в Друзья";
-"recommendToAFriend"	= "посоветовать другу";
+"recommendToAFriend"	= "Посоветовать другу";
 "findFriendsDesc"		= "найти людей в обществе";
 "yourFriendsDesc"		= "просмотр Ваших Beintoo друзей";
 "friendRequestsDesc"	= "управлять Вашими запросами друзей";
@@ -225,7 +226,7 @@
 "addAsFriend"			= "Отправить запрос";
 "nofriendslabel"		= "Заведите новых друзей и просмотрите их здесь!";
 "hereAreYourFriends"	= "Ваши Друзья";
-"searchForTitle"		= "Найти по никнейму, имени или по электронной почте";
+"searchForTitle"		= "Найти по никнейму, имени, имейлу";
 "noResult"				= "К сожалению, результаты не найдены!";
 "noFriendshipReq"		= "У Вас нет запросов о дружбе";
 "friendReqTitle"		= "Нажмите на имя для принятия";
@@ -277,8 +278,8 @@
 "to"					= "к";
 "status"				= "Статус:";
 "startDate"				= "Начальная дата:";
-"endChallengeDate"		= "Дата окончания"
-"prize"					= "Приз"
+"endChallengeDate"		= "Дата окончания";
+"prize"					= "Приз";
 "challengeWinner"		= "Победитель";
 "costToAccept"			= "Взнос:";
 
@@ -287,7 +288,7 @@
 "challmevsyou"          = "Бьюсь об заклад, что Вы не можете набрать столько очков за 48 часов";
 "challmevsyoutitle"     = "Вы не можете набрать...";
 "challFriends"          = "Бьюсь об заклад, что я могу набрать столько очков за 48 часов";
-"challFriendstitle"     = "Я могунабрать...";
+"challFriendstitle"     = "Я могу набрать...";
 "chall48"               = "Бьюсь об заклад, что я могу набрать больше, чем Вы, за последующие 48 часов?";
 "chall48title"          = "Кто лучший?";
 "chall48subtitle"       = "Я могу набрать больше очков чем Вы";
@@ -351,7 +352,7 @@
 "allianceleaveareyousure"   = "Вы действительно хотите покинуть этот альянс?";
 "allianceaddfriends"        = "Добавить друзей к Вашему альянсу";
 "alliancenametooshort"      = "Название Вашего альянса должно состоять, минимум, из трех символов";
-"allianceNoResult"        = "У Вас нет запросов о дружбе в ожидании.";
+"allianceNoResult"          = "У Вас нет запросов о дружбе в ожидании.";
 
 // Labels
 "wehavefound"			= "Какой профиль Вы хотите использовать?";

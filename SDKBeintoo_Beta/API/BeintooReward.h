@@ -99,6 +99,10 @@
 @protocol BeintooRewardDelegate <NSObject>
 
 @optional
+
+- (void)didBeintooGenerateAReward:(BVirtualGood *)theReward;
+- (void)didBeintooFailToGenerateARewardWithError:(NSDictionary *)error;
+
 - (void)beintooHasRewardsCoverage;
 - (void)beintooHasNotRewardsCoverage;
 

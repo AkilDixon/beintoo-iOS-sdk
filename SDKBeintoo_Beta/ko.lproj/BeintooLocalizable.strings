@@ -30,7 +30,8 @@
 
 "MPmarketplaceTitle"    = "구매";
 "MPdescription"         = "오퍼를 구매하기 위해 에덴머니를 사용하세요";
-"accountTitle"          = "Accounts";
+"accountsTitle"          = "Accounts";
+"You have no friends to invite" = "You have no friends to invite";
 
 // Dashboard
 

@@ -52,9 +52,9 @@
 #endif
 		
 	self.elementsTable.delegate		= self;
-	self.elementsTable.rowHeight	= 85.0;	
+	self.elementsTable.rowHeight	= 85.0;
     
-    UILabel *allianceTipsLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 200, 300, 70)];
+    UILabel *allianceTipsLabel          = [[UILabel alloc] initWithFrame:CGRectMake(10, 200, 300, 100)];
     allianceTipsLabel.text              = NSLocalizedStringFromTable(@"alliancemaintextfooter",@"BeintooLocalizable",@"");
     allianceTipsLabel.autoresizingMask  = UIViewAutoresizingFlexibleWidth;
     
@@ -72,7 +72,7 @@
     allianceTipsLabel.textColor         = [UIColor colorWithWhite:0 alpha:0.7];
     allianceTipsLabel.font              = [UIFont systemFontOfSize:13];
     allianceTipsLabel.backgroundColor   = [UIColor clearColor];
-    allianceTipsLabel.numberOfLines     = 3;
+    allianceTipsLabel.numberOfLines     = 0;
     
     [self.view addSubview:allianceTipsLabel];
     [self.view sendSubviewToBack:allianceTipsLabel];
