@@ -66,8 +66,7 @@
 
 	sampleDelegate = [[BeintooDelegate alloc] init];
 	
-    [Beintoo initWithApiKey:@"DuQEh4lGtMGe" andApiSecret:nil andBeintooSettings:beintooSettings andMainDelegate:sampleDelegate];
-    //[Beintoo _privateSandbox];
+    [Beintoo initWithApiKey:your_apikey_here andApiSecret:nil andBeintooSettings:beintooSettings andMainDelegate:sampleDelegate];
     
     /*  UNCOMMENT the line below to use Beintoo in our testing environment sandbox 
 	*   
