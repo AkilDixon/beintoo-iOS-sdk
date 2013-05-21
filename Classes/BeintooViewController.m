@@ -145,7 +145,7 @@
 - (IBAction)setMilan{
      
 	// 45.467354,9.189377
-    CLLocation *loc = [[CLLocation alloc] initWithLatitude:55.757 longitude:37.598];
+    CLLocation *loc = [[CLLocation alloc] initWithLatitude:45.467354 longitude:9.189377];
     [Beintoo _setUserLocation:loc];
     
     [self manageLocation];
