@@ -1048,16 +1048,10 @@
             BNavigationController *signinNavController = [[BNavigationController alloc] initWithRootViewController:signinVC];
             [[signinNavController navigationBar] setTintColor:barColor];
             
-#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
-            [self presentViewController:signinNavController animated:YES completion:nil];
-#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
-            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+            if ([self respondsToSelector:@selector(presentViewController:animated:completion:)])
                 [self presentViewController:signinNavController animated:YES completion:nil];
             else 
                 [self presentModalViewController:signinNavController animated:YES];
-#else
-            [self presentModalViewController:signinNavController animated:YES];
-#endif
             
 #ifdef BEINTOO_ARC_AVAILABLE
 #else
@@ -1132,18 +1126,10 @@
             [Beintoo dismissIpadNotifications];
         }
         else {
-            
-#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
-            [self dismissViewControllerAnimated:YES completion:nil];
-#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
-            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+            if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)])
                 [self dismissViewControllerAnimated:YES completion:nil];
             else
                 [self dismissModalViewControllerAnimated:YES];
-#else
-            [self dismissModalViewControllerAnimated:YES];
-#endif
-            
         }
     }
     else

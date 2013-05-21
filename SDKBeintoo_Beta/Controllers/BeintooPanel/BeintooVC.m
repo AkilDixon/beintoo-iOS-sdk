@@ -436,16 +436,10 @@
         
         isNotificationCenterOpen    = YES;
         
-#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
-        [self presentViewController:notificationNavigationController animated:YES completion:nil];
-#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
-        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+        if ([self respondsToSelector:@selector(presentViewController:animated:completion:)])
             [self presentViewController:notificationNavigationController animated:YES completion:nil];
         else
             [self presentModalViewController:notificationNavigationController animated:YES];
-#else
-        [self presentModalViewController:notificationNavigationController animated:YES];
-#endif
         
 #ifdef BEINTOO_ARC_AVAILABLE
 #else
@@ -770,16 +764,11 @@
             UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
             BNavigationController *signinNavController = [[BNavigationController alloc] initWithRootViewController:signinVC];
             [[signinNavController navigationBar] setTintColor:barColor];
-  
-#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
-            [self presentViewController:signinNavController animated:YES completion:nil];
-#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
-            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+            
+            if ([self respondsToSelector:@selector(presentViewController:animated:completion:)])
                 [self presentViewController:signinNavController animated:YES completion:nil];
-            else  [self presentModalViewController:signinNavController animated:YES];
-#else
-            [self presentModalViewController:signinNavController animated:YES];
-#endif
+            else
+                [self presentModalViewController:signinNavController animated:YES];
 
 #ifdef BEINTOO_ARC_AVAILABLE
 #else

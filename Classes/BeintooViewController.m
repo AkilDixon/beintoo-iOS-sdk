@@ -128,7 +128,7 @@
     */
     
     [Beintoo setAppDelegate:self];
-    [Beintoo giveBedollars:1.0 showNotification:YES withPosition:BeintooNotificationPositionTop];
+    [Beintoo giveBedollars:0.5 showNotification:YES withPosition:BeintooNotificationPositionTop];
 }
 
 - (IBAction)requestAd
@@ -143,8 +143,9 @@
 }
 
 - (IBAction)setMilan{
+     
 	// 45.467354,9.189377
-    CLLocation *loc = [[CLLocation alloc] initWithLatitude:45.467354 longitude:9.189377];
+    CLLocation *loc = [[CLLocation alloc] initWithLatitude:55.757 longitude:37.598];
     [Beintoo _setUserLocation:loc];
     
     [self manageLocation];

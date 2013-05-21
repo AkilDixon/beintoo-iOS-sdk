@@ -17,6 +17,7 @@
 #import "BeintooDevice.h"
 #import "Beintoo.h"
 #import "UIDevice+IdentifierAddition.h"
+#import "NSString+MD5Addition.h"
 
 @implementation BeintooDevice
 
@@ -35,7 +36,7 @@
 
 + (NSString *)getUDID
 {
-	return [[UIDevice currentDevice] uniqueDeviceIdentifier];
+	return [[NSString stringWithFormat:@"%@beintooios", [BeintooDevice getMacAddress]] stringFromMD5];
 }
 
 + (NSString *)getMacAddress

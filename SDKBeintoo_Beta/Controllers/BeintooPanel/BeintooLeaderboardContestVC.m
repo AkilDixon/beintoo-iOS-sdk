@@ -614,29 +614,18 @@
             BNavigationController *signinNavController = [[BNavigationController alloc] initWithRootViewController:signinVC];
             [[signinNavController navigationBar] setTintColor:barColor];
             
-#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
-            [self presentViewController:signinNavController
-                               animated:YES
-                             completion:^(void){
-                                 [leaderboardContestTable scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
-                             }
-             ];
-#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
-            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
+            if ([self respondsToSelector:@selector(presentViewController:animated:completion:)]){
                 [self presentViewController:signinNavController
                                    animated:YES
-                                   completion:^(void){
-                                    [leaderboardContestTable scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
-                                   }
+                                 completion:^(void){
+                                     [leaderboardContestTable scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+                                 }
                  ];
-            else    {
+            }
+            else {
                 [self presentModalViewController:signinNavController animated:YES];
                 [leaderboardContestTable scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
             }
-#else
-            [self presentModalViewController:signinNavController animated:YES];
-            [leaderboardContestTable scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
-#endif
 
 #ifdef BEINTOO_ARC_AVAILABLE
 #else

@@ -332,18 +332,10 @@
         [Beintoo dismissIpadLogin];
     }
     else {
-        
-#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+        if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)])
             [self dismissViewControllerAnimated:YES completion:nil];
-#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
-            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
-                [self dismissViewControllerAnimated:YES completion:nil];
-            else
-                [self dismissModalViewControllerAnimated:YES];
-#else
+        else
             [self dismissModalViewControllerAnimated:YES];
-#endif
-
     }
 }
 
@@ -373,18 +365,10 @@
         [Beintoo dismissIpadLogin];
     }
     else {
-        
-#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_5_0)
+        if ([self respondsToSelector:@selector(dismissViewControllerAnimated:completion:)])
             [self dismissViewControllerAnimated:YES completion:nil];
-#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_5_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_5_0)
-            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0)
-                [self dismissViewControllerAnimated:YES completion:nil];
-            else
-                [self dismissModalViewControllerAnimated:YES];
-#else
+        else
             [self dismissModalViewControllerAnimated:YES];
-#endif
-
     }
 }
 
