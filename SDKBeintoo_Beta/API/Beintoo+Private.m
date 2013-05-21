@@ -52,7 +52,7 @@ NSString *BNSDefDeveloperCurrencyValue      = @"beintooDeveloperCurrencyValue";
 NSString *BNSDefDeveloperLoggedUserId       = @"beintooDeveloperLoggedUserId";
 NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 
-NSString *BeintooSdkVersion                 = @"2.9.3beta-ios";
+NSString *BeintooSdkVersion                 = @"2.9.4beta-ios";
 
 NSString *BeintooNotificationSignupClosed           = @"BeintooSignupClosed";
 NSString *BeintooNotificationOrientationChanged     = @"BeintooOrientationChanged";
