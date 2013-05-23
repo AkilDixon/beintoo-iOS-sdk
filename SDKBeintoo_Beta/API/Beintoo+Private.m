@@ -2153,6 +2153,7 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
     }
     
 #ifdef BEINTOO_ARC_AVAILABLE
+    [Beintoo sharedInstance]->userLocation = newLocation;
 #else
     [Beintoo sharedInstance]->userLocation = [newLocation retain];
 #endif
