@@ -177,7 +177,6 @@
 		704731E3141FAE7200BC856F /* BPopupAnimated.m in Sources */ = {isa = PBXBuildFile; fileRef = 704731E2141FAE7200BC856F /* BPopupAnimated.m */; };
 		704731E6141FB50500BC856F /* BMissionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 704731E5141FB50500BC856F /* BMissionView.m */; };
 		705582B4144D890A00399D2A /* NSString+MD5Addition.m in Sources */ = {isa = PBXBuildFile; fileRef = 705582B2144D890A00399D2A /* NSString+MD5Addition.m */; };
-		705582B5144D890A00399D2A /* UIDevice+IdentifierAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 705582B3144D890A00399D2A /* UIDevice+IdentifierAddition.m */; };
 		7058B0B51498E614005BE188 /* beintoo_challenges_24.png in Resources */ = {isa = PBXBuildFile; fileRef = 7058B0AB1498E614005BE188 /* beintoo_challenges_24.png */; };
 		7058B0B61498E614005BE188 /* beintoo_challenges_24@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7058B0AC1498E614005BE188 /* beintoo_challenges_24@2x.png */; };
 		7058B0B71498E614005BE188 /* beintoo_challenges_horiz.png in Resources */ = {isa = PBXBuildFile; fileRef = 7058B0AD1498E614005BE188 /* beintoo_challenges_horiz.png */; };
@@ -268,6 +267,7 @@
 		F184564316CBA5180097D861 /* BeintooAd.m in Sources */ = {isa = PBXBuildFile; fileRef = F184564216CBA5170097D861 /* BeintooAd.m */; };
 		F184564616CBCBD40097D861 /* BeintooReward.m in Sources */ = {isa = PBXBuildFile; fileRef = F184564516CBCBD20097D861 /* BeintooReward.m */; };
 		F184564816CBD8B00097D861 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F184564716CBD8B00097D861 /* AdSupport.framework */; };
+		F1D398B21770AC8700F0591F /* UIDevice+IdentifierAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D398B11770AC8700F0591F /* UIDevice+IdentifierAddition.m */; };
 		F1E7C65216B14E1D00AE616C /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F1E7C65116B14E1D00AE616C /* Default-568h@2x.png */; };
 		F1F9CC8716B007C300BE8AF1 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 708B1E0112F9B58600CBECD9 /* CoreLocation.framework */; };
 		F1F9CCBE16B07A4700BE8AF1 /* BNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F1F9CCBD16B07A4700BE8AF1 /* BNavigationController.m */; };
@@ -506,9 +506,7 @@
 		704731E4141FB50500BC856F /* BMissionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMissionView.h; sourceTree = "<group>"; };
 		704731E5141FB50500BC856F /* BMissionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BMissionView.m; sourceTree = "<group>"; };
 		705582B0144D890A00399D2A /* NSString+MD5Addition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5Addition.h"; sourceTree = "<group>"; };
-		705582B1144D890A00399D2A /* UIDevice+IdentifierAddition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+IdentifierAddition.h"; sourceTree = "<group>"; };
 		705582B2144D890A00399D2A /* NSString+MD5Addition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5Addition.m"; sourceTree = "<group>"; };
-		705582B3144D890A00399D2A /* UIDevice+IdentifierAddition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+IdentifierAddition.m"; sourceTree = "<group>"; };
 		7058B0AB1498E614005BE188 /* beintoo_challenges_24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = beintoo_challenges_24.png; sourceTree = "<group>"; };
 		7058B0AC1498E614005BE188 /* beintoo_challenges_24@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "beintoo_challenges_24@2x.png"; sourceTree = "<group>"; };
 		7058B0AD1498E614005BE188 /* beintoo_challenges_horiz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = beintoo_challenges_horiz.png; sourceTree = "<group>"; };
@@ -645,6 +643,8 @@
 		F184564416CBCBD00097D861 /* BeintooReward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeintooReward.h; sourceTree = "<group>"; };
 		F184564516CBCBD20097D861 /* BeintooReward.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeintooReward.m; sourceTree = "<group>"; };
 		F184564716CBD8B00097D861 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		F1D398B01770AC8700F0591F /* UIDevice+IdentifierAddition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+IdentifierAddition.h"; sourceTree = "<group>"; };
+		F1D398B11770AC8700F0591F /* UIDevice+IdentifierAddition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+IdentifierAddition.m"; sourceTree = "<group>"; };
 		F1E7C65116B14E1D00AE616C /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		F1F9CCBC16B07A4600BE8AF1 /* BNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNavigationController.h; sourceTree = "<group>"; };
 		F1F9CCBD16B07A4700BE8AF1 /* BNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNavigationController.m; sourceTree = "<group>"; };
@@ -990,8 +990,8 @@
 				705582B2144D890A00399D2A /* NSString+MD5Addition.m */,
 				70679F6E139E1C2A00457107 /* Parser.h */,
 				70679F6F139E1C2A00457107 /* Parser.m */,
-				705582B1144D890A00399D2A /* UIDevice+IdentifierAddition.h */,
-				705582B3144D890A00399D2A /* UIDevice+IdentifierAddition.m */,
+				F1D398B01770AC8700F0591F /* UIDevice+IdentifierAddition.h */,
+				F1D398B11770AC8700F0591F /* UIDevice+IdentifierAddition.m */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -1518,7 +1518,6 @@
 				704731E6141FB50500BC856F /* BMissionView.m in Sources */,
 				70FC3369143B050F004082BD /* BeintooBrowserVC.m in Sources */,
 				705582B4144D890A00399D2A /* NSString+MD5Addition.m in Sources */,
-				705582B5144D890A00399D2A /* UIDevice+IdentifierAddition.m in Sources */,
 				701544D21462E863004B620E /* BSignupLayouts.m in Sources */,
 				70F0AD821498B5D000A9BD01 /* BSendChallengeDetailsView.m in Sources */,
 				70F0AD831498B5D000A9BD01 /* BSendChallengesView.m in Sources */,
@@ -1542,6 +1541,7 @@
 				F1FBBE1816BFB897000F5C11 /* BeintooApp.m in Sources */,
 				F184564316CBA5180097D861 /* BeintooAd.m in Sources */,
 				F184564616CBCBD40097D861 /* BeintooReward.m in Sources */,
+				F1D398B21770AC8700F0591F /* UIDevice+IdentifierAddition.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1618,8 +1618,8 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Antonio Tomarchio (QQDBYYML59)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Antonio Tomarchio (QQDBYYML59)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -1627,6 +1627,7 @@
 				INFOPLIST_FILE = "Beintoo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_LDFLAGS = "";
+				PROVISIONING_PROFILE = "F9E85F66-A8A3-4CF2-9EA8-5E254B94822D";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_LDFLAGS = "";

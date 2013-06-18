@@ -29,8 +29,11 @@
 	if (self = [super init]){
 		loginVC = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
 		loginNavController = [[BNavigationController alloc] initWithRootViewController:loginVC];
+        loginNavController.navigationBar.translucent = FALSE;
         
         beintooPrivateNotificationController = [BNavigationController alloc];
+        beintooPrivateNotificationController.navigationBar.translucent = FALSE;
+        
         notificationVC = [[BeintooNotificationListVC alloc] init];
 	}
     return self;
@@ -629,6 +632,8 @@
     }
     
     beintooPrivateNotificationController = [BNavigationController alloc];
+    beintooPrivateNotificationController.navigationBar.translucent = FALSE;
+    
     notificationVC = [[BeintooNotificationListVC alloc] init];
     
 	beintooPrivateNotificationController = [beintooPrivateNotificationController initWithRootViewController:notificationVC];

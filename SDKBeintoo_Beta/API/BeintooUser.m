@@ -278,7 +278,7 @@ NSString *GIVE_5_BEDOLLAR = @"GIVE_BEDOLLARS_5";
 	else
 		httpBody = [httpBody stringByAppendingString:@"&sendGreetingsEmail=false"];
     
-    httpBody = [httpBody stringByAppendingFormat:@"&skipOnExists=true&allowAttach=true"];
+    httpBody = [httpBody stringByAppendingFormat:@"&skipOnExists=false&allowAttach=true"];
 	
 	NSString *res			 = [NSString stringWithFormat:@"%@set", rest_resource];
 	NSDictionary *params	 = [NSDictionary dictionaryWithObjectsAndKeys:

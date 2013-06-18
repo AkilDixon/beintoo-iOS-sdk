@@ -179,7 +179,9 @@
 
 		cell.textLabel.text				= [user objectForKey:@"nickname"];
 		cell.textLabel.font				= [UIFont systemFontOfSize:16];
+        cell.textLabel.backgroundColor  = [UIColor clearColor];
 		cell.detailTextLabel.text		= [NSString stringWithFormat:@"%@ %@",NSLocalizedStringFromTable(@"level",@"BeintooLocalizable",@""),[self translateLevel:[user objectForKey:@"level"]]];
+        cell.detailTextLabel.backgroundColor  = [UIColor clearColor];
 		cell.imageView.image			= cellImage;
 	}
 	@catch (NSException * e){

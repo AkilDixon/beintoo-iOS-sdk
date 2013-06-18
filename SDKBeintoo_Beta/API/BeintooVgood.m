@@ -120,7 +120,6 @@
 	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
                             [Beintoo getApiKey], @"apikey",
                             [BeintooDevice getUDID], @"deviceUUID",
-                            [BeintooDevice getMacAddress], @"macaddress",
                             [BeintooOpenUDID value], @"openudid",
                             nil];
 	[vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_CHECK_COVERAGE_CALLER_ID];
@@ -152,7 +151,6 @@
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
                             [Beintoo getApiKey], @"apikey",
                             [BeintooDevice getUDID], @"deviceUUID",
-                            [BeintooDevice getMacAddress], @"macaddress",
                             [BeintooOpenUDID value], @"openudid",
                             nil];
     
@@ -189,7 +187,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           [BeintooDevice getASIdentifier], @"iosaid",
@@ -201,7 +198,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           [BeintooDevice getASIdentifier], @"iosaid",
                           [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -214,7 +210,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           [Beintoo getPlayerID], @"guid",
@@ -224,7 +219,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           [Beintoo getPlayerID], @"guid",
                           nil];
@@ -237,7 +231,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           [BeintooDevice getASIdentifier], @"iosaid",
@@ -248,7 +241,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           [BeintooDevice getASIdentifier], @"iosaid",
                           [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -260,7 +252,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [Beintoo getApiKey], @"apikey",
                                     [BeintooDevice getUDID], @"deviceUUID",
-                                    [BeintooDevice getMacAddress], @"macaddress",
                                     [BeintooOpenUDID value], @"openudid",
                                     [BeintooNetwork getCarrierBuiltString], @"carrier",
                                     nil];
@@ -269,7 +260,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           nil];
             }
@@ -309,7 +299,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           [BeintooDevice getASIdentifier], @"iosaid",
@@ -321,7 +310,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           [BeintooDevice getASIdentifier], @"iosaid",
                           [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -334,7 +322,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           [Beintoo getPlayerID], @"guid",
@@ -344,7 +331,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           [Beintoo getPlayerID], @"guid",
                           nil];
@@ -357,7 +343,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           [BeintooDevice getASIdentifier], @"iosaid",
@@ -368,7 +353,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           [BeintooDevice getASIdentifier], @"iosaid",
                           [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -380,7 +364,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           nil];
@@ -389,7 +372,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooDevice getMacAddress], @"macaddress",
                           [BeintooOpenUDID value], @"openudid",
                           nil];
             }
@@ -431,7 +413,6 @@
     if ([BeintooDevice isASIdentifierSupported]){
         params  = [NSDictionary dictionaryWithObjectsAndKeys:
                    [Beintoo getApiKey], @"apikey",
-                   [BeintooDevice getMacAddress], @"macaddress",
                    [BeintooDevice getASIdentifier], @"iosaid",
                    [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
                    nil];
@@ -439,7 +420,6 @@
     else {
         params  = [NSDictionary dictionaryWithObjectsAndKeys:
                    [Beintoo getApiKey], @"apikey",
-                   [BeintooDevice getMacAddress], @"macaddress",
                    nil];
     }
     
@@ -474,7 +454,6 @@
     if ([BeintooDevice isASIdentifierSupported]){
         params  = [NSDictionary dictionaryWithObjectsAndKeys:
                    [Beintoo getApiKey], @"apikey",
-                   [BeintooDevice getMacAddress], @"macaddress",
                    [BeintooDevice getASIdentifier], @"iosaid",
                    [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
                    nil];
@@ -482,7 +461,6 @@
     else {
         params  = [NSDictionary dictionaryWithObjectsAndKeys:
                    [Beintoo getApiKey], @"apikey",
-                   [BeintooDevice getMacAddress], @"macaddress",
                    nil];
     }
     
@@ -516,7 +494,6 @@
         if ([BeintooDevice isASIdentifierSupported]){
             params  = [NSDictionary dictionaryWithObjectsAndKeys:
                        [Beintoo getApiKey], @"apikey",
-                       [BeintooDevice getMacAddress], @"macaddress",
                        [BeintooDevice getASIdentifier], @"iosaid",
                        [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
                        nil];
@@ -524,7 +501,6 @@
         else {
             params  = [NSDictionary dictionaryWithObjectsAndKeys:
                        [Beintoo getApiKey], @"apikey",
-                       [BeintooDevice getMacAddress], @"macaddress",
                        nil];
         }
         
@@ -535,7 +511,6 @@
         if ([BeintooDevice isASIdentifierSupported]){
             params  = [NSDictionary dictionaryWithObjectsAndKeys:
                        [Beintoo getApiKey], @"apikey",
-                       [BeintooDevice getMacAddress], @"macaddress",
                        contestID,@"codeID",
                        [BeintooDevice getASIdentifier], @"iosaid",
                        [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -544,7 +519,6 @@
         else {
             params  = [NSDictionary dictionaryWithObjectsAndKeys:
                        [Beintoo getApiKey], @"apikey",
-                       [BeintooDevice getMacAddress], @"macaddress",
                        contestID,@"codeID",
                        nil];
         }
@@ -586,7 +560,6 @@
     if ([BeintooDevice isASIdentifierSupported]){
         params  = [NSDictionary dictionaryWithObjectsAndKeys:
                    [Beintoo getApiKey], @"apikey",
-                   [BeintooDevice getMacAddress], @"macaddress",
                    [BeintooDevice getASIdentifier], @"iosaid",
                    [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
                    nil];
@@ -594,7 +567,6 @@
     else {
         params  = [NSDictionary dictionaryWithObjectsAndKeys:
                    [Beintoo getApiKey], @"apikey",
-                   [BeintooDevice getMacAddress], @"macaddress",
                    nil];
     }
     
@@ -633,7 +605,6 @@
     if ([BeintooDevice isASIdentifierSupported]){
         params  = [NSDictionary dictionaryWithObjectsAndKeys:
                    [Beintoo getApiKey], @"apikey",
-                   [BeintooDevice getMacAddress], @"macaddress",
                    [BeintooDevice getASIdentifier], @"iosaid",
                    [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
                    nil];
@@ -641,7 +612,6 @@
     else {
         params  = [NSDictionary dictionaryWithObjectsAndKeys:
                    [Beintoo getApiKey], @"apikey",
-                   [BeintooDevice getMacAddress], @"macaddress",
                    nil];
     }
 
@@ -680,7 +650,6 @@
     if ([BeintooDevice isASIdentifierSupported]){
         params  = [NSDictionary dictionaryWithObjectsAndKeys:
                    [Beintoo getApiKey], @"apikey",
-                   [BeintooDevice getMacAddress], @"macaddress",
                    [BeintooDevice getASIdentifier], @"iosaid",
                    [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
                    nil];
@@ -688,7 +657,6 @@
     else {
         params  = [NSDictionary dictionaryWithObjectsAndKeys:
                    [Beintoo getApiKey], @"apikey",
-                   [BeintooDevice getMacAddress], @"macaddress",
                    nil];
     }
     
@@ -725,7 +693,6 @@
     if ([BeintooDevice isASIdentifierSupported]){
         params  = [NSDictionary dictionaryWithObjectsAndKeys:
                    [Beintoo getApiKey], @"apikey",
-                   [BeintooDevice getMacAddress], @"macaddress",
                    [BeintooDevice getASIdentifier], @"iosaid",
                    [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
                    nil];
@@ -733,7 +700,6 @@
     else {
         params  = [NSDictionary dictionaryWithObjectsAndKeys:
                    [Beintoo getApiKey], @"apikey",
-                   [BeintooDevice getMacAddress], @"macaddress",
                    nil];
     }
     
@@ -772,7 +738,6 @@
         if ([BeintooDevice isASIdentifierSupported]){
             params  = [NSDictionary dictionaryWithObjectsAndKeys:
                        [Beintoo getApiKey], @"apikey",
-                       [BeintooDevice getMacAddress], @"macaddress",
                        [BeintooDevice getASIdentifier], @"iosaid",
                        [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
                        nil];
@@ -780,7 +745,6 @@
         else {
             params  = [NSDictionary dictionaryWithObjectsAndKeys:
                        [Beintoo getApiKey], @"apikey",
-                       [BeintooDevice getMacAddress], @"macaddress",
                        nil];
         }
         
@@ -791,7 +755,6 @@
         if ([BeintooDevice isASIdentifierSupported]){
             params  = [NSDictionary dictionaryWithObjectsAndKeys:
                        [Beintoo getApiKey], @"apikey",
-                       [BeintooDevice getMacAddress], @"macaddress",
                        contestID,@"codeID",
                        [BeintooDevice getASIdentifier], @"iosaid",
                        [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -800,7 +763,6 @@
         else {
             params  = [NSDictionary dictionaryWithObjectsAndKeys:
                        [Beintoo getApiKey], @"apikey",
-                       [BeintooDevice getMacAddress], @"macaddress",
                        contestID,@"codeID",
                        nil];
         }
@@ -835,7 +797,6 @@
         if ([BeintooDevice isASIdentifierSupported]){
             params  = [NSDictionary dictionaryWithObjectsAndKeys:
                        [Beintoo getApiKey], @"apikey",
-                       [BeintooDevice getMacAddress], @"macaddress",
                        [BeintooDevice getASIdentifier], @"iosaid",
                        [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
                        nil];
@@ -843,7 +804,6 @@
         else {
             params  = [NSDictionary dictionaryWithObjectsAndKeys:
                        [Beintoo getApiKey], @"apikey",
-                       [BeintooDevice getMacAddress], @"macaddress",
                        nil];
         }
         
@@ -854,7 +814,6 @@
         if ([BeintooDevice isASIdentifierSupported]){
             params  = [NSDictionary dictionaryWithObjectsAndKeys:
                        [Beintoo getApiKey], @"apikey",
-                       [BeintooDevice getMacAddress], @"macaddress",
                        contestID,@"codeID",
                        [BeintooDevice getASIdentifier], @"iosaid",
                        [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -863,7 +822,6 @@
         else {
             params  = [NSDictionary dictionaryWithObjectsAndKeys:
                        [Beintoo getApiKey], @"apikey",
-                       [BeintooDevice getMacAddress], @"macaddress",
                        contestID,@"codeID",
                        nil];
         }
@@ -891,7 +849,6 @@
                             [Beintoo getApiKey], @"apikey",
                             guid, @"guid",
                             [BeintooDevice getUDID],@"deviceUUID",
-                            [BeintooDevice getMacAddress], @"macaddress",
                             nil];
     
     [vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_GETPRIVATEVGOODS_CALLER_ID];
@@ -908,7 +865,10 @@
     }
     
     NSString *res = [NSString stringWithFormat:@"%@privatevgood/assign/%@/%@/",[vgoodService restResource],vgoodID,guid];
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey", [BeintooDevice getMacAddress], @"macaddress", nil];
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            [Beintoo getApiKey], @"apikey",
+                            @"macaddress",
+                            nil];
     
     [vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_ASSIGNPRIVATEVGOOD_CALLER_ID];
 }
@@ -924,8 +884,8 @@
     }
     
     NSString *res = [NSString stringWithFormat:@"%@privatevgood/remove/%@/%@/",[vgoodService restResource],vgoodID,guid];
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",
-                            [BeintooDevice getMacAddress], @"macaddress",
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            [Beintoo getApiKey], @"apikey",
                             nil];
     
     [vgoodService.parser parsePageAtUrl:res withHeaders:params fromCaller:VGOOD_REMOVEPRIVATEVGOOD_CALLER_ID];

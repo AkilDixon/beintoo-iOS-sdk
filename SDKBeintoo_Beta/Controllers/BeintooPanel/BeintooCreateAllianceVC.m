@@ -269,6 +269,7 @@
     
 	cell.textLabel.text     = [currentElem objectForKey:@"nickname"];
 	cell.textLabel.font     = [UIFont systemFontOfSize:13];
+    cell.textLabel.backgroundColor  = [UIColor clearColor];
     cell.imageView.image    = [UIImage imageNamed:@"beintoo_user_icon.png"];
     
     if ([selectedFriendsArray containsObject:[currentElem objectForKey:@"id"]]) {

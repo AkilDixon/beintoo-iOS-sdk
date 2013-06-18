@@ -22,6 +22,7 @@
 
 - (void)show
 {
+    self.navigationBar.translucent = FALSE;
 	self.view.alpha = 1;
 	
 	// Ipad functions here not used (this class is not used on ipad)

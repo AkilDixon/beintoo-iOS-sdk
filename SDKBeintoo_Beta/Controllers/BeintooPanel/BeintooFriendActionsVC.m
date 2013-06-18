@@ -107,8 +107,10 @@
 	NSString *choicheDesc			= [NSString stringWithFormat:@"%@Desc",choicheCode];
 	cell.textLabel.text				= NSLocalizedStringFromTable(choicheCode,@"BeintooLocalizable",@"Select A Friend");;
 	cell.textLabel.font				= [UIFont systemFontOfSize:16];
+    cell.textLabel.backgroundColor  = [UIColor clearColor];
 	cell.detailTextLabel.text		= NSLocalizedStringFromTable(choicheDesc,@"BeintooLocalizable",@"");;
 	cell.detailTextLabel.font		= [UIFont systemFontOfSize:14];
+    cell.detailTextLabel.backgroundColor  = [UIColor clearColor];
     cell.detailTextLabel.numberOfLines = 0;
 
 	cell.imageView.image	= [UIImage imageNamed:[NSString stringWithFormat:@"beintoo_%@.png",choicheCode]];

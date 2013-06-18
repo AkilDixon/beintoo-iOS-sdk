@@ -52,6 +52,7 @@
     
     UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
 	loginNavController      = [[BNavigationController alloc] initWithRootViewController:loginVC];
+    loginNavController.navigationBar.translucent = FALSE;
 	[[loginNavController navigationBar] setTintColor:barColor];	
 
 	levelTitle.text		= NSLocalizedStringFromTable(@"level",@"BeintooLocalizable",@"UserLevel");
@@ -1046,6 +1047,7 @@
             BeintooLoginVC *signinVC        = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
             UIColor *barColor               = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
             BNavigationController *signinNavController = [[BNavigationController alloc] initWithRootViewController:signinVC];
+            signinNavController.navigationBar.translucent = FALSE;
             [[signinNavController navigationBar] setTintColor:barColor];
             
             if ([self respondsToSelector:@selector(presentViewController:animated:completion:)])

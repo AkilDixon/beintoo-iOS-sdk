@@ -568,6 +568,7 @@
     
     cell.textLabel.text         = [[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"nickname"];
     cell.textLabel.font         = [UIFont systemFontOfSize:13];
+    cell.textLabel.backgroundColor  = [UIColor clearColor];
     cell.textLabel.textColor    = [UIColor colorWithWhite:0 alpha:0.7];
     cell.imageView.image        = [UIImage imageNamed:@"beintoo_user_icon.png"];
     cell.imageView.alpha        = 0.0;

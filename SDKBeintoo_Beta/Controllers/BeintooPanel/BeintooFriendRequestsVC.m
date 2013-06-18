@@ -193,6 +193,7 @@
 	
 	cell.textLabel.text = [[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"nickname"];
 	cell.textLabel.font	= [UIFont systemFontOfSize:16];
+    cell.textLabel.backgroundColor  = [UIColor clearColor];
 	
 	BImageDownload *download = [self.elementsImages objectAtIndex:indexPath.row];
 	UIImage *cellImage  = download.image;

@@ -200,7 +200,8 @@
 	
 	cell.textLabel.text  = [[self.friendsArrayList objectAtIndex:indexPath.row] objectForKey:@"nickname"];
 	cell.textLabel.font	 = [UIFont systemFontOfSize:16];
-	
+	cell.textLabel.backgroundColor  = [UIColor clearColor];
+    
 	BImageDownload *download = [self.friendsImages objectAtIndex:indexPath.row];
 	UIImage *cellImage  = download.image;
 	cell.imageView.image = cellImage;

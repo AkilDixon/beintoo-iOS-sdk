@@ -198,6 +198,7 @@
 	
 	UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
 	self.loginNavController = [[BNavigationController alloc] initWithRootViewController:self.loginVC];
+    self.loginNavController.navigationBar.translucent = FALSE;
 	[[self.loginNavController navigationBar] setTintColor:barColor];
     
 	UIImageView *logo;
@@ -430,6 +431,7 @@
     else {
         BeintooNotificationListVC *beintooNotificationVC   = [[BeintooNotificationListVC alloc] init];
         BNavigationController *notificationNavigationController = [[BNavigationController alloc] initWithRootViewController:beintooNotificationVC];
+        notificationNavigationController.navigationBar.translucent = FALSE;
         
         UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
         [[notificationNavigationController navigationBar] setTintColor:barColor];
@@ -644,10 +646,12 @@
 		cell.textLabel.text				= [[self.featuresArray objectAtIndex:indexPath.row] objectForKey:@"featureName"];
 		cell.textLabel.font				= [UIFont systemFontOfSize:18];
         cell.textLabel.alpha            = alphaValueForCell;
+        cell.textLabel.backgroundColor  = [UIColor clearColor];
         
 		cell.detailTextLabel.text		= [[self.featuresArray objectAtIndex:indexPath.row] objectForKey:@"featureDesc"];
         cell.detailTextLabel.alpha      = alphaValueForCell;
         cell.detailTextLabel.numberOfLines = 0;
+        cell.detailTextLabel.backgroundColor  = [UIColor clearColor];
         
 		cell.imageView.image			= [UIImage imageNamed:[[self.featuresArray objectAtIndex:indexPath.row] objectForKey:@"featureImg"]];
         cell.imageView.alpha            = alphaValueForCell;
@@ -763,6 +767,7 @@
             
             UIColor *barColor		= [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0];
             BNavigationController *signinNavController = [[BNavigationController alloc] initWithRootViewController:signinVC];
+            signinNavController.navigationBar.translucent = FALSE;
             [[signinNavController navigationBar] setTintColor:barColor];
             
             if ([self respondsToSelector:@selector(presentViewController:animated:completion:)])

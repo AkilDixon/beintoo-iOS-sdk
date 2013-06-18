@@ -135,6 +135,8 @@
 	}
 	cell.textLabel.text  = [NSString stringWithFormat:@"%@", contestName];
 	cell.textLabel.font  = [UIFont systemFontOfSize:17];
+    cell.textLabel.backgroundColor  = [UIColor clearColor];
+    
 	cell.imageView.image = [UIImage imageNamed:@"beintoo_cup.png"];
     NSString *typeOf;
     
@@ -145,6 +147,8 @@
         typeOf = NSLocalizedStringFromTable(@"alliances",@"BeintooLocalizable",@"Friends");
     }
     cell.detailTextLabel.text = typeOf;
+    cell.detailTextLabel.backgroundColor  = [UIColor clearColor];
+    
     return cell;
 }
 

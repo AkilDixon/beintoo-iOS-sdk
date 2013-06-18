@@ -21,6 +21,7 @@
 #define BEINTOO_IOS_5_1  50100
 #define BEINTOO_IOS_6_0  60000
 #define BEINTOO_IOS_6_1  60100
+#define BEINTOO_IOS_7_0  70000
 
 #if __has_feature(objc_arc) && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_4_0
     #define BEINTOO_ARC_AVAILABLE

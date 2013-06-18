@@ -133,7 +133,7 @@
 
 - (BOOL)webView:(UIWebView*)webView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 {
-	@try {
+    @try {
 		NSString *url           = [[request URL] absoluteString];
 		NSRange registr_ok		= [url rangeOfString:@"#close"]; // Welcome in beintoo (registration ok)
 		NSRange logged_ok		= [url rangeOfString:@"#close_login"];    // Welcome back! You are now logged in

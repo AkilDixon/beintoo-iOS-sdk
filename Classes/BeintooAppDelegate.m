@@ -84,11 +84,7 @@
     [beintooSettings release];
 #endif
     
-    if( [[[UIDevice currentDevice] systemVersion] floatValue] >= 4.0)
-        [self.window setRootViewController:viewController];
-    else 
-        [self.window addSubview:viewController.view];
-    
+    [self.window setRootViewController:viewController];
     [self.window makeKeyAndVisible];
     
     return YES;

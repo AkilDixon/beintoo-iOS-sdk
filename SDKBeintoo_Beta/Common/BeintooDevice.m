@@ -16,8 +16,8 @@
 
 #import "BeintooDevice.h"
 #import "Beintoo.h"
-#import "UIDevice+IdentifierAddition.h"
 #import "NSString+MD5Addition.h"
+#import "UIDevice+IdentifierAddition.h"
 
 @implementation BeintooDevice
 
@@ -36,7 +36,16 @@
 
 + (NSString *)getUDID
 {
-	return [[NSString stringWithFormat:@"%@beintooios", [BeintooDevice getMacAddress]] stringFromMD5];
+    NSString *identifier = @"";
+
+    if ([BeintooDevice isASIdentifierSupported])
+        identifier = [BeintooDevice getASIdentifier];
+    else {
+        // Mac Address will be 02:00:00:00:00:00 on iOS >= 7.0
+        identifier = [[NSString stringWithFormat:@"%@beintooios", [BeintooDevice getMacAddress]] stringFromMD5];
+    }
+    
+    return identifier;
 }
 
 + (NSString *)getMacAddress
@@ -106,32 +115,28 @@
 
 + (NSString *)isASIdentifierEnabledByUser
 {
-    #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
-    if ([ASIdentifierManager sharedManager]){
-        if ([[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled] == TRUE)
-            return @"true";
-        else
-            return @"false";
-    }
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
+    if ([[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled] == TRUE)
+        return @"true";
     else
-        return 0;
-    #else
+        return @"false";
+#endif
+    
     return 0;
-    #endif
+    
 }
 
 + (BOOL)isASIdentifierSupported
 {
-    #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
-    if ([ASIdentifierManager sharedManager])
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
+    if(NSClassFromString(@"ASIdentifierManager")) {
         return TRUE;
-    else
-        return FALSE;
-    #else
-        return FALSE;
-    #endif
+    }
+#endif
+   
+    return FALSE;
 }
-
 
 + (NSString *)getSystemVersion
 {

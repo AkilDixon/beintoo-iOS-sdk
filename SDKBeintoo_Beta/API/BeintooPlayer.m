@@ -146,7 +146,6 @@
             params = [NSDictionary dictionaryWithObjectsAndKeys:
                       [Beintoo getApiKey], @"apikey",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getASIdentifier], @"iosaid",
                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -156,10 +155,9 @@
         }
         else {
             params = [NSDictionary dictionaryWithObjectsAndKeys:
-				  [Beintoo getApiKey], @"apikey", 
-				  [BeintooDevice getUDID], @"deviceUUID",
-                  [BeintooDevice getMacAddress], @"macaddress",
-                  [BeintooOpenUDID value], @"openudid",
+                      [Beintoo getApiKey], @"apikey",
+                      [BeintooDevice getUDID], @"deviceUUID",
+                      [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
                   nil];
@@ -170,8 +168,7 @@
             params = [NSDictionary dictionaryWithObjectsAndKeys:
                       [Beintoo getApiKey], @"apikey", 
                       [BeintooDevice getUDID], @"deviceUUID", 
-                      currentGuid, @"guid", 
-                      [BeintooDevice getMacAddress], @"macaddress",
+                      currentGuid, @"guid",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getASIdentifier], @"iosaid",
                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -184,7 +181,6 @@
                       [Beintoo getApiKey], @"apikey",
                       [BeintooDevice getUDID], @"deviceUUID",
                       currentGuid, @"guid",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
@@ -197,7 +193,6 @@
                       [Beintoo getApiKey], @"apikey", 
                       userId, @"userExt", 
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getASIdentifier], @"iosaid",
                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -210,7 +205,6 @@
                       [Beintoo getApiKey], @"apikey",
                       userId, @"userExt",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
@@ -267,10 +261,17 @@
 	
     NSDictionary *params;	
 	if ([_contestName isEqualToString:@""] || _contestName == nil) {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",[Beintoo getPlayerID], @"guid", [BeintooDevice getMacAddress], @"macaddress", nil];
+		params = [NSDictionary dictionaryWithObjectsAndKeys:
+                  [Beintoo getApiKey], @"apikey",
+                  [Beintoo getPlayerID], @"guid",
+                  nil];
 	}
     else {
-		params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",[Beintoo getPlayerID], @"guid",_contestName, @"codeID", [BeintooDevice getMacAddress], @"macaddress", nil];
+		params = [NSDictionary dictionaryWithObjectsAndKeys:
+                  [Beintoo getApiKey], @"apikey",
+                  [Beintoo getPlayerID], @"guid",
+                  _contestName, @"codeID",
+                  nil];
 	}
     
     BeintooLOG(@"res %@ amnd params %@", [playerService restResource], params);
@@ -319,7 +320,10 @@
 	else	
 		res	= [NSString stringWithFormat:@"%@submitscore/?lastScore=%d&latitude=%f&longitude=%f&radius=%f",[playerService restResource],_score,loc.coordinate.latitude,loc.coordinate.longitude,loc.horizontalAccuracy];	
 	
-	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[Beintoo getApiKey], @"apikey",[Beintoo getPlayerID], @"guid", [BeintooDevice getMacAddress], @"macaddress", nil];
+	NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            [Beintoo getApiKey], @"apikey",
+                            [Beintoo getPlayerID], @"guid",
+                            nil];
 	
 	// Check for internet connection: if available proceed with the submitScore, otherwise save the score locally
 	if ([BeintooNetwork connectedToNetwork]) {
@@ -553,7 +557,7 @@
             params = [NSDictionary dictionaryWithObjectsAndKeys:
                       [Beintoo getApiKey], @"apikey",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
+                      
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getASIdentifier], @"iosaid",
                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -565,7 +569,6 @@
             params = [NSDictionary dictionaryWithObjectsAndKeys:
                       [Beintoo getApiKey], @"apikey",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
@@ -578,7 +581,6 @@
                       [Beintoo getApiKey], @"apikey",
                       [BeintooDevice getUDID], @"deviceUUID",
                       currentGuid, @"guid",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getASIdentifier], @"iosaid",
                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -591,7 +593,6 @@
                       [Beintoo getApiKey], @"apikey",
                       [BeintooDevice getUDID], @"deviceUUID",
                       currentGuid, @"guid",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
@@ -604,7 +605,6 @@
                       [Beintoo getApiKey], @"apikey",
                       userId, @"userExt",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getASIdentifier], @"iosaid",
                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -617,7 +617,6 @@
                       [Beintoo getApiKey], @"apikey",
                       userId, @"userExt",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
@@ -645,7 +644,6 @@
             params = [NSDictionary dictionaryWithObjectsAndKeys:
                       [Beintoo getApiKey], @"apikey",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getASIdentifier], @"iosaid",
                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -657,7 +655,6 @@
             params = [NSDictionary dictionaryWithObjectsAndKeys:
                       [Beintoo getApiKey], @"apikey",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
@@ -670,7 +667,6 @@
                       [Beintoo getApiKey], @"apikey",
                       [BeintooDevice getUDID], @"deviceUUID",
                       currentGuid, @"guid",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getASIdentifier], @"iosaid",
                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -683,7 +679,6 @@
                       [Beintoo getApiKey], @"apikey",
                       [BeintooDevice getUDID], @"deviceUUID",
                       currentGuid, @"guid",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
@@ -696,7 +691,6 @@
                       [Beintoo getApiKey], @"apikey",
                       userid, @"userExt",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getASIdentifier], @"iosaid",
                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -709,7 +703,6 @@
                       [Beintoo getApiKey], @"apikey",
                       userid, @"userExt",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
@@ -736,7 +729,6 @@
             params = [NSDictionary dictionaryWithObjectsAndKeys:
                       [Beintoo getApiKey], @"apikey",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getASIdentifier], @"iosaid",
                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -748,7 +740,6 @@
             params = [NSDictionary dictionaryWithObjectsAndKeys:
                       [Beintoo getApiKey], @"apikey",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
@@ -761,7 +752,6 @@
                       [Beintoo getApiKey], @"apikey",
                       userid, @"userExt",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getASIdentifier], @"iosaid",
                       [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -774,7 +764,6 @@
                       [Beintoo getApiKey], @"apikey",
                       userid, @"userExt",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
@@ -800,7 +789,6 @@
              params = [NSDictionary dictionaryWithObjectsAndKeys:
                        [Beintoo getApiKey], @"apikey",
                        [BeintooDevice getUDID], @"deviceUUID",
-                       [BeintooDevice getMacAddress], @"macaddress",
                        [BeintooOpenUDID value], @"openudid",
                        [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                        [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
@@ -812,7 +800,6 @@
              params = [NSDictionary dictionaryWithObjectsAndKeys:
                        [Beintoo getApiKey], @"apikey",
                        [BeintooDevice getUDID], @"deviceUUID",
-                       [BeintooDevice getMacAddress], @"macaddress",
                        [BeintooOpenUDID value], @"openudid",
                        [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                        [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
@@ -826,7 +813,6 @@
                       [Beintoo getApiKey], @"apikey",
                       userid, @"userExt",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",
@@ -839,7 +825,6 @@
                       [Beintoo getApiKey], @"apikey",
                       userid, @"userExt",
                       [BeintooDevice getUDID], @"deviceUUID",
-                      [BeintooDevice getMacAddress], @"macaddress",
                       [BeintooOpenUDID value], @"openudid",
                       [BeintooDevice getSystemVersion], @"X-BEINTOO-OS-VERSION",
                       [BeintooDevice getDeviceType], @"X-BEINTOO-DEVICE-TYPE",

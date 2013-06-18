@@ -173,6 +173,7 @@
 	
 	cell.textLabel.text     = [[self.elementsArrayList objectAtIndex:indexPath.row] objectForKey:@"name"];
 	cell.textLabel.font     = [UIFont systemFontOfSize:13];
+    cell.textLabel.backgroundColor  = [UIColor clearColor];
     cell.imageView.image    = [UIImage imageNamed:@"beintoo_alliance_iconsmall.png"];
     
     return cell;

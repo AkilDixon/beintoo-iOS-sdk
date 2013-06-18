@@ -196,6 +196,8 @@
 	
 	cell.textLabel.text =  [[self.theVirtualGood.whoAlsoConverted objectAtIndex:indexPath.row] objectForKey:@"nickname"];
 	cell.textLabel.font = [UIFont systemFontOfSize:13];
+    cell.textLabel.backgroundColor  = [UIColor clearColor];
+    
 	NSString *imgString = [[self.theVirtualGood.whoAlsoConverted objectAtIndex:indexPath.row] objectForKey:@"usersmallimg"];
 	cell.imageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imgString]]];
     return cell;
