@@ -34,7 +34,6 @@
 {
     NSString *outstring = nil;
     
-#if __IPHONE_OS_VERSION_MAX_ALLOWED <= BEINTOO_IOS_7_0
     int                 mib[6];
     size_t              len;
     char                *buf;
@@ -74,7 +73,6 @@
     outstring = [NSString stringWithFormat:@"%02X:%02X:%02X:%02X:%02X:%02X",
                            *ptr, *(ptr+1), *(ptr+2), *(ptr+3), *(ptr+4), *(ptr+5)];
     free(buf);
-#endif
     
     return outstring;
 }

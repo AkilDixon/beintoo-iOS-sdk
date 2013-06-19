@@ -40,8 +40,14 @@
 
     if ([BeintooDevice isASIdentifierSupported])
         identifier = [BeintooDevice getASIdentifier];
-    else {
-        // Mac Address will be 02:00:00:00:00:00 on iOS >= 7.0
+    else
+    {
+        /* 
+        ** Note: Mac Address will be 02:00:00:00:00:00 on iOS >= 7.0
+        **
+        ** We enter in this case only if iOS current version in lower than 6.0
+        */
+        
         identifier = [[NSString stringWithFormat:@"%@beintooios", [BeintooDevice getMacAddress]] stringFromMD5];
     }
     
