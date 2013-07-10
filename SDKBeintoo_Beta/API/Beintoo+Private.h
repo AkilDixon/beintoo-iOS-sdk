@@ -19,11 +19,7 @@
 
 #define HOURS_TO_SHOW_TRYBEINTOO   24*7
 
-@interface Beintoo (Private) <CLLocationManagerDelegate,
-#ifdef UI_USER_INTERFACE_IDIOM 
-    UIPopoverControllerDelegate, 
-#endif 
-BeintooPrizeDelegate, BeintooMissionViewDelegate, BTemplateGiveBedollarsDelegate>
+@interface Beintoo (Private) <CLLocationManagerDelegate, BTemplateGiveBedollarsDelegate>
 
 #pragma mark - Init methods
 
@@ -37,43 +33,36 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate, BTemplateGiveBedollarsDelegate
 + (void)initLocallySavedScoresArray;
 + (void)initLocallySavedAchievementsArray;
 + (void)initUserAgent;
-- (void)initDelegates;
 
 #pragma mark - Common methods
 
 + (void)setApplicationWindow:(UIWindow *)_window;
 + (void)setAppOrientation:(int)_appOrientation;
-+ (void)setForceRegistration:(BOOL)_value;
++ (void)setNotificationPosition:(NSInteger)position;
 + (void)setShowAchievementNotificatio:(BOOL)_value;
 + (void)setShowLoginNotification:(BOOL)_value;
 + (void)setShowScoreNotification:(BOOL)_value;
 + (void)setShowNoRewardNotification:(BOOL)_value;
-+ (void)setForceTryBeintoo:(BOOL)_value;
-+ (void)setDismissBeintooAfterRegistration:(BOOL)_value;
-+ (void)setTryBeintooImageTypeReward:(BOOL)_value;
-+ (void)setNotificationPosition:(NSInteger)_value;
 
 #pragma mark - API Services
 
 + (void)initAPI;
 + (void)initPlayerService;
 + (void)initUserService;
-+ (void)initVgoodService;
 + (void)initAchievementsService;
 + (void)initBestoreService;
 + (void)initAppService;
 + (void)initAdService;
 + (void)initRewardService;
++ (void)initEventService;
++ (void)initMissionService;
 
 #pragma mark - Init Controllers
 
++ (void)initControllers;
 + (void)initMainController;
 + (void)initMainAdController;
-+ (void)initVgoodNavigationController;
-+ (void)initMainNavigationController;
-+ (void)initAdNavigationController;
-+ (void)initiPadController;
-+ (void)initPopoversForiPad;
++ (void)initMainGbController;
 
 #pragma mark - Production/Sandbox environments
 
@@ -82,67 +71,56 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate, BTemplateGiveBedollarsDelegate
 
 #pragma mark - Launch and Dismiss methods
 
-+ (void)_launchBeintooOnApp;
-+ (void)_launchBeintooOnAppWithDeveloperCurrencyValue:(float)_value;
-+ (void)_launchNotificationsOnApp;
-+ (void)_launchMarketplaceOnApp;
-+ (void)_launchMarketplaceOnAppWithDeveloperCurrencyValue:(float)_value;
-+ (void)_launchWalletOnApp;
-+ (void)_launchLeaderboardOnApp;
-+ (void)_launchAchievementsOnApp;
-+ (void)_launchPrizeOnApp;
-+ (void)_launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate;
-+ (void)_launchAd;
-+ (void)_launchAdWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate;
-+ (void)_launchMissionOnApp;
-+ (void)_launchSignupOnApp;
-+ (void)_launchPrivateSignupOnApp;
-+ (void)_launchPrivateNotificationsOnApp;
-+ (void)_launchIpadLogin;
-+ (void)_dismissIpadLogin;
-+ (void)_launchIpadNotifications;
-+ (void)_dismissIpadNotifications;
-+ (void)_dismissBeintoo;
-+ (void)_dismissSignup;
-+ (void)_dismissBeintoo:(int)type;
-+ (void)_dismissBeintooNotAnimated;
-+ (void)_dismissPrize;
-+ (void)_dismissAd;
-+ (void)_dismissMission;
-+ (void)_dismissRecommendation;
-+ (void)_launchGiveBedollarsWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate position:(int)position;
-+ (void)_dismissGiveBedollarsController;
++ (void)_openDashboard;
++ (void)_openBestore;
++ (void)_openSignup;
++ (void)_openMissions;
++ (void)_openView:(NSString *)view orURL:(NSString *)URL;
+
++ (void)_dismissView:(id)controller;
+
++ (void)_launchMission:(BMissionTemplate *)_mission delegate:(id<BMissionTemplateDelegate>)_delegate;   
+
+#pragma mark - Reward methods
+
++ (void)_showReward:(BRewardWrapper *)reward;
++ (void)_showReward:(BRewardWrapper *)reward withDelegate:(id)_delegate;
++ (void)_hideReward:(BTemplate *)reward;
+
++ (void)_reward:(BTemplate *)reward launchRewardControllerWithURL:(NSString *)URL;
+
++ (void)_dismissRewardController;
+
+#pragma mark - Ad methods
+
++ (void)_setLastAd:(BAdWrapper *)_ad;
+
++ (void)_showAd:(BAdWrapper *)wrapper;
++ (void)_showAd:(BAdWrapper *)wrapper withDelegate:(id<BeintooTemplateDelegate>)_delegate;
++ (void)_hideAd:(BTemplate *)template;
+
++ (void)_ad:(BTemplate *)template launchAdControllerWithURL:(NSString *)URL;
++ (void)_dismissAdController;
+
+#pragma mark - Give Bedollars methods
+    
++ (void)_showGiveBedollars:(BGiveBedollarsWrapper *)wrapper withDelegate:(id<BTemplateGiveBedollarsDelegate>)delegate position:(int)position;
++ (void)_hideGiveBedollars:(BTemplateGiveBedollars *)template;
+
++ (void)_giveBedollars:(BTemplateGiveBedollars *)template launchControllerWithURL:(NSString *)URL;
++ (void)_giveBedollarsDismissController;
+
+#pragma mark - Custom Browser
+
++ (void)_launchControllerWithURL:(NSString *)URL;
++ (void)_dismissController:(id)navController;
 
 #pragma mark - Private methods
 
 + (UIWindow *)getApplicationWindow;
-+ (void)_setBeintooPlayer:(NSDictionary *)_player;
-+ (void)_setBeintooUser:(NSDictionary *)_user;
-+ (void)_setLastLoggedPlayers:(NSArray *)_players;
-+ (void)_setLastVgood:(BVirtualGood *)_vgood;
-+ (void)_setLastAd:(BVirtualGood *)_ad;
-+ (void)_setLastGiveBedollars:(BVirtualGood *)_content;
-+ (void)setLastTimeForTryBeintooShowTimestamp:(NSString *)_value;
-+ (void)_setBeintooUserFriends:(NSArray *)friends;
++ (void)_setBeintooPlayer:(BPlayerWrapper *)_player;
 
 + (void)_playerLogout;
-
-+ (BOOL)_isAFriendOfMine:(NSString *)_friendID;
-
-+ (NSString *)getLastTimeForTryBeintooShowTimestamp;
-+ (NSArray *)_getBeintooUserFriends;
-
-#pragma mark - Virtual Currency Methods
-
-+ (void)_setDeveloperCurrencyName:(NSString *)_name;
-+ (NSString *)_getDeveloperCurrencyName; 
-+ (void)_setDeveloperUserId:(NSString *)_id;
-+ (NSString *)_getDeveloperUserId;
-+ (void)_setDeveloperCurrencyValue:(float)_value;
-+ (float)_getDeveloperCurrencyValue;
-+ (void)_removeStoredCurrencyAndUser;
-+ (BOOL)_isCurrencyStored;
-+ (BOOL)_isLoggedUserIdStored;
 
 #pragma mark - Location management
 
@@ -165,11 +143,9 @@ BeintooPrizeDelegate, BeintooMissionViewDelegate, BTemplateGiveBedollarsDelegate
 + (void)_giveBedollarsControllerDidAppear;
 + (void)_giveBedollarsControllerDidDisappear;
 
++ (void)_beintooWillAppear;
 + (void)_beintooDidAppear;
 + (void)_beintooWillDisappear;
 + (void)_beintooDidDisappear;
-
-+ (void)_prizeDidAppear;
-+ (void)_prizeDidDisappear;
 
 @end

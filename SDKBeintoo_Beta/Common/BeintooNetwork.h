@@ -38,6 +38,11 @@
 + (NSString *)convertToCurrentDate:(NSString *)date;
 + (NSString *)getUserAgent;
 + (NSData *)getSynchImageWithUA:(NSString *)url;
+
+#pragma mark - Carrier Info
+
 + (NSString *)getCarrierBuiltString;
++ (NSString *)getCarrierMobileCoutryCode;
++ (NSString *)getCarrierMobileNetworkCode;
 
 @end

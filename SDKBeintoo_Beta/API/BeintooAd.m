@@ -19,7 +19,7 @@
 #import "Beintoo.h"
 
 @implementation BeintooAd
-@synthesize adContent, callingDelegate, delegate, parser;
+@synthesize delegate, parser;
 
 #pragma mark - Init methods
 
@@ -27,14 +27,8 @@
 {
 	if (self = [super init])
 	{
-        parser = [[Parser alloc] init];
-		parser.delegate = self;
-        
-		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/vgood/", [Beintoo getRestBaseUrl]]];
-        display_rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/display/", [Beintoo getRestBaseUrl]]];
-        
-		adContent   = [[BVirtualGood alloc] init];
-	}
+        [self initElements];
+    }
     return self;
 }
 
@@ -42,17 +36,19 @@
 {
 	if (self = [super init])
 	{
-        parser = [[Parser alloc] init];
-		parser.delegate = self;
-        
-		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/vgood/", [Beintoo getRestBaseUrl]]];
-        display_rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/display/", [Beintoo getRestBaseUrl]]];
-        
-		adContent   = [[BVirtualGood alloc] init];
-        
+        [self initElements];
         [self setDelegate:_delegate];
 	}
     return self;
+}
+
+- (void)initElements
+{
+    parser = [[Parser alloc] init];
+    parser.delegate = self;
+    
+    rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/vgood/", [Beintoo getRestBaseUrl]]];
+    display_rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/display/", [Beintoo getRestBaseUrl]]];
 }
 
 #pragma mark - Common methods
@@ -70,7 +66,7 @@
 + (void)setDelegate:(id)_delegate
 {
 	BeintooAd *service   = [Beintoo beintooAdService];
-	service.callingDelegate = _delegate;
+	service.delegate = _delegate;
 }
 
 #pragma mark - Methods
@@ -105,7 +101,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           [BeintooDevice getASIdentifier], @"iosaid",
                           [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -116,7 +111,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           [BeintooDevice getASIdentifier], @"iosaid",
                           [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
                           [Beintoo getPlayerID], @"guid",
@@ -128,7 +122,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           [Beintoo getPlayerID], @"guid",
                           nil];
@@ -137,7 +130,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           [Beintoo getPlayerID], @"guid",
                           nil];
             }
@@ -149,7 +141,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           [BeintooDevice getASIdentifier], @"iosaid",
                           [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -159,7 +150,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           [BeintooDevice getASIdentifier], @"iosaid",
                           [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
                           nil];
@@ -170,7 +160,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           nil];
             }
@@ -178,7 +167,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           nil];
             }
         }
@@ -217,7 +205,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           [BeintooDevice getASIdentifier], @"iosaid",
                           [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -228,7 +215,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           [BeintooDevice getASIdentifier], @"iosaid",
                           [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
                           [Beintoo getPlayerID], @"guid",
@@ -240,7 +226,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           [Beintoo getPlayerID], @"guid",
                           nil];
@@ -249,7 +234,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           [Beintoo getPlayerID], @"guid",
                           nil];
             }
@@ -261,7 +245,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           [BeintooDevice getASIdentifier], @"iosaid",
                           [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
@@ -271,7 +254,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           [BeintooDevice getASIdentifier], @"iosaid",
                           [BeintooDevice isASIdentifierEnabledByUser], @"iosate",
                           nil];
@@ -282,7 +264,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           [BeintooNetwork getCarrierBuiltString], @"carrier",
                           nil];
             }
@@ -290,7 +271,6 @@
                 params = [NSDictionary dictionaryWithObjectsAndKeys:
                           [Beintoo getApiKey], @"apikey",
                           [BeintooDevice getUDID], @"deviceUUID",
-                          [BeintooOpenUDID value], @"openudid",
                           nil];
             }
         }
@@ -307,56 +287,34 @@
     {
         case ADS_REQUEST: {
             if ([result objectForKey:@"messageID"]) {
-                if ([[result objectForKey:@"messageID"] intValue] == B_NOTHING_TO_DISPATCH_ERRORCODE) {
+                if ([[result objectForKey:@"messageID"] intValue] == B_NOTHING_TO_DISPATCH_ERRORCODE || [[result objectForKey:@"messageID"] intValue] == -1) {
                     
-                    [Beintoo notifyAdGenerationErrorOnMainDelegate:result];
-                    [BeintooAd notifyAdGenerationErrorOnUserDelegate:result];
-                    
-                    return;
-                }
-                
-                if ([[result objectForKey:@"messageID"] intValue] == -1) {
-                    
-                    [Beintoo notifyAdGenerationErrorOnMainDelegate:result];
-                    [BeintooAd notifyAdGenerationErrorOnUserDelegate:result];
+                    [BeintooAd notifyAdGenerationError:result];
                     
                     return;
                 }
-                
             }
             
             if (![result objectForKey:@"content"])
             {
-                [Beintoo notifyAdGenerationErrorOnMainDelegate:result];
-                [BeintooAd notifyAdGenerationErrorOnUserDelegate:result];
+                [BeintooAd notifyAdGenerationError:result];
                 
                 return;
             }
             
-            [adContent setVgoodContent:result];
-            [adContent setTheGood:result];
-            [Beintoo setLastGeneratedAd:adContent];
+            BAdWrapper *wrapper = [[BAdWrapper alloc] initWithContentOfDictionary:result];
+            [Beintoo setLastGeneratedAd:wrapper];
             
-            [Beintoo notifyAdGenerationOnMainDelegate];
-            [BeintooAd notifyAdGenerationOnUserDelegate];
+            [BeintooAd notifyAdGeneration:wrapper];
             
         }
             break;
             
         case ADS_REQUEST_AND_DISPLAY: {
             if ([result objectForKey:@"messageID"]) {
-                if ([[result objectForKey:@"messageID"] intValue] == B_NOTHING_TO_DISPATCH_ERRORCODE) {
+                if ([[result objectForKey:@"messageID"] intValue] == B_NOTHING_TO_DISPATCH_ERRORCODE || [[result objectForKey:@"messageID"] intValue] == -1) {
                     
-                    [Beintoo notifyAdGenerationErrorOnMainDelegate:result];
-                    [BeintooAd notifyAdGenerationErrorOnUserDelegate:result];
-                    
-                    return;
-                }
-                
-                if ([[result objectForKey:@"messageID"] intValue] == -1) {
-                    
-                    [Beintoo notifyAdGenerationErrorOnMainDelegate:result];
-                    [BeintooAd notifyAdGenerationErrorOnUserDelegate:result];
+                    [BeintooAd notifyAdGenerationError:result];
                     
                     return;
                 }
@@ -364,23 +322,20 @@
             
             if (![result objectForKey:@"content"])
             {
-                [Beintoo notifyAdGenerationErrorOnMainDelegate:result];
-                [BeintooAd notifyAdGenerationErrorOnUserDelegate:result];
+                [BeintooAd notifyAdGenerationError:result];
                 
                 return;
             }
             
-            [adContent setVgoodContent:result];
-            [adContent setTheGood:result];
-            [Beintoo setLastGeneratedAd:adContent];
+            BAdWrapper *wrapper = [[BAdWrapper alloc] initWithContentOfDictionary:result];
+            [Beintoo setLastGeneratedAd:wrapper];
             
-            [Beintoo notifyAdGenerationOnMainDelegate];
-            [BeintooAd notifyAdGenerationOnUserDelegate];
+            [BeintooAd notifyAdGeneration:wrapper];
             
-            if (callingDelegate != nil)
-                [Beintoo displayAdWithDelegate:callingDelegate];
-            else
-                [Beintoo displayAd];
+            BeintooApp *service = [Beintoo beintooAppService];
+            id _delegate = service.delegate;
+            
+            [Beintoo showAd:wrapper withDelegate:_delegate];
             
         }
             break;
@@ -394,24 +349,44 @@
 
 #pragma mark - Notificatioons on developer's delegate
 
-+ (void)notifyAdGenerationOnUserDelegate
++ (void)notifyAdGeneration:(BAdWrapper *)wrapper
 {
-	BeintooAd *service = [Beintoo beintooAdService];
-	id _callingDelegate = service.callingDelegate;
+	[self notifyAdGenerationOnUserDelegate:wrapper];
+    [self notifyAdGenerationOnMainDelegate:wrapper];
+}
+
++ (void)notifyAdGenerationError:(NSDictionary *)error
+{
+    [self notifyAdGenerationErrorOnUserDelegate:error];
+    [self notifyAdGenerationErrorOnMainDelegate:error];
+}
+
++ (void)notifyAdGenerationOnMainDelegate:(BAdWrapper *)wrapper;
+{
+	[Beintoo notifyAdGenerationOnMainDelegate:wrapper];
+}
+
++ (void)notifyAdGenerationErrorOnMainDelegate:(NSDictionary *)_error
+{
+	[Beintoo notifyAdGenerationErrorOnMainDelegate:_error];
+}
+
++ (void)notifyAdGenerationOnUserDelegate:(BAdWrapper *)wrapper;
+{
+	BeintooApp *service = [Beintoo beintooAppService];
+	id _delegate = service.delegate;
     
-    if ([_callingDelegate respondsToSelector:@selector(didBeintooGenerateAnAd:)]) {
-		[_callingDelegate didBeintooGenerateAnAd:[Beintoo getLastGeneratedAd]];
-	}
+    if ([_delegate respondsToSelector:@selector(didBeintooGenerateAnAd:)])
+        [_delegate didBeintooGenerateAnAd:wrapper];
 }
 
 + (void)notifyAdGenerationErrorOnUserDelegate:(NSDictionary *)_error
 {
-	BeintooAd *service = [Beintoo beintooAdService];
-	id _callingDelegate = service.callingDelegate;
+	BeintooApp *service = [Beintoo beintooAppService];
+	id _delegate = service.delegate;
     
-    if ([_callingDelegate respondsToSelector:@selector(didBeintooFailToGenerateAnAdWithError:)]) {
-		[_callingDelegate didBeintooFailToGenerateAnAdWithError:_error];
-	}
+	if ([_delegate respondsToSelector:@selector(didBeintooFailToGenerateAnAd:)])
+        [_delegate didBeintooFailToGenerateAnAd:_error];
 }
 
 #pragma mark - Dealloc
@@ -425,7 +400,6 @@
 	[parser release];
 	[rest_resource release];
     [display_rest_resource release];
-    [adContent release];
     
 	[super dealloc];
 #endif

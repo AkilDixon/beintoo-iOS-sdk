@@ -21,7 +21,7 @@
 #define LOGIN_NO_PLAYER	  2
 #define LOGIN_NO_ERROR	  0
 
-@class BeintooUser,BScore;
+@class BeintooUser, BScore, BPlayerWrapper;
 
 @protocol BeintooPlayerDelegate;
 
@@ -39,44 +39,10 @@
 
 + (void)setPlayerDelegate:(id)_caller;
 + (void)setDelegate:(id)_delegate;
+- (NSString *)restResource;
 
-/* 
- * PLAYER LOGIN: 
- *	
- * Delegate callback response on:
- * - (void)playerDidLoginWithResult:(NSDictionary *)result{
- * - (void)playerDidFailLoginWithResult:(NSString *)error{
- */
 + (void)login;
 
-/* 
- * PLAYER SUBMITSCORE: 
- *	
- * Delegate callback response on:
- * - (void)playerDidSumbitScoreWithResult:(NSString *)result;
- * - (void)playerDidFailSubmitScoreWithError:(NSString *)error;
- */
-+ (void)submitScore:(int)_score;
-+ (void)submitScore:(int)_score forContest:(NSString *)_contestName;
-+ (void)submitScoreAndGetRewardForScore:(int)_score andContest:(NSString *)_contestName withThreshold:(int)_threshold;
-
-+ (void)submitScoreAndGetVgoodForScore:(int)_score andContest:(NSString *)_contestName withThreshold:(int)_threshold andVgoodMultiple:(BOOL)_isMultiple __attribute__((deprecated("use '[Beintoo submitScoreAndGetRewardForScore:andContest:withThreshold:]' instead")));
-/* 
- * PLAYER GETSCORE: 
- *	
- * Delegate callback response on:
- * - (void)playerDidGetScoreWithResult:(NSString *)result;
- * - (void)playerDidFailGetScoreWithError:(NSString *)error;
- */
-+ (void)getScore;
-
-/* 
- * PLAYER SETBALANCE: 
- *	
- * Delegate callback response on:
- * - (void)playerDidSetBalanceWithResult:(NSString *)result;
- * - (void)playerDidFailSetBalanceWithError:(NSString *)error;
- */
 + (void)setBalance:(int)_playerBalance forContest:(NSString *)_contest;
 
 // ---------------------------------------------------------------------------------------
@@ -90,6 +56,12 @@
 + (void)notifyPlayerSetBalanceSuccessWithResult:(NSString *)result;
 + (void)notifyPlayerSetBalanceErrorWithResult:(NSString *)error;	
 
+// DEPRECATED methods
++ (void)submitScore:(int)_score __attribute__((deprecated()));
++ (void)submitScore:(int)_score forContest:(NSString *)_contestName __attribute__((deprecated()));
++ (void)submitScoreAndGetRewardForScore:(int)_score andContest:(NSString *)_contestName withThreshold:(int)_threshold __attribute__((deprecated()));
++ (void)getScore __attribute__((deprecated()));
+
 // ----------- Internal API -------------------
 - (void)login;
 - (void)login:(NSString *)userid;
@@ -97,16 +69,9 @@
 - (void)getPlayerByGUID:(NSString *)guid;
 - (void)getPlayerByUserID:(NSString *)userID;
 - (void)backgroundLogin:(NSString *)userid;
-- (void)getAllScores;
-
-// APP REST
-- (void)topScoreFrom:(int)start andRows:(int)rows forUser:(NSString *)userExt andContest:(NSString *)codeId;
-- (void)topScoreFrom:(int)start andRows:(int)rows closeToUser:(NSString *)userExt andContest:(NSString *)codeId;
-- (void)showContestList;
-- (void)logException:(NSString *    )exception;
+- (void)getAllScores __attribute__((deprecated()));
 
 - (int)loginError;
-- (NSString *)restResource;
 
 // Notifications
 + (void)showNotificationForSubmitScore;
@@ -125,14 +90,14 @@
 + (void)submitScoreForOfflineScores:(NSString *)scores;
 
 #ifdef BEINTOO_ARC_AVAILABLE
-@property(nonatomic, retain) id <BeintooPlayerDelegate> delegate;
-@property(nonatomic, retain) id  callingDelegate;
+@property(nonatomic, strong) id <BeintooPlayerDelegate> delegate;
+@property(nonatomic, strong) id  callingDelegate;
+@property(nonatomic, strong) Parser *parser;
 #else
 @property(nonatomic, assign) id <BeintooPlayerDelegate> delegate;
 @property(nonatomic, assign) id  callingDelegate;
-#endif
-
 @property(nonatomic, retain) Parser *parser;
+#endif
 
 @end
 

@@ -23,7 +23,6 @@
 #import <Foundation/Foundation.h>
 #import "BeintooPlayer.h"
 #import "Parser.h"
-#import "BVirtualGood.h"
 #import "BeintooDevice.h"
 
 extern NSString *GIVE_1_BEDOLLAR;
@@ -53,33 +52,9 @@ extern NSString *GIVE_5_BEDOLLAR;
 - (void)getUser;
 - (void)getUserByM:(NSString *)m andP:(NSString *)p;
 - (void)getUserByUDID;
-- (void)showChallengesbyStatus:(int)status;
-- (void)challengeRequestfrom:(NSString *)userIDFrom	to:(NSString *)userIDTo withAction:(NSString *)action forContest:(NSString *)contest;
-- (void)challengeRequestfrom:(NSString *)userIDFrom	to:(NSString *)userIDTo withAction:(NSString *)action forContest:(NSString *)contest withBedollarsToBet:(NSString *)_bedollars andScoreToReach:(NSString *)_scoreToReach forKindOfChallenge:(NSString *)_challengeKind andActor:(NSString *)actor;
-
-- (void)getChallangePrereequisitesFromUser:(NSString *)userIDFrom toUser:(NSString *)userIDTo forContest:(NSString *)codeID;
-
-- (void)getFriendsByExtid;
 - (void)removeUDIDConnectionFromUserID:(NSString *)userID;
 - (void)getBalanceFrom:(int)start andRowns:(int)numOfRows;
 - (void)getUsersByQuery:(NSString *)query andSkipFriends:(BOOL)skip;
-- (void)sendFriendshipRequestTo:(NSString *)toUserExt;		
-- (void)sendUnfriendshipRequestTo:(NSString *)toUserExt;
-- (void)getFriendRequests;
-- (void)replyToFriendshipRequestWithAnswer:(NSInteger)answer toUser:(NSString *)toUserExt;
-
-/* --> GIVE BEDOLLARS
-    reason can be:
-        GIVE_1_BEDOLLAR
-        GIVE_2_BEDOLLAR
-        GIVE_5_BEDOLLAR
-    refer to the static string
-*/
-+ (void)giveBedollarsByString:(NSString *)_reason showNotification:(BOOL)_showNotification __attribute__((deprecated("use '[Beintoo giveBedollars:showNotification:withPosition:]' instead")));
-- (void)giveBedollarsByString:(NSString *)_reason showNotification:(BOOL)_showNotification __attribute__((deprecated("use '[Beintoo giveBedollars:showNotification:withPosition:]' instead")));
-+ (void)giveBedollars:(float)_amount showNotification:(BOOL)_showNotification __attribute__((deprecated("use '[Beintoo giveBedollars:showNotification:withPosition:]' instead")));
-- (void)giveBedollars:(float)_amount showNotification:(BOOL)_showNotification __attribute__((deprecated("use '[Beintoo giveBedollars:showNotification:withPosition:]' instead")));
-
 - (void)forgotPassword:(NSString *)email;
 
 /*
@@ -115,7 +90,6 @@ extern NSString *GIVE_5_BEDOLLAR;
 @property (nonatomic, assign)   id callingDelegate;
 @property (nonatomic, retain)   NSMutableDictionary *userParams;
 @property (nonatomic, assign)   BOOL showGiveBedollarsNotification;
-@property (nonatomic, retain)   BVirtualGood         *giveBedollarsContent;
 @property (nonatomic, assign)   int notificationPosition;
 
 - (void)playerDidCompleteBackgroundLogin:(NSDictionary *)result;
@@ -129,17 +103,10 @@ extern NSString *GIVE_5_BEDOLLAR;
 - (void)didGetUser:(NSDictionary *)result;
 - (void)didGetUserByUDID:(NSMutableArray *)result;
 - (void)didGetUserByMail:(NSDictionary *)result;
-- (void)didShowChallengesByStatus:(NSArray *)result;
-- (void)challengeRequestFinishedWithResult:(NSDictionary *)result;
-- (void)didGetFriendsByExtid:(NSMutableArray *)result;
 - (void)didGetBalance:(NSMutableArray *)result;
 - (void)didGetUserByQuery:(NSMutableArray *)result;
-- (void)didGetFriendRequestResponse:(NSDictionary *)result;
-- (void)didGetUnfriendRequestResponse:(NSDictionary *)result;
-- (void)didGetFriendRequests:(NSMutableArray *)result;
 - (void)didCompleteRegistration:(NSDictionary *)result;
 - (void)didCompleteUserNickUpdate:(NSDictionary *)result;
-- (void)didGetChallangePrerequisites:(NSDictionary *)result;
 - (void)didCompleteBackgroundRegistration:(NSDictionary *)result;
 - (void)didNotCompleteBackgroundRegistration;
 - (void)didReceiveGiveBedollarsResponse:(NSDictionary *)result;

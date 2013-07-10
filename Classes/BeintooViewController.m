@@ -47,30 +47,13 @@
     [self manageLocation];
 }
 
-- (IBAction)startBeintoo
+- (IBAction)openDashboard
 {    
     /*
-     *  Use 
-     *  
-     *  [Beintoo launchBeintoo]; 
-     *  
-     *  to directly launch the Dashboard
+     *  Use this method to launch the Dashboard of Beintoo
      */
 
-    [Beintoo launchBeintoo];
-}
-
-- (IBAction)startMarketplace
-{    
-    /*
-     *  Use 
-     *
-     *  [Beintoo launchBestore];
-     *
-     *  to directly launch the Bestore, avoiding the dashboard
-     */
-    
-    [Beintoo launchBestore];
+    [Beintoo openDashboard];
 }
 
 - (IBAction)playerLogin
@@ -79,27 +62,9 @@
     [Beintoo login];
 }
 
-- (IBAction)submitScore
+- (IBAction)getReward
 {
-	[Beintoo setPlayerDelegate:self];
-    [Beintoo submitScore:1];
-}
-
-- (IBAction)submitScoreForContest
-{
-	[Beintoo setPlayerDelegate:nil];
-	[Beintoo submitScore:1 forContest:@"default"]; // Here the contest name instead of "default"
-}
-
-- (IBAction)getScoreForContest
-{
-	[Beintoo setPlayerDelegate:self];
-	[Beintoo getScore];
-}
-
-- (IBAction)getVgood
-{
-	[Beintoo setRewardDelegate:self];
+    [Beintoo setRewardDelegate:self];
 	[Beintoo getReward];
 }
 
@@ -128,7 +93,7 @@
     */
     
     [Beintoo setAppDelegate:self];
-    [Beintoo giveBedollars:0.5 showNotification:YES withPosition:BeintooNotificationPositionTop];
+    [Beintoo giveBedollars:0.5 showNotification:YES withPosition:BeintooNotificationPositionBottom];
 }
 
 - (IBAction)requestAd
@@ -137,10 +102,18 @@
 	[Beintoo requestAndDisplayAdWithDeveloperUserGuid:nil];
 }
 
+- (IBAction)getEvent
+{
+    [BeintooEvent setDelegate:self];
+    [BeintooEvent getEventWithAmountOfBedollars:1 score:100 code:@"test"];
+}
+
 - (IBAction)playerLogout{
 	[Beintoo playerLogout];
     [self manageLocation];
 }
+
+#pragma mark - Locations Button
 
 - (IBAction)setMilan{
      
@@ -176,8 +149,7 @@
     [self manageLocation];
 }
 
-#pragma mark -
-#pragma mark Delegates
+#pragma mark - Delegates
 
  /*
  ** Use the delegates callback to perform custom actions on your app
@@ -186,32 +158,32 @@
 
 // -------------- PLAYER LOGIN CALLBACKS
 - (void)playerDidLoginWithResult:(NSDictionary *)result{
-	NSLog(@"playerLogin result: %@", result);
+	NSLog(@"Controller Delegate: playerLogin result: %@", result);
     
     [self manageLocation];
 }
 
 - (void)playerDidFailLoginWithResult:(NSString *)error{
-	NSLog(@"playerLogin error: %@",error);
+	NSLog(@"Controller Delegate: playerLogin error: %@",error);
     
 }
 
 // -------------- PLAYER LOGIN CALLBACKS
 - (void)didCompleteBackgroundRegistration:(NSDictionary *)result{
-    NSLog(@"Set User Callback -------> result %@", result);
+    NSLog(@"Controller Delegate: Set User Callback -------> result %@", result);
 
 }
 - (void)didNotCompleteBackgroundRegistration{
-    NSLog(@"Error in Set User Callback ------->");
+    NSLog(@"Controller Delegate: Error in Set User Callback ------->");
     
 }
 
 // -------------- PLAYER SUBMITSORE CALLBACKS
 - (void)playerDidSumbitScoreWithResult:(NSString *)result{
-	NSLog(@"%@",result);
+	NSLog(@"Controller Delegate: %@",result);
 }
 - (void)playerDidFailSubmitScoreWithError:(NSString *)error{
-	NSLog(@"%@",error);
+	NSLog(@"Controller Delegate: %@",error);
 }
 
 // -------------- PLAYER GETSCORE CALLBACKS
@@ -220,39 +192,47 @@
 }
 
 - (void)playerDidFailGetScoreWithError:(NSString *)error{
-	NSLog(@"Beintoo: player getscore error: %@",error);
+	NSLog(@"Controller Delegate: Beintoo: player getscore error: %@",error);
 }
 
 // -------------- ACHIEVEMENT SUBMIT CALLBACKS
 - (void)didSubmitAchievementWithResult:(NSDictionary *)result{
-	NSLog(@"Beintoo: achievement submitted with result: %@",result);
+	NSLog(@"Controller Delegate: Beintoo: achievement submitted with result: %@",result);
 }
 - (void)didFailToSubmitAchievementWithError:(NSString *)error{
-	NSLog(@"Beintoo: achievement submit error: %@",error);
+	NSLog(@"Controller Delegate: Beintoo: achievement submit error: %@",error);
 }
 
 - (void)didGetAllUserAchievementsWithResult:(NSArray *)result{
-    NSLog(@"Beintoo: achievement list: %@", result);
-    
+    NSLog(@"Controller Delegate: Beintoo: achievement list: %@", result);
 }
 
 - (void)didGetAchievementStatus:(NSString *)_status andPercentage:(int)_percentage forAchievementId:(NSString *)_achievementId
 {
-    NSLog(@"Achieve %@ || status %@ || precentage %i", _achievementId, _status, _percentage);
+    NSLog(@"Controller Delegate: Achieve %@ || status %@ || precentage %i", _achievementId, _status, _percentage);
 }
 
-// GIVE BEDOLLARS
-- (void)didReceiveGiveBedollarsResponse:(NSDictionary *)result{
-    NSLog(@"Give Bedollars response %@", result);
+/**
+*** Give Bedollars callbacks
+**/
+
+- (void)didReceiveGiveBedollarsResponse:(BGiveBedollarsWrapper *)wrapper
+{
+    NSLog(@"Controller Delegate: Give Bedollars response %@", [wrapper dictionaryFromSelf]);
+}
+
+- (void)didFailToPerformGiveBedollars:(NSDictionary *)error
+{
+    NSLog(@"Controller Delegate: failed to retrieve Give Bedollars %@", error);
 }
 
 /**
  *** ADS callbacks
  **/
 
-- (void)didBeintooGenerateAnAd:(BVirtualGood *)theAd
+- (void)didBeintooGenerateAnAd:(BAdWrapper *)wrapper
 {
-    BeintooLOG(@"Main View Controller, AD generated: %@", [theAd theGood]);
+    BeintooLOG(@"Main View Controller, AD generated: %@", [wrapper dictionaryFromSelf]);
 }
 
 - (void)didBeintooFailToGenerateAnAdWithError:(NSDictionary *)error
@@ -264,129 +244,139 @@
 *** REWARD callbacks
 **/
 
-- (void)didBeintooGenerateAReward:(BVirtualGood *)theReward
+- (void)didBeintooGenerateAReward:(BRewardWrapper *)reward
 {
-    BeintooLOG(@"Main View Controller, Reward generated: %@", [theReward theGood]);
+    BeintooLOG(@"Controller Delegate:  Reward generated: %@", [reward dictionaryFromSelf]);
 }
 
 - (void)didBeintooFailToGenerateARewardWithError:(NSDictionary *)error
 {
-    BeintooLOG(@"Main View Controller, Reward generation error: %@", error);
+    BeintooLOG(@"Controller Delegate:  Reward generation error: %@", error);
 }
 
-- (void)beintooPrizeWillAppear{
-    NSLog(@"Main View Controller --- Prize will Appear"); 
+- (void)beintooRewardWillAppear{
+    NSLog(@"Controller Delegate:  Reward will Appear"); 
 }
 
-- (void)beintooPrizeDidAppear{
-    NSLog(@"Main View Controller --- Prize did Appear");
+- (void)beintooRewardDidAppear{
+    NSLog(@"Controller Delegate:  Reward did Appear");
 }
 
-- (void)beintooPrizeWillDisappear{
-    NSLog(@"Main View Controller --- Prize will Disappear");
+- (void)beintooRewardWillDisappear{
+    NSLog(@"Controller Delegate:  Reward will Disappear");
 }
 
-- (void)beintooPrizeDidDisappear{
-    NSLog(@"Main View Controller --- Prize did Disappear");
+- (void)beintooRewardDidDisappear{
+    NSLog(@"Controller Delegate:  Reward did Disappear");
 }
 
-- (void)beintooPrizeAlertWillAppear{
-    NSLog(@"Main View Controller --- Prize alert will Appear");
+- (void)beintooRewardControllerWillAppear{
+    NSLog(@"Controller Delegate:  RewardController will Appear");
 }
 
-- (void)beintooPrizeAlertDidDisappear{
-    NSLog(@"Main View Controller --- Prize alert did Disappear");
+- (void)beintooRewardControllerDidDisappear{
+    NSLog(@"Controller Delegate:  RewardController did Disappear");
 }
 
-- (void)beintooPrizeAlertWillDisappear{
-    NSLog(@"Main View Controller --- Prize alert will Disappear");
+- (void)beintooRewardControllerWillDisappear{
+    NSLog(@"Controller Delegate:  RewardController will Disappear");
 }
 
-- (void)beintooPrizeAlertDidAppear{
-    NSLog(@"Main View Controller --- Prize alert did Appear");
+- (void)beintooRewardControllerDidAppear{
+    NSLog(@"Controller Delegate:  RewardController did Appear");
 }
 
-- (void)userDidTapOnClosePrize{
-    NSLog(@"Main View Controller --- Tapped on close Prize");
+- (void)beintooRewardHasBeenClosed{
+    NSLog(@"Controller Delegate: beintooRewardHasBeenClosed");
 }
 
-- (void)userDidTapOnThePrize{
-    NSLog(@"Main View Controller --- Tapped on Prize");
+- (void)beintooRewardHasBeenTapped{
+    NSLog(@"Controller Delegate: beintooRewardHasBeenTapped");
 }
 
-- (void)buttonsCustomization{
+- (void)beintooAdWillAppear{
+    NSLog(@"Controller Delegate: Ad will Appear");
+}
+
+- (void)beintooAdDidAppear{
+    NSLog(@"Controller Delegate: Ad did Appear");
+}
+
+- (void)beintooAdWillDisappear{
+    NSLog(@"Controller Delegate: Ad will Disappear");
+}
+
+- (void)beintooAdDidDisappear{
+    NSLog(@"Controller Delegate: Ad did Disappear");
+}
+
+- (void)beintooAdControllerWillAppear{
+    NSLog(@"Controller Delegate: AdController will Appear");
+}
+
+- (void)beintooAdControllerDidDisappear{
+    NSLog(@"Controller Delegate: AdController did Disappear");
+}
+
+- (void)beintooAdControllerWillDisappear{
+    NSLog(@"Controller Delegate: AdController will Disappear");
+}
+
+- (void)beintooAdControllerDidAppear{
+    NSLog(@"Controller Delegate: AdController did Appear");
+}
+
+- (void)beintooAdHasBeenClosed{
+    NSLog(@"Controller Delegate: Tapped on close the ad");
+}
+
+- (void)beintooAdHasBeenTapped{
+    NSLog(@"Controller Delegate: Tapped on the ad");
+}
+
+#pragma mark - Events delegates
+
+- (void)didGenerateAnEvent:(BEventWrapper *)wrapper
+{
+    NSLog(@"Controller Delegate: an event has been generated, %@", [wrapper dictionaryFromSelf]);
+}
+
+- (void)didFailToGenerateAnEvent:(NSDictionary *)error
+{
+    NSLog(@"Controller Delegate: failed to generate an event, %@", error);
+}
+
+- (void)setButtonsCustomization:(BButton *)button
+{
+    [button setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
+	[button setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
+	[button setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
+    [button setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
+    [button setTextSize:[NSNumber numberWithInt:14]];
+}
+
+- (void)setButtonLocationsCustomization:(BButton *)button
+{
+    [button setHighColor:[UIColor colorWithRed:10.0/255 green:90.0/255 blue:229.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
+	[button setMediumHighColor:[UIColor colorWithRed:8.0/255 green:72.0/255 blue:183.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
+	[button setMediumLowColor:[UIColor colorWithRed:8.0/255 green:72.0/255 blue:183.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
+    [button setLowColor:[UIColor colorWithRed:7.0/255 green:64.0/255 blue:163.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
+    [button setTextSize:[NSNumber numberWithInt:13]];
+}
+
+- (void)buttonsCustomization
+{    
+    [self setButtonsCustomization:playerLoginButton];
+    [self setButtonsCustomization:logoutButton];
+    [self setButtonsCustomization:giveBedollarsButton];
+    [self setButtonsCustomization:requestAdButton];
+    [self setButtonsCustomization:rewardButton];
+    [self setButtonsCustomization:achievementButton];
+    [self setButtonsCustomization:getEventButton];
     
-    [playerLogin setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[playerLogin setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[playerLogin setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [playerLogin setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-    [playerLogin setTextSize:[NSNumber numberWithInt:14]];
-    
-    [logout setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[logout setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[logout setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [logout setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-    [logout setTextSize:[NSNumber numberWithInt:14]];
-    
-    [getVgood setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[getVgood setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[getVgood setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [getVgood setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-    [getVgood setTextSize:[NSNumber numberWithInt:14]];
-    
-    [submitScore setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[submitScore setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[submitScore setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [submitScore setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-    [submitScore setTextSize:[NSNumber numberWithInt:14]];
-    
-    [submitScoreForContest setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[submitScoreForContest setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[submitScoreForContest setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [submitScoreForContest setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-    [submitScoreForContest setTextSize:[NSNumber numberWithInt:14]];
-    
-    [getScoreForContest setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[getScoreForContest setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[getScoreForContest setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [getScoreForContest setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-    [getScoreForContest setTextSize:[NSNumber numberWithInt:14]];
-    
-    [achievements setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[achievements setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[achievements setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [achievements setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-    [achievements setTextSize:[NSNumber numberWithInt:14]];
-    
-    [london setHighColor:[UIColor colorWithRed:10.0/255 green:90.0/255 blue:229.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-	[london setMediumHighColor:[UIColor colorWithRed:8.0/255 green:72.0/255 blue:183.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-	[london setMediumLowColor:[UIColor colorWithRed:8.0/255 green:72.0/255 blue:183.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-    [london setLowColor:[UIColor colorWithRed:7.0/255 green:64.0/255 blue:163.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-    [london setTextSize:[NSNumber numberWithInt:14]];
-    
-    [milan setHighColor:[UIColor colorWithRed:10.0/255 green:90.0/255 blue:229.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-	[milan setMediumHighColor:[UIColor colorWithRed:8.0/255 green:72.0/255 blue:183.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-	[milan setMediumLowColor:[UIColor colorWithRed:8.0/255 green:72.0/255 blue:183.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-    [milan setLowColor:[UIColor colorWithRed:7.0/255 green:64.0/255 blue:163.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-    [milan setTextSize:[NSNumber numberWithInt:14]];
-    
-    [sanFrancisco setHighColor:[UIColor colorWithRed:10.0/255 green:90.0/255 blue:229.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-	[sanFrancisco setMediumHighColor:[UIColor colorWithRed:8.0/255 green:72.0/255 blue:183.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-	[sanFrancisco setMediumLowColor:[UIColor colorWithRed:8.0/255 green:72.0/255 blue:183.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-    [sanFrancisco setLowColor:[UIColor colorWithRed:7.0/255 green:64.0/255 blue:163.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(5, 2)/pow(255,2) green:pow(45, 2)/pow(255,2) blue:pow(116, 2)/pow(255,2) alpha:1]];
-    [sanFrancisco setTextSize:[NSNumber numberWithInt:14]];
-    
-    [giveBedollars setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[giveBedollars setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[giveBedollars setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [giveBedollars setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-    [giveBedollars setTextSize:[NSNumber numberWithInt:14]];
-    
-    [requestAd setHighColor:[UIColor colorWithRed:136.0/255 green:148.0/255 blue:164.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(156, 2)/pow(255,2) green:pow(168, 2)/pow(255,2) blue:pow(184, 2)/pow(255,2) alpha:1]];
-	[requestAd setMediumHighColor:[UIColor colorWithRed:106.0/255 green:125.0/255 blue:149.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(116, 2)/pow(255,2) green:pow(135, 2)/pow(255,2) blue:pow(159, 2)/pow(255,2) alpha:1]];
-	[requestAd setMediumLowColor:[UIColor colorWithRed:98.0/255 green:118.0/255 blue:144.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(108, 2)/pow(255,2) green:pow(128, 2)/pow(255,2) blue:pow(154, 2)/pow(255,2) alpha:1]];
-    [requestAd setLowColor:[UIColor colorWithRed:79.0/255 green:102.0/255 blue:132.0/255 alpha:1.0] andRollover:[UIColor colorWithRed:pow(89, 2)/pow(255,2) green:pow(112, 2)/pow(255,2) blue:pow(142, 2)/pow(255,2) alpha:1]];
-    [requestAd setTextSize:[NSNumber numberWithInt:14]];
+    [self setButtonLocationsCustomization:london];
+    [self setButtonLocationsCustomization:milan];
+    [self setButtonLocationsCustomization:sanFrancisco];
 }
 
 - (void)manageLocation{

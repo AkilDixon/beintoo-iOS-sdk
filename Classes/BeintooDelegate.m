@@ -24,149 +24,167 @@
  * ----------------------------------------- */
 
 - (void)beintooWillAppear{
-	BeintooLOG(@"Beintoo will appear!");
+	BeintooLOG(@"Main Delegate: Beintoo will appear!");
 }
 
 - (void)beintooDidAppear{
-	BeintooLOG(@"Beintoo did appear!");
+	BeintooLOG(@"Main Delegate: Beintoo did appear!");
 }
 
 - (void)beintooWillDisappear{
-	BeintooLOG(@"Beintoo will disappear!");
+	BeintooLOG(@"Main Delegate: Beintoo will disappear!");
 }
 
 - (void)beintooDidDisappear{
-	BeintooLOG(@"Beintoo did disappear!");
+	BeintooLOG(@"Main Delegate: Beintoo did disappear!");
 }
 
 /* -----------------------------
  * Beintoo Reward
  * ----------------------------- */
 
-- (void)didBeintooGenerateAReward:(BVirtualGood *)theReward
+- (void)didBeintooGenerateAReward:(BRewardWrapper *)reward
 {
-    BeintooLOG(@"Reward generated: %@", [theReward theGood]);
+    BeintooLOG(@"Main Delegate: Reward generated: %@", [reward dictionaryFromSelf]);
 }
 
 - (void)didBeintooFailToGenerateARewardWithError:(NSDictionary *)error
 {
-    BeintooLOG(@"Vgood generation error: %@", error);
+    BeintooLOG(@"Main Delegate: Reward generation error: %@", error);
+}
+
+- (void)beintooRewardHasBeenClosed{
+    NSLog(@"Main Delegate: beintoo Reward HasBeenClosed");
+}
+
+- (void)beintooRewardHasBeenTapped{
+    NSLog(@"Main Delegate: beintoo RewardHasBeenTapped");
 }
 
 /*
  * Reward Notifications
  */
 
-- (void)beintooPrizeWillAppear{
-	BeintooLOG(@"Prize will appear!");
+- (void)beintooRewardWillAppear{
+	BeintooLOG(@"Main Delegate: Reward will appear!");
 }
 
-- (void)beintooPrizeDidAppear{
-	BeintooLOG(@"Prize did appear!");
+- (void)beintooRewardDidAppear{
+	BeintooLOG(@"Main Delegate: Reward did appear!");
 }
 
-- (void)beintooPrizeWillDisappear{
-	BeintooLOG(@"Prize will disappear!");
+- (void)beintooRewardWillDisappear{
+	BeintooLOG(@"Main Delegate: Reward will disappear!");
 }
 
-- (void)beintooPrizeDidDisappear{
-	BeintooLOG(@"Prize did disappear!");
+- (void)beintooRewardDidDisappear{
+	BeintooLOG(@"Main Delegate: Reward did disappear!");
 }
 
-- (void)beintooPrizeAlertWillAppear{
-	BeintooLOG(@"alert will appear");
+- (void)beintooRewardControllerWillAppear{
+	BeintooLOG(@"Main Delegate: RewardController will appear");
 }
 
-- (void)beintooPrizeAlertDidAppear{
-	BeintooLOG(@"alert did appear");
+- (void)beintooRewardControllerDidAppear{
+	BeintooLOG(@"Main Delegate: RewardController did appear");
 }
 
-- (void)beintooPrizeAlertWillDisappear{
-	BeintooLOG(@"alert will disappear");
+- (void)beintooRewardControllerWillDisappear{
+	BeintooLOG(@"Main Delegate: RewardController will disappear");
 
 }
-- (void)beintooPrizeAlertDidDisappear{
-	BeintooLOG(@"alert did disappear");
+- (void)beintooRewardControllerDidDisappear{
+	BeintooLOG(@"Main Delegate: RewardController did disappear");
 }
 
 /*
- * Ad Notifications
- */
+** Ad Notifications
+*/
 
 - (void)beintooAdWillAppear{
-	BeintooLOG(@"Ad will appear!");
+	BeintooLOG(@"Main Delegate: Ad will appear!");
 }
 
 - (void)beintooAdDidAppear{
-	BeintooLOG(@"Ad did appear!");
+	BeintooLOG(@"Main Delegate: Ad did appear!");
 }
 
 - (void)beintooAdDidDisappear{
-	BeintooLOG(@"Ad did disappear!");
+	BeintooLOG(@"Main Delegate: Ad did disappear!");
 }
 
 - (void)beintooAdWillDisappear{
-	BeintooLOG(@"Ad will disappear!");
+	BeintooLOG(@"Main Delegate: Ad will disappear!");
 }
 
 - (void)beintooAdControllerWillAppear{
-	BeintooLOG(@"Ad Controller will appear!");
+	BeintooLOG(@"Main Delegate: Ad Controller will appear!");
 }
 
 - (void)beintooAdControllerDidAppear;{
-	BeintooLOG(@"Ad Controller did appear!");
+	BeintooLOG(@"Main Delegate: Ad Controller did appear!");
 }
 
 - (void)beintooAdControllerDidDisappear{
-	BeintooLOG(@"Ad Controller did disappear!");
+	BeintooLOG(@"Main Delegate: Ad Controller did disappear!");
 }
 
 - (void)beintooAdControllerWillDisappear{
-	BeintooLOG(@"Ad Controller will disappear!");
+	BeintooLOG(@"Main Delegate: Ad Controller will disappear!");
 }
 
 - (void)didBeintooGenerateAnAd:(BVirtualGood *)theAd{
-    BeintooLOG(@"New Ad has been generated!");
+    BeintooLOG(@"Main Delegate: New Ad has been generated!");
 }
 
 - (void)didBeintooFailToGenerateAnAdWithError:(NSDictionary *)error{
-    BeintooLOG(@"Failed while generating a new Ad!");
+    BeintooLOG(@"Main Delegate: Failed while generating a new Ad!");
 }
 
-/*
- * Give Bedollars Notifications
- */
+/* ---------------------------
+ * Give Bedollars
+ * --------------------------- */
 
 - (void)beintooGiveBedollarsWillAppear{
-	BeintooLOG(@"Give Bedollars will appear!");
+	BeintooLOG(@"Main Delegate: Give Bedollars will appear!");
 }
 
 - (void)beintooGiveBedollarsDidAppear{
-	BeintooLOG(@"Give Bedollars did appear!");
+	BeintooLOG(@"Main Delegate: Give Bedollars did appear!");
 }
 
 - (void)beintooGiveBedollarsWillDisappear{
-	BeintooLOG(@"Give Bedollars will disappear!");
+	BeintooLOG(@"Main Delegate: Give Bedollars will disappear!");
 }
 
 - (void)beintooGiveBedollarsDidDisappear{
-	BeintooLOG(@"Give Bedollars did disappear!");
+	BeintooLOG(@"Main Delegate: Give Bedollars did disappear!");
 }
 
 - (void)beintooGiveBedollarsControllerWillAppear{
-	BeintooLOG(@"Give Bedollars Controller will appear");
+	BeintooLOG(@"Main Delegate: Give Bedollars Controller will appear");
 }
 
 - (void)beintooGiveBedollarsControllerDidAppear{
-	BeintooLOG(@"Give Bedollars Controller did appear");
+	BeintooLOG(@"Main Delegate: Give Bedollars Controller did appear");
 }
 
 - (void)beintooGiveBedollarsControllerWillDisappear{
-	BeintooLOG(@"Give Bedollars Controller will disappear");
-    
+	BeintooLOG(@"Main Delegate: Give Bedollars Controller will disappear");
 }
+
 - (void)beintooGiveBedollarsControllerDidDisappear{
-	BeintooLOG(@"Give Bedollars Controller did disappear");
+	BeintooLOG(@"Main Delegate: Give Bedollars Controller did disappear");
+}
+
+- (void)didReceiveGiveBedollarsResponse:(BGiveBedollarsWrapper *)wrapper
+{
+    BeintooLOG(@"Main Delegate: Give Bedollars response %@", [wrapper dictionaryFromSelf]);
+}
+
+- (void)didFailToPerformGiveBedollars:(NSDictionary *)error
+{
+    BeintooLOG(@"Main Delegate: Give Bedollars generation error %@", error);
 }
 
 /* ---------------------------
@@ -179,6 +197,19 @@
 }
 - (void)didBeintooFailToGetAMission:(NSDictionary *)error{
     BeintooLOG(@"Beintoo mission generation error %@",error);    
+}
+
+
+/* ---------------------------
+ * Beintoo Event
+ * --------------------------- */
+
+- (void)didGenerateAnEvent:(BEventWrapper *)wrapper
+{
+    BeintooLOG(@"Main Delegate: generated an Event %@", [wrapper dictionaryFromSelf]);
+}
+- (void)didFailToGenerateAnEvent:(NSDictionary *)error{
+    BeintooLOG(@"Main Delegate: Event generation error %@",error);
 }
 
 @end

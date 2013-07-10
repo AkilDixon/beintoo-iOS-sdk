@@ -18,39 +18,34 @@
 #import <Foundation/Foundation.h>
 #import "BeintooPlayer.h"
 #import "Parser.h"
-#import "BVirtualGood.h"
+#import "BGiveBedollarsWrapper.h"
 
-@protocol BeintooAppDelegate;
+@protocol BeintooAppDelegate, BGiveBedollarsWrapper;
 
 @interface BeintooApp : NSObject <BeintooParserDelegate>
 {
-    id <BeintooAppDelegate>     delegate;
-	Parser                      *parser;
+    id              delegate;
+	Parser          *parser;
 	
-	NSString                    *rest_resource;
-    NSString                    *app_rest_resource;
+	NSString        *rest_resource;
+    NSString        *app_rest_resource;
     
-    int                         notificationPosition;
-    BOOL                        showGiveBedollarsNotification;
-    
-    BVirtualGood                *giveBedollarsContent;
+    int             notificationPosition;
+    BOOL            showGiveBedollarsNotification;
 }
 
 #ifdef BEINTOO_ARC_AVAILABLE
-@property (nonatomic, strong) id <BeintooAppDelegate> delegate;
+@property (nonatomic, strong) id delegate;
 @property (nonatomic, strong) Parser *parser;
-@property (nonatomic, strong) BVirtualGood  *giveBedollarsContent;
 #else
-@property (nonatomic, assign) id <BeintooAppDelegate> delegate;
+@property (nonatomic, assign) id delegate;
 @property (nonatomic, retain) Parser *parser;
-@property (nonatomic, retain) BVirtualGood  *giveBedollarsContent;
 #endif
 
-@property (nonatomic, assign) id            callingDelegate;
 @property (nonatomic, assign) BOOL          showGiveBedollarsNotification;
 @property (nonatomic, assign) int           notificationPosition;
 
-- (id)initWithDelegate:(id)caller;
+- (id)initWithDelegate:(id)_delegate;
 
 - (NSString *)restResource;
 + (void)setDelegate:(id)_caller;
@@ -58,11 +53,15 @@
 + (void)giveBedollars:(float)amount showNotification:(BOOL)showNotification withPosition:(int)position;
 - (void)giveBedollars:(float)amount showNotification:(BOOL)showNotification;
 
++ (void)notifyGiveBedollarsGeneration:(BGiveBedollarsWrapper *)wrapper;
++ (void)notifyGiveBedollarsGenerationError:(NSDictionary *)_error;
+
 @end
 
 @protocol BeintooAppDelegate <NSObject>
 
 @optional
-- (void)didReceiveGiveBedollarsResponse:(NSDictionary *)result;
+- (void)didReceiveGiveBedollarsResponse:(BGiveBedollarsWrapper *)wrapper;
+- (void)didFailToPerformGiveBedollars:(NSDictionary *)error;
 
 @end

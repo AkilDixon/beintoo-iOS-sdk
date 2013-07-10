@@ -43,29 +43,15 @@
      * - BeintooNotificationPosition: you can choose between BeintooNotificationPositionTop or BeintooNotificationPositionBottom
      */
     
-    NSArray	*beintooFeatures = [NSArray arrayWithObjects:   BFEATURE_PROFILE, 
-                                                            BFEATURE_MARKETPLACE, 
-                                                            BFEATURE_LEADERBOARD, 
-                                                            BFEATURE_WALLET, 
-                                                            BFEATURE_CHALLENGES,
-                                                            BFEATURE_ACHIEVEMENTS,
-                                                            BFEATURE_TIPSANDFORUM, nil];
-	
-	NSDictionary *beintooSettings = [[NSDictionary alloc] initWithObjectsAndKeys:
-									 beintooFeatures,   BeintooActiveFeatures,
+    NSDictionary *beintooSettings = [[NSDictionary alloc] initWithObjectsAndKeys:
 									 window,            BeintooApplicationWindow,
-                                     [NSNumber numberWithInt:1], BeintooAchievementNotification,
-                                     [NSNumber numberWithInt:1], BeintooLoginNotification,
-                                     [NSNumber numberWithInt:1], BeintooScoreNotification,
-                                     [NSNumber numberWithInt:0], BeintooNoRewardNotification,
-                                     [NSNumber numberWithInt:0], BeintooDismissAfterRegistration,
-                                     [NSNumber numberWithInt:0], BeintooForceRegistration,
                                      [NSNumber numberWithInt:BeintooNotificationPositionBottom], BeintooNotificationPosition,
 									 [NSNumber numberWithInt:UIInterfaceOrientationPortrait], BeintooAppOrientation,
+                                     [NSNumber numberWithInt:1], BeintooLoginNotification,
 									 nil];
 
 	sampleDelegate = [[BeintooDelegate alloc] init];
-	
+    
     [Beintoo initWithApiKey:your_apikey_here andApiSecret:nil andBeintooSettings:beintooSettings andMainDelegate:sampleDelegate];
     
     /*  UNCOMMENT the line below to use Beintoo in our testing environment sandbox 

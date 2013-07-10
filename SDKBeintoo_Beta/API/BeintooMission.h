@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright 2011 Beintoo - author fmessina@beintoo.com
- * 
+ * Copyright 2013 Beintoo - author gpiazzese@beintoo.com
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,44 +16,53 @@
 
 #import <Foundation/Foundation.h>
 #import "Parser.h"
-#import "BeintooDevice.h"
 
-#define HOURS_TO_SHOW_MISSION 24
+@class BMissionWrapper;
 
-@protocol BeintooMissionDelegate;
+@protocol BeintooMissionAPIDelegate;
 
-__attribute__((deprecated))
-@interface BeintooMission : NSObject <BeintooParserDelegate>{
+extern NSString *NSUDMissionStoredArray;
+
+@interface BeintooMission : NSObject <BeintooParserDelegate>
+{
+    Parser                      *parser;
 	
-	id <BeintooMissionDelegate> delegate;
-	Parser *parser;
-	NSString *rest_resource;
+    id <BeintooMissionAPIDelegate>  delegate;
+	id callingDelegate;
     
-    id callingDelegate;
+    NSString                    *rest_resource;
 }
 
+@property (nonatomic, retain) id callingDelegate;
+@property (nonatomic, retain) id <BeintooMissionAPIDelegate>  delegate;
+@property (nonatomic, retain) Parser          *parser;
+
+// Init methods
+
+- (id)initWithDelegate:(id)_delegate;
 - (NSString *)restResource;
++ (void)setDelegate:(id)_delegate;
 
-+ (void)getMission;
-+ (void)refuseMission;
-+ (void)setMissionDelegate:(id)_caller;
+/* + (void)initMission:(NSString *)missionID;
 
-#ifdef BEINTOO_ARC_AVAILABLE
-@property(nonatomic, retain) id <BeintooMissionDelegate> delegate;
-@property(nonatomic, retain) id callingDelegate;
-#else
-@property(nonatomic, assign) id <BeintooMissionDelegate> delegate;
-@property(nonatomic, assign) id callingDelegate;
-#endif
++ (NSArray *)checkUnlockedMissionsWithScore:(double)score;
 
-@property(nonatomic,retain) Parser *parser;
++ (void)storeMissionList:(NSMutableArray *)eventList;
++ (NSMutableArray *)storedMissions;
+
++ (void)emptyMissionList;
++ (BOOL)isMissionAlreadySaved:(BMissionWrapper *)mission;
++ (BOOL)removeMission:(BMissionWrapper *)mission;
++ (void)updateMission:(BMissionWrapper *)mission;
++ (BMissionWrapper *)getMissionByID:(NSString *)missionID;
++ (void)saveMission:(BMissionWrapper *)mission;
+*/
+
++ (NSMutableArray *)dictionarySavedEvent;
 
 @end
 
-@protocol BeintooMissionDelegate <NSObject>
-
+@protocol BeintooMissionAPIDelegate <NSObject>
 @optional
-- (void)didGetMissionWithResult:(NSDictionary *)result;
+
 @end
-
-

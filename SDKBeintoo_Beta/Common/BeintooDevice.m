@@ -16,8 +16,8 @@
 
 #import "BeintooDevice.h"
 #import "Beintoo.h"
-#import "NSString+MD5Addition.h"
 #import "UIDevice+IdentifierAddition.h"
+#import "NSString+MD5Addition.h"
 
 @implementation BeintooDevice
 
@@ -37,16 +37,16 @@
 + (NSString *)getUDID
 {
     NSString *identifier = @"";
-
+    
     if ([BeintooDevice isASIdentifierSupported])
         identifier = [BeintooDevice getASIdentifier];
     else
     {
-        /* 
-        ** Note: Mac Address will be 02:00:00:00:00:00 on iOS >= 7.0
-        **
-        ** We enter in this case only if iOS current version in lower than 6.0
-        */
+        /*
+         ** Note: Mac Address will be 02:00:00:00:00:00 on iOS >= 7.0
+         **
+         ** We enter in this case only if iOS current version in lower than 6.0
+         */
         
         identifier = [[NSString stringWithFormat:@"%@beintooios", [BeintooDevice getMacAddress]] stringFromMD5];
     }
@@ -109,55 +109,81 @@
 
 + (NSString *)getASIdentifier
 {
-    #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
     if ([ASIdentifierManager sharedManager])
         return [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
-    else
-        return nil;
-    #else
-        return nil;
-    #endif
+#endif
+    
+    return nil;
 }
 
 + (NSString *)isASIdentifierEnabledByUser
 {
+    
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
-    if ([[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled] == TRUE)
-        return @"true";
-    else
-        return @"false";
+    if ([ASIdentifierManager sharedManager]){
+        if ([[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled] == TRUE)
+            return @"true";
+    }
 #endif
     
-    return 0;
-    
+    return @"false";
 }
 
 + (BOOL)isASIdentifierSupported
 {
     
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0
-    if(NSClassFromString(@"ASIdentifierManager")) {
+    if ([ASIdentifierManager sharedManager])
         return TRUE;
-    }
 #endif
-   
+
     return FALSE;
 }
+
 
 + (NSString *)getSystemVersion
 {
     if ([[UIDevice currentDevice] respondsToSelector:@selector(systemVersion)])
         return [[UIDevice currentDevice] systemVersion];
-    else
-        return @"systemVersion";
+    
+    return nil;
 }
 
 + (NSString *)getDeviceType
 {
     if ([[UIDevice currentDevice] respondsToSelector:@selector(model)])
         return [[UIDevice currentDevice] model];
-    else
-        return @"deviceType";
+    
+    return nil;
+}
+
++ (int)getTimeOffset
+{
+    return [NSTimeZone systemTimeZone].secondsFromGMT;
+}
+
++ (NSString *)currentTimezone
+{
+    return [NSString stringWithFormat:@"%@", [NSTimeZone localTimeZone]];
+}
+
++ (NSDictionary *)screenSize
+{
+    CGRect screenBound = [[UIScreen mainScreen] bounds];
+    CGSize screenSize = screenBound.size;
+    CGFloat screenWidth = screenSize.width;
+    CGFloat screenHeight = screenSize.height;
+    
+    NSString *screenWstring = [NSString stringWithFormat:@"%f", screenWidth];
+    NSString *screenHstring = [NSString stringWithFormat:@"%f", screenHeight];
+    
+    
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+            screenWstring, @"width",
+            screenHstring, @"height",
+            nil];
 }
 
 #ifdef BEINTOO_ARC_AVAILABLE

@@ -114,17 +114,41 @@
     #if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_4_0
         CTTelephonyNetworkInfo *netinfo = [[CTTelephonyNetworkInfo alloc] init];
         CTCarrier *carrier = [netinfo subscriberCellularProvider];
-        if ([carrier mobileCountryCode] && [carrier mobileNetworkCode]){
+        if ([carrier mobileCountryCode] && [carrier mobileNetworkCode])
+        {
             NSString *carrierInfos = [NSString stringWithFormat:@"%@%@", [carrier mobileCountryCode], [carrier mobileNetworkCode]];
             
             return carrierInfos;
         }
-        else
-            return nil;
-    #else
-        return nil;
     #endif
+    
+    return nil;
 }
+
++ (NSString *)getCarrierMobileCoutryCode
+{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_4_0
+    CTTelephonyNetworkInfo *netinfo = [[CTTelephonyNetworkInfo alloc] init];
+    CTCarrier *carrier = [netinfo subscriberCellularProvider];
+    if ([carrier mobileCountryCode] && [carrier mobileNetworkCode])
+        return [carrier mobileCountryCode];
+#endif
+    
+    return nil;
+}
+
++ (NSString *)getCarrierMobileNetworkCode
+{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_4_0
+    CTTelephonyNetworkInfo *netinfo = [[CTTelephonyNetworkInfo alloc] init];
+    CTCarrier *carrier = [netinfo subscriberCellularProvider];
+    if ([carrier mobileCountryCode] && [carrier mobileNetworkCode])
+        return [carrier mobileNetworkCode];
+#endif
+    
+    return nil;
+}
+
 
 #ifdef BEINTOO_ARC_AVAILABLE
 #else

@@ -98,10 +98,7 @@
 		self.titleLabel.font = [UIFont systemFontOfSize:22];
 	else 
 		self.titleLabel.font = [UIFont systemFontOfSize:[textSize floatValue]];
-    /*if (numberOfLines)
-        self.titleLabel.numberOfLines = numberOfLines;
-    else 
-        self.titleLabel.numberOfLines = 1;*/
+    
     [self.titleLabel setNumberOfLines:0];
     
 	self.titleLabel.shadowColor = [UIColor blackColor];
@@ -134,6 +131,7 @@
 
 - (void)hesitateUpdate
 {
+    isSelected = NO;
     [self setNeedsDisplay];
 }
 
@@ -141,30 +139,27 @@
 {
     [super touchesBegan:touches withEvent:event];
 	isSelected = YES;
+    
     [self setNeedsDisplay];
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
 {
     [super touchesCancelled:touches withEvent:event];
-	isSelected = NO;
-    [self setNeedsDisplay];
-    [self performSelector:@selector(hesitateUpdate) withObject:nil afterDelay:0.1];
+	
+    [self performSelector:@selector(hesitateUpdate) withObject:nil afterDelay:0.2];
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
     [super touchesMoved:touches withEvent:event];
-    [self setNeedsDisplay];
-    
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     [super touchesEnded:touches withEvent:event];
-	isSelected = NO;
-    [self setNeedsDisplay];
-    [self performSelector:@selector(hesitateUpdate) withObject:nil afterDelay:0.1];
+	
+    [self performSelector:@selector(hesitateUpdate) withObject:nil afterDelay:0.2];
 }
 
 - (void)setHighColor:(UIColor*)color andRollover:(UIColor *)rollover

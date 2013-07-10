@@ -20,7 +20,7 @@
 
 @implementation BeintooApp
 
-@synthesize delegate, parser, callingDelegate, showGiveBedollarsNotification, giveBedollarsContent, notificationPosition;
+@synthesize delegate, parser, showGiveBedollarsNotification, notificationPosition;
 
 #pragma mark - Init 
 
@@ -28,32 +28,29 @@
 {
 	if (self = [super init])
 	{
-        parser          = [[Parser alloc] init];
-		parser.delegate = self;
-		rest_resource   = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/app/", [Beintoo getRestBaseUrl]]];
-        
-        giveBedollarsContent   = [[BVirtualGood alloc] init];
-	}
+        [self initElements];
+    }
     return self;
 }
 
-- (id)initWithDelegate:(id)caller
+- (id)initWithDelegate:(id)_delegate
 {
-	if (self = [super init])
+    if (self = [super init])
 	{
-        parser          = [[Parser alloc] init];
-		parser.delegate = self;
-        
-        [self setDelegate:caller];
-        
-		rest_resource = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/app/", [Beintoo getRestBaseUrl]]];
-        
-        giveBedollarsContent   = [[BVirtualGood alloc] init];
-	}
+        [self initElements];
+        [self setDelegate:_delegate];
+    }
     return self;
 }
 
 #pragma mark - Methods 
+
+- (void)initElements
+{
+    parser          = [[Parser alloc] init];
+    parser.delegate = self;
+    rest_resource   = [[NSString alloc] initWithString:[NSString stringWithFormat:@"%@/app/", [Beintoo getRestBaseUrl]]];
+}
 
 - (NSString *)restResource
 {
@@ -147,25 +144,93 @@
     switch (callerID){
 		case USER_GIVE_BEDOLLARS_CALLER_ID:{
             
-            if ([[self delegate]respondsToSelector:@selector(didReceiveGiveBedollarsResponse:)])
-                [[self delegate] didReceiveGiveBedollarsResponse:result];
-            
             if ([result objectForKey:@"message"] || ![result objectForKey:@"content"]) {
-				BeintooLOG(@"Beintoo: error in Give Bedollars call: %@", [result objectForKey:@"message"]);
+				
+                [BeintooApp notifyGiveBedollarsGenerationError:[result objectForKey:@"message"]];
+                
                 return;
             }
             
             if (showGiveBedollarsNotification == YES){
                 
-                [giveBedollarsContent setVgoodContent:result];
-                [giveBedollarsContent setTheGood:result];
-                [Beintoo setLastGeneratedGiveBedollars:giveBedollarsContent];
+                BGiveBedollarsWrapper *wrapper = [[BGiveBedollarsWrapper alloc] initWithContentOfDictionary:result];
                 
-                [Beintoo launchGiveBedollarsWithDelegate:nil position:notificationPosition];
+                [BeintooApp notifyGiveBedollarsGeneration:wrapper];
+                
+                BeintooApp *service = [Beintoo beintooAppService];
+                id _delegate = service.delegate;
+                
+                [Beintoo showGiveBedollars:wrapper withDelegate:_delegate position:notificationPosition];
+                
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+                [wrapper release];
+#endif
+
             }
 		}
 			break;
     }
+}
+
+#pragma mark - GB notification delegates
+
++ (void)notifyGiveBedollarsGeneration:(BGiveBedollarsWrapper *)wrapper;
+{
+	[self notifyGiveBedollarsGenerationOnUserDelegate:wrapper];
+    [self notifyGiveBedollarsGenerationOnMainDelegate:wrapper];
+}
+
++ (void)notifyGiveBedollarsGenerationError:(NSDictionary *)_error
+{
+    BeintooLOG(@"Beintoo: error in Give Bedollars call: %@", _error);
+    
+	[self notifyGiveBedollarsGenerationErrorOnUserDelegate:_error];
+    [self notifyGiveBedollarsGenerationErrorOnMainDelegate:_error];
+}
+
++ (void)notifyGiveBedollarsGenerationOnMainDelegate:(BGiveBedollarsWrapper *)wrapper;
+{
+	[Beintoo notifyGiveBedollarsGenerationOnMainDelegate:wrapper];
+}
+
++ (void)notifyGiveBedollarsGenerationErrorOnMainDelegate:(NSDictionary *)_error
+{
+	[Beintoo notifyGiveBedollarsGenerationErrorOnMainDelegate:_error];
+}
+
++ (void)notifyGiveBedollarsGenerationOnUserDelegate:(BGiveBedollarsWrapper *)wrapper;
+{
+	BeintooApp *service = [Beintoo beintooAppService];
+	id _delegate = service.delegate;
+    
+    if ([_delegate respondsToSelector:@selector(didReceiveGiveBedollarsResponse:)])
+        [_delegate didReceiveGiveBedollarsResponse:wrapper];
+}
+
++ (void)notifyGiveBedollarsGenerationErrorOnUserDelegate:(NSDictionary *)_error
+{
+	BeintooApp *service = [Beintoo beintooAppService];
+	id _delegate = service.delegate;
+    
+	if ([_delegate respondsToSelector:@selector(didFailToPerformGiveBedollars:)])
+        [_delegate didFailToPerformGiveBedollars:_error];
+}
+
+#pragma mark - Dealloc
+
+- (void)dealloc
+{
+    parser.delegate = nil;
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+#else
+	[parser release];
+	[rest_resource release];
+    
+    [super dealloc];
+#endif
+    
 }
 
 @end

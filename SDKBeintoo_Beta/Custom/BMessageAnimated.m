@@ -122,18 +122,19 @@
     int notificationHeight;
     
     int kind = 0;
-    int i = [[NSUserDefaults standardUserDefaults] integerForKey:@"submitScoreCount"];
+   /* int i = [[NSUserDefaults standardUserDefaults] integerForKey:@"submitScoreCount"];
     
     if ([Beintoo isUserLogged]){
         for (NSString *elem in [Beintoo getFeatureList]){
             if ([elem isEqualToString:@"Marketplace"]){
-                if (i >= [[[Beintoo getPlayer] objectForKey:@"minSubmitPerMarketplace"] intValue]){
+                if (i >= [[Beintoo getPlayer].minSubmitPerMarketplace intValue]){
                     kind = 1;
                     break;
                 }
             }
         }
     }
+    */
     
     switch (notificationType) {
         case NOTIFICATION_TYPE_PLOGIN:
@@ -484,18 +485,19 @@
 	
     int kind = 0;
     
-    int i = [[NSUserDefaults standardUserDefaults] integerForKey:@"submitScoreCount"];
+   /* int i = [[NSUserDefaults standardUserDefaults] integerForKey:@"submitScoreCount"];
     
     if ([Beintoo isUserLogged]){
         for (NSString *elem in [Beintoo getFeatureList]){
             if ([elem isEqualToString:@"Marketplace"]){
-                if (i >= [[[Beintoo getPlayer] objectForKey:@"minSubmitPerMarketplace"] intValue]){
+                if (i >= [[Beintoo getPlayer].minSubmitPerMarketplace intValue]){
                     kind = 1;
                     break;
                 }
             }
         }
     }
+    */
     
 	self.frame = CGRectZero;
     CGRect notification_frame;
@@ -545,7 +547,7 @@
 {
     [self removeViews];
 	
-	NSString *loggedUser = [[Beintoo getUserIfLogged] objectForKey:@"nickname"];
+	NSString *loggedUser = [Beintoo getUserIfLogged].nickname;
 	NSString *msg = [NSString stringWithFormat:NSLocalizedStringFromTable(@"playerLoginMsg",@"BeintooLocalizable",@""),loggedUser];
 	
 	beintooLogo		= [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, 24, 24)];	
@@ -571,7 +573,7 @@
     captionLabel.text               = msg;
 	[self addSubview:captionLabel];
     
-    int unreadNotifications         = [[[Beintoo getPlayer] objectForKey:@"unreadNotification"] intValue];
+    int unreadNotifications         = [[Beintoo getPlayer].unreadNotification intValue];
     if (unreadNotifications > 0) {
         
         captionLabel.frame                          = CGRectMake(45, -5, [self bounds].size.width-50, 40);
@@ -625,16 +627,17 @@
     
     int i = [[NSUserDefaults standardUserDefaults] integerForKey:@"submitScoreCount"];
     
-    if ([Beintoo isUserLogged]){
+    /* if ([Beintoo isUserLogged]){
         for (NSString *elem in [Beintoo getFeatureList]){
             if ([elem isEqualToString:@"Marketplace"]){
-                if (i >= [[[Beintoo getPlayer] objectForKey:@"minSubmitPerMarketplace"] intValue]){
+                if (i >= [[Beintoo getPlayer].minSubmitPerMarketplace intValue]){
                     kind = 1;
                     break;
                 }
             }
         }
     }
+     */
     
     NSString *msg;
     
@@ -669,32 +672,7 @@
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
 	else {
-        if ([Beintoo isVirtualCurrencyStored]){
-            
-            if ([lastSubmittedScore floatValue] == 1)
-                msg = [NSString stringWithFormat:@"%@ %@",[NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsgSinglePoint",@"BeintooLocalizable",@""), lastSubmittedScore], [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMarketplaceMsg", @"BeintooLocalizable", nil), [Beintoo getVirtualCurrencyBalance], [Beintoo getVirtualCurrencyName]]];
-            else 
-                msg = [NSString stringWithFormat:@"%@ %@",[NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsg",@"BeintooLocalizable",@""),lastSubmittedScore], [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMarketplaceMsg", @"BeintooLocalizable", nil), [Beintoo getVirtualCurrencyBalance], [Beintoo getVirtualCurrencyName]]];
-            
-            CGSize expectedSize;
-            
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0 && __IPHONE_OS_VERSION_MIN_REQUIRED >= BEINTOO_IOS_6_0
-            expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:NSLineBreakByWordWrapping];
-#elif (__IPHONE_OS_VERSION_MAX_ALLOWED >= BEINTOO_IOS_6_0) && (__IPHONE_OS_VERSION_MIN_REQUIRED < BEINTOO_IOS_6_0)
-            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
-                expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:NSLineBreakByWordWrapping];
-            else
-                expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:UILineBreakModeWordWrap];
-#else
-            expectedSize = [msg sizeWithFont:[UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0] constrainedToSize:CGSizeMake([self bounds].size.width-50, 60) lineBreakMode:UILineBreakModeWordWrap];
-#endif
-            
-            captionLabel.frame              = CGRectMake(45, 2, [self bounds].size.width-50, expectedSize.height);
-            captionLabel.numberOfLines      = 0;
-            captionLabel.font               = [UIFont fontWithName:@"TrebuchetMS-Bold" size:12.0];
-            
-        }
-        else {
+        
             if (![Beintoo isUserLogged]){
                 
                 if ([lastSubmittedScore floatValue] == 1)
@@ -720,9 +698,9 @@
             }
             else {
                 if ([lastSubmittedScore floatValue] == 1)
-                    msg = [NSString stringWithFormat:@"%@ %@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsgSinglePoint",@"BeintooLocalizable",@""),lastSubmittedScore], [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMarketplaceMsg", @"BeintooLocalizable", nil), [[[Beintoo getUserIfLogged] objectForKey:@"bedollars"] floatValue], NSLocalizedStringFromTable(@"bedollars", @"BeintooLocalizable", nil)]];
+                    msg = [NSString stringWithFormat:@"%@ %@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsgSinglePoint",@"BeintooLocalizable",@""),lastSubmittedScore], [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMarketplaceMsg", @"BeintooLocalizable", nil), [[Beintoo getUserIfLogged].bedollars floatValue], NSLocalizedStringFromTable(@"bedollars", @"BeintooLocalizable", nil)]];
                 else 
-                    msg = [NSString stringWithFormat:@"%@ %@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsg",@"BeintooLocalizable",@""),lastSubmittedScore], [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMarketplaceMsg", @"BeintooLocalizable", nil), [[[Beintoo getUserIfLogged] objectForKey:@"bedollars"] floatValue], NSLocalizedStringFromTable(@"bedollars", @"BeintooLocalizable", nil)]];
+                    msg = [NSString stringWithFormat:@"%@ %@", [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMsg",@"BeintooLocalizable",@""),lastSubmittedScore], [NSString stringWithFormat:NSLocalizedStringFromTable(@"submitScoreMarketplaceMsg", @"BeintooLocalizable", nil), [[Beintoo getUserIfLogged].bedollars floatValue], NSLocalizedStringFromTable(@"bedollars", @"BeintooLocalizable", nil)]];
                 
                 CGSize expectedSize;
                 
@@ -744,7 +722,6 @@
         }
         [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"submitScoreCount"];
         [[NSUserDefaults standardUserDefaults] synchronize];
-	}
     
     captionLabel.text   = msg;
     
@@ -891,8 +868,9 @@
 + (NSString *)getMessageFromCode:(int)code
 {
 	if (code == WELCOME_MESSAGE) {
-		NSString *playerNick = [[Beintoo getUserIfLogged] objectForKey:@"nickname"];
-		if (playerNick!=nil) {
+		NSString *playerNick = [Beintoo getUserIfLogged].nickname;
+        
+        if (playerNick!=nil) {
 			return [NSString stringWithFormat:@"Welcome back %@",playerNick];
 		}
 		return @"NO_MESSAGE";
@@ -920,18 +898,19 @@
     int notificationHeight;
     
     int kind = 0;
-    int i = [[NSUserDefaults standardUserDefaults] integerForKey:@"submitScoreCount"];
+   /* int i = [[NSUserDefaults standardUserDefaults] integerForKey:@"submitScoreCount"];
     
-    if ([Beintoo isUserLogged]){
+     if ([Beintoo isUserLogged]){
         for (NSString *elem in [Beintoo getFeatureList]){
             if ([elem isEqualToString:@"Marketplace"]){
-                if (i >= [[[Beintoo getPlayer] objectForKey:@"minSubmitPerMarketplace"] intValue]){
+                if (i >= [[Beintoo getPlayer].minSubmitPerMarketplace intValue]){
                     kind = 1;
                     break;
                 }
             }
         }
     }
+     */
     
     switch (notificationType) {
         case NOTIFICATION_TYPE_PLOGIN:

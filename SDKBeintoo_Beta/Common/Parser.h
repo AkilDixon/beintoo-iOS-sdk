@@ -54,55 +54,16 @@
 #define USER_FORGOT_PASSWORD_CALLER_ID          46
 #define	USER_SEND_UNFRIENDSHIP_CALLER_ID        47
 
-// VGOOD:from 60 to 79
-#define VGOOD_SHOWBYUSER_CALLER_ID              60
-#define VGOOD_GET_CALLER_ID                     61
-#define VGOOD_SENDGIFT_CALLER_ID                62
-#define VGOOD_ACCEPT_CALLER_ID                  63
-#define VGOOD_SINGLE_CALLER_ID                  64
-#define VGOOD_SINGLEwDELEG_CALLER_ID            65
-#define VGOOD_MULTIPLE_CALLER_ID                66
-#define VGOOD_MULTIPLEwDELEG_CALLER_ID          67
-#define VGOOD_GETPRIVATEVGOODS_CALLER_ID        68
-#define VGOOD_ASSIGNPRIVATEVGOOD_CALLER_ID      69
-#define VGOOD_REMOVEPRIVATEVGOOD_CALLER_ID      70
-#define VGOOD_SET_RATING_CALLER_ID              71
-#define VGOOD_GET_COMMENTS_LIST_CALLER_ID       72
-#define VGOOD_SET_COMMENT_CALLER_ID             73
-#define VGOOD_CHECK_COVERAGE_CALLER_ID          74
-#define VGOOD_IS_ELIGIBLE_FOR_REWARD_CALLER_ID  75
-#define REWARD_GET_AD_CALLER_ID                 76
-#define REWARD_GET_AND_DISPLAY_AD_CALLER_ID     77
+// REWARD:from 60 to 79
 
-// MARKET:from 80 to 89
-#define MARKET_SELLVGOOD_CALLER_ID              80
-#define MARKET_GOODSTOBUY_CALLER_ID             81
-#define MARKET_BUYVGOOD_CALLER_ID               82
+#define REWARD_GET_CALLER_ID                    60
+#define REWARD_CHECK_COVERAGE_CALLER_ID         61
+#define REWARD_IS_ELIGIBLE_FOR_REWARD_CALLER_ID 62
 
 // APP:from 90 to 99
 #define APP_GTOPSCORES_CALLER_ID                90
 #define APP_GCONTESTFORAPP_CALLER_ID            91
 #define APP_LOG_EXCEPTION                       92
-
-// MESSAGEfrom 100 to 109
-#define MESSAGE_SHOW_CALLER_ID                  100
-#define MESSAGE_SEND_CALLER_ID                  101
-#define MESSAGE_SET_READ_CALLER_ID              102
-#define MESSAGE_DELETE_CALLER_ID                103
-
-// ALLIANCE: from 120 to 129
-#define ALLIANCE_GET_CALLER_ID                   120
-#define ALLIANCE_GETLIST_CALLER_ID               121
-#define ALLIANCE_CREATE_CALLER_ID                122
-#define ALLIANCE_GETPENDINGREQUESTS_CALLER_ID    123
-#define ALLIANCE_ADMINACTION_CALLER_ID           124
-#define ALLIANCE_TOPSCORE_CALLER_ID              125
-#define ALLIANCE_INVITEFRIENDS_CALLER_ID         126
-#define ALLIANCE_ADMIN_GET_CALLER_ID             127
-
-// MISSION: from 130 to 139
-#define MISSION_GET_CALLER_ID                    130
-#define MISSION_REFUSE_CALLER_ID                 131
 
 // NOTIFICATION: from 140 to 149
 #define NOTIFICATION_GETLIST_CALLER_ID           140
@@ -136,6 +97,17 @@
 // APPS: from 250 to 270
 #define ADS_REQUEST                                                 250
 #define ADS_REQUEST_AND_DISPLAY                                     251
+
+// EVENTS: from 300 to 320
+
+#define GET_EVENT               300
+
+// MISSIONS: from 320 to 340
+
+#define MISSION_INIT            320
+#define MISSION_OVER            321
+#define MISSION_ACCEPT          322
+#define MISSION_RUNNING        323
 
 @protocol BeintooParserDelegate;
 

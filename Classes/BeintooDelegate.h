@@ -16,8 +16,9 @@
 
 #import <Foundation/Foundation.h>
 #import "BeintooMainDelegate.h"
+#import "Beintoo.h"
 
-@interface BeintooDelegate : NSObject <BeintooMainDelegate>
+@interface BeintooDelegate : NSObject <BeintooMainDelegate, BeintooEventDelegate, BeintooRewardDelegate, BeintooAppDelegate>
 {
 }
 
@@ -28,20 +29,20 @@
 
 
 /* -------------------
- * PRIZE
+ * REWARD
  * -------------------*/
 
-- (void)beintooPrizeWillAppear;
-- (void)beintooPrizeDidAppear;
-- (void)beintooPrizeWillDisappear;
-- (void)beintooPrizeDidDisappear;
+- (void)beintooRewardWillAppear;
+- (void)beintooRewardDidAppear;
+- (void)beintooRewardWillDisappear;
+- (void)beintooRewardDidDisappear;
 
-- (void)beintooPrizeAlertWillAppear;
-- (void)beintooPrizeAlertDidAppear;
-- (void)beintooPrizeAlertWillDisappear;
-- (void)beintooPrizeAlertDidDisappear;
+- (void)beintooRewardControllerWillAppear;
+- (void)beintooRewardControllerDidAppear;
+- (void)beintooRewardControllerWillDisappear;
+- (void)beintooRewardControllerDidDisappear;
 
-- (void)didBeintooGenerateAReward:(BVirtualGood *)theReward;
+- (void)didBeintooGenerateAReward:(BRewardWrapper *)reward;
 - (void)didBeintooFailToGenerateARewardWithError:(NSDictionary *)error;
 
 /* -------------------
@@ -58,7 +59,7 @@
 - (void)beintooAdWillDisappear;
 - (void)beintooAdDidDisappear;
 
-- (void)didBeintooGenerateAnAd:(BVirtualGood *)theAd;
+- (void)didBeintooGenerateAnAd:(BRewardWrapper *)theAd;
 - (void)didBeintooFailToGenerateAnAdWithError:(NSDictionary *)error;
 
 

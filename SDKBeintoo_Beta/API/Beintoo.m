@@ -35,33 +35,24 @@
 	
 	beintooInstance->mainDelegate = beintooMainDelegate;
 	
-	[beintooInstance initDelegates];
-	
 	[Beintoo initAPI];
 	[Beintoo setApiKey:_apikey andApisecret:_apisecret];
 	[Beintoo initLocallySavedScoresArray];
 	[Beintoo initLocallySavedAchievementsArray];
     [Beintoo initUserAgent];
+    
 	[Beintoo initPlayerService];
     [Beintoo initUserService];
-	[Beintoo initVgoodService];
 	[Beintoo initAchievementsService];
     [Beintoo initBestoreService];
     [Beintoo initAppService];
     [Beintoo initAdService];
     [Beintoo initRewardService];
+    [Beintoo initEventService];
+    [Beintoo initMissionService];
 	
 	// Settings initialization
 	[Beintoo initBeintooSettings:_settings];
-
-	[Beintoo initMainController];
-	[Beintoo initVgoodNavigationController];
-	[Beintoo initiPadController];
-	
-	// Popover initialization
-    if ([BeintooDevice isiPad]) {
-        [Beintoo initPopoversForiPad];
-    }
 }
 
 #pragma mark - Player methods
@@ -135,6 +126,40 @@
 + (void)requestAdWithDeveloperUserGuid:(NSString *)_developerUserGuid
 {
     [BeintooAd requestAdWithDeveloperUserGuid:nil];
+}
+
+#pragma mark - Give Bedollars methods
+
++ (void)showGiveBedollars:(BGiveBedollarsWrapper *)wrapper withDelegate:(id)delegate position:(int)position
+{
+    [Beintoo _showGiveBedollars:wrapper withDelegate:delegate position:position];
+}
+
++ (void)hideGiveBedollars:(BTemplateGiveBedollars *)template
+{
+    [Beintoo _hideGiveBedollars:template];
+}
+
++ (void)giveBedollars:(BTemplateGiveBedollars *)template launchControllerWithURL:(NSString *)URL
+{
+    [Beintoo _giveBedollars:template launchControllerWithURL:URL];
+}
+
++ (void)dismissGiveBedollarsController
+{
+    [Beintoo _giveBedollarsDismissController];
+}
+
+#pragma mark - Custom Browser
+
++ (void)launchControllerWithURL:(NSString *)URL
+{
+    [Beintoo _launchControllerWithURL:URL];
+}
+
++ (void)dismissController:(id)navController
+{
+    [Beintoo _dismissController:navController];
 }
 
 #pragma mark - Achievements methods
@@ -216,11 +241,6 @@
     [BeintooReward setDelegate:delegate];
 }
 
-+ (void)setVgoodDelegate:(id)delegate
-{
-    [BeintooVgood setDelegate:delegate];
-}
-
 + (void)setAppDelegate:(id)delegate
 {
     [BeintooApp setDelegate:delegate];
@@ -233,119 +253,114 @@
 
 #pragma mark - Launch and Dismiss methods
 
-+ (void)launchBeintoo{
-	[Beintoo _launchBeintooOnApp];
++ (void)openDashboard
+{
+    [Beintoo _openDashboard];
 }
 
-+ (void)launchBeintooOnAppWithVirtualCurrencyBalance:(float)_value{
-	[Beintoo _launchBeintooOnAppWithDeveloperCurrencyValue:_value];
++ (void)openBestore
+{
+    [Beintoo _openBestore];
 }
 
-+ (void)launchNotifications{
-	[Beintoo _launchNotificationsOnApp];
++ (void)openSignup
+{
+    [Beintoo _openSignup];
 }
 
-+ (void)launchMarketplace{
-    [Beintoo _launchMarketplaceOnApp];
++ (void)openMissions
+{
+    [Beintoo _openMissions];
 }
 
-+ (void)launchMarketplaceOnAppWithVirtualCurrencyBalance:(float)_value{
-	[Beintoo _launchMarketplaceOnAppWithDeveloperCurrencyValue:_value];
++ (void)openView:(NSString *)view orURL:(NSString *)URL
+{
+    [Beintoo _openView:view orURL:URL];
 }
 
-+ (void)launchBestore{
-    [Beintoo _launchMarketplaceOnApp];
-}
-
-+ (void)launchBestoreWithVirtualCurrencyBalance:(float)_value{
-	[Beintoo _launchMarketplaceOnAppWithDeveloperCurrencyValue:_value];
-}
-
-+ (void)launchWallet{
-	[Beintoo _launchWalletOnApp];
-}
-
-+ (void)launchMyOffers{
-	[Beintoo _launchWalletOnApp];
-}
-
-+ (void)launchAchievements{
-	[Beintoo _launchAchievementsOnApp];
-}
-
-+ (void)launchLeaderboard{
-	[Beintoo _launchLeaderboardOnApp];
-}
-
-+ (void)launchPrize{
-	[Beintoo _launchPrizeOnApp];
-}
-
-+ (void)launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate{
-    [Beintoo _launchPrizeOnAppWithDelegate:_beintooPrizeDelegate];
-}
-
-+ (void)launchGiveBedollarsWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate position:(int)position{
-    [Beintoo _launchGiveBedollarsWithDelegate:_beintooPrizeDelegate position:position];
-}
-
-+ (void)dismissGiveBedollarsController{
-	[Beintoo _dismissGiveBedollarsController];
++ (void)dismissView:(id)controller
+{
+    [Beintoo _dismissView:controller];
 }
 
 + (void)displayAd{
-	[Beintoo _launchAd];
+    if ([Beintoo isAdReady]){
+        [Beintoo _showAd:[Beintoo sharedInstance]->lastGeneratedAd withDelegate:nil];
+    }
+    else
+        BeintooLOG(@"No Ad ready to go, try to request for a new one!");
 }
 
-+ (void)displayAdWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate{
-    [Beintoo _launchAdWithDelegate:_beintooPrizeDelegate];
++ (void)displayAdWithDelegate:(id<BeintooTemplateDelegate>)delegate
+{
+    //[Beintoo _launchAdWithDelegate:delegate];
 }
 
-+ (void)launchAd{
-	[Beintoo _launchAd];
++ (void)showMission:(BMissionTemplate *)mission
+{
+    [Beintoo _launchMission:mission delegate:nil];
 }
 
-+ (void)launchAdWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate{
-    [Beintoo _launchAdWithDelegate:_beintooPrizeDelegate];
++ (void)showMission:(BMissionTemplate *)mission delegate:(id <BMissionTemplateDelegate>)delegate
+{
+    [Beintoo _launchMission:mission delegate:delegate];
 }
 
-+ (void)launchMission{
-    [Beintoo _launchMissionOnApp];
+#pragma mark - Reward methods
+
++ (void)showReward:(BRewardWrapper *)wrapper
+{
+    [self _showReward:wrapper];
 }
 
-+ (void)launchIpadLogin{
-	[Beintoo _launchIpadLogin];
++ (void)showReward:(BRewardWrapper *)wrapper withDelegate:(id)_delegate
+{
+    [self _showReward:wrapper withDelegate:_delegate];
 }
 
-+ (void)dismissIpadLogin{
-	[Beintoo _dismissIpadLogin];
++ (void)hideReward:(BTemplate *)template
+{
+    [self _hideReward:template];
 }
 
-+ (void)launchIpadNotifications{
-	[Beintoo _launchIpadNotifications];
++ (void)reward:(BTemplate *)template launchRewardControllerWithURL:(NSString *)URL;
+{
+    [Beintoo _reward:template launchRewardControllerWithURL:URL];
 }
 
-+ (void)dismissIpadNotifications{
-	[Beintoo _dismissIpadNotifications];
++ (void)dismissRewardController
+{
+    [Beintoo _dismissRewardController];
 }
 
-+ (void)launchSignup{
-	[Beintoo _launchSignupOnApp];
+#pragma mark - Ad methods
+
++ (void)showAd:(BAdWrapper *)wrapper
+{
+    [self _showAd:wrapper];
 }
 
-+ (void)_launchPrivateSignup{
-	[Beintoo _launchPrivateSignupOnApp];
++ (void)showAd:(BAdWrapper *)wrapper withDelegate:(id<BeintooTemplateDelegate>)_delegate
+{
+    [self _showAd:wrapper withDelegate:_delegate];
 }
 
-+ (void)_launchPrivateNotifications{
-	[Beintoo _launchPrivateNotificationsOnApp];
++ (void)hideAd:(BTemplate *)template
+{
+    [self _hideAd:template];
+}
+
++ (void)ad:(BTemplate *)template launchRewardControllerWithURL:(NSString *)URL;
+{
+    [Beintoo _ad:template launchAdControllerWithURL:URL];
+}
+
++ (void)dismissAdController
+{
+    [Beintoo _dismissAdController];
 }
 
 #pragma mark - Global Services
-
-+ (BeintooVgood *)beintooVgoodService{
-	return [Beintoo sharedInstance]->beintooVgoodService;
-}
 
 + (BeintooPlayer *)beintooPlayerService{
 	return [Beintoo sharedInstance]->beintooPlayerService;
@@ -376,6 +391,16 @@
     return [Beintoo sharedInstance]->beintooRewardService;
 }
 
++ (BeintooEvent *)beintooEventService
+{
+    return [Beintoo sharedInstance]->beintooEventService;
+}
+
++ (BeintooMission *)beintooMissionService
+{
+    return [Beintoo sharedInstance]->beintooMissionService;
+}
+
 #pragma mark - Global Controllers
 
 + (UIViewController *)getMainController{
@@ -387,136 +412,45 @@
     return [Beintoo sharedInstance]->notificationQueue;
 }
 
-+ (BeintooNavigationController *)getMainNavigationController{
-	return [Beintoo sharedInstance]->mainNavigationController;
-}
-
-+ (BeintooNavigationController *)getBestoreNavigationController{
-	return [Beintoo sharedInstance]->bestoreNavigationController;
-}
-
-+ (BeintooNavigationController *)getLeaderboardsNavigationController{
-	return [Beintoo sharedInstance]->leaderboardNavigationController;
-}
-
-+ (BeintooNavigationController *)getMyOffersNavigationController{
-	return [Beintoo sharedInstance]->myoffersNavigationController;
-}
-
-+ (BeintooNavigationController *)getAchievementsNavigationController{
-	return [Beintoo sharedInstance]->achievementsNavigationController;
-}
-
-+ (BeintooNavigationController *)getNotificationsNavigationController{
-	return [Beintoo sharedInstance]->notificationsNavigationController;
-}
-
-+ (BeintooNavigationController *)getSignupNavigationController{
-	return [Beintoo sharedInstance]->signupNavigationController;
-}
-
-+ (BeintooNavigationController *)getPrivateNotificationsNavigationController{
-	return [Beintoo sharedInstance]->privateNotificationsNavigationController;
-}
-
-+ (BeintooNavigationController *)getPrivateSignupNavigationController{
-	return [Beintoo sharedInstance]->privateSignupNavigationController;
-}
-
-+ (BeintooVgoodNavController *)getVgoodNavigationController{
-	return [Beintoo sharedInstance]->vgoodNavigationController;
-}
-
-+ (BeintooNotificationListVC *)getPrivateNotificationsViewController{
-	return [Beintoo sharedInstance]->beintooNotificationsVC;
-}
-
 #pragma mark - Private Methods
 
-+ (dispatch_queue_t)beintooDispatchQueue{
++ (dispatch_queue_t)beintooDispatchQueue
+{
     return [Beintoo sharedInstance]->beintooDispatchQueue;
 }
 
-
-+ (NSString *)getApiKey{
-
-	return [Beintoo sharedInstance]->apiKey;
++ (id<BeintooMainDelegate>)getMainDelegate{
+	return [Beintoo sharedInstance]->mainDelegate;
 }
 
-+ (NSArray *)getFeatureList{
-	return [Beintoo sharedInstance]->featuresArray;
-}
-
-+ (NSArray *)getLastLoggedPlayers{
-	Beintoo *beintooInstance = [Beintoo sharedInstance];
-    
-#ifdef BEINTOO_ARC_AVAILABLE
-    return beintooInstance->lastLoggedPlayers;
-#else
-	return [beintooInstance->lastLoggedPlayers retain];
-#endif
-}
-
-+ (NSDictionary *)getLastRetrievedMission{
-    return [Beintoo sharedInstance]->lastRetrievedMission;
-}
-
-+ (void)setLastRetrievedMission:(NSDictionary *)_mission
++ (NSString *)getApiKey
 {
-    
-#ifdef BEINTOO_ARC_AVAILABLE
-    [Beintoo sharedInstance]->lastRetrievedMission = _mission;
-#else
-	[Beintoo sharedInstance]->lastRetrievedMission = [_mission retain];
-#endif
-    
+	return [Beintoo sharedInstance]->apiKey;
 }
 								
 + (NSString *)currentVersion{
 	return BeintooSdkVersion;
 }
 
-+ (NSInteger)notificationPosition{
++ (NSString *)platform{
+	return BeintooPlatform;
+}
+
++ (NSInteger)notificationPosition
+{
     return [Beintoo sharedInstance]->notificationPosition;
 }
 
-+ (BOOL)isUserLogged{
-	return [[NSUserDefaults standardUserDefaults] boolForKey:BNSDefIsUserLogged];
-}
-
-+ (BOOL)isRegistrationForced{
-	return [Beintoo sharedInstance]->forceRegistration;
-}
-+ (BOOL)showAchievementNotification{
-    return [Beintoo sharedInstance]->showAchievementNotification;
-}
-+ (BOOL)showLoginNotification{
-    return [Beintoo sharedInstance]->showLoginNotification;
-}
-+ (BOOL)showScoreNotification{
-    return [Beintoo sharedInstance]->showScoreNotification;
-}
-+ (BOOL)showNoRewardNotification{
-    return [Beintoo sharedInstance]->showNoRewardNotification;
-}
-+ (BOOL)dismissBeintooOnRegistrationEnd{
-    return [Beintoo sharedInstance]->dismissBeintooAfterRegistration;
-}
-+ (BOOL)isStatusBarHiddenOnApp{
++ (BOOL)isStatusBarHiddenOnApp
+{
     return [Beintoo sharedInstance]->statusBarHiddenOnApp;
 }
 
-+ (BOOL)isTryBeintooForced{
-    return [Beintoo sharedInstance]->forceTryBeintoo;
-}
 + (BOOL)isOnSandbox{
 	if ([Beintoo sharedInstance]) {
 		return [Beintoo sharedInstance]->isOnSandbox;
 	}
 	return NO;
-}
-+ (BOOL)isTryBeintooImageTypeReward{
-    return [Beintoo sharedInstance]->tryBeintooImageTypeReward;
 }
 
 + (BOOL)isOnPrivateSandbox{
@@ -554,27 +488,33 @@
 	return isLocationServicesEnabled;
 }
 
-+ (void)setUserLogged:(BOOL)isLoggedValue{
-	[[NSUserDefaults standardUserDefaults] setBool:isLoggedValue forKey:BNSDefIsUserLogged];
-	if (!isLoggedValue) {
-		[Beintoo _playerLogout];
-	}
++ (BPlayerWrapper *)getPlayer{
+    @try
+    {
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:BNSDefLoggedPlayer])
+        {
+            /**
+            *** Patch for older versions using NSDictionary type of BeintooPlayer, we have to replace it with the BPlayerWrapper object
+            **/
+            
+            if ([[[NSUserDefaults standardUserDefaults] objectForKey:BNSDefLoggedPlayer] isKindOfClass:[NSDictionary class]])
+            {
+                BPlayerWrapper *player = [[BPlayerWrapper alloc] initWithContentOfDictionary:[[NSUserDefaults standardUserDefaults] objectForKey:BNSDefLoggedPlayer]];
+                [Beintoo setBeintooPlayer:player];
+                
+            }
+            
+            return [NSKeyedUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults] objectForKey:BNSDefLoggedPlayer]];
+        }
+    }
+    @catch (NSException *exception) {
+        BeintooLOG(@"Exception on getting Player from stored preferences, %@", exception);
+    }
+    
+    return nil;
 }
 
-+ (NSString *)getMissionTimestamp{
-    return [[NSUserDefaults standardUserDefaults] objectForKey:@"LastSeenMissionTimestamp"];
-}
-
-+ (void)setMissionTimestamp:(NSString *)_timestamp{
-    [[NSUserDefaults standardUserDefaults] setObject:_timestamp forKey:@"LastSeenMissionTimestamp"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-+ (NSDictionary *)getPlayer{
-	return [[NSUserDefaults standardUserDefaults]objectForKey:BNSDefLoggedPlayer];
-}
-
-+ (void)setBeintooPlayer:(NSDictionary *)_player{
++ (void)setBeintooPlayer:(BPlayerWrapper *)_player{
 	[self _setBeintooPlayer:_player];
 }
 
@@ -582,44 +522,46 @@
 	[self _playerLogout];
 }
 
-+ (NSDictionary *)getUserIfLogged
++ (BUserWrapper *)getUserIfLogged
 {
-	return [[NSUserDefaults standardUserDefaults]objectForKey:BNSDefLoggedUser];
-}
-
-+ (void)setBeintooUser:(NSDictionary *)_user
-{
-	[self _setBeintooUser:_user];
-}
-
-+ (void)setBeintooUserFriends:(NSArray *)friends
-{
-    [Beintoo _setBeintooUserFriends:friends];    
-}
-
-+ (NSArray *)getBeintooUserFriends
-{
-    return [Beintoo _getBeintooUserFriends];
-}    
-
-+ (BOOL)isAFriendOfMine:(NSString *)_friendID
-{
-    return [Beintoo _isAFriendOfMine:_friendID];
-}
-
-+ (BVirtualGood *)getLastGeneratedVGood{
-	@synchronized(self){
+    @try
+    {
+        if ([Beintoo isUserLogged])
+        {
+            return [Beintoo getPlayer].user;
+        }
+    }
+    @catch (NSException *exception) {
+        BeintooLOG(@"Exception on getting User from stored preferences, %@", exception);
+    }
     
-#ifdef BEINTOO_ARC_AVAILABLE
-        return [Beintoo sharedInstance]->lastGeneratedGood;
-#else
-        return [[Beintoo sharedInstance]->lastGeneratedGood retain];
-#endif
-        
-	}
+	return nil;
 }
 
-+ (BVirtualGood *)getLastGeneratedAd{
++ (BOOL)isUserLogged{
+    @try
+    {
+        if ([Beintoo getPlayer] != nil)
+        {
+            BPlayerWrapper *player = [Beintoo getPlayer];
+            
+            if (player.user != nil)
+            {
+                BUserWrapper *user = player.user;
+                
+                if (user.userid)
+                    return TRUE;
+            }
+        }
+    }
+    @catch (NSException *exception) {
+        BeintooLOG(@"Exception on getting User from stored preferences, %@", exception);
+    }
+    
+	return FALSE;
+}
+
++ (BAdWrapper *)getLastGeneratedAd{
 	@synchronized(self){
 #ifdef BEINTOO_ARC_AVAILABLE
         return [Beintoo sharedInstance]->lastGeneratedAd;
@@ -636,82 +578,18 @@
         return NO;
 }
 
-+ (BVirtualGood *)getLastGeneratedGiveBedollars{
-	@synchronized(self){
-#ifdef BEINTOO_ARC_AVAILABLE
-        return [Beintoo sharedInstance]->lastGeneratedGiveBedollars;
-#else
-        return [[Beintoo sharedInstance]->lastGeneratedGiveBedollars retain];
-#endif
-	}
-}
-
-+ (void)setLastGeneratedGiveBedollars:(BVirtualGood *)_content{
-	@synchronized(self){
-		[self _setLastGiveBedollars:_content];
-	}
-}
-
 + (NSDictionary *)getAppVgoodThresholds{
-    return [[Beintoo getPlayer] objectForKey:@"vgoodThreshold"];
-}
-
-#pragma mark - Virtual Currency Methods
-
-+ (void)setVirtualCurrencyName:(NSString *)_name{
-    [Beintoo _setDeveloperCurrencyName:_name];
-}
-
-+ (NSString *)getVirtualCurrencyName{
-    return [Beintoo _getDeveloperCurrencyName];
-}
-
-+ (void)setVirtualCurrencyBalance:(float)_value{
-    [Beintoo _setDeveloperCurrencyValue:_value];
-}
-
-+ (float)getVirtualCurrencyBalance{
-    return [Beintoo _getDeveloperCurrencyValue];
-}
-
-+ (void)setDeveloperUserId:(NSString *)_id{
-    [Beintoo _setDeveloperUserId:_id];
-}
-
-+ (NSString *)getDeveloperUserId{
-    return [Beintoo _getDeveloperUserId];
-}
-
-+ (void)setDeveloperUserId:(NSString *)_userId withBalance:(float)_value{
-    [Beintoo _setDeveloperCurrencyValue:_value];
-    [Beintoo _setDeveloperUserId:_userId];
-}
-
-+ (void)setVirtualCurrencyName:(NSString *)_name forUserId:(NSString *)_userId withBalance:(float)_value{
-    [Beintoo _setDeveloperCurrencyName:_name];
-    [Beintoo _setDeveloperCurrencyValue:_value];
-    [Beintoo _setDeveloperUserId:_userId];
-}
-
-+ (void)removeStoredVirtualCurrency{
-    [Beintoo _removeStoredCurrencyAndUser];
-}
-
-+ (BOOL)isVirtualCurrencyStored{
-    return [Beintoo _isCurrencyStored];
+    if ([Beintoo getPlayer] != nil)
+        return [Beintoo getPlayer].vgoodThreshold;
+        
+    return nil;
 }
 
 #pragma mark - Common methods
 
-+ (void)setLastGeneratedVgood:(BVirtualGood *)_theVGood{
++ (void)setLastGeneratedAd:(BAdWrapper *)wrapper{
 	@synchronized(self){
-		[self _setLastVgood:_theVGood];
-	}
-}
-
-+ (void)setLastGeneratedAd:(BVirtualGood *)_theAd{
-	@synchronized(self){
-		[self _setLastAd:_theAd];
+		[self _setLastAd:wrapper];
 	}
 }
 
@@ -734,7 +612,7 @@
 
 + (void)eventuallyUpdateDisplayedContent
 {
-    BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
+    /* BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
     if (_prizeView.alpha == 1){
         [_prizeView preparePrizeAlertOrientation:_prizeView.frame];
     }
@@ -742,7 +620,7 @@
     BPrize	*_adView = [Beintoo sharedInstance]->adView;
     if (_adView.alpha == 1){
         [_adView preparePrizeAlertOrientation:_adView.frame];
-    }
+    } */
 }
 
 + (NSString *)getRestBaseUrl{
@@ -754,17 +632,19 @@
 }
 
 + (NSString *)getPlayerID{
-	NSDictionary *_beintooPlayer = [Beintoo getPlayer];
-	if(_beintooPlayer!= nil){
-		return [_beintooPlayer objectForKey:@"guid"];
+    BPlayerWrapper *_beintooPlayer = [Beintoo getPlayer];
+	if(_beintooPlayer != nil)
+    {
+        return _beintooPlayer.guid;
 	}
 	return nil;
 }
 
 + (NSString *)getUserID{
-	NSDictionary *_beintooUser = [Beintoo getUserIfLogged];
-	if(_beintooUser!= nil){
-		return [_beintooUser objectForKey:@"id"];
+	BUserWrapper *_beintooUser = [Beintoo getUserIfLogged];
+    if(_beintooUser != nil)
+    {
+        return _beintooUser.userid;
 	}
 	return nil;	
 }
@@ -787,10 +667,6 @@
 	return locationForURL;
 }
 
-+ (BeintooVC *)getBeintooPanelRootViewController{
-	return [Beintoo sharedInstance]->beintooPanelRootViewController;
-}
-
 + (UIWindow *)getAppWindow{
 	return [Beintoo getApplicationWindow];
 }
@@ -799,8 +675,20 @@
 	return [Beintoo sharedInstance]->notificationView;
 }
 
-+ (id<BeintooMainDelegate>)getMainDelegate{
-	return [Beintoo sharedInstance]->mainDelegate;
++ (BOOL)showAchievementNotification{
+    return [Beintoo sharedInstance]->showAchievementNotification;
+}
+
++ (BOOL)showLoginNotification{
+    return [Beintoo sharedInstance]->showLoginNotification;
+}
+
++ (BOOL)showScoreNotification{
+    return [Beintoo sharedInstance]->showScoreNotification;
+}
+
++ (BOOL)showNoRewardNotification{
+    return [Beintoo sharedInstance]->showNoRewardNotification;
 }
 
 + (void)updateUserLocation{
@@ -811,21 +699,18 @@
 	return [Beintoo sharedInstance]->userLocation;
 }
 
-+ (void)setLastLoggedPlayers:(NSArray *)_players{
-	[Beintoo _setLastLoggedPlayers:_players];
-}
-
 #pragma mark - Notifications
 
-+ (void)notifyVGoodGenerationOnMainDelegate{
-	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
++ (void)notifyRewardGenerationOnMainDelegate:(BRewardWrapper *)reward{
+	
+    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
 	
 	if ([_mainDelegate respondsToSelector:@selector(didBeintooGenerateAReward:)]) {
-		[_mainDelegate didBeintooGenerateAReward:[Beintoo sharedInstance]->lastGeneratedGood];
+		[_mainDelegate didBeintooGenerateAReward:reward];
 	}
 }
 
-+ (void)notifyVGoodGenerationErrorOnMainDelegate:(NSDictionary *)_error{
++ (void)notifyRewardGenerationErrorOnMainDelegate:(NSDictionary *)_error{
 	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
 	
 	if ([_mainDelegate respondsToSelector:@selector(didBeintooFailToGenerateARewardWithError:)]) {
@@ -833,11 +718,47 @@
 	}
 }
 
-+ (void)notifyAdGenerationOnMainDelegate{
++ (void)notifyGiveBedollarsGenerationOnMainDelegate:(BGiveBedollarsWrapper *)wrapper
+{
+    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+	
+	if ([_mainDelegate respondsToSelector:@selector(didReceiveGiveBedollarsResponse:)]) {
+		[_mainDelegate didReceiveGiveBedollarsResponse:wrapper];
+	}
+}
+
++ (void)notifyGiveBedollarsGenerationErrorOnMainDelegate:(NSDictionary *)_error
+{
+    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+	
+	if ([_mainDelegate respondsToSelector:@selector(didFailToPerformGiveBedollarsWithResponse:)]) {
+		[_mainDelegate didFailToPerformGiveBedollars:_error];
+	}
+}
+
++ (void)notifyEventGenerationOnMainDelegate:(BEventWrapper *)wrapper
+{
+    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+	
+	if ([_mainDelegate respondsToSelector:@selector(didGenerateAnEvent:)]) {
+		[_mainDelegate didGenerateAnEvent:wrapper];
+	}
+}
+
++ (void)notifyEventGenerationErrorOnMainDelegate:(NSDictionary *)_error
+{
+    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+	
+	if ([_mainDelegate respondsToSelector:@selector(didFailToGenerateAnEvent:)]) {
+		[_mainDelegate didFailToGenerateAnEvent:_error];
+	}
+}
+
++ (void)notifyAdGenerationOnMainDelegate:(BAdWrapper *)wrapper{
 	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
 	
 	if ([_mainDelegate respondsToSelector:@selector(didBeintooGenerateAnAd:)]) {
-		[_mainDelegate didBeintooGenerateAnAd:[Beintoo sharedInstance]->lastGeneratedAd];
+		[_mainDelegate didBeintooGenerateAnAd:wrapper];
 	}
 }
 
@@ -849,36 +770,8 @@
 	}
 }
 
-+ (void)dismissBeintoo{
-	[Beintoo _dismissBeintoo];
-}
-
-+ (void)dismissBeintoo:(int)type{
-	[Beintoo _dismissBeintoo:type];
-}
-
-+ (void)dismissSignup{
-	[Beintoo _dismissSignup];
-}
-
-+ (void)dismissBeintooNotAnimated{
-    [Beintoo _dismissBeintooNotAnimated];
-}
-
-+ (void)dismissMission{
-	[Beintoo _dismissMission];
-}
-
-+ (void)dismissPrize{
-	[Beintoo _dismissPrize];
-}
-
-+ (void)dismissAd{
-	[Beintoo _dismissAd];
-}
-
-+ (void)dismissRecommendation{
-	[Beintoo _dismissRecommendation];
++ (void)beintooWillAppear{
+	[Beintoo _beintooWillAppear];
 }
 
 + (void)beintooDidAppear{
@@ -891,14 +784,6 @@
 
 + (void)beintooDidDisappear{
 	[Beintoo _beintooDidDisappear];
-}
-
-+ (void)prizeDidAppear{
-	[Beintoo _prizeDidAppear];
-}
-
-+ (void)prizeDidDisappear{
-	[Beintoo _prizeDidDisappear];
 }
 
 + (void)adControllerDidAppear{
@@ -952,65 +837,17 @@
 	[beintooInstance->userLocation release];
 	beintooInstance->userLocation = nil;
 	/* --------------------------------------------- */
-	[beintooInstance->lastGeneratedGood release];
-	beintooInstance->lastGeneratedGood = nil;
-	/* --------------------------------------------- */
-	[beintooInstance->lastLoggedPlayers release];
-	beintooInstance->lastLoggedPlayers = nil;
-	/* --------------------------------------------- */
-	[beintooInstance->prizeView release];
-	beintooInstance->prizeView = nil;
-    /* --------------------------------------------- */
-	[beintooInstance->lastRetrievedMission release];
-	beintooInstance->lastRetrievedMission = nil;
-    /* --------------------------------------------- */
-	[beintooInstance->missionView release];
-	beintooInstance->missionView = nil;
-	/* --------------------------------------------- */
 	[beintooInstance->notificationView release];
 	beintooInstance->notificationView = nil;
 	/* --------------------------------------------- */
-	[beintooInstance->mainNavigationController release];
-	beintooInstance->mainNavigationController = nil;
-	/* --------------------------------------------- */
-	[beintooInstance->vgoodNavigationController release];
-	beintooInstance->vgoodNavigationController = nil;
-	/* --------------------------------------------- */
 	[beintooInstance->mainController release];
 	beintooInstance->mainController = nil;
-	/* --------------------------------------------- */
-	[beintooInstance->featuresArray release];
-	beintooInstance->featuresArray = nil;
-	/* --------------------------------------------- */  
-	[beintooInstance->beintooPanelRootViewController release];  // Released
-	beintooInstance->beintooPanelRootViewController = nil;
-    /* --------------------------------------------- */
-	[beintooInstance->beintooWalletViewController release];  // Released
-	beintooInstance->beintooWalletViewController = nil;
-    /* --------------------------------------------- */  
-	[beintooInstance->beintooLeaderboardVC release];  // Released
-	beintooInstance->beintooLeaderboardVC = nil;
-    /* --------------------------------------------- */  
-	[beintooInstance->beintooLeaderboardWithContestVC release];  // Released
-	beintooInstance->beintooLeaderboardWithContestVC = nil;
-	/* --------------------------------------------- */  
-	[beintooInstance->beintooWalletViewController release];  // Released
-	beintooInstance->beintooWalletViewController = nil;
-    /* --------------------------------------------- */  
-	[beintooInstance->beintooLeaderboardVC release];  // Released
-	beintooInstance->beintooLeaderboardVC = nil;
-    /* --------------------------------------------- */  
-	[beintooInstance->beintooLeaderboardWithContestVC release];  // Released
-	beintooInstance->beintooLeaderboardWithContestVC = nil;
 	/* --------------------------------------------- */
 	[[Beintoo sharedInstance]->beintooPlayerService release];
 	[Beintoo sharedInstance]->beintooPlayerService = nil;
     /* --------------------------------------------- */
 	[[Beintoo sharedInstance]->beintooUserService release];
 	[Beintoo sharedInstance]->beintooUserService = nil;
-	/* --------------------------------------------- */
-	[beintooInstance->beintooVgoodService release];
-	beintooInstance->beintooVgoodService = nil;	
 	/* --------------------------------------------- */
 	[beintooInstance->beintooAchievementsService release];
 	beintooInstance->beintooAchievementsService = nil;

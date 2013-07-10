@@ -53,4 +53,9 @@
 + (NSString *)getSystemVersion;
 + (NSString *)getDeviceType;
 
++ (int)getTimeOffset;
++ (NSString *)currentTimezone;
+
++ (NSDictionary *)screenSize;
+
 @end

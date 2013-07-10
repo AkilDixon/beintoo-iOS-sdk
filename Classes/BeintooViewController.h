@@ -17,21 +17,20 @@
 #import <UIKit/UIKit.h>
 #import "Beintoo.h"
 
-@interface BeintooViewController : UIViewController <BeintooPlayerDelegate, BeintooVgoodDelegate, BeintooMissionDelegate, BeintooMissionDelegate, BeintooUserDelegate, BeintooAchievementsDelegate, BeintooPrizeDelegate, BeintooVgoodDelegate, BeintooAppDelegate, BeintooAdDelegate>{
+@interface BeintooViewController : UIViewController <BeintooPlayerDelegate, BeintooUserDelegate, BeintooAchievementsDelegate, BeintooAppDelegate, BeintooAdDelegate, BeintooRewardDelegate, BeintooTemplateDelegate, BeintooEventDelegate /*, ZBarReaderDelegate*/>{
 	
     //---> Buttons
-    IBOutlet BButton *playerLogin;
-    IBOutlet BButton *logout;
-    IBOutlet BButton *submitScore;
-    IBOutlet BButton *submitScoreForContest;
-    IBOutlet BButton *achievements;
-    IBOutlet BButton *getVgood;
-    IBOutlet BButton *getScoreForContest;
+    IBOutlet BButton *playerLoginButton;
+    IBOutlet BButton *logoutButton;
+    IBOutlet BButton *achievementButton;
+    IBOutlet BButton *rewardButton;
+    IBOutlet BButton *giveBedollarsButton;
+    IBOutlet BButton *requestAdButton;
+    IBOutlet BButton *getEventButton;
+    
     IBOutlet BButton *london;
     IBOutlet BButton *milan;
     IBOutlet BButton *sanFrancisco;
-    IBOutlet BButton *giveBedollars;
-    IBOutlet BButton *requestAd;
     
     IBOutlet UIView     *lightLondon;
     IBOutlet UIView     *lightSanFrancisco;
@@ -42,25 +41,18 @@
     BeintooUser         *_user;
 }
 
-- (IBAction)startBeintoo;
-- (IBAction)startMarketplace;
+- (IBAction)openDashboard;
 - (IBAction)playerLogin;
-- (IBAction)submitScore;
-- (IBAction)submitScoreForContest;
-- (IBAction)getVgood;
-- (IBAction)getScoreForContest;
+- (IBAction)getReward;
 - (IBAction)playerLogout;
 - (IBAction)submitAchievement;
+- (IBAction)giveBedollars;
+- (IBAction)requestAd;
+- (IBAction)getEvent;
+
 - (IBAction)setMilan;
 - (IBAction)setSanFrancisco;
 - (IBAction)setLondon;
-- (IBAction)giveBedollars;
-
-- (void)buttonsCustomization;
-- (void)manageLocation;
-
-- (void)didNotCompleteBackgroundRegistration;
-- (void)didCompleteBackgroundRegistration:(NSDictionary *)result;
 
 @end
 

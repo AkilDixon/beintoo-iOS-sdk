@@ -15,39 +15,30 @@
  ******************************************************************************/
 
 #import <UIKit/UIKit.h>
-#import "BPrize.h"
 
-@class BeintooVGoodVC,BeintooMultipleVgoodVC,BeintooVGoodShowVC,BeintooWebViewVC;
+@class BTemplateVC, BTemplate, BTemplateGiveBedollars;
 
-@interface BeintooMainController : UINavigationController <BeintooPrizeDelegate>{
+// Main is the type of a controller presented as first layer of Beintoo, other controllers presented on Beintoo itself, will be child
+// This is usefull to present n controllers upon themselves.
+// Main controller will be the only one the will trigger the delegate callbacks
 
-	BPrize *prizeBanner;
-	
+#define NAV_TYPE_MAIN         1
+#define NAV_TYPE_CHILD        2
+
+@interface BeintooMainController : UINavigationController
+{
 	NSString *transitionEnterSubtype;
 	NSString *transitionExitSubtype;
-	
-	BeintooVGoodVC *singleVgoodVC;
-	BeintooMultipleVgoodVC *multipleVgoodVC;
-	BeintooVGoodShowVC *recommendationVC;
-	BeintooWebViewVC   *webViewVC;
+    
+    BTemplateVC *templateVC;
+    BTemplate   *template;
+    BTemplateGiveBedollars   *templateGB;
 }
 
-@property(nonatomic, retain) BeintooVGoodVC *singleVgoodVC;
-@property(nonatomic, retain) BeintooMultipleVgoodVC *multipleVgoodVC;
-@property(nonatomic, retain) BeintooVGoodShowVC *recommendationVC;
-@property(nonatomic, retain) BeintooWebViewVC *webViewVC;
+@property (nonatomic, retain) BTemplateVC *templateVC;
+@property (nonatomic, retain) BTemplate *template;
+@property (nonatomic, retain) BTemplateGiveBedollars *templateGB;
+@property (nonatomic, assign) int type;
 
-- (void)hide;
-- (void)showVgoodNavigationController;
-- (void)hideVgoodNavigationController;
-- (void)showMissionVgoodNavigationController;
-- (void)hideMissionVgoodNavigationController;
-- (void)prepareBeintooVgoodOrientation;
-
-- (void)showAdNavigationController;
-- (void)hideAdNavigationController;
-
-- (void)showGiveBedollarsNC;
-- (void)hideGiveBedollarsNC;
 
 @end

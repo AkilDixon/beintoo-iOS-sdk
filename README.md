@@ -1,5 +1,5 @@
-The Beintoo iOS sdk allows you to integrate Beintoo into your iPhone and iPad iOS applications.
-The integration of Beintoo is extremely easy, in few steps you will be able to monetize and start engaging your users with social gaming features.
+The Beintoo iOS sdk allows you to integrate Beintoo into your iOS applications, both for iPhone and iPad.
+The integration of Beintoo is extremely easy, in a few steps you will be able to monetize and start engaging your users with social gaming features.
 
 Getting Started
 ===============
@@ -18,6 +18,7 @@ To integrate Beintoo with an existing application, follow these steps:
 3. Copy the entire SDKBeintoo_Beta folder inside your Xcode project. Simply drag and drop the folder into your application's project and check "Copy items into destination group's folder" when Xcode asks.
 	
 	 Make sure that these frameworks are included to respect the library dependencies: 
+	 
 	* UIKit.framework
 	* Foundation.framework
 	* CoreGraphics.framework
@@ -42,24 +43,18 @@ To integrate Beintoo with an existing application, follow these steps:
    	- beintooSettings: a dictionary with your settings for Beintoo. 
 		
 			NSDictionary *beintooSettings = [[NSDictionary alloc] initWithObjectsAndKeys:
-						     beintooFeatures,BeintooActiveFeatures,
-						     window,BeintooApplicationWindow,
+						     window, BeintooApplicationWindow,
 		                     [NSNumber numberWithInt:1],BeintooAchievementNotification,
 		                     [NSNumber numberWithInt:1],BeintooLoginNotification,
 		                     [NSNumber numberWithInt:1],BeintooScoreNotification,
 		                     [NSNumber numberWithInt:1],BeintooNoRewardNotification,
-		                     [NSNumber numberWithInt:1],BeintooDismissAfterRegistration,
-		                     [NSNumber numberWithInt:0],BeintooForceRegistration,
-		                     [NSNumber numberWithInt:BeintooNotificationPositionBottom], BeintooNotificationPosition,
-						     [NSNumber numberWithInt:UIInterfaceOrientationPortrait],BeintooAppOrientation, nil];
+		         			 [NSNumber numberWithInt:BeintooNotificationPositionBottom], BeintooNotificationPosition,
+						     [NSNumber numberWithInt:UIInterfaceOrientationPortrait], BeintooAppOrientation, nil];
   
  
  
 __Important__  
-If your compiler enables Automatic Reference Counting (ARC) you should turn off ARC for every file of the Beintoo SDK.
-Go to your project settings, under Build Phases > Compile Sources
-Select the files you want ARC disabled and add -fno-objc-arc compiler flags. You can set flags for multiple files in one shot by selecting the files then hitting “Enter” key.
-
+The Beintoo Sdk is compliant both for ARC and non ARC projects: it is the SDK itself that understands if ARC is enabled or it isn't, and it takes care of memory management in both cases.
 Check the sample Xcode project for a lot of examples on how to use all the Beintoo features.  
 
 

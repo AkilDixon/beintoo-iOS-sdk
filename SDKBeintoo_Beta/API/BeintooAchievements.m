@@ -711,14 +711,14 @@
                 NSMutableArray      *allUnlockedAchievements = [NSMutableArray array];;
                 NSDictionary        *mission = [result objectForKey:@"mission"];
                 
-                if (mission) {
+                /*if (mission) {
                     [Beintoo setLastRetrievedMission:mission];
                     playerAchievements      = [mission objectForKey:@"playerAchievements"];
                     sponsoredAchievements   = [mission objectForKey:@"sponsoredAchievements"];
                     if ([[mission objectForKey:@"status"] isEqualToString:@"OVER"]) {
                         isMissionOver = TRUE;
                     }
-                }
+                }*/
                 
                 // To Show the unlock notification of the achievement ----- *** DA SISTEMARE PER ACHIEVEM A CASCATA!!
                 // In questo momento ne visualizza solo uno, il primo, non a cascata
@@ -824,7 +824,7 @@
                 
                 [BeintooAchievements notifyAchievementSubmitSuccessWithResult:result];
                 
-                BOOL isMissionOver              = FALSE;
+               // BOOL isMissionOver              = FALSE;
                 BOOL isAchievemUnlocked         = FALSE;
                 BOOL isAchievementOnSponsored   = FALSE;
                 
@@ -835,14 +835,14 @@
                 NSMutableArray      *allUnlockedAchievements = [NSMutableArray array];;
                 NSDictionary        *mission = [result objectForKey:@"mission"];
                 
-                if (mission) {
+                /*if (mission) {
                     [Beintoo setLastRetrievedMission:mission];
                     playerAchievements      = [mission objectForKey:@"playerAchievements"];
                     sponsoredAchievements   = [mission objectForKey:@"sponsoredAchievements"];
                     if ([[mission objectForKey:@"status"] isEqualToString:@"OVER"]) {
                         isMissionOver = TRUE;
                     }
-                }
+                }*/
                 
                 // To Show the unlock notification of the achievement ----- *** DA SISTEMARE PER ACHIEVEM A CASCATA!!
                 // In questo momento ne visualizza solo uno, il primo, non a cascata
@@ -910,7 +910,7 @@
                 NSDictionary        *mission = [result objectForKey:@"mission"];
                 
                 if (mission) {
-                    [Beintoo setLastRetrievedMission:mission];
+                    //[Beintoo setLastRetrievedMission:mission];
                     playerAchievements      = [mission objectForKey:@"playerAchievements"];
                     sponsoredAchievements   = [mission objectForKey:@"sponsoredAchievements"];
                     if ([[mission objectForKey:@"status"] isEqualToString:@"OVER"]) {
@@ -1104,7 +1104,7 @@
                 NSDictionary        *mission = [result objectForKey:@"mission"];
                 
                 if (mission) {
-                    [Beintoo setLastRetrievedMission:mission];
+                   // [Beintoo setLastRetrievedMission:mission];
                     playerAchievements      = [mission objectForKey:@"playerAchievements"];
                     sponsoredAchievements   = [mission objectForKey:@"sponsoredAchievements"];
                     if ([[mission objectForKey:@"status"] isEqualToString:@"OVER"]) {

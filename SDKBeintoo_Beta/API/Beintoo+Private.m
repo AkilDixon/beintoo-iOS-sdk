@@ -52,7 +52,8 @@ NSString *BNSDefDeveloperCurrencyValue      = @"beintooDeveloperCurrencyValue";
 NSString *BNSDefDeveloperLoggedUserId       = @"beintooDeveloperLoggedUserId";
 NSString *BNSDefUserFriends                 = @"beintooUserFriends";
 
-NSString *BeintooSdkVersion                 = @"2.9.5beta-ios";
+NSString *BeintooSdkVersion                 = @"3.0.0beta-ios";
+NSString *BeintooPlatform                   = @"iOS";
 
 NSString *BeintooNotificationSignupClosed           = @"BeintooSignupClosed";
 NSString *BeintooNotificationOrientationChanged     = @"BeintooOrientationChanged";
@@ -106,33 +107,13 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
 	beintooInstance->locationManager        = [[CLLocationManager alloc] init];
 	beintooInstance->userLocation           = nil;
     
-    beintooInstance->prizeView              = [[BPrize alloc] init];
-    beintooInstance->adView                 = [[BPrize alloc] init];
-    beintooInstance->giveBedollarsView      = [[BTemplateGiveBedollars alloc] init];
-    
-    beintooInstance->prizeView.alpha            = 0.0;
-    beintooInstance->adView.alpha               = 0.0;
-    beintooInstance->giveBedollarsView.alpha    = 0.0;
-    
-    beintooInstance->prizeView.isVisible            = NO;
-    beintooInstance->adView.isVisible               = NO;
-    beintooInstance->giveBedollarsView.isVisible    = NO;
-
-    beintooInstance->missionView            = [[BMissionView alloc] init];
-	beintooInstance->lastLoggedPlayers      = [[NSArray alloc] init];
-	beintooInstance->featuresArray          = [[NSArray alloc] init];
-	beintooInstance->notificationView       = [[BMessageAnimated alloc]init];
+    beintooInstance->notificationView       = [[BMessageAnimated alloc] init];
     beintooInstance->lastRetrievedMission   = [[NSDictionary alloc] init];
     
     beintooInstance->notificationQueue      = [[BAnimatedNotificationQueue alloc] init];
  
     beintooInstance->beintooDispatchQueue   = dispatch_queue_create("com.Beintoo.beintooQueue", NULL);
     
-    beintooInstance->beintooBestoreVC                   = [[BeintooBestoreVC alloc] init];
-    beintooInstance->beintooWalletViewController        = [[BeintooWalletVC alloc] init];
-    beintooInstance->beintooLeaderboardWithContestVC    = [[BeintooLeaderboardContestVC alloc] init];
-    beintooInstance->beintooLeaderboardVC               = [[BeintooLeaderboardVC alloc] init];
-
 #ifdef BEINTOO_ARC_AVAILABLE
     }
 #else
@@ -164,27 +145,51 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
 }
 
 + (void)initBeintooSettings:(NSDictionary *)_settings{
-	Beintoo *beintooInstance = [Beintoo sharedInstance];
-	
-	[Beintoo setAppOrientation:(int)[[_settings objectForKey:BeintooAppOrientation] intValue]];
-	[Beintoo setForceRegistration:(BOOL)[[_settings objectForKey:BeintooForceRegistration] boolValue]];
-    [Beintoo setShowAchievementNotificatio:(BOOL)[[_settings objectForKey:BeintooAchievementNotification] boolValue]];
-    [Beintoo setShowLoginNotification:(BOOL)[[_settings objectForKey:BeintooLoginNotification] boolValue]];
-    [Beintoo setShowScoreNotification:(BOOL)[[_settings objectForKey:BeintooScoreNotification] boolValue]];
-    [Beintoo setShowNoRewardNotification:(BOOL)[[_settings objectForKey:BeintooNoRewardNotification] boolValue]];
-    [Beintoo setDismissBeintooAfterRegistration:(BOOL)[[_settings objectForKey:BeintooDismissAfterRegistration] boolValue]];
-    [Beintoo setNotificationPosition:(NSInteger)[[_settings objectForKey:BeintooNotificationPosition] integerValue]];
+    if (_settings == nil || [_settings count] == 0)
+        return;
     
-	beintooInstance->featuresArray = (NSArray *)[[_settings objectForKey:BeintooActiveFeatures] copy];
-	[Beintoo setApplicationWindow:(UIWindow *)[_settings objectForKey:BeintooApplicationWindow]];
+    if ([_settings objectForKey:BeintooAppOrientation])
+        [Beintoo setAppOrientation:(int)[[_settings objectForKey:BeintooAppOrientation] intValue]];
+    
+    if ([_settings objectForKey:BeintooNotificationPosition])
+        [Beintoo setNotificationPosition:(NSInteger)[[_settings objectForKey:BeintooNotificationPosition] integerValue]];
+    
+    if ([_settings objectForKey:BeintooApplicationWindow])
+        [Beintoo setApplicationWindow:(UIWindow *)[_settings objectForKey:BeintooApplicationWindow]];
+    
+    if ([_settings objectForKey:BeintooLoginNotification])
+        [Beintoo setShowLoginNotification:(UIWindow *)[_settings objectForKey:BeintooLoginNotification]];
+    
+    if ([_settings objectForKey:BeintooAchievementNotification])
+        [Beintoo setShowAchievementNotificatio:(UIWindow *)[_settings objectForKey:BeintooAchievementNotification]];
+    
+    if ([_settings objectForKey:BeintooNoRewardNotification])
+        [Beintoo setShowNoRewardNotification:(UIWindow *)[_settings objectForKey:BeintooNoRewardNotification]];
 }
 
-- (void)initDelegates
++ (void)setShowAchievementNotificatio:(BOOL)_value
 {
-	[Beintoo sharedInstance]->prizeView.delegate            = self;
-    [Beintoo sharedInstance]->adView.delegate               = self;
-    [Beintoo sharedInstance]->giveBedollarsView.delegate    = self;
-    [Beintoo sharedInstance]->missionView.delegate          = self;
+    [Beintoo sharedInstance]->showAchievementNotification = _value;
+}
+
++ (void)setShowLoginNotification:(BOOL)_value
+{
+    [Beintoo sharedInstance]->showLoginNotification = _value;
+}
+
++ (void)setShowScoreNotification:(BOOL)_value
+{
+    [Beintoo sharedInstance]->showScoreNotification = _value;
+}
+
++ (void)setShowNoRewardNotification:(BOOL)_value
+{
+    [Beintoo sharedInstance]->showNoRewardNotification = _value;
+}
+
++ (void)setNotificationPosition:(NSInteger)_value
+{
+    [Beintoo sharedInstance]->notificationPosition  = _value;
 }
 
 + (void)initLocallySavedScoresArray
@@ -225,22 +230,6 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
     [Beintoo sharedInstance]->displayBaseUrl = displayBaseUrl;
 	[Beintoo sharedInstance]->isOnSandbox = NO;
     [Beintoo sharedInstance]->isOnPrivateSandbox = NO;
-}
-
-+ (void)initVgoodService
-{
-	if ([Beintoo sharedInstance]->beintooVgoodService != nil) {
-        
-#ifdef BEINTOO_ARC_AVAILABLE
-        [Beintoo sharedInstance]->beintooVgoodService = nil;
-#else
-        [[Beintoo sharedInstance]->beintooVgoodService release];
-#endif
-        
-	}
-    
-	[Beintoo sharedInstance]->beintooVgoodService = [[BeintooVgood alloc] init];
-	BeintooLOG(@"Vgood API service Initialized at URL: %@",[[Beintoo sharedInstance]->beintooVgoodService restResource]);
 }
 
 + (void)initPlayerService
@@ -346,122 +335,62 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
 	BeintooLOG(@"Reward API service Initialized at URL: %@", [[Beintoo sharedInstance]->beintooRewardService restResource]);
 }
 
-#pragma mark - Init Controllers
-
-+ (void)initMainController{
-	Beintoo *beintooInstance                    = [Beintoo sharedInstance];
-	beintooInstance->mainController             = [[BeintooMainController alloc] init];
-	beintooInstance->mainController.view.alpha  = 0;
++ (void)initEventService{
+	if ([Beintoo sharedInstance]->beintooEventService != nil) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        [Beintoo sharedInstance]->beintooEventService = nil;
+#else
+        [[Beintoo sharedInstance]->beintooEventService release];
+#endif
+        
+	}
+	[Beintoo sharedInstance]->beintooEventService = [[BeintooEvent alloc] init];
+	BeintooLOG(@"Event API service Initialized at URL: %@", [[Beintoo sharedInstance]->beintooEventService restResource]);
 }
 
-+ (void)initMainAdController{
++ (void)initMissionService{
+	if ([Beintoo sharedInstance]->beintooMissionService != nil) {
+        
+#ifdef BEINTOO_ARC_AVAILABLE
+        [Beintoo sharedInstance]->beintooMissionService = nil;
+#else
+        [[Beintoo sharedInstance]->beintooMissionService release];
+#endif
+        
+	}
+	[Beintoo sharedInstance]->beintooMissionService = [[BeintooMission alloc] init];
+	BeintooLOG(@"Mission API service Initialized at URL: %@", [[Beintoo sharedInstance]->beintooMissionService restResource]);
+}
+
+#pragma mark - Init Controllers
+
++ (void)initControllers
+{
+	[Beintoo initMainController];
+    [Beintoo initMainAdController];
+    [Beintoo initMainGbController];
+}
+
++ (void)initMainController
+{
+	Beintoo *beintooInstance                        = [Beintoo sharedInstance];
+	beintooInstance->mainController                 = [[BeintooMainController alloc] init];
+	beintooInstance->mainController.view.alpha      = 0;
+}
+
++ (void)initMainAdController
+{
 	Beintoo *beintooInstance                        = [Beintoo sharedInstance];
 	beintooInstance->mainAdController               = [[BeintooMainController alloc] init];
 	beintooInstance->mainAdController.view.alpha    = 0;
 }
 
-+ (void)initMainNavigationController{
-	Beintoo *beintooInstance                    = [Beintoo sharedInstance];
-	beintooInstance->mainNavigationController   = [[BeintooNavigationController alloc] init];
-    [beintooInstance->mainNavigationController setType:NAV_TYPE_MAIN];
-    [[beintooInstance->mainNavigationController navigationBar] setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
-}
-
-+ (void)initBestoreNavigationController{
++ (void)initMainGbController
+{
 	Beintoo *beintooInstance                        = [Beintoo sharedInstance];
-	beintooInstance->bestoreNavigationController    = [[BeintooNavigationController alloc] init];
-    [beintooInstance->bestoreNavigationController setType:NAV_TYPE_BESTORE];
-    [[beintooInstance->bestoreNavigationController navigationBar] setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
-}
-
-+ (void)initLeaderboardNavigationController{
-	Beintoo *beintooInstance                    = [Beintoo sharedInstance];
-	beintooInstance->leaderboardNavigationController   = [[BeintooNavigationController alloc] init];
-    [beintooInstance->leaderboardNavigationController setType:NAV_TYPE_LEADERBOARD];
-    [[beintooInstance->leaderboardNavigationController navigationBar] setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
-}
-
-+ (void)initAchievementsNavigationController{
-	Beintoo *beintooInstance                    = [Beintoo sharedInstance];
-	beintooInstance->achievementsNavigationController   = [[BeintooNavigationController alloc] init];
-    [beintooInstance->achievementsNavigationController setType:NAV_TYPE_ACHIEVEMENTS];
-    [[beintooInstance->achievementsNavigationController navigationBar] setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
-}
-
-+ (void)initMyOffersNavigationController{
-	Beintoo *beintooInstance                    = [Beintoo sharedInstance];
-	beintooInstance->myoffersNavigationController   = [[BeintooNavigationController alloc] init];
-    [beintooInstance->myoffersNavigationController setType:NAV_TYPE_MYOFFERS];
-    [[beintooInstance->myoffersNavigationController navigationBar] setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
-}
-
-+ (void)initNotificationsNavigationController{
-	Beintoo *beintooInstance                    = [Beintoo sharedInstance];
-	beintooInstance->notificationsNavigationController   = [[BeintooNavigationController alloc] init];
-    [beintooInstance->notificationsNavigationController setType:NAV_TYPE_NOTIFICATIONS];
-    [[beintooInstance->notificationsNavigationController navigationBar] setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
-}
-
-+ (void)initSignupNavigationController{
-	Beintoo *beintooInstance                    = [Beintoo sharedInstance];
-	beintooInstance->signupNavigationController   = [[BeintooNavigationController alloc] init];
-    [beintooInstance->signupNavigationController setType:NAV_TYPE_SIGNUP];
-    [[beintooInstance->signupNavigationController navigationBar] setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
-}
-
-+ (void)initPrivateNotificationsNavigationController{
-	Beintoo *beintooInstance                    = [Beintoo sharedInstance];
-	beintooInstance->privateNotificationsNavigationController   = [[BeintooNavigationController alloc] init];
-    [beintooInstance->privateNotificationsNavigationController setType:NAV_TYPE_NOTIFICATIONS_PRIVATE];
-    [[beintooInstance->privateNotificationsNavigationController navigationBar] setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
-}
-
-+ (void)initPrivateSignupNavigationController{
-	Beintoo *beintooInstance                    = [Beintoo sharedInstance];
-	beintooInstance->privateSignupNavigationController   = [[BeintooNavigationController alloc] init];
-    [beintooInstance->privateSignupNavigationController setType:NAV_TYPE_SIGNUP_PRIVATE];
-    [[beintooInstance->privateSignupNavigationController navigationBar] setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
-}
-
-+ (void)initVgoodNavigationController{
-	// This navigation controller is not initialized with a Root Controller.
-	// The root controller will change based on the type of vgood (Single, Multiple, Recommendation)
-	Beintoo *beintooInstance = [Beintoo sharedInstance];
-	beintooInstance->vgoodNavigationController = [BeintooVgoodNavController alloc];
-	[[beintooInstance->vgoodNavigationController navigationBar] setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
-}
-
-+ (void)initAdNavigationController{
-	// This navigation controller is not initialized with a Root Controller.
-	// The root controller will change based on the type of vgood (Single, Multiple, Recommendation)
-	Beintoo *beintooInstance = [Beintoo sharedInstance];
-	beintooInstance->adNavigationController = [BeintooVgoodNavController alloc];
-	[[beintooInstance->adNavigationController navigationBar] setTintColor:[UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:1.0]];
-}
-
-+ (void)initiPadController{
-	Beintoo *beintooInstance = [Beintoo sharedInstance];
-	beintooInstance->ipadController = [[BeintooiPadController alloc] init];
-	beintooInstance->ipadController.view.alpha = 0;
-}
-
-+ (void)initPopoversForiPad{
-	Beintoo *beintooInstance = [Beintoo sharedInstance];
-	beintooInstance->homePopover = [NSClassFromString(@"UIPopoverController") alloc];
-	beintooInstance->homePopover.delegate = [Beintoo sharedInstance];
-	[beintooInstance->homePopover setPopoverContentSize:CGSizeMake(320, 455)];
-	
-	beintooInstance->loginPopover = [NSClassFromString(@"UIPopoverController") alloc];
-	beintooInstance->loginPopover.delegate = [Beintoo sharedInstance];
-	[beintooInstance->loginPopover setPopoverContentSize:CGSizeMake(320, 455)];
-    
-	beintooInstance->vgoodPopover = [NSClassFromString(@"UIPopoverController") alloc];
-	beintooInstance->vgoodPopover.delegate = [Beintoo sharedInstance];
-	[beintooInstance->vgoodPopover setPopoverContentSize:CGSizeMake(320, 455)];
-    
-	beintooInstance->recommendationPopover = [NSClassFromString(@"UIPopoverController") alloc];
-	beintooInstance->recommendationPopover.delegate = [Beintoo sharedInstance];
-	[beintooInstance->recommendationPopover setPopoverContentSize:CGSizeMake(320, 455)];
+	beintooInstance->mainGbController               = [[BeintooMainController alloc] init];
+	beintooInstance->mainGbController.view.alpha    = 0;
 }
 
 #pragma mark - Private methods
@@ -501,62 +430,6 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
 	return appKeyWindow;
 }
 
-+ (NSString *)getLastTimeForTryBeintooShowTimestamp
-{
-    return [[NSUserDefaults standardUserDefaults] objectForKey:BNSDefForceTryBeintoo];
-}
-
-+ (void)setLastTimeForTryBeintooShowTimestamp:(NSString *)_value
-{
-    [[NSUserDefaults standardUserDefaults] setObject:_value forKey:BNSDefForceTryBeintoo];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-+ (void)setForceRegistration:(BOOL)_value
-{
-	[Beintoo sharedInstance]->forceRegistration = _value;
-}
-
-+ (void)setShowAchievementNotificatio:(BOOL)_value
-{
-    [Beintoo sharedInstance]->showAchievementNotification = _value;
-}
-
-+ (void)setShowLoginNotification:(BOOL)_value
-{
-    [Beintoo sharedInstance]->showLoginNotification = _value;
-}
-
-+ (void)setShowScoreNotification:(BOOL)_value
-{
-    [Beintoo sharedInstance]->showScoreNotification = _value;
-}
-
-+ (void)setShowNoRewardNotification:(BOOL)_value
-{
-    [Beintoo sharedInstance]->showNoRewardNotification = _value;
-}
-
-+ (void)setDismissBeintooAfterRegistration:(BOOL)_value
-{
-    [Beintoo sharedInstance]->dismissBeintooAfterRegistration = _value;    
-}
-
-+ (void)setNotificationPosition:(NSInteger)_value
-{
-    [Beintoo sharedInstance]->notificationPosition  = _value;
-}
-
-+ (void)setForceTryBeintoo:(BOOL)_value
-{
-    [Beintoo sharedInstance]->forceTryBeintoo  = _value;
-}
-
-+ (void)setTryBeintooImageTypeReward:(BOOL)_value
-{
-    [Beintoo sharedInstance]->tryBeintooImageTypeReward = _value;
-}
-
 + (void)_setIsStatusBarHiddenOnApp:(BOOL)_value
 {
     [Beintoo sharedInstance]->statusBarHiddenOnApp = _value;
@@ -571,7 +444,6 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
     [Beintoo sharedInstance]->displayBaseUrl = displayBaseUrl;
 	[Beintoo sharedInstance]->isOnSandbox = YES;
     [Beintoo sharedInstance]->isOnPrivateSandbox = NO;
-    [Beintoo initVgoodService];
 	[Beintoo initPlayerService];
     [Beintoo initUserService];
 	[Beintoo initAchievementsService];
@@ -579,6 +451,8 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
     [Beintoo initAppService];
     [Beintoo initAdService];
     [Beintoo initRewardService];
+    [Beintoo initEventService];
+    [Beintoo initMissionService];
 }
 
 + (void)privateSandbox
@@ -588,7 +462,6 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
     [Beintoo sharedInstance]->displayBaseUrl = sandboxDisplayBaseUrl;
 	[Beintoo sharedInstance]->isOnPrivateSandbox = YES;
     [Beintoo sharedInstance]->isOnSandbox = NO;
-	[Beintoo initVgoodService];
 	[Beintoo initPlayerService];
     [Beintoo initUserService];
 	[Beintoo initAchievementsService];
@@ -596,13 +469,14 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
     [Beintoo initAppService];
     [Beintoo initAdService];
     [Beintoo initRewardService];
+    [Beintoo initEventService];
+    [Beintoo initMissionService];
 }
 
 + (void)production
 {
 	BeintooLOG(@"Beintoo: Going to production");
     [self initAPI];
-	[Beintoo initVgoodService];
 	[Beintoo initPlayerService];
     [Beintoo initUserService];
 	[Beintoo initAchievementsService];
@@ -610,6 +484,8 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
     [Beintoo initAppService];
     [Beintoo initAdService];
     [Beintoo initRewardService];
+    [Beintoo initEventService];
+    [Beintoo initMissionService];
 }
 
 #pragma mark - StatusBar management
@@ -646,7 +522,27 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
 
 #pragma mark - Launch and Dismiss methods
 
-+ (void)_launchBeintooOnApp
++ (void)_openDashboard
+{
+    [Beintoo openView:BCUrlSectionDashboard orURL:nil];
+}
+
++ (void)_openBestore
+{
+    [Beintoo _openView:BCUrlSectionBestore orURL:nil];
+}
+
++ (void)_openSignup
+{
+    [Beintoo _openView:BCUrlSectionSignup orURL:nil];
+}
+
++ (void)_openMissions
+{
+    [Beintoo _openView:BCUrlSectionMissions orURL:nil];
+}
+
++ (void)_openView:(NSString *)view orURL:(NSString *)URL
 {
     if ([BeintooNetwork connectedToNetwork] == NO)
     {
@@ -654,607 +550,307 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
         return;
     }
     
-	id <BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-    
-    Beintoo *beintooInstance               = [Beintoo sharedInstance];
-    
-    [Beintoo initMainNavigationController];
-    
-    beintooInstance->beintooPanelRootViewController     = [[BeintooVC alloc] init];
-    beintooInstance->mainNavigationController           = [beintooInstance->mainNavigationController initWithRootViewController:beintooInstance->beintooPanelRootViewController];
-
-#ifdef BEINTOO_ARC_AVAILABLE
-
-#else
-    [[Beintoo sharedInstance]->beintooPanelRootViewController release];
-#endif
-	    
-    if ([_mainDelegate respondsToSelector:@selector(beintooWillAppear)]) {
-		[_mainDelegate beintooWillAppear];
-	}	
-    
+    // Let's hode the status bar, if needed
     [Beintoo manageStatusBarOnLaunch];
     
-    if (![BeintooDevice isiPad]) { // ------------ iPhone-iPod
-		BeintooNavigationController *_mainNavController = [Beintoo sharedInstance]->mainNavigationController;
-				
-		[_mainNavController prepareBeintooPanelOrientation];
-		[[Beintoo getApplicationWindow] addSubview:_mainNavController.view];
-		[_mainNavController show];
-	}
-	else {  // ----------- iPad
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-				
-		[_iPadController preparePopoverOrientation]; 
-		[[Beintoo getApplicationWindow] addSubview:_iPadController.view];
-		[_iPadController showBeintooPopover];
-	}
-}
-
-+ (void)_launchBeintooOnAppWithDeveloperCurrencyValue:(float)_value
-{
-    [self _setDeveloperCurrencyValue:_value];
-	[self _launchBeintooOnApp];
-}
-
-+ (void)_launchNotificationsOnApp
-{
-    if ([BeintooNetwork connectedToNetwork] == NO)
+	BeintooWebview *beintooWebView      = [BeintooWebview alloc];
+    
+    // Check if it is the case of opening a Beintoo buildin url or a custom URL
+    if (view != nil)
+        beintooWebView.openSection          = view;
+    else if (URL != nil)
+        beintooWebView.url  = URL;
+    
+    beintooWebView                      = [beintooWebView init];
+    
+    BeintooMainController *controller = [BeintooMainController alloc];
+    controller   = [controller initWithRootViewController:beintooWebView];
+    [controller setNavigationBarHidden:YES];
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    
+#else
+    [beintooWebView release];
+#endif
+    
+    UIViewController *rootController = [Beintoo getApplicationWindow].rootViewController;
+    if ([UIApplication sharedApplication].keyWindow.rootViewController.presentedViewController != nil)
     {
-        [BeintooNetwork showNoConnectionAlert];
-        return;
+        rootController = [UIApplication sharedApplication].keyWindow.rootViewController.presentedViewController;
+        controller.type = NAV_TYPE_CHILD;
+    }
+    else {
+        controller.type = NAV_TYPE_MAIN;
     }
     
-	id <BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+    // Let's call the Will Appear delegate
+    if (controller.type == NAV_TYPE_MAIN)
+        [Beintoo  beintooWillAppear];
     
-    Beintoo *beintooInstance              = [Beintoo sharedInstance];
-    
-    [Beintoo initNotificationsNavigationController];
-    
-    beintooInstance->beintooNotificationsVC     = [[BeintooNotificationListVC alloc] init];
-    beintooInstance->notificationsNavigationController = [beintooInstance->notificationsNavigationController initWithRootViewController:beintooInstance->beintooNotificationsVC];
-	
-    if ([_mainDelegate respondsToSelector:@selector(beintooWillAppear)]) {
-		[_mainDelegate beintooWillAppear];
-	}	
-    
-    [Beintoo manageStatusBarOnLaunch];
-    
-    if (![BeintooDevice isiPad]) { // ------------ iPhone-iPod
-		BeintooNavigationController *_mainNavController = [Beintoo sharedInstance]->notificationsNavigationController;
-        
-		[_mainNavController prepareBeintooPanelOrientation];
-		[[Beintoo getApplicationWindow] addSubview:_mainNavController.view];
-		[_mainNavController show];
-	}
-	else {  // ----------- iPad
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-        
-		[_iPadController preparePopoverOrientation]; 
-		[[Beintoo getApplicationWindow] addSubview:_iPadController.view];
-		//[_iPadController showNotificationsPopover];
-	}
-}
-
-+ (void)_launchMarketplaceOnApp
-{
-    if ([BeintooNetwork connectedToNetwork] == NO)
+    for (UIView *subview in [Beintoo getApplicationWindow].subviews)
     {
-        [BeintooNetwork showNoConnectionAlert];
-        return;
+        if ( [subview isKindOfClass:[BTemplate class]] || [subview isKindOfClass:[BTemplateGiveBedollars class]] || [subview isKindOfClass:[BMissionTemplate class]] )
+        {
+            [subview removeFromSuperview];
+        }
     }
     
-	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+    /*
+    **  Let's present the controller
+    **  check for iOS 6.0 or greater selector presentViewController:animated:completion:
+    */
     
-    Beintoo *beintooInstance                                  = [Beintoo sharedInstance];
-    
-    [Beintoo initMainNavigationController];
-    
-    beintooInstance->beintooBestoreVC = [[BeintooBestoreVC alloc] initWithNibName:@"BeintooBestoreVC" bundle:[NSBundle mainBundle]];
-    
-    beintooInstance->mainNavigationController = [beintooInstance->mainNavigationController initWithRootViewController:beintooInstance->beintooBestoreVC];
-    
-#ifdef BEINTOO_ARC_AVAILABLE
-    
-#else
-    [beintooInstance->beintooBestoreVC release];
-#endif
-    
-    [Beintoo manageStatusBarOnLaunch];
-    
-	if ([_mainDelegate respondsToSelector:@selector(beintooWillAppear)]) {
-		[_mainDelegate beintooWillAppear];
-	}	
-	
-	if (![BeintooDevice isiPad]) { // ------------ iPhone-iPod        
-        BeintooNavigationController *_mainNavController = [Beintoo sharedInstance]->mainNavigationController;
-        
-		[_mainNavController prepareBeintooPanelOrientation];
-		[[Beintoo getApplicationWindow] addSubview:_mainNavController.view];
-		[_mainNavController show];
-	}
-	else {  // ----------- iPad
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-        
-		[_iPadController preparePopoverOrientation]; 
-		[[Beintoo getApplicationWindow] addSubview:_iPadController.view];
-		[_iPadController showBestorePopover];
-	}
-}
-
-+ (void)_launchMarketplaceOnAppWithDeveloperCurrencyValue:(float)_value
-{
-    [self _setDeveloperCurrencyValue:_value];
-	[self _launchMarketplaceOnApp];
-}
-
-+ (void)_launchWalletOnApp
-{
-    if ([BeintooNetwork connectedToNetwork] == NO)
+    if ([rootController respondsToSelector:@selector(presentViewController:animated:completion:)])
     {
-        [BeintooNetwork showNoConnectionAlert];
-        return;
+        [rootController presentViewController:controller animated:YES
+                                                                      completion:^(void){
+                                                                          
+                                                                          if (controller.type == NAV_TYPE_MAIN)
+                                                                              [Beintoo  beintooDidAppear];
+                                                                      }];
     }
-    
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-    
-	Beintoo *beintooInstance = [Beintoo sharedInstance];
-    [Beintoo initMainNavigationController];
-    
-    beintooInstance->beintooWalletViewController  = [[BeintooWalletVC alloc] initWithNibName:@"BeintooWalletVC" bundle:[NSBundle mainBundle]];
-    beintooInstance->mainNavigationController = [beintooInstance->mainNavigationController initWithRootViewController:beintooInstance->beintooWalletViewController];
-    
-#ifdef BEINTOO_ARC_AVAILABLE
-    
-#else
-    [beintooInstance->beintooWalletViewController release];
-#endif
-    
-    [Beintoo manageStatusBarOnLaunch];
-    
-    if ([_mainDelegate respondsToSelector:@selector(beintooWillAppear)]) {
-        [_mainDelegate beintooWillAppear];
-    }
-    
-    if (![BeintooDevice isiPad]) { // ------------ iPhone-iPod
-        BeintooNavigationController *_mainNavController = [Beintoo sharedInstance]->mainNavigationController;
+    else {
+        [rootController presentModalViewController:controller animated:YES];
         
-        [_mainNavController prepareBeintooPanelOrientation];
-        [[Beintoo getApplicationWindow] addSubview:_mainNavController.view];
-        [_mainNavController show];
-    }
-    else {  // ----------- iPad
-        BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-        
-        [_iPadController preparePopoverOrientation];
-        [[Beintoo getApplicationWindow] addSubview:_iPadController.view];
-        [_iPadController showMyOffersPopover];
+        if (controller.type == NAV_TYPE_MAIN)
+            [Beintoo  beintooDidAppear];
     }
 }
 
-+ (void)_launchAchievementsOnApp
++ (void)_dismissView:(id)controller
 {
-    if ([BeintooNetwork connectedToNetwork] == NO)
-    {
-        [BeintooNetwork showNoConnectionAlert];
-        return;
-    }
-    
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-    
-	Beintoo *beintooInstance = [Beintoo sharedInstance];
-    
-    [Beintoo initMainNavigationController];
-    
-    BeintooAchievementsVC *achievementsVC = [[BeintooAchievementsVC alloc] initWithNibName:@"BeintooAchievementsVC" bundle:[NSBundle mainBundle]];
-    beintooInstance->mainNavigationController = [beintooInstance->mainNavigationController initWithRootViewController:achievementsVC];
-    
-#ifdef BEINTOO_ARC_AVAILABLE
-    
-#else
-    [achievementsVC release];
-#endif
-    
-    [Beintoo manageStatusBarOnLaunch];
-    
-    if ([_mainDelegate respondsToSelector:@selector(beintooWillAppear)]) {
-        [_mainDelegate beintooWillAppear];
-    }
-    
-    if (![BeintooDevice isiPad]) { // ------------ iPhone-iPod
-        BeintooNavigationController *_mainNavController = [Beintoo sharedInstance]->mainNavigationController;
-        
-        [_mainNavController prepareBeintooPanelOrientation];
-        [[Beintoo getApplicationWindow] addSubview:_mainNavController.view];
-        [_mainNavController show];
-    }
-    else {  // ----------- iPad
-        BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-        
-        [_iPadController preparePopoverOrientation];
-        [[Beintoo getApplicationWindow] addSubview:_iPadController.view];
-        [_iPadController showAchievementsPopover];
-    }
-}
-
-+ (void)_launchLeaderboardOnApp
-{
-    if ([BeintooNetwork connectedToNetwork] == NO)
-    {
-        [BeintooNetwork showNoConnectionAlert];
-        return;
-    }
-    
-	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-    
-    Beintoo *beintooInstance                                  = [Beintoo sharedInstance];
-    [Beintoo initMainNavigationController];
-    BeintooLeaderboardVC *leaderboardVC = [[BeintooLeaderboardVC alloc] initWithNibName:@"BeintooLeaderboardVC" bundle:[NSBundle mainBundle]];
-    beintooInstance->mainNavigationController = [beintooInstance->mainNavigationController initWithRootViewController:leaderboardVC];
-    
-#ifdef BEINTOO_ARC_AVAILABLE
-    
-#else
-    [leaderboardVC release];
-#endif
-    
-    [Beintoo manageStatusBarOnLaunch];
-    
-    if ([_mainDelegate respondsToSelector:@selector(beintooWillAppear)]) {
-        [_mainDelegate beintooWillAppear];
-    }
-    
-    if (![BeintooDevice isiPad]) { // ------------ iPhone-iPod
-        BeintooNavigationController *_mainNavController = [Beintoo sharedInstance]->mainNavigationController;
-        
-        [_mainNavController prepareBeintooPanelOrientation];
-        [[Beintoo getApplicationWindow] addSubview:_mainNavController.view];
-        [_mainNavController show];
-    }
-    else {  // ----------- iPad
-        BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-        
-        [_iPadController preparePopoverOrientation];
-        [[Beintoo getApplicationWindow] addSubview:_iPadController.view];
-        [_iPadController showBestorePopover];
-    }
-}
-
-+ (void)_launchPrizeOnApp
-{
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-    
-	BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
-    
-    if (_prizeView.isVisible == NO){
-        if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertWillAppear)]) {
-            [_mainDelegate beintooPrizeAlertWillAppear];
-        }
-        
-        [_prizeView setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
-        [[Beintoo getApplicationWindow] addSubview:_prizeView];
-        
-        if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertDidAppear)]) {
-            [_mainDelegate beintooPrizeAlertDidAppear];
-        }	
-        [_prizeView setIsVisible:YES];
-    }
-}
-
-+ (void)_launchPrizeOnAppWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate
-{
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	
-    BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
-    
-    if (_prizeView.isVisible == NO){
-        _prizeView.globalDelegate = _beintooPrizeDelegate;
-    
-        if ([_beintooPrizeDelegate respondsToSelector:@selector(beintooPrizeAlertWillAppear)]) {
-            [_beintooPrizeDelegate beintooPrizeAlertWillAppear];
-        }
-        
-        if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertWillAppear)]) {
-            [_mainDelegate beintooPrizeAlertWillAppear];
-        }
-        
-        [_prizeView setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
-        [[Beintoo getApplicationWindow] addSubview:_prizeView];
-        
-        if ([_beintooPrizeDelegate respondsToSelector:@selector(beintooPrizeAlertDidAppear)]) {
-            [_beintooPrizeDelegate beintooPrizeAlertDidAppear];
-        }
-        
-        if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertDidAppear)]) {
-            [_mainDelegate beintooPrizeAlertDidAppear];
-        }
-        [_prizeView setIsVisible:YES];
-    }    
-}
-
-+ (void)_launchAd
-{
-	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-    
-	BPrize	*_adView = [Beintoo sharedInstance]->adView;
-    
-    if (_adView.isVisible == NO){
-        if ([_mainDelegate respondsToSelector:@selector(beintooAdWillAppear)]) {
-            [_mainDelegate beintooAdWillAppear];
-        }
-        
-        [_adView setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
-        [[Beintoo getApplicationWindow] addSubview:_adView];
-        
-        if ([_mainDelegate respondsToSelector:@selector(beintooAdDidAppear)]) {
-            [_mainDelegate beintooAdDidAppear];
-        }
-        [_adView setIsVisible:YES];
-    }
-}
-
-+ (void)_launchAdWithDelegate:(id<BeintooPrizeDelegate>)_beintooPrizeDelegate
-{
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	
-    BPrize	*_prizeView = [Beintoo sharedInstance]->adView;
-    
-    if (_prizeView.isVisible == NO){
-        _prizeView.globalDelegate = _beintooPrizeDelegate;
-        
-        if ([_beintooPrizeDelegate respondsToSelector:@selector(beintooAdWillAppear)]) {
-            [_beintooPrizeDelegate beintooAdWillAppear];
-        }
-        
-        if ([_mainDelegate respondsToSelector:@selector(beintooAdWillAppear)]) {
-            [_mainDelegate beintooAdWillAppear];
-        }
-        
-        [_prizeView setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
-        [[Beintoo getApplicationWindow] addSubview:_prizeView];
-        
-        if ([_beintooPrizeDelegate respondsToSelector:@selector(beintooAdDidAppear)]) {
-            [_beintooPrizeDelegate beintooAdDidAppear];
-        }
-        
-        if ([_mainDelegate respondsToSelector:@selector(beintooAdDidAppear)]) {
-            [_mainDelegate beintooAdDidAppear];
-        }
-        [_prizeView setIsVisible:YES];
-    }
-}
-
-+ (void)_launchGiveBedollarsWithDelegate:(id<BTemplateGiveBedollarsDelegate>)_delegate position:(int)position
-{
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	
-    BTemplateGiveBedollars	*template = [Beintoo sharedInstance]->giveBedollarsView;
-    
-    if (template.isVisible == NO){
-        template.notificationPosition = position;
-        
-        template.globalDelegate = _delegate;
-        
-        if ([_delegate respondsToSelector:@selector(beintooGiveBedollarsWillAppear)]) {
-            [_delegate beintooGiveBedollarsWillAppear];
-        }
-        
-        if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsWillAppear)]) {
-            [_mainDelegate beintooGiveBedollarsWillAppear];
-        }
-        
-        [template setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
-        [[Beintoo getApplicationWindow] addSubview:template];
-        
-        if ([_delegate respondsToSelector:@selector(beintooGiveBedollarsDidAppear)]) {
-            [_delegate beintooGiveBedollarsDidAppear];
-        }
-        
-        if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsDidAppear)]) {
-            [_mainDelegate beintooGiveBedollarsDidAppear];
-        }
-        [template setIsVisible:YES];
-    }
-}
-
-- (void)dismissGiveBedollars
-{    
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-    
-    BTemplateGiveBedollars	*_prizeView = [Beintoo sharedInstance]->giveBedollarsView;
-    
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooGiveBedollarsWillDisappear)]) {
-		[[_prizeView globalDelegate] beintooGiveBedollarsWillDisappear];
-	}
-    
-    if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsWillDisappear)]) {
-		[_mainDelegate beintooGiveBedollarsWillDisappear];
-	}
-    
-	if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooGiveBedollarsDidDisappear)]) {
-		[[_prizeView globalDelegate] beintooGiveBedollarsDidDisappear];
-	}
-    
-	if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsDidDisappear)]) {
-		[_mainDelegate beintooGiveBedollarsDidDisappear];
-	}
-    
-    [_prizeView setIsVisible:NO];
-}
-
-+ (void)_launchMissionOnApp
-{
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	
-    BMissionView	*_missionView = [Beintoo sharedInstance]->missionView;
-	
-    [Beintoo manageStatusBarOnLaunch];
-    
-	if ([_mainDelegate respondsToSelector:@selector(beintooWillAppear)]) {
-		[_mainDelegate beintooWillAppear];
-	}	
-	
-	[_missionView setMissionContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
-	[[Beintoo getApplicationWindow] addSubview:_missionView];
-	[_missionView show];
-	
-	if ([_mainDelegate respondsToSelector:@selector(beintooDidAppear)]) {
-		[_mainDelegate beintooDidAppear];
-	}	
-}
-
-+ (void)_launchSignupOnApp
-{
-    if ([Beintoo isUserLogged]){
-        [Beintoo playerLogout];
-    }
-    
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-    
-    Beintoo *beintooInstance                                  = [Beintoo sharedInstance];
-    [Beintoo initMainNavigationController];
-    beintooInstance->beintooPanelRootViewController     = [[BeintooVC alloc] init];
-    beintooInstance->beintooPanelRootViewController.forceSignup = YES;
-    
-    beintooInstance->mainNavigationController = [beintooInstance->mainNavigationController initWithRootViewController:beintooInstance->beintooPanelRootViewController];
-    
-#ifdef BEINTOO_ARC_AVAILABLE
-    
-#else
-    [[Beintoo sharedInstance]->beintooPanelRootViewController release];
-#endif
-    
-    [Beintoo manageStatusBarOnLaunch];
-    
-    if ([_mainDelegate respondsToSelector:@selector(beintooWillAppear)]) {
-        [_mainDelegate beintooWillAppear];
-    }
-    
-    if (![BeintooDevice isiPad]) { // ------------ iPhone-iPod
-        BeintooNavigationController *_mainNavController = [Beintoo sharedInstance]->mainNavigationController;
-        
-        [_mainNavController prepareBeintooPanelOrientation];
-        [[Beintoo getApplicationWindow] addSubview:_mainNavController.view];
-        _mainNavController.isSignupDirectLaunch = YES;
-        [_mainNavController show];
-    }
-    else {  // ----------- iPad
-        BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-        
-        [_iPadController preparePopoverOrientation];
-        [[Beintoo getApplicationWindow] addSubview:_iPadController.view];
-        [_iPadController showBeintooPopover];
-    }
-}
-
-+ (void)_launchPrivateNotificationsOnApp
-{
-	Beintoo *beintooInstance                    = [Beintoo sharedInstance];
-    [Beintoo initPrivateSignupNavigationController];
-    
-    [Beintoo initPrivateNotificationsNavigationController];
-    
-     beintooInstance->beintooNotificationsVC     = [[BeintooNotificationListVC alloc] init];
-    beintooInstance->privateNotificationsNavigationController = [beintooInstance->privateNotificationsNavigationController initWithRootViewController:beintooInstance->beintooNotificationsVC];
-
-    
-    if (![BeintooDevice isiPad]) { // ------------ iPhone-iPod        
-        BeintooNavigationController *_mainNavController = [Beintoo sharedInstance]->privateNotificationsNavigationController;
-        
-		[_mainNavController prepareBeintooPanelOrientation];
-		[[Beintoo getApplicationWindow] addSubview:_mainNavController.view];
-		[_mainNavController show];
-	}
-	else {  // ----------- iPad
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-        
-		[_iPadController preparePopoverOrientation]; 
-		[[Beintoo getApplicationWindow] addSubview:_iPadController.view];
-		[_iPadController showPrivateNotificationsPopover];
-	}
-}
-
-+ (void)_launchPrivateSignupOnApp
-{
-	Beintoo *beintooInstance                                  = [Beintoo sharedInstance];
-    
-    [Beintoo initPrivateSignupNavigationController];
-    
-    BeintooLoginVC *beintooLoginVC = [[BeintooLoginVC alloc] initWithNibName:@"BeintooLoginVC" bundle:[NSBundle mainBundle]];
-    beintooInstance->privateSignupNavigationController = [beintooInstance->privateSignupNavigationController initWithRootViewController:beintooLoginVC];
-    
-    if (![BeintooDevice isiPad]) { // ------------ iPhone-iPod        
-        BeintooNavigationController *_mainNavController = [Beintoo sharedInstance]->privateSignupNavigationController;
-        
-		[_mainNavController prepareBeintooPanelOrientation];
-		[[Beintoo getApplicationWindow] addSubview:_mainNavController.view];
-		[_mainNavController show];
-	}
-	else {  // ----------- iPad
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-        
-		[_iPadController preparePopoverOrientation]; 
-		[[Beintoo getApplicationWindow] addSubview:_iPadController.view];
-		[_iPadController showPrivateSignupPopover];
-	}
-}
-
-+ (void)_launchIpadLogin
-{
-	if ([BeintooDevice isiPad]) {
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		[_iPadController showLoginPopover];
-	}
-}
-
-+ (void)_dismissIpadLogin
-{
-	if ([BeintooDevice isiPad]) {
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		[_iPadController hideLoginPopover];
-	}	
-}
-
-+ (void)_launchIpadNotifications
-{
-	if ([BeintooDevice isiPad]) {
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		[_iPadController showPrivateNotificationsPopover];
-	}
-}
-
-+ (void)_dismissIpadNotifications
-{
-	if ([BeintooDevice isiPad]) {
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		[_iPadController hidePrivateNotificationsPopover];
-	}
-}
-
-+ (void)_dismissBeintoo
-{
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-    
-	if ([_mainDelegate respondsToSelector:@selector(beintooWillDisappear)]) {
-		[_mainDelegate beintooWillDisappear];
-	}
-		
+    // Let's show the status bar, if needed
     [Beintoo manageStatusBarOnDismiss];
     
-    BeintooNavigationController *_mainController = [Beintoo sharedInstance]->mainNavigationController;
+    BeintooMainController *rootController = (BeintooMainController *)controller;
     
-	if (![BeintooDevice isiPad]) { // iPhone-iPod
-				
-		[_mainController popToRootViewControllerAnimated:NO];
-		[_mainController hide];
+    if (rootController.type == NAV_TYPE_MAIN)
+        [Beintoo  beintooWillDisappear];
+    
+    /*
+    **  Let's dismiss the controller
+    **  check for iOS 6.0 or greater selector dismissViewControllerAnimated:completion:
+    */
+    
+	if ([rootController respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]){
+        [rootController dismissViewControllerAnimated:YES
+                                            completion:^(void){
+                                                if (rootController.type == NAV_TYPE_MAIN)
+                                                    [Beintoo beintooDidDisappear];
+                                            }
+         ];
+    }
+    else
+    {
+        [rootController dismissModalViewControllerAnimated:YES];
+        
+        if (rootController.type == NAV_TYPE_MAIN)
+            [Beintoo beintooDidDisappear];
+    }
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    
+#else
+    [controller release];
+#endif
+    
+}
+
+#pragma mark - Reward methods
+
++ (void)_showReward:(BRewardWrapper *)reward
+{
+    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+    
+    BTemplate *_prizeView = [[BTemplate alloc] initWithReward:reward];
+    
+    if ([_mainDelegate respondsToSelector:@selector(beintooRewardWillAppear)]) {
+        [_mainDelegate beintooRewardWillAppear];
+    }
+    
+    [_prizeView setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
+    [[Beintoo getApplicationWindow] addSubview:_prizeView];
+   
+    if ([_mainDelegate respondsToSelector:@selector(beintooRewardDidAppear)]) {
+        [_mainDelegate beintooRewardDidAppear];
+    }
+    
+    [_prizeView setIsVisible:YES];
+}
+
++ (void)_showReward:(BRewardWrapper *)reward withDelegate:(id)_delegate
+{
+    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+    
+    BTemplate	*_prizeView = [[BTemplate alloc] initWithReward:reward];
+    _prizeView.delegate = _delegate;
+    
+    if (_prizeView.isVisible == NO){
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooRewardWillAppear)]) {
+            [_mainDelegate beintooRewardWillAppear];
+        }
+        
+        if ([_delegate respondsToSelector:@selector(beintooRewardWillAppear)]) {
+            [_delegate beintooRewardWillAppear];
+        }
+        
+        [_prizeView setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
+        [[Beintoo getApplicationWindow] addSubview:_prizeView];
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooRewardDidAppear)]) {
+            [_mainDelegate beintooRewardDidAppear];
+        }
+
+        if ([_delegate respondsToSelector:@selector(beintooRewardDidAppear)]) {
+            [_delegate beintooRewardDidAppear];
+        }
+        
+        [_prizeView setIsVisible:YES];
+    }
+}
+
++ (void)_hideReward:(BTemplate *)reward
+{
+    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+    
+    BTemplate *_prizeView = reward;
+    id _delegate = _prizeView.delegate;
+    
+   if ([_mainDelegate respondsToSelector:@selector(beintooRewardWillDisappear)]) {
+        [_mainDelegate beintooRewardWillDisappear];
+    }
+    
+    if ([_delegate respondsToSelector:@selector(beintooRewardWillDisappear)]) {
+        [_delegate beintooRewardWillDisappear];
+    }
+    
+    if ([_mainDelegate respondsToSelector:@selector(beintooRewardDidDisappear)]) {
+        [_mainDelegate beintooRewardDidDisappear];
+    }
+    
+    if ([_delegate respondsToSelector:@selector(beintooRewardDidDisappear)]) {
+        [_delegate beintooRewardDidDisappear];
+    }
+}
+
++ (void)_reward:(BTemplate *)reward launchRewardControllerWithURL:(NSString *)URL
+{
+	[Beintoo manageStatusBarOnLaunch];
+    
+    BeintooMainController *mainNavigatorController          = [BeintooMainController alloc];
+    
+    BTemplateVC *templateVC = [BTemplateVC alloc];
+    templateVC.URL = URL;
+    templateVC.type = REWARD;
+    templateVC = [templateVC init];
+    
+    mainNavigatorController = [mainNavigatorController initWithRootViewController:templateVC];
+    mainNavigatorController.templateVC = templateVC;
+    mainNavigatorController.template = reward;
+    
+    [Beintoo sharedInstance]->mainController = mainNavigatorController;
+    
+    id<BeintooMainDelegate>	  _mainDelegate         = [Beintoo sharedInstance]->mainDelegate;
+    
+    if ([[reward globalDelegate] respondsToSelector:@selector(beintooRewardControllerWillAppear)]) {
+		[[reward globalDelegate] beintooRewardControllerWillAppear];
 	}
-	else {  // ----------- iPad
-		
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		[_iPadController.popoverController dismissPopoverAnimated:NO];
-		
-        [_iPadController hideBeintooPopover];
+	
+    if ([_mainDelegate respondsToSelector:@selector(beintooRewardControllerWillAppear)]) {
+		[_mainDelegate beintooRewardControllerWillAppear];
 	}
+    
+    UIViewController *controller = [Beintoo getApplicationWindow].rootViewController;
+    if ([UIApplication sharedApplication].keyWindow.rootViewController.presentedViewController != nil)
+    {
+        controller = [UIApplication sharedApplication].keyWindow.rootViewController.presentedViewController;
+    }
+    
+    for (UIView *subview in [Beintoo getApplicationWindow].subviews)
+    {
+        if ( [subview isKindOfClass:[BTemplate class]] || [subview isKindOfClass:[BTemplateGiveBedollars class]] || [subview isKindOfClass:[BMissionTemplate class]] )
+        {
+            [subview removeFromSuperview];
+        }
+    }
+    
+    if ([controller respondsToSelector:@selector(presentViewController:animated:completion:)])
+    {
+        [controller presentViewController:mainNavigatorController animated:YES
+                                                                      completion:^(void){
+                                                                          
+                                                                          if ([[reward globalDelegate] respondsToSelector:@selector(beintooRewardControllerDidAppear)]) {
+                                                                              [[reward globalDelegate] beintooRewardControllerDidAppear];
+                                                                          }
+                                                                          
+                                                                          if ([_mainDelegate respondsToSelector:@selector(beintooRewardControllerDidAppear)]) {
+                                                                              [_mainDelegate beintooRewardControllerDidAppear];
+                                                                          }
+                                                                      }];
+    }
+    else
+    {
+        [controller presentModalViewController:mainNavigatorController animated:YES];
+        
+        if ([[reward globalDelegate] respondsToSelector:@selector(beintooRewardControllerDidAppear)]) {
+            [[reward globalDelegate] beintooRewardControllerDidAppear];
+        }
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooRewardControllerDidAppear)]) {
+            [_mainDelegate beintooRewardControllerDidAppear];
+        }
+    }
+}
+
++ (void)_dismissRewardController
+{
+    // Let's show the status bar, if needed
+    [Beintoo manageStatusBarOnDismiss];
+    
+    BeintooMainController *_mainController = [Beintoo sharedInstance]->mainController;
+    BTemplate *template = _mainController.template;
+    
+    id<BeintooMainDelegate> _mainDelegate         = [Beintoo sharedInstance]->mainDelegate;
+    
+    if ([[template globalDelegate] respondsToSelector:@selector(beintooRewardControllerWillDisappear)]) {
+		[[template globalDelegate] beintooRewardControllerWillDisappear];
+	}
+	
+    if ([_mainDelegate respondsToSelector:@selector(beintooRewardControllerWillDisappear)]) {
+		[_mainDelegate beintooRewardControllerWillDisappear];
+	}
+    
+    /*
+     **  Let's dismiss the controller
+     **  check for iOS 6.0 or greater selector dismissViewControllerAnimated:completion:
+     */
+    
+	if ([_mainController respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]){
+        [_mainController dismissViewControllerAnimated:YES
+                                            completion:^(void){
+                                                if ([[template globalDelegate] respondsToSelector:@selector(beintooRewardControllerDidDisappear)]) {
+                                                    [[template globalDelegate] beintooRewardControllerDidDisappear];
+                                                }
+                                                
+                                                if ([_mainDelegate respondsToSelector:@selector(beintooRewardControllerDidDisappear)]) {
+                                                    [_mainDelegate beintooRewardControllerDidDisappear];
+                                                }
+                                            }
+         ];
+    }
+    else
+    {
+        [_mainController dismissModalViewControllerAnimated:YES];
+        
+        if ([[template globalDelegate] respondsToSelector:@selector(beintooRewardControllerDidDisappear)]) {
+            [[template globalDelegate] beintooRewardControllerDidDisappear];
+        }
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooRewardControllerDidDisappear)]) {
+            [_mainDelegate beintooRewardControllerDidDisappear];
+        }
+    }
     
 #ifdef BEINTOO_ARC_AVAILABLE
     
@@ -1264,160 +860,431 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
     
 }
 
-+ (void)_dismissSignup
+#pragma mark - Ad methods
+
++ (void)_showAd:(BAdWrapper *)wrapper
 {
-	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
     
-	if ([_mainDelegate respondsToSelector:@selector(beintooWillDisappear)]) {
-		[_mainDelegate beintooWillDisappear];
+    BTemplate *_prizeView = [[BTemplate alloc] initWithAd:wrapper];
+    
+    if ([_mainDelegate respondsToSelector:@selector(beintooAdWillAppear)]) {
+        [_mainDelegate beintooAdWillAppear];
+    }
+    
+    [_prizeView setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
+    [[Beintoo getApplicationWindow] addSubview:_prizeView];
+    
+    if ([_mainDelegate respondsToSelector:@selector(beintooAdDidAppear)]) {
+        [_mainDelegate beintooAdDidAppear];
+    }
+    
+    [_prizeView setIsVisible:YES];
+}
+
++ (void)_showAd:(BAdWrapper *)wrapper withDelegate:(id)_delegate
+{
+    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+    
+    BTemplate *_prizeView = [[BTemplate alloc] initWithAd:wrapper];
+    _prizeView.delegate = _delegate;
+    
+    if (_prizeView.isVisible == NO){
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooAdWillAppear)]) {
+            [_mainDelegate beintooAdWillAppear];
+        }
+        
+        if ([_delegate respondsToSelector:@selector(beintooAdWillAppear)]) {
+            [_delegate beintooAdWillAppear];
+        }
+        
+        [_prizeView setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
+        [[Beintoo getApplicationWindow] addSubview:_prizeView];
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooAdDidAppear)]) {
+            [_mainDelegate beintooAdDidAppear];
+        }
+        
+        if ([_delegate respondsToSelector:@selector(beintooAdDidAppear)]) {
+            [_delegate beintooAdDidAppear];
+        }
+        
+        [_prizeView setIsVisible:YES];
+    }
+}
+
++ (void)_hideAd:(BTemplate *)template
+{
+    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+    
+    BTemplate	*_prizeView = template;
+    id _delegate = _prizeView.delegate;
+    
+    if ([_mainDelegate respondsToSelector:@selector(beintooAdWillDisappear)]) {
+        [_mainDelegate beintooAdWillDisappear];
+    }
+    
+    if ([_delegate respondsToSelector:@selector(beintooAdWillDisappear)]) {
+        [_delegate beintooAdWillDisappear];
+    }
+    
+    if ([_mainDelegate respondsToSelector:@selector(beintooAdDidDisappear)]) {
+        [_mainDelegate beintooAdDidDisappear];
+    }
+    
+    if ([_delegate respondsToSelector:@selector(beintooAdDidDisappear)]) {
+        [_delegate beintooAdDidDisappear];
+    }
+    
+    [Beintoo sharedInstance]->lastGeneratedAd = nil;
+}
+
++ (void)_ad:(BTemplate *)template launchAdControllerWithURL:(NSString *)URL
+{
+	[Beintoo manageStatusBarOnLaunch];
+    
+    BeintooMainController *mainNavigatorController          = [BeintooMainController alloc];
+    
+    BTemplateVC *templateVC = [BTemplateVC alloc];
+    templateVC.URL = URL;
+    templateVC.type = AD;
+    templateVC = [templateVC init];
+    
+    mainNavigatorController = [mainNavigatorController initWithRootViewController:templateVC];
+    mainNavigatorController.templateVC = templateVC;
+    mainNavigatorController.template = template;
+    
+    [Beintoo sharedInstance]->mainAdController = mainNavigatorController;
+    
+    id<BeintooMainDelegate>	  _mainDelegate         = [Beintoo sharedInstance]->mainDelegate;
+    
+    if ([[template globalDelegate] respondsToSelector:@selector(beintooAdControllerWillAppear)]) {
+		[[template globalDelegate] beintooAdControllerWillAppear];
+	}
+	
+    if ([_mainDelegate respondsToSelector:@selector(beintooAdControllerWillAppear)]) {
+		[_mainDelegate beintooAdControllerWillAppear];
 	}
     
+    UIViewController *controller = [Beintoo getApplicationWindow].rootViewController;
+    if ([UIApplication sharedApplication].keyWindow.rootViewController.presentedViewController != nil)
+    {
+        controller = [UIApplication sharedApplication].keyWindow.rootViewController.presentedViewController;
+    }
+    
+    for (UIView *subview in [Beintoo getApplicationWindow].subviews)
+    {
+        if ( [subview isKindOfClass:[BTemplate class]] || [subview isKindOfClass:[BTemplateGiveBedollars class]] || [subview isKindOfClass:[BMissionTemplate class]] )
+        {
+            [subview removeFromSuperview];
+        }
+    }
+    
+    if ([controller respondsToSelector:@selector(presentViewController:animated:completion:)])
+    {
+        [controller presentViewController:mainNavigatorController animated:YES
+                                                                      completion:^(void){
+                                                                          
+                                                                          if ([[template globalDelegate] respondsToSelector:@selector(beintooAdControllerDidAppear)]) {
+                                                                              [[template globalDelegate] beintooAdControllerDidAppear];
+                                                                          }
+                                                                          
+                                                                          if ([_mainDelegate respondsToSelector:@selector(beintooAdControllerDidAppear)]) {
+                                                                              [_mainDelegate beintooAdControllerDidAppear];
+                                                                          }
+                                                                      }];
+    }
+    else {
+        [controller presentModalViewController:mainNavigatorController animated:YES];
+        
+        if ([[template globalDelegate] respondsToSelector:@selector(beintooAdControllerDidAppear)]) {
+            [[template globalDelegate] beintooAdControllerDidAppear];
+        }
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooAdControllerDidAppear)]) {
+            [_mainDelegate beintooAdControllerDidAppear];
+        }
+    }
+    
+    [Beintoo sharedInstance]->lastGeneratedAd = nil;
+}
+
++ (void)_dismissAdController
+{
+    // Let's show the status bar, if needed
     [Beintoo manageStatusBarOnDismiss];
     
-	if (![BeintooDevice isiPad]) { // iPhone-iPod
-        
-		BeintooNavigationController *_mainController = [Beintoo sharedInstance]->signupNavigationController;
-        
-        [_mainController hide];
-        
-#ifdef BEINTOO_ARC_AVAILABLE
-        
-#else
-        [_mainController release];
-#endif
-
+    BeintooMainController *_mainController = [Beintoo sharedInstance]->mainAdController;
+    BTemplate *template = _mainController.template;
+    
+    id<BeintooMainDelegate> _mainDelegate         = [Beintoo sharedInstance]->mainDelegate;
+    
+    if ([[template globalDelegate] respondsToSelector:@selector(beintooAdControllerWillDisappear)]) {
+		[[template globalDelegate] beintooAdControllerWillDisappear];
 	}
-	else {  // ----------- iPad
-		
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		[_iPadController.popoverController dismissPopoverAnimated:NO];
-		if (_iPadController.isLoginOngoing) {
-			[_iPadController.loginPopoverController dismissPopoverAnimated:NO];
-		}
-		[_iPadController hideSignupPopover];
+	
+    if ([_mainDelegate respondsToSelector:@selector(beintooAdControllerWillDisappear)]) {
+		[_mainDelegate beintooAdControllerWillDisappear];
 	}
+    
+    /*
+     **  Let's dismiss the controller
+     **  check for iOS 6.0 or greater selector dismissViewControllerAnimated:completion:
+     */
+    
+	if ([_mainController respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]){
+        [_mainController dismissViewControllerAnimated:YES
+                                            completion:^(void){
+                                                if ([[template globalDelegate] respondsToSelector:@selector(beintooAdControllerDidDisappear)]) {
+                                                    [[template globalDelegate] beintooAdControllerDidDisappear];
+                                                }
+                                                
+                                                if ([_mainDelegate respondsToSelector:@selector(beintooAdControllerDidDisappear)]) {
+                                                    [_mainDelegate beintooAdControllerDidDisappear];
+                                                }
+                                            }
+         ];
+    }
+    else
+    {
+        [_mainController dismissModalViewControllerAnimated:YES];
+        
+        if ([[template globalDelegate] respondsToSelector:@selector(beintooAdControllerDidDisappear)]) {
+            [[template globalDelegate] beintooAdControllerDidDisappear];
+        }
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooAdControllerDidDisappear)]) {
+            [_mainDelegate beintooAdControllerDidDisappear];
+        }
+    }
     
 #ifdef BEINTOO_ARC_AVAILABLE
     
 #else
-    [[Beintoo sharedInstance]->beintooPanelRootViewController release];
+    [_mainController release];
+    [template release];
 #endif
     
 }
 
-+ (void)_dismissBeintoo:(int)type
-{    
-        id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-        
-        if (!(type == NAV_TYPE_SIGNUP_PRIVATE || type == NAV_TYPE_NOTIFICATIONS_PRIVATE)){
-            if ([_mainDelegate respondsToSelector:@selector(beintooWillDisappear)]) {
-                [_mainDelegate beintooWillDisappear];
-            }
-            [Beintoo manageStatusBarOnDismiss];
-        }
-        
-        BeintooNavigationController *mainController;
-        
-        if (![BeintooDevice isiPad]) { // iPhone-iPod
-            
-            if (type == NAV_TYPE_BESTORE)
-                mainController = [Beintoo sharedInstance]->bestoreNavigationController;
-            else if (type == NAV_TYPE_LEADERBOARD)
-                mainController = [Beintoo sharedInstance]->leaderboardNavigationController;
-            else if (type == NAV_TYPE_ACHIEVEMENTS)
-                mainController = [Beintoo sharedInstance]->achievementsNavigationController;
-            else if (type == NAV_TYPE_MYOFFERS)
-                mainController = [Beintoo sharedInstance]->myoffersNavigationController;
-            else if (type == NAV_TYPE_NOTIFICATIONS)
-                mainController = [Beintoo sharedInstance]->notificationsNavigationController;
-            else if (type == NAV_TYPE_SIGNUP){
-                
-#ifdef BEINTOO_ARC_AVAILABLE
-#else
-                [[Beintoo sharedInstance]->beintooPanelRootViewController release];
-#endif
-                
-                mainController = [Beintoo sharedInstance]->signupNavigationController;
-            }
-            else if (type == NAV_TYPE_SIGNUP_PRIVATE)
-                mainController = [Beintoo sharedInstance]->privateSignupNavigationController;
-            else if (type == NAV_TYPE_NOTIFICATIONS_PRIVATE)
-                mainController = [Beintoo sharedInstance]->privateNotificationsNavigationController;
-            else if (type == NAV_TYPE_MAIN){
-                
-#ifdef BEINTOO_ARC_AVAILABLE
-#else
-                [[Beintoo sharedInstance]->beintooPanelRootViewController release];
-#endif
-                
-                mainController = [Beintoo sharedInstance]->mainNavigationController;
-            }
-            
-            [mainController hide];
-            
-#ifdef BEINTOO_ARC_AVAILABLE
-            
-#else
-            [mainController release];
-#endif
-        
-        }
-        else {  // ----------- iPad
-            
-            BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-            
-            [_iPadController.popoverController dismissPopoverAnimated:NO];
-            
-            if (type == NAV_TYPE_BESTORE)
-                [_iPadController hideBestorePopover];
-            else if (type == NAV_TYPE_LEADERBOARD)
-                [_iPadController hideLeaderboardPopover];
-            else if (type == NAV_TYPE_ACHIEVEMENTS)
-                [_iPadController hideAchievementsPopover];
-            else if (type == NAV_TYPE_MYOFFERS)
-                [_iPadController hideMyOffersPopover];
-            else if (type == NAV_TYPE_NOTIFICATIONS)
-                [_iPadController hideNotificationsPopover];
-            else if (type == NAV_TYPE_SIGNUP)
-                [_iPadController hideSignupPopover];
-            else if (type == NAV_TYPE_NOTIFICATIONS_PRIVATE)
-                [_iPadController hidePrivateNotificationsPopover];
-            else if (type == NAV_TYPE_SIGNUP_PRIVATE)
-                [_iPadController hidePrivateSignupPopover];
-            else if (type == NAV_TYPE_MAIN)
-                [_iPadController hideBeintooPopover];
-        }
-}
+#pragma mark - Give Bedollars methods
 
-/*
- * Dismiss not animated: immediately remove the Beintoo view (no animation, behaviour similar to 
- * [UIViewController dismissModalViewControllerAnimated:NO]
- */
-
-+ (void)_dismissBeintooNotAnimated
++ (void)_showGiveBedollars:(BGiveBedollarsWrapper *)wrapper withDelegate:(id)delegate position:(int)position
 {
-    [Beintoo manageStatusBarOnDismiss];
-
     id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
 	
-	if ([_mainDelegate respondsToSelector:@selector(beintooWillDisappear)]) {
-		[_mainDelegate beintooWillDisappear];
+    BTemplateGiveBedollars *template = [[BTemplateGiveBedollars alloc] initWithContent:wrapper];
+    
+    if (template.isVisible == NO){
+        template.notificationPosition = position;
+        template.globalDelegate = delegate;
+        
+        if ([delegate respondsToSelector:@selector(beintooGiveBedollarsWillAppear)]) {
+            [delegate beintooGiveBedollarsWillAppear];
+        }
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsWillAppear)]) {
+            [_mainDelegate beintooGiveBedollarsWillAppear];
+        }
+        
+        [template setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
+        [[Beintoo getApplicationWindow] addSubview:template];
+        
+        if ([delegate respondsToSelector:@selector(beintooGiveBedollarsDidAppear)]) {
+            [delegate beintooGiveBedollarsDidAppear];
+        }
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsDidAppear)]) {
+            [_mainDelegate beintooGiveBedollarsDidAppear];
+        }
+        [template setIsVisible:YES];
+    }
+}
+
++ (void)_hideGiveBedollars:(BTemplateGiveBedollars *)template
+{    
+    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+    
+    BTemplateGiveBedollars *_prizeView = template;
+    id _delegate = _prizeView.delegate;
+    
+    if ([_delegate respondsToSelector:@selector(beintooGiveBedollarsWillDisappear)]) {
+		[_delegate beintooGiveBedollarsWillDisappear];
 	}
     
-	if (![BeintooDevice isiPad]) { // iPhone-iPod
+    if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsWillDisappear)]) {
+		[_mainDelegate beintooGiveBedollarsWillDisappear];
+	}
+    
+	if ([_delegate respondsToSelector:@selector(beintooGiveBedollarsDidDisappear)]) {
+		[_delegate beintooGiveBedollarsDidDisappear];
+	}
+    
+	if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsDidDisappear)]) {
+		[_mainDelegate beintooGiveBedollarsDidDisappear];
+	}
+}
+
++ (void)_giveBedollars:(BTemplateGiveBedollars *)template launchControllerWithURL:(NSString *)URL
+{
+    [Beintoo manageStatusBarOnLaunch];
+    
+    BeintooMainController *mainNavigatorController          = [BeintooMainController alloc];
+    
+    BTemplateVC *templateVC = [BTemplateVC alloc];
+    templateVC.URL = URL;
+    templateVC.type = GIVE_BEDOLLARS;
+    templateVC = [templateVC init];
+    
+    mainNavigatorController = [mainNavigatorController initWithRootViewController:templateVC];
+    mainNavigatorController.templateVC = templateVC;
+    mainNavigatorController.templateGB = template;
+    
+    [Beintoo sharedInstance]->mainGbController = mainNavigatorController;
+    
+    id<BeintooMainDelegate>	  _mainDelegate         = [Beintoo sharedInstance]->mainDelegate;
+    id delegate = [template delegate];
+    
+    if ([delegate respondsToSelector:@selector(beintooGiveBedollarsControllerWillAppear)]) {
+		[delegate beintooGiveBedollarsControllerWillAppear];
+	}
+	
+    if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsControllerWillAppear)]) {
+		[_mainDelegate beintooGiveBedollarsControllerWillAppear];
+	}
+    
+    UIViewController *controller = [Beintoo getApplicationWindow].rootViewController;
+    if ([UIApplication sharedApplication].keyWindow.rootViewController.presentedViewController != nil)
+    {
+        controller = [UIApplication sharedApplication].keyWindow.rootViewController.presentedViewController;
+    }
+    
+    for (UIView *subview in [Beintoo getApplicationWindow].subviews)
+    {
+        if ( [subview isKindOfClass:[BTemplate class]] || [subview isKindOfClass:[BTemplateGiveBedollars class]] || [subview isKindOfClass:[BMissionTemplate class]] )
+        {
+            [subview removeFromSuperview];
+        }
+    }
+    
+    if ([controller respondsToSelector:@selector(presentViewController:animated:completion:)])
+    {
+        [controller presentViewController:mainNavigatorController animated:YES
+                                                                      completion:^(void){
+                                                                          
+                                                                          if ([delegate respondsToSelector:@selector(beintooGiveBedollarsControllerDidAppear)]) {
+                                                                              [delegate beintooGiveBedollarsControllerDidAppear];
+                                                                          }
+                                                                          
+                                                                          if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsControllerDidAppear)]) {
+                                                                              [_mainDelegate beintooGiveBedollarsControllerDidAppear];
+                                                                          }
+                                                                      }];
+    }
+    else {
+        [controller presentModalViewController:mainNavigatorController animated:YES];
         
-		BeintooNavigationController *_mainController = [Beintoo sharedInstance]->mainNavigationController;
-		[_mainController hideNotAnimated];
+        if ([delegate respondsToSelector:@selector(beintooGiveBedollarsControllerDidAppear)]) {
+            [delegate beintooGiveBedollarsControllerDidAppear];
+        }
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsControllerDidAppear)]) {
+            [_mainDelegate beintooGiveBedollarsControllerDidAppear];
+        }
+    }
+}
+
++ (void)_giveBedollarsDismissController
+{
+    // Let's show the status bar, if needed
+    [Beintoo manageStatusBarOnDismiss];
+    
+    BeintooMainController *_mainController = [Beintoo sharedInstance]->mainGbController;
+    BTemplateGiveBedollars *template = _mainController.templateGB;
+    
+    id<BeintooMainDelegate> _mainDelegate         = [Beintoo sharedInstance]->mainDelegate;
+    
+    if ([[template globalDelegate] respondsToSelector:@selector(beintooGiveBedollarsControllerWillDisappear)]) {
+		[[template globalDelegate] beintooGiveBedollarsControllerWillDisappear];
 	}
-	else {  // ----------- iPad
-		
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		[_iPadController.popoverController dismissPopoverAnimated:NO];
-		if (_iPadController.isLoginOngoing) {
-			[_iPadController.loginPopoverController dismissPopoverAnimated:NO];
-		}
-		[_iPadController hideBeintooPopover];
+	
+    if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsControllerWillDisappear)]) {
+		[_mainDelegate beintooGiveBedollarsControllerWillDisappear];
 	}
+    
+    /*
+     **  Let's dismiss the controller
+     **  check for iOS 6.0 or greater selector dismissViewControllerAnimated:completion:
+     */
+    
+	if ([_mainController respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]){
+        [_mainController dismissViewControllerAnimated:YES
+                                            completion:^(void){
+                                                if ([[template globalDelegate] respondsToSelector:@selector(beintooGiveBedollarsControllerDidDisappear)]) {
+                                                    [[template globalDelegate] beintooGiveBedollarsControllerDidDisappear];
+                                                }
+                                                
+                                                if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsControllerDidDisappear)]) {
+                                                    [_mainDelegate beintooGiveBedollarsControllerDidDisappear];
+                                                }
+                                            }
+         ];
+    }
+    else
+    {
+        [_mainController dismissModalViewControllerAnimated:YES];
+        
+        if ([[template globalDelegate] respondsToSelector:@selector(beintooGiveBedollarsControllerDidDisappear)]) {
+            [[template globalDelegate] beintooGiveBedollarsControllerDidDisappear];
+        }
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsControllerDidDisappear)]) {
+            [_mainDelegate beintooGiveBedollarsControllerDidDisappear];
+        }
+    }
+    
+#ifdef BEINTOO_ARC_AVAILABLE
+    
+#else
+    [_mainController release];
+    [template release];
+#endif
+    
+}
+
++ (void)_launchMission:(BMissionTemplate *)_mission delegate:(id<BMissionTemplateDelegate>)_delegate
+{
+    //id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+	
+    BMissionTemplate *mission               = _mission;
+    id <BMissionTemplateDelegate> delegate  = _delegate;
+    
+    if (mission.isVisible == NO){
+        mission.globalDelegate = delegate;
+        
+        /* if ([delegate respondsToSelector:@selector(beintooPrizeAlertWillAppear)]) {
+            [delegate beintooPrizeAlertWillAppear];
+        }
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertWillAppear)]) {
+            [_mainDelegate beintooPrizeAlertWillAppear];
+        } */
+        
+        [mission setPrizeContentWithWindowSize:[Beintoo getApplicationWindow].bounds.size];
+        [[Beintoo getApplicationWindow] addSubview:mission];
+        [mission show];
+        
+       /* if ([_beintooPrizeDelegate respondsToSelector:@selector(beintooPrizeAlertDidAppear)]) {
+            [_beintooPrizeDelegate beintooPrizeAlertDidAppear];
+        }
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertDidAppear)]) {
+            [_mainDelegate beintooPrizeAlertDidAppear];
+        }*/
+        
+        [mission setIsVisible:YES];
+    }
 }
 
 + (void)_dismissMission
@@ -1430,140 +1297,123 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
 		[_mainDelegate beintooWillDisappear];
 	}
 	
-	if (![BeintooDevice isiPad]) { // iPhone-iPodTouch
-		BeintooMainController *_mainController = [Beintoo sharedInstance]->mainController;
-		[_mainController hideMissionVgoodNavigationController];
-	}
-	else {  // ----------- iPad
-		
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		[_iPadController.vgoodPopoverController dismissPopoverAnimated:NO];
-		[_iPadController hideMissionVgoodPopover];
-	}
+	//BeintooMainController *_mainController = [Beintoo sharedInstance]->mainController;
+   // [_mainController hideMissionVgoodNavigationController];
 }
 
-+ (void)_dismissPrize
+#pragma mark - Native Browser with Custom URL
+
++ (void)_launchControllerWithURL:(NSString *)URL
 {
-	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+	[Beintoo manageStatusBarOnLaunch];
     
-    [Beintoo manageStatusBarOnDismiss];
+    BTemplateVC *templateVC = [BTemplateVC alloc];
+    templateVC.URL = URL;
+    templateVC.type = CUSTOM_TYPE;
+    templateVC = [templateVC init];
     
-    BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeWillDisappear)]) {
-		[[_prizeView globalDelegate] beintooPrizeWillDisappear];
-	}
+    BeintooMainController *mainNavigatorController          = [BeintooMainController alloc];
+    mainNavigatorController = [mainNavigatorController initWithRootViewController:templateVC];
+    mainNavigatorController.templateVC = templateVC;
     
-	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeWillDisappear)]) {
-		[_mainDelegate beintooPrizeWillDisappear];
-	}
-	
-	if (![BeintooDevice isiPad]) { // iPhone-iPodTouch
-		BeintooMainController *_mainController = [Beintoo sharedInstance]->mainController;
-		[_mainController hideVgoodNavigationController];
-	}
-	else {  // ----------- iPad
-		
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		[_iPadController.vgoodPopoverController dismissPopoverAnimated:NO];
-		[_iPadController hideVgoodPopover];
-	}
+    id<BeintooMainDelegate>	  _mainDelegate         = [Beintoo sharedInstance]->mainDelegate;
     
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeDidDisappear)]) {
-		[[_prizeView globalDelegate] beintooPrizeDidDisappear];
-	}
+    UIViewController *controller = [Beintoo getApplicationWindow].rootViewController;
+    if ([UIApplication sharedApplication].keyWindow.rootViewController.presentedViewController != nil)
+    {
+        controller = [UIApplication sharedApplication].keyWindow.rootViewController.presentedViewController;
+    }
+    else {
+        [Beintoo beintooWillAppear];
+    }
     
-    [_prizeView setIsVisible:NO];
+    for (UIView *subview in [Beintoo getApplicationWindow].subviews)
+    {
+        if ( [subview isKindOfClass:[BTemplate class]] || [subview isKindOfClass:[BTemplateGiveBedollars class]] || [subview isKindOfClass:[BMissionTemplate class]] )
+        {
+            [subview removeFromSuperview];
+        }
+    }
+    
+    if ([[Beintoo getApplicationWindow] respondsToSelector:@selector(presentViewController:animated:completion:)])
+    {
+        [controller presentViewController:mainNavigatorController animated:YES
+                                                                      completion:^(void){
+                                                                          if ([_mainDelegate respondsToSelector:@selector(beintooDidAppear)]) {
+                                                                              [_mainDelegate beintooDidAppear];
+                                                                          }
+                                                                      }];
+    }
+    else
+    {
+        [controller presentModalViewController:mainNavigatorController animated:YES];
+        
+        if ([_mainDelegate respondsToSelector:@selector(beintooDidAppear)]) {
+            [_mainDelegate beintooDidAppear];
+        }
+    }
 }
 
-+ (void)_dismissAd
-{    
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-    
++ (void)_dismissController:(id)controller
+{
+    // Let's show the status bar, if needed
     [Beintoo manageStatusBarOnDismiss];
     
-    BPrize	*_prizeView = [Beintoo sharedInstance]->adView;
+    id<BeintooMainDelegate> _mainDelegate         = [Beintoo sharedInstance]->mainDelegate;
     
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooAdControllerWillDisappear)]) {
-		[[_prizeView globalDelegate] beintooAdControllerWillDisappear];
+    if ([_mainDelegate respondsToSelector:@selector(beintooWillAppear)]) {
+		[_mainDelegate beintooWillAppear];
 	}
     
-	if ([_mainDelegate respondsToSelector:@selector(beintooAdControllerWillDisappear)]) {
-		[_mainDelegate beintooAdControllerWillDisappear];
-	}
-	
-	if (![BeintooDevice isiPad]) { // iPhone-iPodTouch
-		BeintooMainController *_mainController = [Beintoo sharedInstance]->mainAdController;
-		[_mainController hideAdNavigationController];
-	}
-	else {  // ----------- iPad
-		
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		[_iPadController.adPopoverController dismissPopoverAnimated:NO];
-		[_iPadController hideAdPopover];
+    /*
+     **  Let's dismiss the controller
+     **  check for iOS 6.0 or greater selector dismissViewControllerAnimated:completion:
+     */
+    
+	if ([controller respondsToSelector:@selector(dismissViewControllerAnimated:completion:)]){
+        [controller dismissViewControllerAnimated:YES
+                                            completion:^(void){
+                                                if ([_mainDelegate respondsToSelector:@selector(beintooDidDisappear)]) {
+                                                    [_mainDelegate beintooDidDisappear];
+                                                }
+                                            }
+         ];
+    }
+    else
+    {
+        [controller dismissModalViewControllerAnimated:YES];
         
-	}
-    
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooAdControllerDidDisappear)]) {
-		[[_prizeView globalDelegate] beintooAdControllerDidDisappear];
-	}
-    
-    [_prizeView setIsVisible:NO];
+        if ([_mainDelegate respondsToSelector:@selector(beintooDidDisappear)]) {
+            [_mainDelegate beintooDidDisappear];
+        }
+    }
     
 #ifdef BEINTOO_ARC_AVAILABLE
     
 #else
-    [[Beintoo sharedInstance]->mainAdController release];
+    [controller release];
 #endif
     
 }
 
-+ (void)_dismissRecommendation
+#pragma mark - Player/User
+
++ (void)_setBeintooPlayer:(BPlayerWrapper *)_player
 {
-	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	
-    [Beintoo manageStatusBarOnDismiss];
-    
-	if (![BeintooDevice isiPad]) { // iPhone-iPodTouch
-		
-		if ([_mainDelegate respondsToSelector:@selector(beintooPrizeWillDisappear)]) {
-			[_mainDelegate beintooPrizeWillDisappear];
-		}
-		
-		BeintooMainController *_mainController = [Beintoo sharedInstance]->mainController;
-		_mainController.view.alpha = 0;
-		[_mainController.view removeFromSuperview];
-		
-		if ([_mainDelegate respondsToSelector:@selector(beintooPrizeDidDisappear)]) {
-			[_mainDelegate beintooPrizeDidDisappear];
-		}
-	}
-}
-
-#pragma mark -
-#pragma mark Player - user
-
-+ (void)_setBeintooPlayer:(NSDictionary *)_player
-{	
-	if (_player != nil && [_player objectForKey:@"guid"]!=nil) {
-		[[NSUserDefaults standardUserDefaults] setObject:_player forKey:BNSDefLoggedPlayer];
-		
-		// If the player is connected to a user, we also set the user
-		if ([_player objectForKey:@"user"]) {
-			[[NSUserDefaults standardUserDefaults] setObject:[_player objectForKey:@"user"] forKey:BNSDefLoggedUser];
-			[[NSUserDefaults standardUserDefaults] setBool:YES forKey:BNSDefIsUserLogged];
-		}
-		else {
-			[[NSUserDefaults standardUserDefaults] setBool:NO forKey:BNSDefIsUserLogged];
-		}
-		[[NSUserDefaults standardUserDefaults] synchronize];
-	}
+    @try
+    {
+        NSData *dataVal = [NSKeyedArchiver archivedDataWithRootObject:_player];
+        [[NSUserDefaults standardUserDefaults] setObject:dataVal forKey:BNSDefLoggedPlayer];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    @catch (NSException *exception) {
+        BeintooLOG(@"Exception on storing player, %@", exception);
+    }
 }
 
 + (void)_playerLogout
 {
-	[[NSUserDefaults standardUserDefaults] setBool:NO forKey:BNSDefIsUserLogged];
 	[[NSUserDefaults standardUserDefaults] setObject:nil forKey:BNSDefLoggedPlayer];
-	[[NSUserDefaults standardUserDefaults] setObject:nil forKey:BNSDefLoggedUser];
 	[[NSUserDefaults standardUserDefaults] synchronize];
     
     NSHTTPCookie *cookie;
@@ -1582,513 +1432,19 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
     }
 }
 
-+ (void)_setBeintooUser:(NSDictionary *)_user
++ (void)_setLastAd:(BAdWrapper *)wrapper
 {
-	if (_user != nil && [_user objectForKey:@"id"]) {
-		[[NSUserDefaults standardUserDefaults] setObject:_user forKey:BNSDefLoggedUser];
-		[[NSUserDefaults standardUserDefaults] setBool:YES forKey:BNSDefIsUserLogged];
-		[[NSUserDefaults standardUserDefaults] synchronize];
-	}
-}
-
-+ (void)_setBeintooUserFriends:(NSArray *)friends
-{	
-	if ([Beintoo isUserLogged] && [friends count] > 0) {
-		[[NSUserDefaults standardUserDefaults] setObject:friends forKey:BNSDefUserFriends];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-	}
-    else {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:BNSDefUserFriends];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-    }
-}
-
-+ (NSArray *)_getBeintooUserFriends
-{	
-	if ([Beintoo isUserLogged] && [[NSUserDefaults standardUserDefaults] objectForKey:BNSDefUserFriends]) {
-		return [[NSUserDefaults standardUserDefaults] objectForKey:BNSDefUserFriends];
-    }
-    return nil;
-}
-
-+ (BOOL)_isAFriendOfMine:(NSString *)_friendID
-{	
-	if ([Beintoo isUserLogged] && [[NSUserDefaults standardUserDefaults] objectForKey:BNSDefUserFriends]) {
-        NSArray *friendsArray = [Beintoo getBeintooUserFriends];
-        for (NSDictionary *singleFriend in friendsArray){
-            if ([[singleFriend objectForKey:@"id"] isEqualToString:_friendID]){
-                return YES;
-                break;
-            }
-        }
-    }
-    return NO;
-}
-
-+ (void)_setLastVgood:(BVirtualGood *)_vgood
-{
-    BPrize *_prize = [Beintoo sharedInstance]->prizeView;
-    if (_prize.isVisible == NO){
-        if ([Beintoo sharedInstance]->lastGeneratedGood != nil) {
+    if ([Beintoo sharedInstance]->lastGeneratedAd != nil) {
             
 #ifdef BEINTOO_ARC_AVAILABLE
             
 #else
-           [[Beintoo sharedInstance]->lastGeneratedGood release];
+        [[Beintoo sharedInstance]->lastGeneratedAd release];
 #endif
             
-        }
-        _prize.type = REWARD;
-        [Beintoo sharedInstance]->lastGeneratedGood     = _vgood;
     }
-}
-
-+ (void)_setLastAd:(BVirtualGood *)_ad
-{
-    BPrize *_adView = [Beintoo sharedInstance]->adView;
-    if (_adView.isVisible == NO){
-        if ([Beintoo sharedInstance]->lastGeneratedAd != nil) {
-            
-#ifdef BEINTOO_ARC_AVAILABLE
-            
-#else
-            [[Beintoo sharedInstance]->lastGeneratedAd release];
-#endif
-            
-        }
-         _adView.type = AD;
-        [Beintoo sharedInstance]->lastGeneratedAd     = _ad;
-    }
-}
-
-+ (void)_setLastLoggedPlayers:(NSArray *)_players
-{
-	if ([_players count] < 1) {
-		return;
-	}
-	[Beintoo sharedInstance]->lastLoggedPlayers = _players;
-}
-
-+ (void)_setLastGiveBedollars:(BVirtualGood *)_content
-{
-    BTemplateGiveBedollars *_giveBedollarsView = [Beintoo sharedInstance]->giveBedollarsView;
-    if (_giveBedollarsView.isVisible == NO){
-        if ([Beintoo sharedInstance]->lastGeneratedGiveBedollars != nil) {
-            
-#ifdef BEINTOO_ARC_AVAILABLE
-            
-#else
-            [[Beintoo sharedInstance]->lastGeneratedGiveBedollars release];
-#endif
-            
-        }
-        _giveBedollarsView.type = GIVE_BEDOLLARS;
-        [Beintoo sharedInstance]->lastGeneratedGiveBedollars     = _content;
-    }
-}
-
-#pragma mark - Virtual Currency Methods
-
-+ (void)_setDeveloperCurrencyName:(NSString *)_name
-{
-    [[NSUserDefaults standardUserDefaults] setObject:_name forKey:BNSDefDeveloperCurrencyName];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-+ (NSString *)_getDeveloperCurrencyName
-{
-    return [[NSUserDefaults standardUserDefaults] objectForKey:BNSDefDeveloperCurrencyName];
-}
-
-+ (void)_setDeveloperUserId:(NSString *)_id
-{
-    [[NSUserDefaults standardUserDefaults] setObject:_id forKey:BNSDefDeveloperLoggedUserId];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-+ (NSString *)_getDeveloperUserId
-{
-    return [[NSUserDefaults standardUserDefaults] objectForKey:BNSDefDeveloperLoggedUserId];
-}
-
-+ (void)_setDeveloperCurrencyValue:(float)_value
-{
-    [[NSUserDefaults standardUserDefaults] setFloat:_value forKey:BNSDefDeveloperCurrencyValue];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-+ (float)_getDeveloperCurrencyValue
-{
-    return [[NSUserDefaults standardUserDefaults] floatForKey:BNSDefDeveloperCurrencyValue];
-}
-
-+ (void)_removeStoredCurrencyAndUser
-{
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:BNSDefDeveloperCurrencyName];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:BNSDefDeveloperCurrencyValue];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:BNSDefDeveloperLoggedUserId];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-+ (void)_removeUserId
-{
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:BNSDefDeveloperLoggedUserId];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-+ (BOOL)_isCurrencyStored
-{
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:BNSDefDeveloperCurrencyName] != nil && [[[NSUserDefaults standardUserDefaults] objectForKey:BNSDefDeveloperCurrencyName] length] > 0)
-        return YES;
-    
-    else 
-        return NO;
-}
-
-+ (BOOL)_isLoggedUserIdStored
-{
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:BNSDefDeveloperLoggedUserId] != nil && [[[NSUserDefaults standardUserDefaults] objectForKey:BNSDefDeveloperLoggedUserId] length] > 0)
-        return YES;
-    
-    else 
-        return NO;
-}
-
-#pragma mark -
-#pragma mark PopoverDelegate
-
-#ifdef UI_USER_INTERFACE_IDIOM
-- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
-	[Beintoo _dismissBeintoo];
-}
-#endif
-
-#pragma mark -
-#pragma mark PrizeDelegate
-
-- (void)userDidTapOnThePrize
-{	
-	BVirtualGood *lastVgood = [Beintoo getLastGeneratedVGood];
-    [Beintoo manageStatusBarOnLaunch];
-    
-	BeintooVgoodNavController *iPadVgoodNavigatorController = [Beintoo getVgoodNavigationController];
-	BeintooMainController *mainNavigatorController          = [Beintoo sharedInstance]->mainController;
-	
-    id<BeintooMainDelegate>	  _mainDelegate         = [Beintoo sharedInstance]->mainDelegate;
-    
-    mainNavigatorController.viewControllers     = nil;
-    iPadVgoodNavigatorController.viewControllers    = nil;
-	
-    BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
-    
-	if ([lastVgood isRecommendation]) { // ----------  RECOMMENDATION ------------- //
-		// Initialization of the Recommendation Controller with the recommendation URL
-        
-		mainNavigatorController.recommendationVC= [mainNavigatorController.recommendationVC initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle] urlToOpen:lastVgood.getItRealURL];
-        
-        [mainNavigatorController.recommendationVC setType:REWARD];
-        
-        if ([BeintooDevice isiPad]) {
-            iPadVgoodNavigatorController = [iPadVgoodNavigatorController initWithRootViewController:mainNavigatorController.recommendationVC];
-        }
-        else{
-            mainNavigatorController = [mainNavigatorController initWithRootViewController:mainNavigatorController.recommendationVC];
-        }
-	}
-	else if ([lastVgood isMultiple]) {  // ----------  MULTIPLE VGOOD ------------- //
-		// Initialize the Multiple vgood Controller with the list of options
-		NSArray *vgoodList = [Beintoo getLastGeneratedVGood].theGoodsList;
-        
-		mainNavigatorController.multipleVgoodVC = [mainNavigatorController.multipleVgoodVC initWithNibName:@"BeintooMultipleVgoodVC" bundle:[NSBundle mainBundle]
-                                                      andOptions:[NSDictionary dictionaryWithObjectsAndKeys:vgoodList,@"vgoodArray",/*self.popoverVgoodController,@"popoverController",*/nil]];
-        if ([BeintooDevice isiPad]) {
-            iPadVgoodNavigatorController = [iPadVgoodNavigatorController initWithRootViewController:mainNavigatorController.multipleVgoodVC];
-        }
-        else{
-            mainNavigatorController = [mainNavigatorController initWithRootViewController:mainNavigatorController.multipleVgoodVC];
-        }
-	}
-	else {								// ----------  SINGLE VGOOD ------------- //
-		// Initialize the Single vgood Controller with the generated vgood
-        
-        mainNavigatorController.singleVgoodVC.theVirtualGood = [Beintoo getLastGeneratedVGood];
-        if ([BeintooDevice isiPad]) {
-            iPadVgoodNavigatorController = [iPadVgoodNavigatorController initWithRootViewController:mainNavigatorController.singleVgoodVC];
-        }
-        else{
-            mainNavigatorController = [mainNavigatorController initWithRootViewController:mainNavigatorController.singleVgoodVC];
-        }
-	}
-    
-	if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeWillAppear)]) {
-		[[_prizeView globalDelegate] beintooPrizeWillAppear];
-	}
-	
-    if ([_mainDelegate respondsToSelector:@selector(beintooPrizeWillAppear)]) {
-		[_mainDelegate beintooPrizeWillAppear];
-	}
-    
-	if (![BeintooDevice isiPad]) { // --- iPhone,iPod
-		[mainNavigatorController prepareBeintooVgoodOrientation];
-		[[Beintoo getApplicationWindow] addSubview:mainNavigatorController.view];
-		[mainNavigatorController showVgoodNavigationController];
-	}
-	else {  // --- iPad
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		
-		[_iPadController preparePopoverOrientation]; 
-		[[Beintoo getApplicationWindow] addSubview:_iPadController.view];
-		[_iPadController showVgoodPopoverWithVGoodController:iPadVgoodNavigatorController];
-	}
-    
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeDidAppear)]) {
-		[[_prizeView globalDelegate] beintooPrizeDidAppear];
-	}
-}
-
-- (void)userDidTapOnClosePrize
-{    
-    BVirtualGood *lastVgood = [Beintoo getLastGeneratedVGood];
-	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	
-    BPrize	*_prizeView = [Beintoo sharedInstance]->prizeView;
-    
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeAlertWillDisappear)]) {
-		[[_prizeView globalDelegate] beintooPrizeAlertWillDisappear];
-	}
-    
-    if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertWillDisappear)]) {
-		[_mainDelegate beintooPrizeAlertWillDisappear];
-	}
-    
-	if ([lastVgood isMultiple]) {
-		
-		@synchronized(self){
-			BeintooVgood *_vgoodService = [Beintoo beintooVgoodService];
-			[_vgoodService acceptGoodWithId:lastVgood.vGoodID];
-		}
-	}
-	
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooPrizeAlertDidDisappear)]) {
-		[[_prizeView globalDelegate] beintooPrizeAlertDidDisappear];
-	}
-    
-	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeAlertDidDisappear)]) {
-		[_mainDelegate beintooPrizeAlertDidDisappear];
-	}
-    
-    [_prizeView setIsVisible:NO];
-}
-
-- (void)userDidTapOnTheAd
-{	
-	BVirtualGood *lastVgood = [Beintoo getLastGeneratedAd];
-    [Beintoo manageStatusBarOnLaunch];
-    
-    [Beintoo initAdNavigationController];
-    [Beintoo initMainAdController];
-    
-	BeintooVgoodNavController *iPadVgoodNavigatorController = [Beintoo sharedInstance]->adNavigationController;
-	BeintooMainController *mainNavigatorController          = [Beintoo sharedInstance]->mainAdController;
-    
-    id<BeintooMainDelegate>	  _mainDelegate         = [Beintoo sharedInstance]->mainDelegate;
-    
-    mainNavigatorController.recommendationVC = [mainNavigatorController.recommendationVC initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle] urlToOpen:lastVgood.getItRealURL];
-    
-    BPrize	*_prizeView = [Beintoo sharedInstance]->adView;
-    [mainNavigatorController.recommendationVC setType:AD];
-    
-    if ([BeintooDevice isiPad]) {
-        iPadVgoodNavigatorController = [iPadVgoodNavigatorController initWithRootViewController:mainNavigatorController.recommendationVC];
-    }
-    else{
-        mainNavigatorController = [mainNavigatorController initWithRootViewController:mainNavigatorController.recommendationVC];
-    }
-	
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooAdControllerWillAppear)]) {
-		[[_prizeView globalDelegate] beintooAdControllerWillAppear];
-	}
-	
-    if ([_mainDelegate respondsToSelector:@selector(beintooAdControllerWillAppear)]) {
-		[_mainDelegate beintooAdControllerWillAppear];
-	}
-    
-	if (![BeintooDevice isiPad]) { // --- iPhone,iPod
-		[mainNavigatorController prepareBeintooVgoodOrientation];
-		[[Beintoo getApplicationWindow] addSubview:mainNavigatorController.view];
-		[mainNavigatorController showAdNavigationController];
-	}
-	else {  // --- iPad
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		
-		[_iPadController preparePopoverOrientation];
-		[[Beintoo getApplicationWindow] addSubview:_iPadController.view];
-		[_iPadController showAdPopoverWithVGoodController:iPadVgoodNavigatorController];
-	}
-    
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooAdControllerDidAppear)]) {
-		[[_prizeView globalDelegate] beintooAdControllerDidAppear];
-	}
-}
-
-- (void)userDidTapOnCloseAd
-{
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-    
-    BPrize	*_prizeView = [Beintoo sharedInstance]->adView;
-    
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooAdWillDisappear)]) {
-		[[_prizeView globalDelegate] beintooAdWillDisappear];
-	}
-    
-    if ([_mainDelegate respondsToSelector:@selector(beintooAdWillDisappear)]) {
-		[_mainDelegate beintooAdWillDisappear];
-	}
-    
-	if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooAdDidDisappear)]) {
-		[[_prizeView globalDelegate] beintooAdDidDisappear];
-	}
-    
-	if ([_mainDelegate respondsToSelector:@selector(beintooAdDidDisappear)]) {
-		[_mainDelegate beintooAdDidDisappear];
-	}
-    
-    [_prizeView setIsVisible:NO];
-}
-
-- (void)launchGiveBedollarsController
-{	
-	BVirtualGood *giveBedollars = [Beintoo getLastGeneratedGiveBedollars];
-    [Beintoo manageStatusBarOnLaunch];
-    
-    [Beintoo initAdNavigationController];
-    [Beintoo initMainAdController];
-    
-	BeintooVgoodNavController *iPadVgoodNavigatorController = [Beintoo sharedInstance]->adNavigationController;
-	BeintooMainController *mainNavigatorController          = [Beintoo sharedInstance]->mainAdController;
-    
-    id<BeintooMainDelegate>	  _mainDelegate         = [Beintoo sharedInstance]->mainDelegate;
-    
-    mainNavigatorController.recommendationVC = [mainNavigatorController.recommendationVC initWithNibName:@"BeintooVGoodShowVC" bundle:[NSBundle mainBundle] urlToOpen:giveBedollars.getItRealURL];
-    
-    BTemplateGiveBedollars	*_prizeView = [Beintoo sharedInstance]->giveBedollarsView;
-    [mainNavigatorController.recommendationVC setType:GIVE_BEDOLLARS];
-    
-    if ([BeintooDevice isiPad]) {
-        iPadVgoodNavigatorController = [iPadVgoodNavigatorController initWithRootViewController:mainNavigatorController.recommendationVC];
-    }
-    else{
-        mainNavigatorController = [mainNavigatorController initWithRootViewController:mainNavigatorController.recommendationVC];
-    }
-	
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooGiveBedollarsControllerWillAppear)]) {
-		[[_prizeView globalDelegate] beintooGiveBedollarsControllerWillAppear];
-	}
-	
-    if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsControllerWillAppear)]) {
-		[_mainDelegate beintooGiveBedollarsControllerWillAppear];
-	}
-    
-	if (![BeintooDevice isiPad]) { // --- iPhone,iPod
-		[mainNavigatorController prepareBeintooVgoodOrientation];
-		[[Beintoo getApplicationWindow] addSubview:mainNavigatorController.view];
-		[mainNavigatorController showGiveBedollarsNC];
-	}
-	else {  // --- iPad
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		
-		[_iPadController preparePopoverOrientation];
-		[[Beintoo getApplicationWindow] addSubview:_iPadController.view];
-		[_iPadController showAdPopoverWithVGoodController:iPadVgoodNavigatorController];
-	}
-    
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooGiveBedollarsControllerDidAppear)]) {
-		[[_prizeView globalDelegate] beintooGiveBedollarsControllerDidAppear];
-	}
-}
-
-+ (void)_dismissGiveBedollarsController
-{    
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-    
-    [Beintoo manageStatusBarOnDismiss];
-    
-    BTemplateGiveBedollars	*_prizeView = [Beintoo sharedInstance]->giveBedollarsView;
-    
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooGiveBedollarsControllerWillDisappear)]) {
-		[[_prizeView globalDelegate] beintooGiveBedollarsControllerWillDisappear];
-	}
-    
-	if ([_mainDelegate respondsToSelector:@selector(beintooGiveBedollarsControllerWillDisappear)]) {
-		[_mainDelegate beintooGiveBedollarsControllerWillDisappear];
-	}
-	
-	if (![BeintooDevice isiPad]) { // iPhone-iPodTouch
-		BeintooMainController *_mainController = [Beintoo sharedInstance]->mainAdController;
-		[_mainController hideGiveBedollarsNC];
-	}
-	else {  // ----------- iPad
-		
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		[_iPadController.adPopoverController dismissPopoverAnimated:NO];
-		[_iPadController hideAdPopover];
-        
-	}
-    
-    if ([[_prizeView globalDelegate] respondsToSelector:@selector(beintooGiveBedollarsControllerDidDisappear)]) {
-		[[_prizeView globalDelegate] beintooGiveBedollarsControllerDidDisappear];
-	}
-    
-    [_prizeView setIsVisible:NO];
-    
-#ifdef BEINTOO_ARC_AVAILABLE
-    
-#else
-    [[Beintoo sharedInstance]->mainAdController release];
-#endif
-    
-}
-
-- (void)userDidTapOnCloseMission
-{
-    id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-    
-    [Beintoo manageStatusBarOnDismiss];
-    
-    if ([_mainDelegate respondsToSelector:@selector(beintooDidDisappear)]) {
-		[_mainDelegate beintooDidDisappear];
-	}
-}
-
-- (void)userDidTapOnMissionGetItReal
-{
-    NSDictionary *lastMission   = [Beintoo getLastRetrievedMission];
-    NSString *getItRealUrl      = [[lastMission objectForKey:@"vgood"] objectForKey:@"getRealURL"];
-	BeintooVgoodNavController *vgoodNavController = [Beintoo getVgoodNavigationController];
-	BeintooMainController *_vgoodController = [Beintoo sharedInstance]->mainController;
-    _vgoodController.viewControllers = nil;
-	
-    // Initialization of the Recommendation Controller with the recommendation URL
-    _vgoodController.webViewVC = [_vgoodController.webViewVC initWithNibName:@"BeintooWebViewVC" bundle:[NSBundle mainBundle] urlToOpen:getItRealUrl];
-    if ([BeintooDevice isiPad]) {
-        vgoodNavController = [vgoodNavController initWithRootViewController:_vgoodController.webViewVC];
-    }
-    else{
-        _vgoodController = [_vgoodController initWithRootViewController:_vgoodController.webViewVC];
-    }
-	
-	if (![BeintooDevice isiPad]) { // --- iPhone,iPod
-		[_vgoodController prepareBeintooVgoodOrientation];
-		[[Beintoo getApplicationWindow] addSubview:_vgoodController.view];
-		[_vgoodController showMissionVgoodNavigationController];
-		
-	}
-	else {  // --- iPad
-		BeintooiPadController *_iPadController = [Beintoo sharedInstance]->ipadController;
-		[_iPadController preparePopoverOrientation]; 
-		[[Beintoo getApplicationWindow] addSubview:_iPadController.view];
-		[_iPadController showMissionVgoodPopoverWithVGoodController:vgoodNavController];
-	}
+         
+    [Beintoo sharedInstance]->lastGeneratedAd = wrapper;
 }
 
 + (void)_beintooUserDidLogin
@@ -2168,6 +1524,14 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
 
 #pragma mark - Notifications
 
++ (void)_beintooWillAppear
+{
+	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
+	if ([_mainDelegate respondsToSelector:@selector(beintooWillAppear)]) {
+		[_mainDelegate beintooWillAppear];
+	}
+}
+
 + (void)_beintooDidAppear
 {
 	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
@@ -2189,22 +1553,6 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
 	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
 	if ([_mainDelegate respondsToSelector:@selector(beintooDidDisappear)]) {
 		[_mainDelegate beintooDidDisappear];
-	}
-}
-
-+ (void)_prizeDidAppear
-{
-	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeDidAppear)]) {
-		[_mainDelegate beintooPrizeDidAppear];
-	}
-}
-
-+ (void)_prizeDidDisappear
-{
-	id<BeintooMainDelegate> _mainDelegate = [Beintoo sharedInstance]->mainDelegate;
-	if ([_mainDelegate respondsToSelector:@selector(beintooPrizeDidDisappear)]) {
-		[_mainDelegate beintooPrizeDidDisappear];
 	}
 }
 

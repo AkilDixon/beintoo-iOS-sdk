@@ -28,13 +28,14 @@ static BLoadingView *loading;
         self.opaque = NO;
 	
 		hudView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 60, 60)];
+        hudView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
 		hudView.backgroundColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:0.7];
 		hudView.clipsToBounds = YES;
 		hudView.layer.cornerRadius = 10.0;
         hudView.autoresizesSubviews = NO;
 		
 		activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-		activityIndicatorView.frame = CGRectMake(11, 11, activityIndicatorView.bounds.size.width, activityIndicatorView.bounds.size.height);
+		activityIndicatorView.frame = CGRectMake(12, 12, activityIndicatorView.bounds.size.width, activityIndicatorView.bounds.size.height);
 		[hudView addSubview:activityIndicatorView];
 		[activityIndicatorView startAnimating];
 		[self addSubview:hudView];
@@ -44,8 +45,9 @@ static BLoadingView *loading;
 
 + (void)startActivity:(UIView *)callingView
 {	
-	loading = [[BLoadingView alloc] initWithFrame:CGRectMake((callingView.frame.size.width/2)-30, (callingView.frame.size.height/2)-30, 100, 100)];
+	loading = [[BLoadingView alloc] initWithFrame:CGRectMake((callingView.frame.size.width/2) - 30, (callingView.frame.size.height/2) - 32, 100, 100)];
 	loading.alpha = 0.0;
+    loading.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
     loading.autoresizesSubviews = NO;
 	[callingView addSubview:loading];
 	
@@ -64,12 +66,14 @@ static BLoadingView *loading;
         
 		UIView *hudFullView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, _view.frame.size.width, _view.frame.size.height)];
 		//hudFullView.backgroundColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:0.5];
+        hudFullView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
         hudFullView.backgroundColor = [UIColor colorWithWhite:0.2 alpha:0.3];
 		hudFullView.clipsToBounds = YES;
 		hudFullView.layer.cornerRadius = 0.0;
 		
 		hudView = [[UIView alloc] initWithFrame:CGRectMake((hudFullView.frame.size.width/2) - 30 , (hudFullView.frame.size.height/2) - 30, 60, 60)];
 		hudView.backgroundColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:0.7];
+        hudView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
 		hudView.clipsToBounds = YES;
 		hudView.layer.cornerRadius = 10.0;
 		
@@ -92,6 +96,7 @@ static BLoadingView *loading;
         
 		UIView *hudFullView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, _view.frame.size.width, _view.frame.size.height)];
 		//hudFullView.backgroundColor = [UIColor colorWithRed:108.0/255 green:128.0/255 blue:154.0/255 alpha:0.3];
+        hudFullView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
         hudFullView.backgroundColor = [UIColor colorWithWhite:0.2 alpha:0.3];
 		hudFullView.clipsToBounds = YES;
 		hudFullView.layer.cornerRadius = 0.0;
@@ -105,7 +110,7 @@ static BLoadingView *loading;
 + (void)startFullScreenActivity:(UIView *)callingView
 {	
 	loading = [[BLoadingView alloc] initWithFrame:CGRectMake(callingView.frame.origin.x, callingView.frame.origin.y, callingView.frame.size.width, callingView.frame.size.height) andCallingView:callingView];
-    
+    loading.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
 	loading.alpha = 0.0;
 	[callingView addSubview:loading];
 	
@@ -119,6 +124,7 @@ static BLoadingView *loading;
 + (void)startFullScreenHiddenActivity:(UIView *)callingView
 {	
     loading = [[BLoadingView alloc] initWithHiddenFrame:CGRectMake(callingView.frame.origin.x, callingView.frame.origin.y, callingView.frame.size.width, callingView.frame.size.height) andCallingView:callingView];
+    loading.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
     loading.layer.cornerRadius = 0.0;
     [callingView addSubview:loading];
     

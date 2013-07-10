@@ -1,0 +1,49 @@
+/*******************************************************************************
+ * Copyright 2013 Beintoo - author gpiazzese@beintoo.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
+#import <Foundation/Foundation.h>
+#import "BeintooDevice.h"
+
+@interface BUserWrapper : NSObject
+{
+    
+}
+
+- (id)initWithContentOfDictionary:(NSDictionary *)dictionary;
+- (id)copyWithZone:(NSZone *)zone;
+- (NSDictionary *)dictionaryFromSelf;
+
+@property (nonatomic, retain) NSString *userid;
+@property (nonatomic, retain) NSString *locale;
+@property (nonatomic, retain) NSString *name;
+@property (nonatomic, retain) NSString *nickname;
+@property (nonatomic, retain) NSString *userimg;
+@property (nonatomic, retain) NSString *usersmallimg;
+
+@property (nonatomic, retain) NSDictionary *language;
+
+@property (nonatomic, retain) NSNumber *bedollars;
+@property (nonatomic, retain) NSNumber *bescore;
+@property (nonatomic, retain) NSNumber *gender;
+@property (nonatomic, retain) NSNumber *isverified;
+@property (nonatomic, retain) NSNumber *level;
+@property (nonatomic, retain) NSNumber *messages;
+@property (nonatomic, retain) NSNumber *pendingFriendRequest;
+@property (nonatomic, retain) NSNumber *unreadMessages;
+
+@property (nonatomic, retain) NSDate *lastupdate;
+
+@end

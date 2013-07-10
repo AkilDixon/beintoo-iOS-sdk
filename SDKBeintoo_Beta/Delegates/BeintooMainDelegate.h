@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-@class BVirtualGood;
+@class BRewardWrapper, BVirtualGood, BGiveBedollarsWrapper, BEventWrapper, BAdWrapper;
 
 @protocol BeintooMainDelegate <NSObject>
 
@@ -28,37 +28,56 @@
 
 - (void)beintooDidDisappear;
 
+
+/* ---------------------------------------------------------------------
+ * Reward
+ * --------------------------------------------------------------------- */
+
+- (void)beintooPrizeWillAppear __attribute__((deprecated("use 'beintooRewardWillAppear:' instead")));
+
+- (void)beintooPrizeDidAppear __attribute__((deprecated("use 'beintooRewardDidAppear:' instead")));
+
+- (void)beintooPrizeWillDisappear __attribute__((deprecated("use 'beintooRewardWillDisappear:' instead")));
+
+- (void)beintooPrizeDidDisappear __attribute__((deprecated("use 'beintooRewardDidDisappear:' instead")));
+
+
+- (void)beintooPrizeAlertWillAppear __attribute__((deprecated("use 'beintooRewardControllerWillAppear:' instead")));
+
+- (void)beintooPrizeAlertDidAppear __attribute__((deprecated("use 'beintooRewardControllerDidAppear:' instead")));
+
+- (void)beintooPrizeAlertWillDisappear __attribute__((deprecated("use 'beintooRewardControllerWillDisappear:' instead")));
+
+- (void)beintooPrizeAlertDidDisappear __attribute__((deprecated("use 'beintooRewardControllerDidDisappear:' instead")));
+
+
+
+- (void)beintooRewardWillAppear;
+
+- (void)beintooRewardDidAppear;
+
+- (void)beintooRewardWillDisappear;
+
+- (void)beintooRewardDidDisappear;
+
+
+- (void)beintooRewardControllerWillAppear;
+
+- (void)beintooRewardControllerDidAppear;
+
+- (void)beintooRewardControllerWillDisappear;
+
+- (void)beintooRewardControllerDidDisappear;
+
+
+- (void)didBeintooGenerateAReward:(BRewardWrapper *)reward;
+
+- (void)didBeintooFailToGenerateARewardWithError:(NSDictionary *)error;
+
 - (void)didBeintooGenerateAVirtualGood:(BVirtualGood *)theVgood __attribute__((deprecated("use 'didBeintooGenerateAReward:' instead")));
 
 - (void)didBeintooFailToGenerateAVirtualGoodWithError:(NSDictionary *)error __attribute__((deprecated("use 'didBeintooFailToGenerateARewardWithError:' instead")));
 
-- (void)didBeintooGenerateAReward:(BVirtualGood *)theReward;
-
-- (void)didBeintooFailToGenerateARewardWithError:(NSDictionary *)error;
-
-/* ---------------------------------------------------------------------
- * Prize
- * --------------------------------------------------------------------- */
-
-- (void)beintooPrizeAlertWillAppear;
-
-- (void)beintooPrizeAlertDidAppear;
-
-- (void)beintooPrizeAlertWillDisappear;
-
-- (void)beintooPrizeAlertDidDisappear;
-
-- (void)beintooPrizeWillAppear;
-
-- (void)beintooPrizeDidAppear;
-
-- (void)beintooPrizeWillDisappear;
-
-- (void)beintooPrizeDidDisappear;
-
-- (void)didBeintooGenerateAnAd:(BVirtualGood *)theAd;
-
-- (void)didBeintooFailToGenerateAnAdWithError:(NSDictionary *)error;
 
 /* ---------------------------------------------------------------------
  * Ad
@@ -72,6 +91,7 @@
 
 - (void)beintooAdDidDisappear;
 
+
 - (void)beintooAdControllerWillAppear;
 
 - (void)beintooAdControllerDidAppear;
@@ -79,6 +99,12 @@
 - (void)beintooAdControllerWillDisappear;
 
 - (void)beintooAdControllerDidDisappear;
+
+
+- (void)didBeintooGenerateAnAd:(BAdWrapper *)ad;
+
+- (void)didBeintooFailToGenerateAnAdWithError:(NSDictionary *)error;
+
 
 /* ---------------------------------------------------------------------
  * User Login/Singup Delegates
@@ -104,6 +130,7 @@
 
 - (void)beintooGiveBedollarsDidDisappear;
 
+
 - (void)beintooGiveBedollarsControllerWillAppear;
 
 - (void)beintooGiveBedollarsControllerDidAppear;
@@ -111,5 +138,18 @@
 - (void)beintooGiveBedollarsControllerWillDisappear;
 
 - (void)beintooGiveBedollarsControllerDidDisappear;
+
+
+- (void)didReceiveGiveBedollarsResponse:(BGiveBedollarsWrapper *)wrapper;
+
+- (void)didFailToPerformGiveBedollars:(NSDictionary *)error;
+
+/* ---------------------------------------------------------------------
+** Event Delegates
+** --------------------------------------------------------------------- */
+
+- (void)didGenerateAnEvent:(BEventWrapper *)wrapper;
+
+- (void)didFailToGenerateAnEvent:(NSDictionary *)error;
 
 @end

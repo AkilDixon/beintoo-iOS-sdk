@@ -38,10 +38,7 @@
             caller == PLAYER_SETBALANCE_CALLER_ID    ||
             caller == PLAYER_LOGINwDELEG_CALLER_ID   ||
             caller == ACHIEVEMENTS_GETSUBMITPERCENT_CALLER_ID || caller == ACHIEVEMENTS_GETSUBMITSCORE_CALLER_ID ||
-            caller == ACHIEVEMENTS_GETINCREMENTSCORE_CALLER_ID ||
-            caller == MISSION_GET_CALLER_ID || caller == MISSION_REFUSE_CALLER_ID ||
-            caller == VGOOD_SINGLE_CALLER_ID || caller == VGOOD_SINGLEwDELEG_CALLER_ID ||
-            caller == VGOOD_MULTIPLE_CALLER_ID || caller == VGOOD_MULTIPLEwDELEG_CALLER_ID || caller == VGOOD_CHECK_COVERAGE_CALLER_ID || caller == VGOOD_IS_ELIGIBLE_FOR_REWARD_CALLER_ID || caller == USER_GIVE_BEDOLLARS_CALLER_ID || caller ==  REWARD_GET_AD_CALLER_ID || caller ==  REWARD_GET_AND_DISPLAY_AD_CALLER_ID || callerID == ADS_REQUEST_AND_DISPLAY || callerID == ADS_REQUEST) {
+            caller == ACHIEVEMENTS_GETINCREMENTSCORE_CALLER_ID || caller == REWARD_GET_CALLER_ID || caller == REWARD_CHECK_COVERAGE_CALLER_ID || caller == REWARD_IS_ELIGIBLE_FOR_REWARD_CALLER_ID || caller == USER_GIVE_BEDOLLARS_CALLER_ID || callerID == ADS_REQUEST_AND_DISPLAY || callerID == ADS_REQUEST) {
             BeintooLOG(@"Beintoo - no connection available, check the last action performed!");
             
             self.callerID = caller;
@@ -80,7 +77,7 @@
                 [request setValue:@"true" forHTTPHeaderField:@"sandbox"];
             }
             
-            if (self.callerID == VGOOD_MULTIPLE_CALLER_ID || self.callerID == VGOOD_SINGLE_CALLER_ID || self.callerID == VGOOD_MULTIPLEwDELEG_CALLER_ID || self.callerID == VGOOD_SINGLEwDELEG_CALLER_ID || self.callerID == REWARD_GET_AD_CALLER_ID || self.callerID == REWARD_GET_AD_CALLER_ID || self.callerID == REWARD_GET_AND_DISPLAY_AD_CALLER_ID || self.callerID == ADS_REQUEST_AND_DISPLAY || self.callerID == ADS_REQUEST)
+            if (self.callerID == REWARD_GET_CALLER_ID || self.callerID == REWARD_IS_ELIGIBLE_FOR_REWARD_CALLER_ID || self.callerID == ADS_REQUEST_AND_DISPLAY || self.callerID == ADS_REQUEST)
             {
                 [request setValue:[BeintooNetwork getUserAgent] forHTTPHeaderField:@"User-Agent"];
             }
@@ -127,7 +124,7 @@
 - (void)parsePageAtUrlWithPOST:(NSString *)URL withHeaders:(NSDictionary *)headers withHTTPBody:(NSString *)httpBody fromCaller:(int)caller
 {
     if (![BeintooNetwork connectedToNetwork]) {
-        if (caller == MESSAGE_SET_READ_CALLER_ID     || caller == PLAYER_SSCORE_OFFLINE_CALLER_ID ||
+        if (caller == PLAYER_SSCORE_OFFLINE_CALLER_ID ||
             caller == ACHIEVEMENTS_SUBMIT_PERCENT_ID || caller == ACHIEVEMENTS_SUBMIT_SCORE_ID ) {
             
             self.callerID = caller;
@@ -178,7 +175,7 @@
         
         if ([responseHTTP respondsToSelector:@selector(allHeaderFields)]) {
             
-            if ([responseHTTP statusCode] != 200 && (callerID == REWARD_GET_AD_CALLER_ID || callerID == REWARD_GET_AND_DISPLAY_AD_CALLER_ID)){
+            if ([responseHTTP statusCode] != 200 && (callerID == ADS_REQUEST || callerID == ADS_REQUEST_AND_DISPLAY)){
                 NSDictionary *dictionary = [NSDictionary dictionaryWithObject:@"-10" forKey:@"messageID"];
                 @try {
                     if (self.callerID){
@@ -208,6 +205,7 @@
 		else {
 			// Data correctly received, then converted from byte to string
 			webpage = [[NSString alloc] initWithData:urlData encoding:NSUTF8StringEncoding];
+            BeintooLOG(@"page content %@", webpage);
 		}
 	}
     @catch (NSException *e) {

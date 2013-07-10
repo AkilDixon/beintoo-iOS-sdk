@@ -17,53 +17,49 @@
 
 #import <Foundation/Foundation.h>
 #import "Parser.h"
-#import "BVirtualGood.h"
 #import "BeintooDevice.h"
+
+@class BAdWrapper;
 
 @protocol BeintooAdDelegate;
 
 @interface BeintooAd : NSObject <BeintooParserDelegate>
 {
-    Parser                  *parser;
+    Parser          *parser;
+    id              delegate;
 	
-    id <BeintooAdDelegate> delegate;
-	
-    NSString                *rest_resource;
-    NSString                *display_rest_resource;
-	
-	id callingDelegate;
-    
-    BVirtualGood            *adContent;
+    NSString        *rest_resource;
+    NSString        *display_rest_resource;
 }
 
 + (void)requestAndDisplayAdWithDeveloperUserGuid:(NSString *)_developerUserGuid;
 + (void)requestAdWithDeveloperUserGuid:(NSString *)_developerUserGuid;
 
 // Init methods
+
 - (id)initWithDelegate:(id)_delegate;
 + (void)setDelegate:(id)_delegate;
 - (NSString *)restResource;
 - (NSString *)getDisplayRestResource;
 
++ (void)notifyAdGeneration:(BAdWrapper *)wrapper;
++ (void)notifyAdGenerationError:(NSDictionary *)error;
+
 #ifdef BEINTOO_ARC_AVAILABLE
-@property(nonatomic, retain) id <BeintooAdDelegate> delegate;
-@property(nonatomic, retain) id  callingDelegate;
+@property(nonatomic, retain) id delegate;
 #else
-@property(nonatomic, assign) id <BeintooAdDelegate> delegate;
-@property(nonatomic, assign) id  callingDelegate;
+@property(nonatomic, assign) id delegate;
 #endif
 
 @property(nonatomic,retain) Parser          *parser;
-@property(nonatomic,retain) BVirtualGood    *adContent;
-
 
 @end
 
-@protocol BeintooAdDelegate <NSObject>
 
+@protocol BeintooAdDelegate <NSObject>
 @optional
 
-- (void)didBeintooGenerateAnAd:(BVirtualGood *)theAd;
-- (void)didBeintooFailToGenerateAnAdWithError:(NSDictionary *)error;
+- (void)didBeintooGenerateAnAd:(BAdWrapper *)wrapper;
+- (void)didBeintooFailToGenerateAnAd:(NSDictionary *)error;
 
 @end

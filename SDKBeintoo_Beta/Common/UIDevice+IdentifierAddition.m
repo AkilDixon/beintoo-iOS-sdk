@@ -29,11 +29,8 @@
 // Return the local MAC addy
 // Courtesy of FreeBSD hackers email list
 // Accidentally munged during previous update. Fixed thanks to erica sadun & mlamb.
-
 - (NSString *) getmacaddress
-{
-    NSString *outstring = nil;
-    
+{    
     int                 mib[6];
     size_t              len;
     char                *buf;
@@ -70,7 +67,7 @@
     ifm = (struct if_msghdr *)buf;
     sdl = (struct sockaddr_dl *)(ifm + 1);
     ptr = (unsigned char *)LLADDR(sdl);
-    outstring = [NSString stringWithFormat:@"%02X:%02X:%02X:%02X:%02X:%02X",
+    NSString *outstring = [NSString stringWithFormat:@"%02X:%02X:%02X:%02X:%02X:%02X", 
                            *ptr, *(ptr+1), *(ptr+2), *(ptr+3), *(ptr+4), *(ptr+5)];
     free(buf);
     
@@ -78,6 +75,27 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark Public Methods
+
+- (NSString *) uniqueDeviceIdentifier
+{
+    NSString *macaddress = [[UIDevice currentDevice] getmacaddress];
+    NSString *bundleIdentifier = @"com.Beintoo.Beintoo-iOS-Sdk";
+    
+    NSString *stringToHash = [NSString stringWithFormat:@"%@%@",macaddress,bundleIdentifier];
+    NSString *uniqueIdentifier = [stringToHash stringFromMD5];
+    
+    return uniqueIdentifier;
+}
+
+- (NSString *) uniqueGlobalDeviceIdentifier
+{
+    NSString *macaddress = [[UIDevice currentDevice] getmacaddress];
+    NSString *uniqueIdentifier = [macaddress stringFromMD5];
+    
+   return uniqueIdentifier;
+}
 
 - (NSString *)_getMacAddress
 {
