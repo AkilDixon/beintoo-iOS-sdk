@@ -730,6 +730,7 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME) ";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "5525475A-ADDE-4C94-BD32-88E884B96849";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;

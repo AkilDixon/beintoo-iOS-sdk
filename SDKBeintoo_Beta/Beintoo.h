@@ -216,6 +216,9 @@ extern NSString *BNSDefIsUserLogged;
 
 #pragma mark - Launch and Dismiss methods
 
++ (void)launchBestore __attribute__((deprecated("use [Beintoo openBestore] instead")));
++ (void)launchBeintoo __attribute__((deprecated("use [Beintoo openDashboard] instead")));
+
 + (void)openDashboard;
 + (void)openBestore;
 + (void)openSignup;

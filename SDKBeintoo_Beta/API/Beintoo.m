@@ -253,6 +253,16 @@
 
 #pragma mark - Launch and Dismiss methods
 
++ (void)launchBestore
+{
+    [Beintoo openBestore];
+}
+
++ (void)launchBeintoo
+{
+    [Beintoo openDashboard];
+}
+
 + (void)openDashboard
 {
     [Beintoo _openDashboard];

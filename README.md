@@ -47,7 +47,7 @@ To integrate Beintoo with an existing application, follow these steps:
 		                     [NSNumber numberWithInt:1],BeintooAchievementNotification,
 		                     [NSNumber numberWithInt:1],BeintooLoginNotification,
 		                     [NSNumber numberWithInt:1],BeintooScoreNotification,
-		                     [NSNumber numberWithInt:1],BeintooNoRewardNotification,
+		                     [NSNumber numberWithInt:0],BeintooNoRewardNotification,
 		         			 [NSNumber numberWithInt:BeintooNotificationPositionBottom], BeintooNotificationPosition,
 						     [NSNumber numberWithInt:UIInterfaceOrientationPortrait], BeintooAppOrientation, nil];
   
@@ -58,7 +58,21 @@ The Beintoo Sdk is compliant both for ARC and non ARC projects: it is the SDK it
 Check the sample Xcode project for a lot of examples on how to use all the Beintoo features.  
 
 
-API Description
+Main Methods
+===============
+
+Player Login:         [Beintoo login];
+Get A Reward:         [Beintoo getReward];
+Give Bedollars:       [Beintoo giveBedollars:0.5 showNotification:YES withPosition:BeintooNotificationPositionBottom];
+Submit Score And Get A Reward: [Beintoo submitScoreAndGetRewardForScore:5 andContest:@"some_codeID" withThreshold:1000];
+
+
+Launch Beintoo UI Controllers
+
+Open the Dashboard:  [Beintoo openDashboard];
+Open the Bestore:    [Beintoo openBestore];
+
+Beintoo iOS full documentation
 ===============
 
 See our iOS SDK Documentation http://documentation.beintoo.com/home/ios-sdk for more information on the SDK methods and protocols.

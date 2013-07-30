@@ -212,7 +212,7 @@ NSString *BeintooNotificationCloseBPickerView       = @"BeintooCloseBPickerView"
 {
     UIWebView   *webView = [[UIWebView alloc] initWithFrame:CGRectZero];
     NSString *userAgent = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
-    
+        
 #ifdef BEINTOO_ARC_AVAILABLE
 #else
     [webView release];
