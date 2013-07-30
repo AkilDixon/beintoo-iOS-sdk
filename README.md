@@ -11,7 +11,7 @@ To integrate Beintoo with an existing application, follow these steps:
 
 1. Download the last version of the SDK from GitHub:
 
- 	https://github.com/Beintoo/beintoo-iOS-sdk
+     https://github.com/Beintoo/beintoo-iOS-sdk
 
 2. Have you got your apikey? If not, register your application on Beintoo (http://www.beintoo.com/business). Simply register and create a your app from the developer dashboard to obtain your apikey.
 
@@ -61,16 +61,36 @@ Check the sample Xcode project for a lot of examples on how to use all the Beint
 Main Methods
 ===============
 
-Player Login:         [Beintoo login];
-Get A Reward:         [Beintoo getReward];
-Give Bedollars:       [Beintoo giveBedollars:0.5 showNotification:YES withPosition:BeintooNotificationPositionBottom];
-Submit Score And Get A Reward: [Beintoo submitScoreAndGetRewardForScore:5 andContest:@"some_codeID" withThreshold:1000];
+Player Login:        
+        
+        [Beintoo login];
+
+Get A Reward:         
+                
+        [Beintoo getReward];
+        
+Give Bedollars:       
+
+        [Beintoo giveBedollars:0.5 showNotification:YES withPosition:BeintooNotificationPositionBottom];
+		
+Submit Score And Get A Reward: 
+    
+        [Beintoo submitScoreAndGetRewardForScore:5 andContest:@"some_codeID" withThreshold:1000];
+
 
 
 Launch Beintoo UI Controllers
+===============
 
-Open the Dashboard:  [Beintoo openDashboard];
-Open the Bestore:    [Beintoo openBestore];
+Open the Dashboard:  
+
+        [Beintoo openDashboard];
+
+Open the Bestore:    
+
+        [Beintoo openBestore];
+		
+
 
 Beintoo iOS full documentation
 ===============
